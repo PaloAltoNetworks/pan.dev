@@ -947,14 +947,24 @@ const config = {
             outputDir: "products/scm/api/config/incidents",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          "posturemanagement": {
-            specPath: "openapi-specs/scm/config/posture-management",
-            outputDir: "products/scm/api/config/posture-management",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
           "compliance-framework-posture": {
             specPath: "openapi-specs/scm/config/posture-management/compliance-framework",
             outputDir: "products/scm/api/config/posture-management/compliance-framework",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "policy-optimizer-posture": {
+            specPath: "openapi-specs/scm/config/posture-management/policy-optimizer",
+            outputDir: "products/scm/api/config/posture-management/policy-optimizer",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "posture-checks": {
+            specPath: "openapi-specs/scm/config/posture-management/checks",
+            outputDir: "products/scm/api/config/posture-management/checks",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-cleanup-posture": {
+            specPath: "openapi-specs/scm/config/posture-management/config-cleanup",
+            outputDir: "products/scm/api/config/posture-management/config-cleanup",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-adnsr": {

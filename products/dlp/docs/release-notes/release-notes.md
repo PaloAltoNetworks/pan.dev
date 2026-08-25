@@ -13,6 +13,26 @@ keywords:
 
 Everything we ship for the DLP API, newest first. Pick a date to see exactly what changed, including breaking changes, what you need to do, and links to the affected endpoints.
 
+## August 2026
+
+### Dlp — Dlp (Updated)
+
+4 new endpoints and 2 removed endpoints.
+
+<details><summary>View endpoints (5)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/v4/api/incidents` | Retrieve paginated incident records using token |
+| POST | `/v4/api/incidents` | Retrieve initial incident records with token |
+| POST | `/v4/api/incidents/download` | Get signed download URL for incidents |
+| POST | `/v4/api/incidents/management` | Update key details for incidents |
+| GET | `/v4/api/incidents/{id}` | Retrieve incident details by ID |
+
+</details>
+
+See [Dlp APIs](/dlp/api/dlp-api-spec-beta/) for full details.
+
 ## July 31st, 2026
 
 Dlp API: 15 new, 3 removed endpoints.
