@@ -19,8 +19,10 @@ servers:
 tags:
 - name: Config File Upload
   description: Config file upload for BPA result
-- name: Posture Checks
+- name: Custom Posture Checks
   description: Operations for managing custom posture checks including CRUD and batch operations.
+- name: Posture Check Reports
+  description: Posture check reports and BPA assessment results
 
 paths:
   /reports/config-file-upload:
@@ -151,7 +153,7 @@ paths:
   /all-checks:
     get:
       tags:
-        - Posture Checks
+        - Custom Posture Checks
       summary: List Posture Checks
       description: Returns a paginated list of posture checks (both custom and predefined).
       operationId: ListPostureChecks
@@ -216,7 +218,7 @@ paths:
 
     post:
       tags:
-        - Posture Checks
+        - Custom Posture Checks
       summary: Create Posture Check
       description: Creates a new custom posture check. Requires SCM Pro license.
       operationId: CreatePostureChecks
@@ -255,7 +257,7 @@ paths:
   /all-checks/{id}:
     get:
       tags:
-        - Posture Checks
+        - Custom Posture Checks
       summary: Get Posture Check
       description: Returns a specific posture check by ID.
       operationId: GetPostureChecksByID
@@ -288,7 +290,7 @@ paths:
 
     put:
       tags:
-        - Posture Checks
+        - Custom Posture Checks
       summary: Update Posture Check
       description: Updates an existing custom posture check. Requires SCM Pro license.
       operationId: UpdatePostureChecksByID
@@ -339,7 +341,7 @@ paths:
 
     delete:
       tags:
-        - Posture Checks
+        - Custom Posture Checks
       summary: Delete Posture Check
       description: Deletes a custom posture check. Requires SCM Pro license.
       operationId: DeletePostureChecksByID
@@ -375,7 +377,7 @@ paths:
   /all-checks/{id}:clone:
     post:
       tags:
-        - Posture Checks
+        - Custom Posture Checks
       summary: Clone Posture Check
       description: Creates a copy of an existing posture check with a new ID. Requires SCM Pro license.
       operationId: ClonePostureChecksByID
@@ -427,7 +429,7 @@ paths:
   /all-checks/batch-upsert:
     post:
       tags:
-        - Posture Checks
+        - Custom Posture Checks
       summary: Batch Upsert Posture Checks
       description: Creates or updates multiple posture checks in a single call. Objects with an existing ID will be updated, new objects will be created. Requires SCM Pro license.
       operationId: BatchUpsertPostureChecks
@@ -466,7 +468,7 @@ paths:
   /all-checks/batch-delete:
     post:
       tags:
-        - Posture Checks
+        - Custom Posture Checks
       summary: Batch Delete Posture Checks
       description: Deletes multiple posture checks in a single call. Requires SCM Pro license.
       operationId: BatchDeletePostureChecks
@@ -491,6 +493,293 @@ paths:
                 $ref: '#/components/schemas/Error'
         '403':
           description: Forbidden - SCM Pro license required.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /report:
+    get:
+      tags:
+        - Posture Check Reports
+      summary: Get Posture Check Reports
+      description: |
+        Returns paginated posture check results (BPA assessment results) with filtering support.
+        Platform is auto-detected based on device_serial:
+        - No device_serial: SCM platform (cloud_mgmt path)
+        - With device_serial: Checks Panorama path first, then NGFW path
+      operationId: ListPostureCheckReports
+      parameters:
+        - in: query
+          name: device_serial
+          schema:
+            type: string
+          description: Device serial number. If provided, auto-detects panorama or ngfw platform. If omitted, uses SCM platform.
+        - in: query
+          name: location
+          schema:
+            type: string
+          description: Filter by location path (substring match on folder/snippet/device group name).
+        - in: query
+          name: state
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [pass, fail, excepted]
+          style: form
+          explode: true
+          description: Filter by check state. Use repeated params for multiple values (e.g., state=pass&state=fail).
+        - in: query
+          name: severity
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [Critical, High, Warning, Informational]
+          style: form
+          explode: true
+          description: Filter by severity level. Use repeated params for multiple values (e.g., severity=Critical&severity=High).
+        - in: query
+          name: check_id
+          schema:
+            type: string
+          description: Filter by specific check ID.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+          description: Maximum number of results to return.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Number of results to skip for pagination.
+      responses:
+        '200':
+          description: Posture check reports retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostureCheckReportListResponse'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /report/object-types:
+    get:
+      tags:
+        - Posture Check Reports
+      summary: List Object Types in Report
+      description: |
+        Returns a list of available object types in the BPA report.
+        Platform is auto-detected based on device_serial:
+        - No device_serial: SCM platform (cloud_mgmt path)
+        - With device_serial: Checks Panorama path first, then NGFW path
+      operationId: ListPostureCheckReportObjectTypes
+      parameters:
+        - in: query
+          name: device_serial
+          schema:
+            type: string
+          description: Device serial number. If provided, auto-detects panorama or ngfw platform. If omitted, uses SCM platform.
+      responses:
+        '200':
+          description: Object types retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostureCheckReportObjectTypesResponse'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /report/{object-type}:
+    get:
+      tags:
+        - Posture Check Reports
+      summary: Get Posture Check Reports by Object Type
+      description: |
+        Returns paginated posture check results filtered by a specific configuration object type.
+        Platform is auto-detected based on device_serial:
+        - No device_serial: SCM platform (cloud_mgmt path)
+        - With device_serial: Checks Panorama path first, then NGFW path
+      operationId: ListPostureCheckReportsByType
+      parameters:
+        - in: path
+          name: object-type
+          schema:
+            type: string
+          required: true
+          description: The configuration object type (e.g., security-rules, address-objects). Must be a valid object type present in the BPA report.
+        - in: query
+          name: device_serial
+          schema:
+            type: string
+          description: Device serial number. If provided, auto-detects panorama or ngfw platform. If omitted, uses SCM platform.
+        - in: query
+          name: location
+          schema:
+            type: string
+          description: Filter by location path (substring match on folder/snippet/device group name).
+        - in: query
+          name: state
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [pass, fail, excepted]
+          style: form
+          explode: true
+          description: Filter by check state. Use repeated params for multiple values (e.g., state=pass&state=fail).
+        - in: query
+          name: severity
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [Critical, High, Warning, Informational]
+          style: form
+          explode: true
+          description: Filter by severity level. Use repeated params for multiple values (e.g., severity=Critical&severity=High).
+        - in: query
+          name: check_id
+          schema:
+            type: string
+          description: Filter by specific check ID.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+          description: Maximum number of results to return.
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Number of results to skip for pagination.
+      responses:
+        '200':
+          description: Posture check reports retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostureCheckReportListResponse'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Object type not found in BPA report.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /report/objects/{uuid}:
+    get:
+      tags:
+        - Posture Check Reports
+      summary: Get Posture Check Reports for Single Object
+      description: |
+        Returns all posture check results for a specific configuration object identified by UUID.
+        Platform is auto-detected based on device_serial:
+        - No device_serial: SCM platform (cloud_mgmt path)
+        - With device_serial: Checks Panorama path first, then NGFW path
+      operationId: GetPostureCheckReportsByUUID
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+          description: The UUID of the configuration object.
+        - in: query
+          name: device_serial
+          schema:
+            type: string
+          description: Device serial number. If provided, auto-detects panorama or ngfw platform. If omitted, uses SCM platform.
+        - in: query
+          name: state
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [pass, fail, excepted]
+          style: form
+          explode: true
+          description: Filter by check state. Use repeated params for multiple values (e.g., state=pass&state=fail).
+        - in: query
+          name: severity
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [Critical, High, Warning, Informational]
+          style: form
+          explode: true
+          description: Filter by severity level. Use repeated params for multiple values (e.g., severity=Critical&severity=High).
+        - in: query
+          name: check_id
+          schema:
+            type: string
+          description: Filter by specific check ID.
+      responses:
+        '200':
+          description: Posture check reports for object retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostureCheckReportForObjectResponse'
+        '400':
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Object not found.
           content:
             application/json:
               schema:
@@ -801,6 +1090,97 @@ components:
         message:
           type: string
           description: Error message describing why the operation failed.
+
+    PostureCheckResult:
+      type: object
+      description: A BPA result object containing configuration and check warnings.
+      properties:
+        configuration:
+          type: object
+          description: Configuration object metadata (uuid, name, location, etc.).
+          additionalProperties: true
+        warnings:
+          type: array
+          description: Array of check results for this object.
+          items:
+            type: object
+            properties:
+              check_id:
+                type: integer
+                description: Unique identifier for the check.
+              status:
+                type: string
+                enum: [pass, fail]
+                description: Check status (pass or fail).
+              check_passed:
+                type: boolean
+                description: Whether the check passed.
+              user_excluded:
+                type: boolean
+                description: Whether the check was excluded by user (excepted).
+              check_excluded:
+                type: boolean
+                description: Whether the check was excluded.
+              check_message:
+                type: string
+                description: Detailed message about the check result.
+              check_name:
+                type: string
+                description: Human-readable name of the check (recommendation).
+              check_type:
+                type: string
+                description: Severity of the check (Critical, High, Warning, Informational).
+              action:
+                type: string
+                description: Action configured for this check (e.g., alert).
+            additionalProperties: true
+        notes:
+          type: object
+          nullable: true
+          description: Additional notes for the object.
+          additionalProperties: true
+        summary_remediation:
+          type: object
+          description: Summary remediation information.
+          additionalProperties: true
+      additionalProperties: true
+
+    PostureCheckReportListResponse:
+      type: object
+      description: Paginated list of posture check results.
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostureCheckResult'
+        total:
+          type: integer
+          description: Total number of results matching the query.
+        limit:
+          type: integer
+          description: Maximum number of results returned.
+        offset:
+          type: integer
+          description: Number of results skipped.
+
+    PostureCheckReportForObjectResponse:
+      type: object
+      description: Posture check results for a single configuration object.
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PostureCheckResult'
+
+    PostureCheckReportObjectTypesResponse:
+      type: object
+      description: List of available object types in the BPA report.
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+          description: List of object type identifiers present in the BPA report.
 
     PostureCheckListResponse:
       type: object
