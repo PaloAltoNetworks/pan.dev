@@ -134,9 +134,27 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "scm/api/config/sase/network configurations/network-api",
+              id: "scm/api/config/sase/network/network-api",
             },
-            require("./api/config/sase/network configurations/sidebar"),
+            require("./api/config/sase/network/sidebar"),
+            {
+              type: "category",
+              label: "Logical Routers",
+              collapsed: true,
+              items: [require("./api/config/sase/network/logical-routers/sidebar")],
+            },
+            {
+              type: "category",
+              label: "Virtual Routers",
+              collapsed: true,
+              items: [require("./api/config/sase/network/virtual-routers/sidebar")],
+            },
+            {
+              type: "category",
+              label: "VR Routing Profiles",
+              collapsed: true,
+              items: [require("./api/config/sase/network/vr-routing-profiles/sidebar")],
+            },
           ],
         },
         {
@@ -270,6 +288,24 @@ module.exports = {
               id: "scm/api/config/ngfw/network/network-api",
             },
             require("./api/config/ngfw/network/sidebar"),
+            {
+              type: "category",
+              label: "Logical Routers",
+              collapsed: true,
+              items: [require("./api/config/ngfw/network/logical-routers/sidebar")],
+            },
+            {
+              type: "category",
+              label: "Virtual Routers",
+              collapsed: true,
+              items: [require("./api/config/ngfw/network/virtual-routers/sidebar")],
+            },
+            {
+              type: "category",
+              label: "VR Routing Profiles",
+              collapsed: true,
+              items: [require("./api/config/ngfw/network/vr-routing-profiles/sidebar")],
+            },
           ],
         },
         {

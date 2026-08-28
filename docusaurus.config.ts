@@ -880,6 +880,8 @@ const config = {
           "config-sase-vr-routing-profiles": {
             specPath: "openapi-specs/scm/config/sase/network/vr-routing-profiles",
             outputDir: "products/scm/api/config/sase/network/vr-routing-profiles",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-ngfw-operations": {
             specPath: "openapi-specs/scm/config/ngfw/operations",
             outputDir: "products/scm/api/config/ngfw/operations",
@@ -911,7 +913,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-ngfw-network": {
-            specPath: "openapi-specs/scm/config/ngfw/network",
+            specPath: "openapi-specs/scm/config/ngfw/network/network-services_R3.yaml",
             outputDir: "products/scm/api/config/ngfw/network",
             sidebarOptions: { groupPathsBy: "tag" },
           },
@@ -928,6 +930,8 @@ const config = {
           "config-ngfw-vr-routing-profiles": {
             specPath: "openapi-specs/scm/config/ngfw/network/vr-routing-profiles",
             outputDir: "products/scm/api/config/ngfw/network/vr-routing-profiles",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-ngfw-objects": {
             specPath: "openapi-specs/scm/config/ngfw/objects",
             outputDir: "products/scm/api/config/ngfw/objects",
