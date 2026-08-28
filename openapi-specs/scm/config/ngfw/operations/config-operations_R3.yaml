@@ -110,6 +110,37 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
+  '/config-versions:push':
+    post:
+      tags:
+        - Config Versions
+      summary: Push a configuration version
+      description: |
+        Push a specific configuration version to devices and/or containers.
+      operationId: PushConfigVersions
+      requestBody:
+        description: Push configuration version request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/push-config-version-request'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/push-config-version-response'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
   '/config-versions/candidate:push':
     post:
       tags:
@@ -748,6 +779,45 @@ components:
       properties:
         version:
           type: integer
+    push-config-version-request:
+      type: object
+      properties:
+        version:
+          type: integer
+          description: The configuration version number to push
+          example: 123
+        devices:
+          type: array
+          description: The target device serial numbers for the configuration push
+          uniqueItems: true
+          items:
+            type: string
+            pattern: '^[0-9]{14,15}$'
+          example: ["007951000388704", "007951000388707"]
+        containers:
+          type: array
+          description: The folders for the configuration push
+          uniqueItems: true
+          items:
+            type: string
+            maxLength: 64
+          example: ["folder1", "folder2"]
+      required:
+        - version
+    push-config-version-response:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates whether the push operation was initiated successfully
+          example: true
+        job_id:
+          type: string
+          description: The job ID for tracking the push operation
+          example: "12345"
+        message:
+          type: string
+          description: Additional information about the push operation
     config-version:
       type: object
       properties:
