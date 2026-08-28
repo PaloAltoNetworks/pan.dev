@@ -134,9 +134,9 @@ module.exports = {
           items: [
             {
               type: "doc",
-              id: "scm/api/config/sase/network configurations/network-api",
+              id: "scm/api/config/sase/network/network-api",
             },
-            require("./api/config/sase/network configurations/sidebar"),
+            require("./api/config/sase/network/sidebar"),
           ],
         },
         {
