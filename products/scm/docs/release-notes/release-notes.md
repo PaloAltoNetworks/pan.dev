@@ -15,6 +15,150 @@ These release notes identify API changes made for the various Strata Cloud Manag
 
 ## August 2026
 
+### NGFW, SASE — Routing APIs (New)
+
+New R3 routing APIs introduce Logical Routers, Virtual Routers, and VR Routing Profiles for both NGFW and SASE platforms, enabling programmatic management of routing topologies and routing policy profiles.
+
+<details><summary>View endpoints</summary>
+
+**NGFW Logical Routers**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/logical-routers` | List logical routers |
+| POST | `/config/network/v1/logical-routers` | Create a logical router |
+| GET | `/config/network/v1/logical-routers/{id}` | Get a logical router |
+| PUT | `/config/network/v1/logical-routers/{id}` | Update a logical router |
+| DELETE | `/config/network/v1/logical-routers/{id}` | Delete a logical router |
+
+**NGFW Virtual Routers**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/virtual-routers` | List virtual routers |
+| POST | `/config/network/v1/virtual-routers` | Create a virtual router |
+| GET | `/config/network/v1/virtual-routers/{id}` | Get a virtual router |
+| PUT | `/config/network/v1/virtual-routers/{id}` | Update a virtual router |
+| DELETE | `/config/network/v1/virtual-routers/{id}` | Delete a virtual router |
+
+**NGFW VR Routing Profiles**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/vr-routing-profiles` | List VR routing profiles |
+| POST | `/config/network/v1/vr-routing-profiles` | Create a VR routing profile |
+| GET | `/config/network/v1/vr-routing-profiles/{id}` | Get a VR routing profile |
+| PUT | `/config/network/v1/vr-routing-profiles/{id}` | Update a VR routing profile |
+| DELETE | `/config/network/v1/vr-routing-profiles/{id}` | Delete a VR routing profile |
+
+**SASE Logical Routers**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/logical-routers` | List logical routers |
+| POST | `/config/network/v1/logical-routers` | Create a logical router |
+| GET | `/config/network/v1/logical-routers/{id}` | Get a logical router |
+| PUT | `/config/network/v1/logical-routers/{id}` | Update a logical router |
+| DELETE | `/config/network/v1/logical-routers/{id}` | Delete a logical router |
+
+**SASE Virtual Routers**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/virtual-routers` | List virtual routers |
+| POST | `/config/network/v1/virtual-routers` | Create a virtual router |
+| GET | `/config/network/v1/virtual-routers/{id}` | Get a virtual router |
+| PUT | `/config/network/v1/virtual-routers/{id}` | Update a virtual router |
+| DELETE | `/config/network/v1/virtual-routers/{id}` | Delete a virtual router |
+
+**SASE VR Routing Profiles**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/vr-routing-profiles` | List VR routing profiles |
+| POST | `/config/network/v1/vr-routing-profiles` | Create a VR routing profile |
+| GET | `/config/network/v1/vr-routing-profiles/{id}` | Get a VR routing profile |
+| PUT | `/config/network/v1/vr-routing-profiles/{id}` | Update a VR routing profile |
+| DELETE | `/config/network/v1/vr-routing-profiles/{id}` | Delete a VR routing profile |
+
+</details>
+
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+
+---
+
+### NGFW — Device Settings API (New)
+
+Comprehensive R3 Device Settings API for NGFW providing full programmatic control over device-level configuration including interfaces, zones, service routes, high availability, DNS, NTP, and more (~6800 lines of spec coverage).
+
+See [NGFW Device Settings APIs](/scm/api/config/ngfw/device/device-api/) for full details.
+
+---
+
+### NGFW, SASE — Application Tags API (New)
+
+New R3 Application Tags APIs enable management of application tag definitions for both NGFW and SASE platforms, supporting dynamic policy grouping and application classification workflows.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/objects/v1/application-tags` | List application tags |
+| POST | `/config/objects/v1/application-tags` | Create an application tag |
+| GET | `/config/objects/v1/application-tags/{id}` | Get an application tag |
+| PUT | `/config/objects/v1/application-tags/{id}` | Update an application tag |
+| DELETE | `/config/objects/v1/application-tags/{id}` | Delete an application tag |
+
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+
+---
+
+### Cloud NGFW — Application Tags API (New)
+
+R3 Application Tags support extended to Cloud NGFW, providing consistent application tagging and policy grouping across all three platforms.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/objects/v1/application-tags` | List application tags |
+| POST | `/config/objects/v1/application-tags` | Create an application tag |
+| GET | `/config/objects/v1/application-tags/{id}` | Get an application tag |
+| PUT | `/config/objects/v1/application-tags/{id}` | Update an application tag |
+| DELETE | `/config/objects/v1/application-tags/{id}` | Delete an application tag |
+
+See [Cloud NGFW APIs](/scm/api/config/cloudngfw/) for full details.
+
+---
+
+### SASE — Deployment Services API (Updated)
+
+R3 update to the Deployment Services API introduces expanded service management capabilities for SASE deployments.
+
+See [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+
+---
+
+### NGFW, SASE — Network Services API (Updated)
+
+R3 release of the Network Services API for both NGFW and SASE platforms with updated schemas and expanded endpoint coverage.
+
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+
+---
+
+### Config Operations, Config Setup, Device Onboarding — R3 Updates (Updated)
+
+R3 release updates across Config Operations, Config Setup, and Device Onboarding APIs for SASE, NGFW, and Cloud NGFW platforms with improved schemas and additional endpoint coverage.
+
+See [Configuration Operations APIs](/scm/api/config/sase/operations/operations-api/) for full details.
+
+---
+
+### Identity Services, Security Services, Objects — R3 Updates (Updated)
+
+R3 release updates to Identity Services, Security Services, and Objects APIs across SASE, NGFW, and Cloud NGFW platforms with schema improvements and expanded resource management capabilities.
+
+See [Identity Services APIs](/scm/api/config/sase/identity/identity-api), [Security Services APIs](/scm/api/config/sase/security/security-api/), and [Objects APIs](/scm/api/config/sase/objects/objects-api/) for full details.
+
+---
+
 ### Posture Management — Policy Optimizer API (New)
 
 Retrieve security rules with optimization recommendations and their suggested replacement rules.
