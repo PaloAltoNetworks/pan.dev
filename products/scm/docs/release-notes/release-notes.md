@@ -15,55 +15,20 @@ These release notes identify API changes made for the various Strata Cloud Manag
 
 ## August 2026
 
-### Posture Management — Policy Optimizer API (New)
+**Product:** Strata Cloud Manager — Activation Service
 
-Retrieve security rules with optimization recommendations and their suggested replacement rules.
+Added [Activation Service APIs](/scm/api/activation/introduction) and Asset Service APIs to SCM. These APIs enable programmatic management of tenant activation, license allocation, and instance lifecycle operations.
 
-| Method | Endpoint | Description |
-| ------ | -------- | ----------- |
-| GET | `/posture/policy-optimizer/v1/security-rules` | List security rules with optimization recommendations |
-| GET | `/posture/policy-optimizer/v1/security-rules/{id}` | Get security rule optimization recommendations by ID |
+New endpoints:
 
-See [Policy Optimizer API](/scm/api/config/posture-management/policy-optimizer/policy-optimizer-api/) for full details.
-
----
-
-### Posture Management — Posture Check Upload Initiation API (New)
-
-Upload configuration files for Best Practice Assessment (BPA) processing and manage custom posture checks programmatically.
-
-<details><summary>View endpoints (10)</summary>
-
-| Method | Endpoint | Description |
-| ------ | -------- | ----------- |
-| POST | `/posture/checks/v1/reports/config-file-upload` | Initiate a config file upload for BPA processing |
-| GET | `/posture/checks/v1/reports/{id}/bpa-result` | Get BPA processing status and result |
-| GET | `/posture/checks/v1/all-checks` | List posture checks (custom and predefined) |
-| POST | `/posture/checks/v1/all-checks` | Create a custom posture check |
-| GET | `/posture/checks/v1/all-checks/{id}` | Get a posture check by ID |
-| PUT | `/posture/checks/v1/all-checks/{id}` | Update a custom posture check |
-| DELETE | `/posture/checks/v1/all-checks/{id}` | Delete a custom posture check |
-| POST | `/posture/checks/v1/all-checks/{id}:clone` | Clone a posture check |
-| POST | `/posture/checks/v1/all-checks/batch-upsert` | Batch create or update posture checks |
-| POST | `/posture/checks/v1/all-checks/batch-delete` | Batch delete posture checks |
-
-</details>
-
-See [Posture Check Upload Initiation API](/scm/api/config/posture-management/checks/posture-check-upload-initiation-api/) for full details.
-
----
-
-### Posture Management — Config Cleanup API (New)
-
-Identify unused or redundant security rules across Strata Cloud Manager and Panorama deployments.
-
-| Method | Endpoint | Description |
-| ------ | -------- | ----------- |
-| GET | `/posture/config-cleanup/v1/zerohit-rules` | Get security rules with zero traffic hits |
-
-See [Config Cleanup API](/scm/api/config/posture-management/config-cleanup/config-cleanup-api/) for full details.
-
----
+| Endpoint | Description |
+|----------|-------------|
+| `POST /activation/api/v1/shared-instances` | Share a CIE instance with child TSGs |
+| `POST /activation/api/v1/activate` | Activate or amend Prisma Access licenses |
+| `GET /activation/api/v1/offboard/validation` | Validate offboard readiness |
+| `POST /activation/api/v1/offboard` | Offboard a product instance |
+| `GET /asset/api/v1/entitlement-groups` | Fetch entitlement group details |
+| `GET /asset/api/v1/instances` | Get product instance status |
 
 ## July 2026
 
