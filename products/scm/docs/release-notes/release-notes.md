@@ -65,6 +65,12 @@ See [Config Cleanup API](/scm/api/config/posture-management/config-cleanup/confi
 
 ---
 
+## August 2026
+
+**Product:** Strata Cloud Manager — Settings
+
+Updated [Settings APIs](/scm/api/config/ngfw/device/device-settings/) with 3 new endpoints.
+
 ## July 2026
 
 ### Posture Management — Compliance Framework APIs (New)
