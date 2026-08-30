@@ -1,0 +1,98 @@
+---
+id: firefly-helm-reference
+title: "Helm reference"
+sidebar_label: "Helm reference"
+keywords:
+  - Machine Identity Management
+  - Workload Identity Manager
+---
+
+## Introduction
+
+The most consistent and standard method for deploying *Workload Identity Manager* (formerly known as *Firefly*) in [Kubernetes](https://kubernetes.io/) is to use [Helm](https://helm.sh/) and Venafi provides [official Helm charts](https://gallery.ecr.aws/venafi-images/helm/firefly) to streamline these deployments.  Click [here](https://docs.venafi.cloud/firefly/deploy/kubernetes/) for more information about deploying *Workload Identity Manager* in Kubernetes.
+
+## Chart Values
+
+Helm allows customization through variables whose values are defined by a [values file](https://helm.sh/docs/chart_template_guide/values_files/).  The table below lists the values available for configuring the official *Workload Identity Manager* Helm charts using a `values.yaml` file.  Please note that some of the values are required.
+
+> ✅ Tip
+>
+> You can execute the following command to generate a starter Helm values file (with comments) for deploying *Workload Identity Manager* in a Kubernetes cluster:
+> ```bash
+> helm show values oci://registry.venafi.cloud/public/venafi-images/helm/firefly --version v1.6.0 > firefly-values.yaml
+> ```
+
+| Key | Type | Description |
+|-----|------|-------------|
+| acceptTerms | bool | **REQUIRED**: Set to true to indicate acceptance of Venafi's [End User License Agreement](https://venafi.com/end-user-license-agreement). |
+| crd: |||
+| &nbsp;`enabled` | bool | Installs the CRD in the cluster. Required to enable firefly with the given group. (Default: `true`) |
+| &nbsp;`approver:` |||
+| &nbsp;&nbsp;&nbsp;`enabled` | bool | Enable or disable the creation of a ClusterRole and ClusterRoleBinding to allow an approver to approve CertificateRequest resources which use the Firefly issuer group name. (Default: `true`) |
+| &nbsp;&nbsp;&nbsp;`subject` | object | The subject which will be granted permission to approve CertifcateRequest resources which use the Firefly issuer group. (Default: `{"kind":"ServiceAccount", "name":"cert-manager-approver-policy", "namespace":"cert-manager"}`) |
+| &nbsp;`groupName` | string | Group name of the issuer. (Default: `"firefly.venafi.com"`) |
+| deployment: |||
+| &nbsp;`affinity` | object | (Default: `{}`) |
+| &nbsp;`config:` |||
+| &nbsp;&nbsp;&nbsp;`bootstrap:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`selfSigned:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`enabled` | bool | Indicates whether Firefly will bootstrap using a self-signed issuer certificate. (Default: `false`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`csr:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`commonName` | string | The Common Name of the Firefly issuer certificate. |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`tpp:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`enabled` | bool | Indicates whether Firefly will request its issuer certificate from Cerificate Manager - Self-Hosted. (Default: `false`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`configurationDN` | string | The distinguished name (DN) of the Generic Credential object in Certificate Manager - Self-Hosted that contains the security configuration for *Workload Identity Manager* to bootstrap. |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`connection:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`create` | bool | Indicates whether to create the VenafiConnection resource when the Helm chart is installed (Default: `false`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`name` | string | The name of the VenafiConnection resource Firefly will use for connecting to Certificate Manager - Self-Hosted. |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`url` | string | **REQUIRED if enabled**: Specifies the base URL of Certificate Manager - Self-Hosted. |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`clientID` | string | Name of the API Integration for Firefly in Certificate Manager - Self-Hosted. (Default: `"firefly"`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`usernamePassword:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`enabled` | bool | Indicates whether Firefly will use a Kubetnetes secret to authenticate with Certificate Manager - Self-Hosted. (Default: `false`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`name` | string | The name of the Secret containing the username/password Firefly will use to get an access token from Certificate Manager - Self-Hosted. |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`serviceAccountToken:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`enabled` | bool | Indicates whether Firefly will use a Kubernetes service account token to authenticate with Certificate Manager - Self-Hosted. (Default: `false`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`audiences` | list | The intended audience(s) of the JWT that Firefly will use to authenticate with Certificate Manager - Self-Hosted. (Default: `["tpp"]`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`csr:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`instanceNaming`| string | Left portion of the Common Name of the Firefly issuer certificate. |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`vaas:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;`enabled `| bool | Indicates whether Firefly will request its issuer certificate from Certificate Manager - SaaS. (Default: `true`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`clientID` | string | **REQUIRED if enabled**: The ClientID of a Certificate Manager - SaaS service account associated with the desired configuration. |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`credentialsSecretName` | string | The name of the Secret containing the credentials of your Certificate Manager - SaaS service account. (Default: `"venafi-credentials"`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`credentialsSecretEnabled` | bool | Indicates whether a Kubernetes secret is used to store credentials for accessing Certificate Manager - SaaS. (Default: `true`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`url` | string | The base URL of Certificate Manager - SaaS with which the *Workload Identity Manager* instance will interact. (Default: `"https://api.venafi.cloud"`) |
+| &nbsp;&nbsp;&nbsp;`controller:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`enabled` | bool | Indicates whether Firefly's Kubernetes controller will listen for cert-manager certificates. (Default: `true`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`certManager` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`caRootChainPopulation` | bool | (Default: `true`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`checkApproval` | bool | (Default: `true`) |
+| &nbsp;&nbsp;&nbsp;`server:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`grpc:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`dnsNames` | list | DNS names by which clients will access the gRPC server. (Default: `[]`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`enabled` | bool | Indicates whether the gRPC server is enabled. (Default: `false`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ipAddress` | string | Network address at which clients will access the gRPC server. (Default: `"0.0.0.0"`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`port` | int | TCP port on which the gRPC server will listen. (Default: `8081`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`rest:` |||
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`dnsNames` | list | DNS names by which clients will access the REST server. (Default: `[]`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`enabled` | bool | Indicates whether the REST server is enabled. (Default: `false`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ipAddress` | string | Network address at which clients will access the REST server. (Default: `"0.0.0.0"`) |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`port` | int | TCP port on which the REST server will listen. (Default: `8281`) |
+| &nbsp;`enabled` | bool | Toggle for running Firefly inside the Kubernetes cluster as an in-cluster Certificate Authority (CA). (Default: `true`) |
+| &nbsp;`extraVolumes` | list | Mappings of secrets to volumes.  This is **REQUIRED** for Certificate Manager - Self-Hosted since its server certificate will be issued by a private trust CA and untrusted by default.  For example, `[ {"name": "trust-bundle", "secret": {"secretName": "tpp-trust-anchor-cert"}} ]` (Default: `[]`) |
+| &nbsp;`extraVolumeMounts` | list | Mount points for the extraVolumes. For example, `[ {"mountPath":"/etc/ssl/certs/", "name":"trust-bundle"} ]` (Default: `[]`) |
+| &nbsp;`image` | string | The Docker image repo. Override if you are using an on-prem image registry. Do **not** include a tag. Set `deployment.imageDigest` instead. (Default: `"registry.venafi.cloud/public/venafi-images/firefly"`) |
+| &nbsp;`imageDigest` | string | The digest of the image. (Default: `"REPLACE_WITH_IMAGE_DIGEST"`) |
+| &nbsp;`imagePullPolicy` | string | Override the image pullPolicy. (Default: `"IfNotPresent"`) |
+| &nbsp;`imagePullSecrets` | list | Set a list of image pull secrets. (Default: `[]`) |
+| &nbsp;`logLevel` | int | Log level, goes from 1 to 5 (highest). Default: `2`) |
+| &nbsp;`mlock` | bool | Only applicable for development and testing.  Disabling is **not** recommend and may prevent Firefly from starting up depending on how it is configured to boostrap. (Default: `true`) |
+| &nbsp;`nodeSelector` | object | It is recommended to set a nodeSelector for resource isolation. (Default: `{}`) |
+| &nbsp;`replicaCount` | int | A minimum of 2 is needed to achieve active-passive standby HA. (Default: `2`) |
+| &nbsp;`resources` | object | (Default: `{}`) |
+| &nbsp;`securityContext` | object | The default is the minimum security context to allow for the mlock operation. (Default: `{"allowPrivilegeEscalation":false, "capabilities": {"add":["IPC_LOCK"], "drop":["ALL"]}, "readOnlyRootFilesystem":true, "runAsNonRoot":true, "seccompProfile": {"type": "RuntimeDefault"}`) |
+| &nbsp;`tolerations` | list | (Default: `[]`) |
+| overrideSignerSubject | object | Optional Subject to assign permissions for Firefly to sign CertificateRequests. This should be used when Firefly is running outside the cluster, and likely takes the identity of a Kubernetes user. (Default: `{}`) |
+| service: |||
+| <div style={{marginLeft: "10px"}}>type</div> | string | The type of service: "ClusterIP", "NodePort", "LoadBalancer", etc. (Default: `"ClusterIP"`) |
+| serviceAccount: |||
+| <div style={{marginLeft: "10px"}}>annotations</div> | object | Optional annotations to set for the Firefly service account. (Default: `{}`) |
