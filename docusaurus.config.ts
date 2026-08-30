@@ -541,6 +541,11 @@ const config = {
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc",
                     },
+                    {
+                      to: "sase/api/mt-bulk-config/introduction",
+                      label: "Multitenant Bulk Configuration",
+                      icon: "api-doc",
+                    },
                   ],
                 },
                 {
@@ -796,6 +801,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          mtbulkconfig: {
+            specPath: "openapi-specs/sase/mt-bulk-config",
+            outputDir: "products/sase/api/mt-bulk-config",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",

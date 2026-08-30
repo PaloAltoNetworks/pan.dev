@@ -366,4 +366,8 @@ module.exports = {
     require("./api/pab-msp/sidebar"),
   ],
   
+  mtbulkconfig: [
+    "sase/api/mt-bulk-config/introduction",
+    ...require("./api/mt-bulk-config/sidebar"),
+  ],
 };
