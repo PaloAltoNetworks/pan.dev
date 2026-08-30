@@ -65,6 +65,12 @@ See [Config Cleanup API](/scm/api/config/posture-management/config-cleanup/confi
 
 ---
 
+## August 2026
+
+**Product:** Strata Cloud Manager — Epm
+
+Added [Epm APIs](/scm/api/config/epm/endpoint-inventory/) to the Epm API. These APIs enable © 2026 Palo Alto Networks, Inc.
+
 ## July 2026
 
 ### Posture Management — Compliance Framework APIs (New)
