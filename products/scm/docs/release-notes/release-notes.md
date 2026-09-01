@@ -13,6 +13,14 @@ keywords:
 
 These release notes identify API changes made for the various Strata Cloud Manager services.
 
+## September 2026
+
+### Strata Cloud Manager — Compliance Frameworks (Updated)
+
+Additional endpoint and schema updates.
+
+See [Compliance Frameworks APIs](/scm/api/config/posture-management/compliance-framework/compliance-center/) for full details.
+
 ## August 2026
 
 ### Posture Management — Policy Optimizer API (New)
