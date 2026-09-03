@@ -1,0 +1,1062 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Prisma Access Agent
+  description: |
+    © 2026 Palo Alto Networks, Inc. APIs for managing and monitoring Prisma Access Agent endpoints including inventory search, statistics, actions, and staged rollout operations.
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    email: support@paloaltonetworks.com
+    name: Palo Alto Networks Technical Support
+    url: 'https://support.paloaltonetworks.com'
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: 'https://api.sase.paloaltonetworks.com/sse/epm/v1'
+    description: Production (external/customer-facing)
+  - url: 'https://api.apps.paloaltonetworks.com/sse/epm/v1'
+    description: Production (first-party apps)
+tags:
+  - name: Agent Actions
+    description: Initiate and track actions on agents
+  - name: Agent Binaries
+    description: Retrieve available agent binary versions
+  - name: Agent Inventory
+    description: Search, filter, and retrieve agent endpoint data
+  - name: Agent Statistics
+    description: Aggregate statistics and rollout ring status
+  - name: Staged Rollout
+    description: Start and stop staged upgrade rollout
+security:
+  - scmToken: []
+paths:
+  /agents-search:
+    post:
+      tags:
+        - Agent Inventory
+      summary: Search agents
+      description: |
+        Search and filter agents with pagination and sorting.
+      operationId: SearchAgents
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/search-agents-request'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/search-agents-response'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /agents-filters:
+    get:
+      tags:
+        - Agent Inventory
+      summary: Get agent filter values
+      description: |
+        Retrieve available values for a specified filter type.
+      operationId: GetAgentFilters
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+        - $ref: '#/components/parameters/filter-type'
+        - $ref: '#/components/parameters/filter-limit'
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+        - $ref: '#/components/parameters/search'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /agents-stats:
+    get:
+      tags:
+        - Agent Statistics
+      summary: Get agent status statistics
+      description: |
+        Retrieve aggregate agent counts grouped by connection status.
+      operationId: GetAgentsStatistics
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/agents-statistics'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /agents-ring-stats:
+    get:
+      tags:
+        - Agent Statistics
+      summary: Get agent ring status
+      description: |
+        Retrieve staged rollout ring progress and status.
+      operationId: GetAgentsRingStatus
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/agents-ring-status'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /agents/{agent-id}:
+    get:
+      tags:
+        - Agent Inventory
+      summary: Get agent by ID
+      description: |
+        Retrieve detailed information for a specific agent.
+      operationId: GetAgentById
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+        - $ref: '#/components/parameters/agent-id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/agent'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /agent-binaries:
+    get:
+      tags:
+        - Agent Binaries
+      summary: Get available agent binaries
+      description: |
+        Retrieve available agent binary versions and metadata.
+      operationId: GetAgentBinaries
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/get-agent-binaries-response'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /actions:
+    get:
+      tags:
+        - Agent Actions
+      summary: List actions
+      description: |
+        Retrieve actions initiated by the current user.
+      operationId: ListActions
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/action'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /actions/{action-id}:
+    get:
+      tags:
+        - Agent Actions
+      summary: Get action by ID
+      description: |
+        Retrieve status and details of a specific action.
+      operationId: GetActionById
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+        - $ref: '#/components/parameters/action-id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/action'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /agent-actions/{agent-id}:
+    get:
+      tags:
+        - Agent Actions
+      summary: Get actions for agent
+      description: |
+        Retrieve action history for a specific agent.
+      operationId: GetAgentActions
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+        - $ref: '#/components/parameters/agent-id'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/action'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /action-upgrade:
+    post:
+      tags:
+        - Agent Actions
+      summary: Request agent upgrade
+      description: |
+        Initiate an upgrade action for one or more agents.
+      operationId: RequestUpgrade
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/initiate-action-request'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/initiate-action-response'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /action-downgrade:
+    post:
+      tags:
+        - Agent Actions
+      summary: Request agent downgrade
+      description: |
+        Initiate a downgrade action for one or more agents.
+      operationId: RequestDowngrade
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/initiate-action-request'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/initiate-action-response'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /action-uninstall:
+    post:
+      tags:
+        - Agent Actions
+      summary: Request agent uninstall
+      description: |
+        Initiate an uninstall action for one or more agents.
+      operationId: RequestUninstall
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/initiate-action-request'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/initiate-action-response'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /action-request-logs:
+    post:
+      tags:
+        - Agent Actions
+      summary: Request agent logs
+      description: |
+        Initiate a log collection action for one or more agents.
+      operationId: RequestLogs
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/initiate-action-request'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/initiate-action-response'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /action-request-hip:
+    post:
+      tags:
+        - Agent Actions
+      summary: Request agent HIP report
+      description: |
+        Initiate a HIP report collection for one or more agents.
+      operationId: RequestRecentHip
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/initiate-action-request'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/initiate-action-response'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /action-request-diagnostics:
+    post:
+      tags:
+        - Agent Actions
+      summary: Request agent diagnostics
+      description: |
+        Initiate a diagnostics collection for one or more agents.
+      operationId: RequestDiagnostics
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/initiate-action-request'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/initiate-action-response'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /stage-rollout:
+    post:
+      tags:
+        - Staged Rollout
+      summary: Start staged rollout
+      description: |
+        Initiate a staged rollout for agent upgrades.
+      operationId: StartStageRollout
+      x-action: true
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      tags:
+        - Staged Rollout
+      summary: Stop staged rollout
+      description: |
+        Stop an in-progress staged rollout with a reason.
+      operationId: StopStageRollout
+      x-singleton: true
+      parameters:
+        - $ref: '#/components/parameters/x-panw-region'
+      responses:
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+components:
+  securitySchemes:
+    scmToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    x-panw-region:
+      name: x-panw-region
+      in: header
+      required: true
+      description: |
+        The tenant's deployment region. Used by the API Gateway to route requests to the correct regional backend.
+        Without this header, requests return empty results. Obtain the value from the SCM platform
+        (api_gateway.get_X_PANW_Region_Header() or sparky.getState().auth.instances.platform_region).
+        Known values: americas, europe, gov. Additional regions (e.g., asia, india, japan) may exist
+        for APAC-provisioned tenants.
+      schema:
+        type: string
+    agent-id:
+      name: agent-id
+      in: path
+      required: true
+      description: Unique agent identifier based on host ID.
+      schema:
+        type: string
+    action-id:
+      name: action-id
+      in: path
+      required: true
+      description: Unique action identifier.
+      schema:
+        type: string
+    filter-type:
+      name: type
+      in: query
+      required: true
+      description: The filter field to retrieve values for.
+      schema:
+        type: string
+        enum:
+          - rings
+          - state
+          - host_name
+          - os_name
+          - os_version
+          - product_version
+          - private_ip
+          - private_ipv6
+          - public_ip
+          - public_ipv6
+          - user_id
+          - project
+          - eie_enabled
+    filter-limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of filter values to return.
+      schema:
+        type: integer
+        default: 100
+    from:
+      name: from
+      in: query
+      required: false
+      description: Start time filter as epoch milliseconds.
+      schema:
+        type: integer
+        format: int64
+    to:
+      name: to
+      in: query
+      required: false
+      description: End time filter as epoch milliseconds.
+      schema:
+        type: integer
+        format: int64
+    search:
+      name: search
+      in: query
+      required: false
+      description: Text to filter returned values.
+      schema:
+        type: string
+  schemas:
+    search-agents-request:
+      type: object
+      properties:
+        active_from:
+          type: integer
+          format: int64
+        host_name:
+          type: array
+          items:
+            type: string
+        agents:
+          type: array
+          items:
+            type: string
+        user_id:
+          type: array
+          items:
+            type: string
+        agent_status:
+          type: array
+          items:
+            type: string
+            enum:
+              - connected
+              - connected-prelogon
+              - disconnected
+              - disconnected-not-compliant
+              - offline
+              - quarantined
+              - authenticated
+              - disabled
+              - enrolled
+        platform:
+          type: array
+          items:
+            type: string
+            enum:
+              - Windows
+              - macOS
+              - Linux
+              - Android
+              - iOS
+        os_version:
+          type: array
+          items:
+            type: string
+        os_name:
+          type: array
+          items:
+            type: string
+        product_version:
+          type: array
+          items:
+            type: string
+        private_ip:
+          type: array
+          items:
+            type: string
+        private_ipv6:
+          type: array
+          items:
+            type: string
+        public_ip:
+          type: array
+          items:
+            type: string
+        public_ipv6:
+          type: array
+          items:
+            type: string
+        adem_agent_status:
+          type: array
+          items:
+            type: string
+        organization_unit:
+          type: array
+          items:
+            type: string
+        update_ring:
+          type: array
+          items:
+            type: string
+        gateway:
+          type: array
+          items:
+            type: string
+        dlp_support_activation_flag:
+          type: array
+          items:
+            type: string
+            enum:
+              - 'true'
+              - 'false'
+        eie_enabled:
+          type: boolean
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+        project:
+          type: array
+          items:
+            type: string
+        sort_by:
+          type: string
+          description: 'Field name to sort by. Prefix with - for descending. Case-insensitive.'
+    search-agents-response:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/agent'
+        offset:
+          type: integer
+          format: int64
+        total:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int64
+    agent:
+      type: object
+      properties:
+        device_information:
+          $ref: '#/components/schemas/device-information'
+        agent_information:
+          $ref: '#/components/schemas/agent-information'
+        project:
+          $ref: '#/components/schemas/project'
+        adem_data:
+          $ref: '#/components/schemas/adem-information'
+        user:
+          $ref: '#/components/schemas/user'
+        agent_otps:
+          $ref: '#/components/schemas/agent-otps'
+        authorization:
+          $ref: '#/components/schemas/authorization'
+    device-information:
+      type: object
+      properties:
+        host_id:
+          type: string
+        host_name:
+          type: string
+        serial_number:
+          type: string
+        platform:
+          type: string
+          enum:
+            - Windows
+            - macOS
+            - Linux
+            - Android
+            - iOS
+        os_version:
+          type: string
+        public_ip:
+          type: string
+        private_ip:
+          type: string
+        private_ipv6:
+          type: string
+        public_ipv6:
+          type: string
+        location:
+          type: string
+        is_internal_network:
+          type: boolean
+    agent-information:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - connected
+            - connected-prelogon
+            - disconnected
+            - disconnected-not-compliant
+            - offline
+            - quarantined
+            - authenticated
+            - disabled
+            - enrolled
+        version:
+          type: string
+        ring:
+          type: string
+        previous_agent_version:
+          type: string
+        next_agent_version:
+          type: string
+        allow_downgrade:
+          type: boolean
+        allow_upgrade:
+          type: boolean
+        is_dlp_activated:
+          type: string
+          enum:
+            - 'true'
+            - 'false'
+            - '-'
+        is_dlp:
+          type: boolean
+        dlp_config_updated_timestamp:
+          type: integer
+          format: int64
+        dlp_config_update_request_id:
+          type: string
+        dlp_policies:
+          type: array
+          items:
+            type: string
+        dlp_policies_count:
+          type: integer
+          format: int64
+        dlp_profiles:
+          type: array
+          items:
+            type: string
+        eie_enabled:
+          type: boolean
+    adem-information:
+      type: object
+      properties:
+        agent_status:
+          type: string
+        agent_version:
+          type: string
+        experience_score: {}
+        is_adem_enabled:
+          type: boolean
+        click_to_view_more_in_ADEM:
+          type: string
+        click_to_enable_ADEM:
+          type: string
+    user:
+      type: object
+      properties:
+        user_id:
+          type: string
+        last_login:
+          type: integer
+          format: int64
+        groups:
+          type: array
+          items:
+            type: string
+    project:
+      type: object
+      properties:
+        name:
+          type: string
+    authorization:
+      type: object
+      properties:
+        compliance_status:
+          type: string
+        last_sync_time:
+          type: integer
+          format: int64
+        reason:
+          type: string
+    agent-otps:
+      type: object
+      properties:
+        privileged_access_otp:
+          type: string
+        disable_with_otp:
+          type: string
+        uninstall_with_otp:
+          type: string
+        restart_with_otp:
+          type: string
+        exit_with_otp:
+          type: string
+    initiate-action-request:
+      type: object
+      required:
+        - agents
+      properties:
+        agents:
+          type: array
+          items:
+            $ref: '#/components/schemas/agent-info'
+    agent-info:
+      type: object
+      required:
+        - agent_id
+      properties:
+        agent_id:
+          type: string
+        user_id:
+          type: string
+        host_name:
+          type: string
+    initiate-action-response:
+      type: object
+      properties:
+        action_id:
+          type: string
+    action:
+      type: object
+      properties:
+        id:
+          type: string
+        tenant_id:
+          type: string
+        agent_actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/agent-action'
+        action_type:
+          type: string
+          enum:
+            - UNINSTALL
+            - REQUEST_LOGS
+            - REQUEST_DIAGNOSTICS
+            - UPGRADE
+            - DOWNGRADE
+            - GET_RECENT_HIP_REPORT
+        status:
+          type: string
+          enum:
+            - UNINITIATED
+            - PARTIALLY_INITIATED
+            - INITIATED
+            - TIMEOUT
+            - COMPLETED
+        created_at:
+          type: integer
+          format: int64
+        created_by:
+          type: string
+        in_progress:
+          type: boolean
+        updated_at:
+          type: integer
+          format: int64
+        created_by_name:
+          type: string
+    agent-action:
+      type: object
+      properties:
+        agent_id:
+          type: string
+        host_name:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+          enum:
+            - FAILED_TO_REQUEST
+            - REQUESTED
+            - SENT
+            - PENDING
+            - COMPLETED
+            - FAILED
+            - UNINITIATED
+            - INITIATED
+        error:
+          type: string
+        download_url:
+          type: string
+    agents-statistics:
+      type: object
+      properties:
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/status-count'
+    status-count:
+      type: object
+      properties:
+        name:
+          type: string
+        count:
+          type: integer
+          format: int32
+    agents-ring-status:
+      type: object
+      properties:
+        version:
+          type: string
+        percent_complete:
+          type: integer
+          format: int32
+        is_rollout_in_progress:
+          type: boolean
+        is_rollout_initiated:
+          type: boolean
+        show_rollout_notice:
+          type: boolean
+        rollout_start_time:
+          type: integer
+          format: int64
+        rings:
+          type: array
+          items:
+            $ref: '#/components/schemas/upgrade-ring'
+    upgrade-ring:
+      type: object
+      properties:
+        name:
+          type: string
+        index:
+          type: integer
+          format: int32
+        percent_complete:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+            - PLANNED
+            - INPROGRESS
+            - DONE
+            - ERROR
+            - INACTIVE
+            - CANCELLED
+            - FAILED
+        failed:
+          type: integer
+          format: int64
+        upgraded:
+          type: integer
+          format: int64
+        pending:
+          type: integer
+          format: int64
+        start_time:
+          type: integer
+          format: int64
+        total:
+          type: integer
+          format: int64
+    get-agent-binaries-response:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/agent-config'
+        binaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/agent-binary'
+    agent-config:
+      type: object
+      properties:
+        content:
+          type: string
+    agent-binary:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        version:
+          type: string
+        fqdn:
+          type: string
+        os_name:
+          type: string
+        os_description:
+          type: string
+        os_isa:
+          type: string
+        is_dlp:
+          type: boolean
+  responses:
+    auth_errors:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+    not_found:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+    default_errors:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string

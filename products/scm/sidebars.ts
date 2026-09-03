@@ -174,6 +174,18 @@ module.exports = {
         },
         {
           type: "category",
+          label: "Prisma Access Agent",
+          collapsed: true,
+          items: [
+            {
+              type: "doc",
+              id: "scm/api/config/sase/prisma-access-agent/introduction",
+            },
+            require("./api/config/sase/prisma-access-agent/sidebar"),
+          ],
+        },
+        {
+          type: "category",
           label: "Objects",
           items: [
             {
@@ -462,21 +474,34 @@ module.exports = {
         },
       ],
     },
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
   ],
-  scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
-  scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],
-  scmsubscription: [
-    "scm/api/subscription/subscription-api",
-    require("./api/subscription/sidebar"),
+  scmcdug: [
+    "scm/api/config/ciedss/cdug/cdug-introduction",
+    require("./api/config/ciedss/cdug/sidebar"),
   ],
   scmciedss: [
     "scm/api/config/ciedss/ciedss",
     "scm/api/config/ciedss/usecases",
     require("./api/config/ciedss/sidebar"),
   ],
-  scmcdug: [
-    "scm/api/config/ciedss/cdug/cdug-introduction",
-    require("./api/config/ciedss/cdug/sidebar"),
+  scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
+  scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],
+  scmsubscription: [
+    "scm/api/subscription/subscription-api",
+    require("./api/subscription/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
 };
