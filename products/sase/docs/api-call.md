@@ -78,6 +78,7 @@ The `X-PANW-Region` header parameter is the region you chose when setting up you
 | jp        | Japan                        |
 | sg        | Southeast Asia               |
 | uk        | United Kingdom               |
+| ch        | Switzerland                  |
 
 
 If you need to verify which region to use, you can 
