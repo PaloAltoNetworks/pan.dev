@@ -864,7 +864,7 @@ const config = {
           },
           "config-sase-network configurations": {
             specPath: "openapi-specs/scm/config/sase/network/network-services_R3.yaml",
-            outputDir: "products/scm/api/config/sase/network configurations",
+            outputDir: "products/scm/api/config/sase/network",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-sase-logical-routers": {
