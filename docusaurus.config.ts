@@ -863,7 +863,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-sase-network configurations": {
-            specPath: "openapi-specs/scm/config/sase/network configurations",
+            specPath: "openapi-specs/scm/config/sase/network/network-services_R3.yaml",
             outputDir: "products/scm/api/config/sase/network configurations",
             sidebarOptions: { groupPathsBy: "tag" },
           },
