@@ -863,8 +863,23 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-sase-network configurations": {
-            specPath: "openapi-specs/scm/config/sase/network configurations",
-            outputDir: "products/scm/api/config/sase/network configurations",
+            specPath: "openapi-specs/scm/config/sase/network",
+            outputDir: "products/scm/api/config/sase/network",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-logical-routers": {
+            specPath: "openapi-specs/scm/config/sase/network/logical-routers",
+            outputDir: "products/scm/api/config/sase/network/logical-routers",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-virtual-routers": {
+            specPath: "openapi-specs/scm/config/sase/network/virtual-routers",
+            outputDir: "products/scm/api/config/sase/network/virtual-routers",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-sase-vr-routing-profiles": {
+            specPath: "openapi-specs/scm/config/sase/network/vr-routing-profiles",
+            outputDir: "products/scm/api/config/sase/network/vr-routing-profiles",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-ngfw-operations": {
@@ -898,8 +913,23 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-ngfw-network": {
-            specPath: "openapi-specs/scm/config/ngfw/network",
+            specPath: "openapi-specs/scm/config/ngfw/network/network-services_R3.yaml",
             outputDir: "products/scm/api/config/ngfw/network",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-logical-routers": {
+            specPath: "openapi-specs/scm/config/ngfw/network/logical-routers",
+            outputDir: "products/scm/api/config/ngfw/network/logical-routers",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-virtual-routers": {
+            specPath: "openapi-specs/scm/config/ngfw/network/virtual-routers",
+            outputDir: "products/scm/api/config/ngfw/network/virtual-routers",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-vr-routing-profiles": {
+            specPath: "openapi-specs/scm/config/ngfw/network/vr-routing-profiles",
+            outputDir: "products/scm/api/config/ngfw/network/vr-routing-profiles",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-ngfw-objects": {

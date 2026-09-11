@@ -114,6 +114,22 @@ paths:
           description: Filter sites by site group name
           schema:
             type: string
+        - name: pagination
+          in: query
+          description: The parameter to mention if the response should be paginated
+          schema:
+            type: boolean
+            default: false
+        - name: limit
+          in: query
+          description: The maximum number of resources to return
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: The offset into the list of resources returned
+          schema:
+            type: integer
       responses:
         '200':
           description: Sites retrieved successfully
@@ -133,6 +149,15 @@ paths:
                     items:
                       $ref: '#/components/schemas/site_with_claims'
                     description: Array of sites with their claims and resolution history
+                  offset:
+                    type: integer
+                    description: The offset into the total number of objects (for paginated responses)
+                  limit:
+                    type: integer
+                    description: The maximum number of objects to return (for paginated responses)
+                  total:
+                    type: integer
+                    description: Total number of objects available
                   message:
                     type: string
                     description: Human-readable message
@@ -339,7 +364,23 @@ paths:
           description: Filter properties by type
           schema:
             type: string
-            enum: [integer, string]
+            enum: [integer, string, ip-address]
+        - name: pagination
+          in: query
+          description: The parameter to mention if the response should be paginated
+          schema:
+            type: boolean
+            default: false
+        - name: limit
+          in: query
+          description: The maximum number of resources to return
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: The offset into the list of resources returned
+          schema:
+            type: integer
       responses:
         '200':
           description: Properties retrieved successfully
@@ -359,6 +400,15 @@ paths:
                     items:
                       $ref: '#/components/schemas/property'
                     description: Array of property schemas
+                  offset:
+                    type: integer
+                    description: The offset into the total number of objects (for paginated responses)
+                  limit:
+                    type: integer
+                    description: The maximum number of objects to return (for paginated responses)
+                  total:
+                    type: integer
+                    description: Total number of objects available
                   message:
                     type: string
                     description: Human-readable message
@@ -553,6 +603,23 @@ paths:
       description: |
         Retrieves all onboarding rules ordered by priority.
       operationId: listOnboardingRules
+      parameters:
+        - name: pagination
+          in: query
+          description: The parameter to mention if the response should be paginated
+          schema:
+            type: boolean
+            default: false
+        - name: limit
+          in: query
+          description: The maximum number of resources to return
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: The offset into the list of resources returned
+          schema:
+            type: integer
       responses:
         '200':
           description: Onboarding rules retrieved successfully
@@ -572,6 +639,15 @@ paths:
                     items:
                       $ref: '#/components/schemas/resolved_onboarding_rule'
                     description: Array of onboarding rules ordered by priority
+                  offset:
+                    type: integer
+                    description: The offset into the total number of objects (for paginated responses)
+                  limit:
+                    type: integer
+                    description: The maximum number of objects to return (for paginated responses)
+                  total:
+                    type: integer
+                    description: Total number of objects available
                   message:
                     type: string
                     description: Human-readable message
@@ -811,6 +887,23 @@ paths:
       summary: List site groups
       description: Retrieves all site groups for the tenant
       operationId: listSiteGroups
+      parameters:
+        - name: pagination
+          in: query
+          description: The parameter to mention if the response should be paginated
+          schema:
+            type: boolean
+            default: false
+        - name: limit
+          in: query
+          description: The maximum number of resources to return
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: The offset into the list of resources returned
+          schema:
+            type: integer
       responses:
         '200':
           description: Site groups retrieved successfully
@@ -830,6 +923,15 @@ paths:
                     items:
                       $ref: '#/components/schemas/site_group'
                     description: Array of site groups
+                  offset:
+                    type: integer
+                    description: The offset into the total number of objects (for paginated responses)
+                  limit:
+                    type: integer
+                    description: The maximum number of objects to return (for paginated responses)
+                  total:
+                    type: integer
+                    description: Total number of objects available
                   message:
                     type: string
                     description: Human-readable message
@@ -1034,109 +1136,61 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            required:
-              - status
-              - error
-            properties:
-              status:
-                type: string
-                enum: [error]
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/resource_validation_result'
-              error:
-                type: string
-                description: Error message
-    Conflict:
-      description: Conflict
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - status
-              - error
-            properties:
-              status:
-                type: string
-                enum: [error]
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/resource_validation_result'
-              error:
-                type: string
-                description: Error message
+            $ref: '#/components/schemas/generic_error'
     NotFound:
       description: Not Found
       content:
         application/json:
           schema:
-            type: object
-            required:
-              - status
-              - error
-            properties:
-              status:
-                type: string
-                enum: [error]
-              error:
-                type: string
-                description: Error message
+            $ref: '#/components/schemas/generic_error'
     InternalServerError:
       description: Internal Server Error
       content:
         application/json:
           schema:
-            type: object
-            required:
-              - status
-              - error
-            properties:
-              status:
-                type: string
-                enum: [error]
-              error:
-                type: string
-                description: Error message
+            $ref: '#/components/schemas/generic_error'
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
   schemas:
-    resource_validation_error:
+    generic_error:
       type: object
       required:
-        - type
-        - resource_id
-        - resource_name
-        - message
+        - _errors
+        - _request_id
       properties:
-        type:
-          type: string
-          enum: [site, rule, name_conflict]
-          description: Type of validation error
-        resource_id:
-          type: string
-          description: ID of the affected resource
-        resource_name:
-          type: string
-          description: Name of the affected resource
-        message:
-          type: string
-          description: Detailed error message
-    resource_validation_result:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Resource UUID
-        name:
-          type: string
-          description: Resource name
-        validation_errors:
+        _errors:
           type: array
           items:
-            $ref: '#/components/schemas/resource_validation_error'
+            $ref: '#/components/schemas/error_detail'
+          description: Array of error objects
+        _request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier for troubleshooting
+    error_detail:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code for programmatic handling
+        message:
+          type: string
+          description: Brief human-readable error message
+          example: "Validation failed"
+        details:
+          oneOf:
+            - type: string
+            - type: object
+          description: Detailed error information and context (can be string, object, or array)
+        help:
+          type: string
     site:
       type: object
       required:

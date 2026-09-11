@@ -106,7 +106,7 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/sase/network configurations/network-api",
+            to: "scm/api/config/sase/network/network-api",
             label: "Network Configurations",
             icon: "api-doc",
           },
