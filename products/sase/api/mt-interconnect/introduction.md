@@ -8,7 +8,7 @@ keywords:
   - API
 ---
 
-:::warning Deprecation Notice
+:::warning[Deprecation Notice]
 The **Backbone** and **Connection** APIs are now deprecated and have been replaced by the **Service Provider (SP) Interconnect** framework.
 
 **Key Terminology Changes:**

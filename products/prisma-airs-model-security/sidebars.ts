@@ -9,7 +9,10 @@ module.exports = {
       type: "doc",
       id: "prisma-airs-model-security/api/aisecuritymodel/errorcodes",
     }, 
-    
+    {
+      type: "doc",
+      id: "prisma-airs-model-security/api/aisecuritymodel/sdk-aisecuritymodel",
+    },
     // 3. Management API Category (Folder only, no intro doc)
     {
       label: "Management Plane API",

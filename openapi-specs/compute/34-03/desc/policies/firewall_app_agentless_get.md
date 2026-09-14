@@ -1,0 +1,1 @@
+ Returns the Agentless application firewall policy

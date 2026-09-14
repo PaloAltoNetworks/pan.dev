@@ -345,7 +345,7 @@ To illustrate that, the `passed` flag added by this method is highlighted:
 }
 ```
 
-:::caution
+:::warning
 This method operates on the passed dictionary directly.
 :::
 
@@ -602,7 +602,7 @@ Where:
 - `threshold_value` is a percentage value provided as either `int` or `float`. If the list is empty,
     the method will return `None`.
 
-:::caution
+:::warning
 This list **does not support** [`ConfigParser`](/panos/docs/panos-upgrade-assurance/api/utils#class-configparser)
 [`dialect`](/panos/docs/panos-upgrade-assurance/dialect).
 :::

@@ -45,9 +45,7 @@ function EditMetaRow({
   return (
     <>
       <hr></hr>
-      <div className={clsx(ThemeClassNames.docs.docFooterEditMetaRow, styles.docFooterEditMetaRow, "row")}>
-        <div className={clsx("col", styles.docFooterEditMetaRowItem)}>
-        </div>
+      <div className={clsx(ThemeClassNames.docs.docFooterEditMetaRow, styles.docFooterEditMetaRow)}>
         <div className={styles.docFooterEditMetaRowItemRight}>
           <CopyButton isVisible={true}/>
           {editUrl && <EditThisPage editUrl={editUrl} />}

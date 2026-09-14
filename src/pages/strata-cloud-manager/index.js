@@ -37,11 +37,6 @@ export default function SCMLandingPage() {
           icon: "doc",
         },
         {
-          label: "Changelog",
-          to: "scm/docs/release-notes/changelog",
-          icon: "doc",
-        },
-        {
           label: "Release Notes",
           to: "scm/docs/release-notes",
           icon: "doc",
@@ -75,6 +70,11 @@ export default function SCMLandingPage() {
         {
           to: "scm/api/subscription/subscription-api",
           label: "Subscription Service",
+          icon: "api-doc",
+        },
+        {
+          to: "terraform/docs/scm/getting-started/introduction",
+          label: "Strata Cloud Manager Terraform Provider",
           icon: "api-doc",
         },
       ],
@@ -185,7 +185,21 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-        Posture: [
+        "NGFW Operations": [
+          {
+            to: "scm/api/config/ngfw-operations/introduction",
+            label: "NGFW Operations",
+            icon: "api-doc",
+          },
+        ],
+        "NGTS Configuration": [
+          {
+            to: "scm/api/config/ngts/ngts-api",
+            label: "NGTS API",
+            icon: "api-doc",
+          },
+        ],
+        "Posture": [
           {
             to: "scm/api/config/posture-management/introduction-posture",
             label: "Posture",
@@ -196,6 +210,13 @@ export default function SCMLandingPage() {
           {
             to: "scm/api/config/incidents/incident-scm",
             label: "Incidents API",
+            icon: "api-doc",
+          },
+        ],
+        "Advanced DNS Security Resolver": [
+          {
+            to: "scm/api/config/adnsr/introduction-adnsr",
+            label: "Advanced DNS Security Resolver API",
             icon: "api-doc",
           },
         ],
@@ -233,6 +254,11 @@ export default function SCMLandingPage() {
           {
             label: "CIE Directory Sync Service",
             to: "scm/api/config/ciedss/ciedss",
+            icon: "api-doc",
+          },
+          {
+            label: "Cloud Dynamic User Groups",
+            to: "scm/api/config/ciedss/cdug/cdug-introduction",
             icon: "api-doc",
           },
         ],

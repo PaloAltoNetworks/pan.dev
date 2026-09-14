@@ -3,7 +3,7 @@ id: troubleshooting
 title: Troubleshooting
 sidebar_position: 4
 ---
-:::warning Important
+:::warning[Important]
 This TA and App is now deprecated and will no longer receive updates or support. For continued support and future updates, please switch to the new app supported by Splunk.
 
 Please follow the [documentation](https://splunk.github.io/splunk-app-for-palo-alto-networks/Installationoverview/) for a migration path to use the Splunk supported
@@ -98,7 +98,7 @@ If your logs are not getting converted to these other sourcetypes and are instea
 
 ### No WildFire Data
 
-:::caution Deprecated
+:::warning[Deprecated]
 
 WildFire reports have been deprecated as of App/Add-on 7.0.0 
 

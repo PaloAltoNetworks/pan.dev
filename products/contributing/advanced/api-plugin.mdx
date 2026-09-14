@@ -3,79 +3,80 @@ id: api-plugin
 title: Using the API Plugin
 ---
 
-The pan.dev site now uses [docusaurus-openapi-docs](https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/) plugin to generate markdown files from OpenAPI Spec files. If you want to get a more in depth understanding of the plugin, refer to [this readme](https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/#readme)
+The pan.dev site uses the [docusaurus-openapi-docs](https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/) plugin to generate Markdown files from OpenAPI Spec files. For a deeper dive, refer to the [plugin README](https://github.com/PaloAltoNetworks/docusaurus-openapi-docs/#readme).
 
 ## CLI
 
-The plugin utilizes a list of cli commands to generate and clean the API documentation from the directory. These scripts are meant to run before starting or building the site. For that reason, we have included the generation within the `yarn start` and `yarn build commands`.
+The plugin exposes a set of CLI commands that generate and clean the API documentation directory. These scripts are meant to run before starting or building the site, so we've wired the generation into the `yarn start` and `yarn build` commands.
 
 ## Configuration
 
-The plugin has a configuration within `docusaurus.config.js`.
+The plugin has a configuration entry in `docusaurus.config.ts`.
 
 <details>
-    <summary>See an example configuration </summary>
+    <summary>See an example configuration</summary>
 
-```json
+```js
 [
   "docusaurus-plugin-openapi-docs",
   {
-    "id": "default",
-    "docsPluginId": "default",
-    "config": {
+    id: "default",
+    docsPluginId: "default",
+    config: {
       // highlight-start
-      "auth": {
-        "specPath": "openapi-specs/sase/auth",
-        "outputDir": "products/sase/api/auth",
-        "sidebarOptions": {
-          "groupPathsBy": "tag"
-        }
+      auth: {
+        specPath: "openapi-specs/sase/auth",
+        outputDir: "products/sase/api/auth",
+        sidebarOptions: {
+          groupPathsBy: "tag",
+        },
       },
-      "iam": {
-        "specPath": "openapi-specs/sase/iam",
-        "outputDir": "products/sase/api/iam",
-        "sidebarOptions": {
-          "groupPathsBy": "tag",
-          "categoryLinkSource": "info"
-        }
+      iam: {
+        specPath: "openapi-specs/sase/iam",
+        outputDir: "products/sase/api/iam",
+        sidebarOptions: {
+          groupPathsBy: "tag",
+          categoryLinkSource: "info",
+        },
       },
-      "insights": {
-        "specPath": "openapi-specs/access/insights/2.0",
-        "outputDir": "products/access/api/insights",
-        "sidebarOptions": { "groupPathsBy": "tag" },
-        "version": "2.0",
-        "label": "v2.0",
-        "baseUrl": "/access/api/insights/",
-        "versions": {
+      insights: {
+        specPath: "openapi-specs/access/insights/2.0",
+        outputDir: "products/access/api/insights",
+        sidebarOptions: { groupPathsBy: "tag" },
+        version: "2.0",
+        label: "v2.0",
+        baseUrl: "/access/api/insights/",
+        versions: {
           "1.0": {
-            "specPath": "openapi-specs/access/insights/1.0",
-            "outputDir": "products/access/api/insights/1.0",
-            "label": "v1.0",
-            "baseUrl": "/access/api/insights/1.0/"
-          }
-        }
-      }
+            specPath: "openapi-specs/access/insights/1.0",
+            outputDir: "products/access/api/insights/1.0",
+            label: "v1.0",
+            baseUrl: "/access/api/insights/1.0/",
+          },
+        },
+      },
       // highlight-end
-    }
-  }
+    },
+  },
 ]
 ```
 
 </details>
 
-For each API we have a configuration. In the above example `auth`, `iam`, and `insights` are the API IDs. For each separate API Doc section (i.e. if you want the API to have its own sidebar), you should add an entry to this configuration.
-At a minimum, each API needs to specify
+For each API we have a configuration. In the example above, `auth`, `iam`, and `insights` are the API IDs. For each separate API Doc section (i.e. if you want the API to have its own sidebar), add an entry to this configuration.
 
-- `specPath` is used to denote the directory that your OpenAPI Specification is in. This needs to be unique for each API. This should follow the pattern of `openapi-specs/<product>/<api-name-if-needed>`
-- `outputDir` is the directory the markdown files will be written out to. This needs to be unique for each API. This should follow the pattern `products/<product>/api/<api-name-if-needed>`
+At a minimum, each API needs to specify:
+
+- `specPath` — the directory that contains your OpenAPI Specification. Must be unique for each API. Follow the pattern `openapi-specs/<product>/<api-name-if-needed>`.
+- `outputDir` — the directory the Markdown files will be written to. Must be unique for each API. Follow the pattern `products/<product>/api/<api-name-if-needed>`.
 
 You will likely also need to use `sidebarOptions` based on how your OpenAPI Spec is set up.
 
 ### Sidebars for APIs that use tagging
 
-If you use `tags` on all your operations, the plugin will create a `sidebar.ts` that groups the operations by their `tag`. Ensure that the tags are defined globally. To use this options you can add the follow options to the APIs config.
+If you use `tags` on all your operations, the plugin will create a `sidebar.ts` that groups the operations by their `tag`. Ensure that the tags are defined globally. To use this option, add the following options to the API's config:
 
-```json
+```js
 sidebarOptions: {
     // highlight-start
     groupPathsBy: "tag"
@@ -87,24 +88,25 @@ You will then need to add this sidebar array in the `products/<product>/sidebars
 
 ```js title="products/<product>/sidebars.ts"
 module.exports = {
-    // highlight-next-line
-  <product-name>-api: [
-    "doc-1", "doc-2", // All docs you want to include before go here
+  // highlight-next-line
+  "<product-name>-api": [
+    "doc-1",
+    "doc-2", // All docs you want to include before go here
     // highlight-start
-    require("./api/<product>/<api-name-if-needed>/sidebar")
+    require("./api/<product>/<api-name-if-needed>/sidebar"),
+    // highlight-end
   ],
-  // highlight-end
-    <product-name>-docs: [
+  "<product-name>-docs": [
     // Docs Sidebar goes here
-  ]
+  ],
 };
 ```
 
 ### Sidebars for APIs that don't use tagging
 
-If you don't use tags, you can use the autogenerated sidebars feature. For this option you need to add a `__category__.json` like the one below:
+If you don't use tags, you can use the autogenerated sidebars feature. For this option you need to add a `_category_.json` like the one below:
 
-```json title="products/<product>/api/<api-name-if-needed>/__category__.json"
+```json title="products/<product>/api/<api-name-if-needed>/_category_.json"
 {
   "label": "Sidebar Category Name",
   "collapsible": true,
@@ -115,79 +117,75 @@ If you don't use tags, you can use the autogenerated sidebars feature. For this 
 }
 ```
 
-You then need to edit the `products/product/sidebars.ts` to know to autogenerate the sidebar for the API Directory.
+You then need to edit `products/<product>/sidebars.ts` so it autogenerates the sidebar for the API directory.
 
 ```js title="products/<product>/sidebars.ts"
 module.exports = {
-    // highlight-next-line
-  <product-name>-api: [
+  // highlight-next-line
+  "<product-name>-api": [
     {
       type: "autogenerated",
       dirName: "./api", // generate sidebar from the api folder
     },
   ],
-  // highlight-end
-    <product-name>-docs: [
+  "<product-name>-docs": [
     // Docs Sidebar goes here
-  ]
+  ],
 };
 ```
 
 ### APIs with versions
 
-Visit [the Plugin docs](https://docusaurus-openapi.tryingpan.dev/versioning) for information on versioned APIs. If you add a new versioned API, you might need to make updates to the `package.json` to ensure the commands `yarn clean-all` and `yarn gen-all` work.
+Visit [the plugin docs](https://docusaurus-openapi.tryingpan.dev/versioning) for information on versioned APIs. The repo's `gen-all` and `clean-all` scripts already pass `--all-versions`, so newly added versioned APIs are picked up automatically — no `package.json` edits required.
 
-- to the `gen-all` command add `&& docusaurus gen-api-docs:version \<id\>:all` to the end, similar to the insights.
-- to the `clean-all` command add `&& docusaurus clean-api-docs:version \<id\>:all` to the end, similar to the insights.
+## Example APIs to reference
 
-## Example of APIs to reference
+There are four variables to consider when deciding how to configure your API:
 
-There are 4 variables to consider when deciding how to configure your API.
+1. Single or multiple spec files
+2. Uses tags or doesn't use tags
 
-1.  Single or Multiple Spec files
-2.  Uses Tags or Doesn't Use Tags
+   _Note: If you have multiple specs you must use tags or create a separate config for each spec file._
 
-    _Note: If you have multiple specs you must use tags or create a separate config for each spec file_
+3. One API for the product or multiple APIs for the product
+4. One version or multiple versions of the API
 
-3.  One API for the Product or Multiple APIs for the Product
-4.  One Version or Multiple Versions of the API
-
-** Single Spec, Uses Tags, One API, One Version **
+### Single spec, uses tags, one API, one version
 
 See `dns-security`. Note the following:
 
-- `sidebarOptions` in the `docusaurus.config.js`
-- sidebars.ts in `products/dns-security/sidebars.ts`
+- `sidebarOptions` in `docusaurus.config.ts`
+- `products/dns-security/sidebars.ts`
 
-** Single Spec, No tags, One API, One Version **
+### Single spec, no tags, one API, one version
 
 See `iot`. Note the following:
 
-- lack of `sidebarOptions` in the `docusaurus.config.js`
-- autogenerated sidebar in `products/iot/sidebars.ts`
+- Lack of `sidebarOptions` in `docusaurus.config.ts`
+- Autogenerated sidebar in `products/iot/sidebars.ts`
 
-** Multiple Specs, Uses Tags, Multiple APIs **
+### Multiple specs, uses tags, multiple APIs
 
 See `sase`, which consists of `auth`, `iam`, `mt-monitor`, `subscription`, and `tenancy` APIs. Note the following:
 
-- Each API has it's own configuration in `docusaurus.config.js` with `sidebarOptions`
-- Each API has it's own sidebar in `products/sase/sidebars.ts`
+- Each API has its own configuration in `docusaurus.config.ts` with `sidebarOptions`
+- Each API has its own sidebar in `products/sase/sidebars.ts`
 
-** An API with Multiple Versions **
+### An API with multiple versions
 
 See `access/api/insights`. Note the following:
 
-- More complex configuration in `docusaurus.config.js` with `version`, `label`, `baseUrl`, and `versions` object
+- More complex configuration in `docusaurus.config.ts` with `version`, `label`, `baseUrl`, and `versions` object
 - `products/access/sidebars.ts` has `insightVersions` (name this for your product)
 - Require of `versionSelect` and `versionCrumb` in `products/access/sidebars.ts`. You will need to copy these lines.
-- `saseinsightsv1`/`saseinsightsv2` sidebars in `products/access/sidebars.ts`.
-- You can also visit [the Plugin docs](https://docusaurus-openapi.tryingpan.dev/versioning) for more information on versioned APIs
+- `saseinsightsv1` / `saseinsightsv2` sidebars in `products/access/sidebars.ts`
+- You can also visit [the plugin docs](https://docusaurus-openapi.tryingpan.dev/versioning) for more information on versioned APIs
 
 ## FAQs
 
 **I want to add a new API, is there anything special I need to do?**
 
-If your product doesn't already have a directory in the `products/` directory, you will need to create one with a `sidebars.ts` file and a folder for `api` inside of it. See the above examples for ideas of how to get started.
+If your product doesn't already have a directory in `products/`, create one with a `sidebars.ts` file and a folder for `api` inside of it. See the above examples for ideas of how to get started.
 
 **How are the URLs created for each endpoint?**
 
@@ -195,16 +193,16 @@ The URLs are the path of the API directory (minus `products/`) plus the `operati
 
 **I updated my spec file, do I need to do anything?**
 
-Yes. After updating the spec file, you need to clean the existing API Docs. To do this you can run a `yarn clean-api-docs <id>` where the ID is the key of the APIs configuration in `docusaurus.config.js`. i.e. for `iot` you would run `yarn clean-api-docs iot`. The command is slightly different for versioned docs, see [the docs.](https://docusaurus-openapi.tryingpan.dev/versioning#generating-and-cleaning). After cleaning you can generate the new docs with the `yarn gen-api-docs <id>`.
+Yes. After updating the spec file, you need to clean the existing API Docs. Run `yarn clean-api-docs <id>`, where the ID is the key of the APIs configuration in `docusaurus.config.ts`. For example, for `iot` you would run `yarn clean-api-docs iot`. The command is slightly different for versioned docs; see [the docs](https://docusaurus-openapi.tryingpan.dev/versioning#generating-and-cleaning). After cleaning, generate the new docs with `yarn gen-api-docs <id>`.
 
 **Things don't seem to be working**
 
 _Issues running `yarn gen-api-docs <id>` or `yarn gen-all`_
 
-There is potentially a problem with your OpenAPI Spec file. Please make sure it is valid. We recommend using [Spectral](https://marketplace.visualstudio.com/items?itemName=stoplight.spectral) within VSCode to spot any issues. Else, make sure the configuration of your API Doc is referencing the right paths.
+There is potentially a problem with your OpenAPI Spec file. Please make sure it is valid. We recommend using [Spectral](https://marketplace.visualstudio.com/items?itemName=stoplight.spectral) within VSCode to spot any issues. Otherwise, make sure the configuration of your API Doc is referencing the right paths.
 
 _Issues running `yarn start` or `yarn build`_
 
-- If you see a long list paths one line at a time (e.g. threat-vault/docs/response-fields/threat-vault-response), it's most likely an issue with your sidebar. Make sure your sidebars.ts is using the correct docIDs and referecing the right API sidebar.
-- For other issues, try to run a `yarn sos` to clean up the project before running `yarn start`
-- If these don't work contact us in #pan-dev on Slack and provide the output of running a `yarn sos && yarn start` command.
+- If you see a long list of paths one line at a time (e.g. `threat-vault/docs/response-fields/threat-vault-response`), it's most likely an issue with your sidebar. Make sure your `sidebars.ts` is using the correct docIDs and referencing the right API sidebar.
+- For other issues, try running `yarn sos` to clean up the project before running `yarn start`.
+- If those don't work, contact us in `#pan-dev` on Slack and provide the output of running a `yarn sos && yarn start` command.

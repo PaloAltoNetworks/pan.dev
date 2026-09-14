@@ -284,7 +284,6 @@ module.exports = {
       label: "Prisma SASE API Release Notes",
       collapsed: true,
       items: [
-        "sase/docs/release-notes/changelog",
         "sase/docs/release-notes/release-notes",
       ],
     },

@@ -80,6 +80,14 @@ const config = {
         autoCollapseCategories: true,
       },
     },
+    api: {
+      schemaExpansion: {
+        enabled: true,
+        default: 0,
+        max: 4,
+        persist: true,
+      },
+    },
     algolia: {
       apiKey: "6869800b232f5f8362e83901d79110ee",
       appId: "XC7919KOX3",
@@ -411,11 +419,6 @@ const config = {
                       icon: "doc",
                     },
                     {
-                      to: "scm/docs/release-notes/changelog",
-                      label: "Changelog",
-                      icon: "doc",
-                    },
-                    {
                       to: "scm/docs/api-best-practices",
                       label: "Strata Cloud Manager API Best Practices",
                       icon: "doc",
@@ -439,11 +442,6 @@ const config = {
                     {
                       to: "sase/docs",
                       label: "Prisma SASE Developer's Guide",
-                      icon: "doc",
-                    },
-                    {
-                      to: "/sase/docs/release-notes/changelog",
-                      label: "Prisma SASE Changelog",
                       icon: "doc",
                     },
                     {
@@ -718,6 +716,26 @@ const config = {
                 },
               ],
             },
+            {
+              label: "Idira",
+              to: "#",
+              colorclass: "idira",
+              description:
+                "Explore resources and community content for IDIRA",
+              products: [
+                {
+                  label: "Idira Resources",
+                  to: "#",
+                  docs: [
+                    {
+                      label: "Idira Marketplace",
+                      to: "https://marketplace.idira.pan.dev/",
+                      icon: "doc",
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
         {
@@ -814,6 +832,11 @@ const config = {
             outputDir: "products/scm/api/config/sase/setup",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-sase-setup-device-onboarding": {
+            specPath: "openapi-specs/scm/config/sase/setup/device-onboarding",
+            outputDir: "products/scm/api/config/sase/setup/device-onboarding",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-sase-deployment": {
             specPath: "openapi-specs/scm/config/sase/deployment",
             outputDir: "products/scm/api/config/sase/deployment",
@@ -849,9 +872,19 @@ const config = {
             outputDir: "products/scm/api/config/ngfw/operations",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-ngfw-operations-api": {
+            specPath: "openapi-specs/scm/config/ngfw-operations",
+            outputDir: "products/scm/api/config/ngfw-operations",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-ngfw-setup": {
             specPath: "openapi-specs/scm/config/ngfw/setup",
             outputDir: "products/scm/api/config/ngfw/setup",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-ngfw-setup-device-onboarding": {
+            specPath: "openapi-specs/scm/config/ngfw/setup/device-onboarding",
+            outputDir: "products/scm/api/config/ngfw/setup/device-onboarding",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-ngfw-identity": {
@@ -889,6 +922,11 @@ const config = {
             outputDir: "products/scm/api/config/cloudngfw/setup",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          "config-cloudngfw-setup-device-onboarding": {
+            specPath: "openapi-specs/scm/config/cloudngfw/setup/device-onboarding",
+            outputDir: "products/scm/api/config/cloudngfw/setup/device-onboarding",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           "config-cloudngfw-identity": {
             specPath: "openapi-specs/scm/config/cloudngfw/identity",
             outputDir: "products/scm/api/config/cloudngfw/identity",
@@ -909,9 +947,29 @@ const config = {
             outputDir: "products/scm/api/config/incidents",
             sidebarOptions: { groupPathsBy: "tag" },
           },
-          "posturemanagement": {
-            specPath: "openapi-specs/scm/config/posture-management",
-            outputDir: "products/scm/api/config/posture-management",
+          "compliance-framework-posture": {
+            specPath: "openapi-specs/scm/config/posture-management/compliance-framework",
+            outputDir: "products/scm/api/config/posture-management/compliance-framework",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "policy-optimizer-posture": {
+            specPath: "openapi-specs/scm/config/posture-management/policy-optimizer",
+            outputDir: "products/scm/api/config/posture-management/policy-optimizer",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "posture-checks": {
+            specPath: "openapi-specs/scm/config/posture-management/checks",
+            outputDir: "products/scm/api/config/posture-management/checks",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-cleanup-posture": {
+            specPath: "openapi-specs/scm/config/posture-management/config-cleanup",
+            outputDir: "products/scm/api/config/posture-management/config-cleanup",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          "config-adnsr": {
+            specPath: "openapi-specs/scm/config/adnsr",
+            outputDir: "products/scm/api/config/adnsr",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           adem: {
@@ -1026,14 +1084,25 @@ const config = {
             outputDir: "products/scm/api/tenancy",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          ngts: {
+            specPath: "openapi-specs/scm/config/ngts/tlsprotect-cloud.json",
+            outputDir: "products/scm/api/config/ngts",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           ciedss: {
             specPath: "openapi-specs/scm/config/ciedss",
             outputDir: "products/scm/api/config/ciedss",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          cdug: {
+            specPath: "openapi-specs/scm/config/cdug",
+            outputDir: "products/scm/api/config/ciedss/cdug",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           sdwan: {
             specPath: "openapi-specs/sdwan/unified",
             outputDir: "products/sdwan/api",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "info" },
             version: "Unified",
             label: "Unified",
@@ -1188,8 +1257,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "34.03",
-            label: "v34.03",
+            version: "34.04",
+            label: "v34.04",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -1207,13 +1276,6 @@ const config = {
                 baseUrl: "/compute/api/32-07/",
               },
             },
-          },
-          compute_3300: {
-            specPath: "openapi-specs/compute/33-00",
-            outputDir: "products/compute/api/33-00",
-            showExtensions: true,
-            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            baseUrl: "/compute/api/33-00/",
           },
           compute_3301: {
             specPath: "openapi-specs/compute/33-01",
@@ -1257,6 +1319,13 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-02/",
           },
+          compute_3403: {
+            specPath: "openapi-specs/compute/34-03",
+            outputDir: "products/compute/api/34-03",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/34-03/",
+          },
         },
       },
     ],
@@ -1276,6 +1345,10 @@ const config = {
       require.resolve("./docusaurus-plugin-gtm/index.js"),
       {
         gtm: "GTM-PLXD79N",
+        // Must match STORAGE_KEY in src/components/CookieConsent/consent.js —
+        // the head script reads this to replay a returning visitor's choice
+        // before GTM loads.
+        storageKey: "cookie-consent-preferences",
       },
     ],
     tailwindPlugin,

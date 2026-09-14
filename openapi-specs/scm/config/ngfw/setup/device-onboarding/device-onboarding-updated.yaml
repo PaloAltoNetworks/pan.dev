@@ -1,0 +1,1663 @@
+openapi: 3.0.0
+info:
+  version: 2.0.0
+  title: Device Onboarding
+  description: These APIs are used to define Strata Cloud Manager device onboarding workflows.
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    email: support@paloaltonetworks.com
+    name: Palo Alto Networks Technical Support
+    url: 'https://support.paloaltonetworks.com'
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: 'https://api.strata.paloaltonetworks.com/config/setup/device-onboarding/v1'
+    description: Current
+tags:
+  - name: Sites
+    description: Onboarding Sites information
+  - name: Properties
+    description: Onboarding Properties information
+  - name: Onboarding Rules
+    description: Onboarding rules information
+  - name: Site Groups
+    description: Onboarding Site Groups Information
+paths:
+  /sites:
+    post:
+      tags:
+        - Sites
+      summary: Create sites
+      description: |
+        Creates one or more sites with All-or-Nothing semantics. All sites must pass validation,
+        or none will be created. Validates uniqueness, required fields, and property constraints.
+      operationId: createSites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_sites_request'
+      responses:
+        '201':
+          description: Sites created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Site ID
+                        name:
+                          type: string
+                          description: Site name
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Sites
+      summary: List sites
+      description: |
+        Retrieves all sites for the tenant with optional filtering by status, site group, and site names.
+        Includes claims and resolution history for each site.
+
+        **Filter Priority**: If multiple filters are provided, the priority is:
+        1. `name` - Filter by specific site names (highest priority)
+        2. `site-group` - Filter by site group name
+        3. `status` - Filter by claim status (applied after other filters)
+      operationId: listSites
+      parameters:
+        - name: name
+          in: query
+          description: |
+            Filter sites by name. Multiple values supported (e.g., `?name=A&name=B`).
+            Returns only sites matching the specified names.
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: status
+          in: query
+          description: Filter sites by claim status
+          schema:
+            type: string
+            enum: [all, claimed, unclaimed]
+            default: all
+        - name: site-group
+          in: query
+          description: Filter sites by site group name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sites retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/site_with_claims'
+                    description: Array of sites with their claims and resolution history
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /sites/{id}:
+    get:
+      tags:
+        - Sites
+      summary: Get a site
+      description: Retrieves a single site by UUID with its claims and resolution history
+      operationId: getSiteByID
+      parameters:
+        - $ref: '#/components/parameters/site_id'
+      responses:
+        '200':
+          description: Site retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/site_with_claims'
+                    description: Site with claims and resolution history
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Sites
+      summary: Update a site
+      description: |
+        Updates a site's name, site group, or property values. Site must be unclaimed
+        to be updated.
+      operationId: updateSiteByID
+      parameters:
+        - $ref: '#/components/parameters/site_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_site_request'
+      responses:
+        '200':
+          description: Site updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/site'
+                    description: Updated site
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Sites
+      summary: Delete a site
+      description: |
+        Deletes a site by ID. Site must be unclaimed unless force=true is specified.
+      operationId: deleteSiteByID
+      parameters:
+        - $ref: '#/components/parameters/site_id'
+        - name: force
+          in: query
+          description: Force delete even if site is claimed
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Site deleted successfully - returns deleted resource
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/site'
+                    description: Deleted site
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /properties:
+    post:
+      tags:
+        - Properties
+      summary: Create a property
+      description: |
+        Creates a new property definition with type and optional constraints.
+
+        Supported types and their constraints:
+        - integer: min, max
+        - string: max_len
+
+        Note: Property names cannot start with the reserved prefix '_sys_'
+      operationId: createProperty
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_property_request'
+      responses:
+        '201':
+          description: Property created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Property ID
+                      name:
+                        type: string
+                        description: Property name
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Properties
+      summary: List properties
+      description: |
+        Retrieves all properties with optional filtering by type.
+      operationId: listProperties
+      parameters:
+        - name: type
+          in: query
+          description: Filter properties by type
+          schema:
+            type: string
+            enum: [integer, string]
+      responses:
+        '200':
+          description: Properties retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/property'
+                    description: Array of property schemas
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /properties/{id}:
+    get:
+      tags:
+        - Properties
+      summary: Get a property
+      description: Retrieves a property by UUID
+      operationId: getPropertyByID
+      parameters:
+        - $ref: '#/components/parameters/property_id'
+      responses:
+        '200':
+          description: Property retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/property'
+                    description: Property details
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Properties
+      summary: Update a property
+      description: |
+        Updates a property. Validates that changes don't break existing site values
+        or onboarding rule references.
+
+        Supported constraints by type:
+        - integer: min, max
+        - string: max_len
+
+        Note: Property names cannot start with the reserved prefix '_sys_'
+      operationId: updatePropertyByID
+      parameters:
+        - $ref: '#/components/parameters/property_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_property_request'
+      responses:
+        '200':
+          description: Property updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/property'
+                    description: Updated property schema
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Properties
+      summary: Delete a property
+      description: |
+        Deletes a property by ID. Property must not be in use by any sites or onboarding rules.
+      operationId: deletePropertyByID
+      parameters:
+        - $ref: '#/components/parameters/property_id'
+      responses:
+        '200':
+          description: Property deleted successfully - returns deleted resource
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/property'
+                    description: Deleted property
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /onboarding-rules:
+    post:
+      tags:
+        - Onboarding Rules
+      summary: Create an onboarding rule
+      description: |
+        Creates a new onboarding rule with match criteria, actions, and variable resolution.
+      operationId: createOnboardingRule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_onboarding_rule_request'
+      responses:
+        '201':
+          description: Onboarding rule created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Onboarding rule ID
+                      name:
+                        type: string
+                        description: Onboarding rule name
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Onboarding Rules
+      summary: List onboarding rules
+      description: |
+        Retrieves all onboarding rules ordered by priority.
+      operationId: listOnboardingRules
+      responses:
+        '200':
+          description: Onboarding rules retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/resolved_onboarding_rule'
+                    description: Array of onboarding rules ordered by priority
+                  message:
+                    type: string
+                    description: Human-readable message
+                  metadata:
+                    type: object
+                    properties:
+                      types_mapping:
+                        type: object
+                        description: Mapping of config service types to site manager types
+                    description: Additional response metadata
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /onboarding-rules/{id}:move:
+    post:
+      tags:
+        - Onboarding Rules
+      summary: Move an onboarding rule
+      description: |
+        Changes the priority order of an onboarding rule. The rule can be moved to top, bottom,
+        or before/after another rule.
+      operationId: moveOnboardingRuleByID
+      parameters:
+        - $ref: '#/components/parameters/onboarding_rule_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/move_onboarding_rule_request'
+      responses:
+        '200':
+          description: Rule moved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  message:
+                    type: string
+                    description: Human-readable message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /onboarding-rules/{id}:
+    get:
+      tags:
+        - Onboarding Rules
+      summary: Get an onboarding rule
+      description: Retrieves an onboarding rule by UUID
+      operationId: getOnboardingRuleByID
+      parameters:
+        - $ref: '#/components/parameters/onboarding_rule_id'
+      responses:
+        '200':
+          description: Onboarding rule retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/resolved_onboarding_rule'
+                    description: Onboarding rule with resolved variables
+                  message:
+                    type: string
+                    description: Human-readable message
+                  metadata:
+                    type: object
+                    description: Additional response metadata
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Onboarding Rules
+      summary: Update an onboarding rule
+      description: Updates an existing onboarding rule
+      operationId: updateOnboardingRuleByID
+      parameters:
+        - $ref: '#/components/parameters/onboarding_rule_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_onboarding_rule_request'
+      responses:
+        '200':
+          description: Onboarding rule updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/onboard_rule_entry'
+                    description: Updated onboarding rule
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Onboarding Rules
+      summary: Delete an onboarding rule
+      description: Deletes an onboarding rule by ID
+      operationId: deleteOnboardingRuleByID
+      parameters:
+        - $ref: '#/components/parameters/onboarding_rule_id'
+      responses:
+        '200':
+          description: Onboarding rule deleted successfully - returns deleted resource
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/onboard_rule_entry'
+                    description: Deleted onboarding rule
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /site-groups:
+    post:
+      tags:
+        - Site Groups
+      summary: Create a site group
+      description: |
+        Creates a new site group with optional property list. The property list defines
+        which properties are available for sites in this site group and which properties
+        can be referenced by onboarding rule variables for this site group.
+      operationId: createSiteGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_site_group_request'
+      responses:
+        '201':
+          description: Site group created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Site group ID
+                      name:
+                        type: string
+                        description: Site group name
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - Site Groups
+      summary: List site groups
+      description: Retrieves all site groups for the tenant
+      operationId: listSiteGroups
+      responses:
+        '200':
+          description: Site groups retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/site_group'
+                    description: Array of site groups
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /site-groups/{id}:
+    get:
+      tags:
+        - Site Groups
+      summary: Get a site group
+      description: Retrieves a site group by UUID
+      operationId: getSiteGroupByID
+      parameters:
+        - $ref: '#/components/parameters/site_group_id'
+      responses:
+        '200':
+          description: Site group retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/site_group'
+                    description: Site group details
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      tags:
+        - Site Groups
+      summary: Update a site group
+      description: |
+        Updates a site group's name, description, or property list.
+
+        **Validation rules:**
+        - Name changes are blocked (HTTP 409) if the site group is referenced by any sites or onboarding rules
+        - Property list updates are blocked (HTTP 409) if any unclaimed sites reference this site group
+        - Property list updates are allowed if all sites referencing this site group are claimed
+        - Description-only updates are always allowed
+      operationId: updateSiteGroupByID
+      parameters:
+        - $ref: '#/components/parameters/site_group_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_site_group_request'
+      responses:
+        '200':
+          description: Site group updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/site_group'
+                    description: Updated site group
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Site Groups
+      summary: Delete a site group
+      description: |
+        Deletes a site group by ID. Site group must not be in use by any sites or onboarding rules.
+      operationId: deleteSiteGroupByID
+      parameters:
+        - $ref: '#/components/parameters/site_group_id'
+      responses:
+        '200':
+          description: Site group deleted successfully - returns deleted resource
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum: [success]
+                    description: Response status indicator
+                  data:
+                    $ref: '#/components/schemas/site_group'
+                    description: Deleted site group
+                  message:
+                    type: string
+                    description: Human-readable message
+                  request_id:
+                    type: string
+                    format: uuid
+                    description: Unique request identifier for troubleshooting
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  securitySchemes:
+    scmOAuth:
+      type: oauth2
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the 
+        OAuth 2.0 Client Credentials flow.  Please use the `client_id`, 
+        `client_secret` values associated with an IAM service account along 
+        with a scope value of `tsg_id:XXXXXXXXXX`, where `XXXXXXXXXX` is the 
+        Tenant Service Group (TSG) ID.  The resulting JWT access token should 
+        be attached to all API calls as a `Bearer` token in the `Authorization` 
+        header (ex. `Authorization: Bearer tokenstring`).
+      flows: 
+        clientCredentials:
+          tokenUrl: https://auth.apps.paloaltonetworks.com/oauth2/access_token
+          scopes: {}
+    scmToken:
+      type: http
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the 
+        OAuth 2.0 Client Credentials flow.  Please use the `client_id`, 
+        `client_secret` values associated with an IAM service account along 
+        with a scope value of `tsg_id:XXXXXXXXXX`, where `XXXXXXXXXX` is the 
+        Tenant Service Group (TSG) ID.  The resulting JWT access token should 
+        be attached to all API calls as a `Bearer` token in the `Authorization` 
+        header (ex. `Authorization: Bearer tokenstring`).
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    site_id:
+      name: id
+      in: path
+      required: true
+      description: Site UUID
+      schema:
+        type: string
+        format: uuid
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    property_id:
+      name: id
+      in: path
+      required: true
+      description: Property UUID
+      schema:
+        type: string
+        format: uuid
+    onboarding_rule_id:
+      name: id
+      in: path
+      required: true
+      description: Onboarding Rule UUID
+      schema:
+        type: string
+        format: uuid
+    site_group_id:
+      name: id
+      in: path
+      required: true
+      description: Site Group UUID
+      schema:
+        type: string
+        format: uuid
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                type: string
+                enum: [error]
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/resource_validation_result'
+              error:
+                type: string
+                description: Error message
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                type: string
+                enum: [error]
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/resource_validation_result'
+              error:
+                type: string
+                description: Error message
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                type: string
+                enum: [error]
+              error:
+                type: string
+                description: Error message
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - error
+            properties:
+              status:
+                type: string
+                enum: [error]
+              error:
+                type: string
+                description: Error message
+  schemas:
+    resource_validation_error:
+      type: object
+      required:
+        - type
+        - resource_id
+        - resource_name
+        - message
+      properties:
+        type:
+          type: string
+          enum: [site, rule, name_conflict]
+          description: Type of validation error
+        resource_id:
+          type: string
+          description: ID of the affected resource
+        resource_name:
+          type: string
+          description: Name of the affected resource
+        message:
+          type: string
+          description: Detailed error message
+    resource_validation_result:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Resource UUID
+        name:
+          type: string
+          description: Resource name
+        validation_errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/resource_validation_error'
+    site:
+      type: object
+      required:
+        - id
+        - tenant_id
+        - name
+        - site_group
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Site UUID
+        tenant_id:
+          type: string
+          description: Tenant identifier
+        name:
+          type: string
+          description: Site name (unique within tenant)
+          maxLength: 255
+        site_group:
+          type: string
+          description: Site group name
+        address:
+          type: string
+          description: |
+            Physical address of the site. When a site is created with an address,
+            the system automatically fetches latitude/longitude coordinates in the
+            background using Google Maps Geocoding API.
+          example: "123 Market St, San Francisco, CA 94103"
+        latitude:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            Latitude coordinate. Automatically populated when site has an address.
+            Used for proximity filtering and distance calculations.
+          minimum: -90
+          maximum: 90
+          example: 37.7749
+        longitude:
+          type: number
+          format: double
+          nullable: true
+          description: |
+            Longitude coordinate. Automatically populated when site has an address.
+            Used for proximity filtering and distance calculations.
+          minimum: -180
+          maximum: 180
+          example: -122.4194
+        property_values:
+          type: object
+          additionalProperties: true
+          description: Key-value pairs of property names to values
+        created_at:
+          type: string
+          format: date-time
+        last_updated:
+          type: string
+          format: date-time
+    create_sites_request:
+      type: object
+      required:
+        - sites
+      properties:
+        sites:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - name
+              - site_group
+            properties:
+              name:
+                type: string
+                maxLength: 255
+              site_group:
+                type: string
+              address:
+                type: string
+                description: Physical address of the site
+              property_values:
+                type: object
+                additionalProperties: true
+    update_site_request:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        site_group:
+          type: string
+        property_values:
+          type: object
+          additionalProperties: true
+    claim:
+      type: object
+      required:
+        - id
+        - tenant_id
+        - site_id
+        - serial_number
+        - device_role
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+        site_id:
+          type: string
+          format: uuid
+        serial_number:
+          type: string
+          description: Device serial number
+        device_role:
+          type: string
+          enum: [standalone, primary, secondary]
+          description: Device role in HA configuration
+        onboarding_rule_id:
+          type: string
+          format: uuid
+        claimed_by:
+          type: string
+          description: User or service that claimed the device
+        claimed_at:
+          type: string
+          format: date-time
+    site_with_claims:
+      type: object
+      properties:
+        site:
+          $ref: '#/components/schemas/site'
+        claims:
+          type: array
+          items:
+            $ref: '#/components/schemas/claim_with_resolved_history'
+    claim_with_resolved_history:
+      type: object
+      properties:
+        claim:
+          $ref: '#/components/schemas/claim'
+        resolution_rule:
+          $ref: '#/components/schemas/resolved_onboarding_rule'
+
+    property:
+      type: object
+      required:
+        - id
+        - name
+        - type
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Property name (unique within tenant)
+        type:
+          type: string
+          enum: [integer, string]
+          description: Property data type
+        constraints:
+          $ref: '#/components/schemas/property_constraints'
+        created_at:
+          type: string
+          format: date-time
+        last_updated:
+          type: string
+          format: date-time
+
+    property_constraints:
+      type: object
+      properties:
+        min:
+          type: string
+          description: Minimum value (for integer type)
+          example: "0"
+        max:
+          type: string
+          description: Maximum value (for integer type)
+          example: "100"
+        max_len:
+          type: string
+          description: Maximum length (required for string type, must be 1-1024 inclusive)
+          example: "255"
+
+    create_property_request:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [integer, string]
+        constraints:
+          $ref: '#/components/schemas/property_constraints'
+
+    update_property_request:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [integer, string]
+        constraints:
+          $ref: '#/components/schemas/property_constraints'
+
+    onboard_rule_entry:
+      type: object
+      required:
+        - id
+        - name
+        - enable
+        - rule_type
+        - site_group
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        enable:
+          type: boolean
+        rule_type:
+          type: string
+          description: Rule type (e.g., "site")
+        site_group:
+          type: string
+        rule_order:
+          type: integer
+          description: Rule priority (lower number = higher priority)
+        match_criteria:
+          $ref: '#/components/schemas/onboard_match_criteria'
+        actions:
+          $ref: '#/components/schemas/onboard_actions'
+        variables:
+          type: array
+          items:
+            $ref: '#/components/schemas/variable'
+        created_at:
+          type: string
+          format: date-time
+        last_updated:
+          type: string
+          format: date-time
+
+    onboard_match_criteria:
+      type: object
+      properties:
+        models:
+          $ref: '#/components/schemas/model_criteria'
+        # Add other match criteria fields as needed
+
+    model_criteria:
+      type: object
+      properties:
+        include_models:
+          type: array
+          items:
+            $ref: '#/components/schemas/device_model'
+        exclude_models:
+          type: array
+          items:
+            $ref: '#/components/schemas/device_model'
+
+    device_model:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Device model name
+
+    onboard_actions:
+      type: object
+      additionalProperties: true
+      description: Actions to perform during onboarding
+
+    variable:
+      type: object
+      required:
+        - name
+        - resolution_rule
+      properties:
+        name:
+          type: string
+          description: Variable name
+        resolution_rule:
+          $ref: '#/components/schemas/resolution_rule'
+
+    resolution_rule:
+      type: object
+      required:
+        - expression
+      properties:
+        expression:
+          type: string
+          description: Expression to resolve the variable (can reference properties with ${property_name})
+
+    create_onboarding_rule_request:
+      type: object
+      required:
+        - name
+        - enable
+        - rule_type
+        - site_group
+        - match_criteria
+        - actions
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        enable:
+          type: boolean
+        rule_type:
+          type: string
+        site_group:
+          type: string
+        match_criteria:
+          $ref: '#/components/schemas/onboard_match_criteria'
+        actions:
+          $ref: '#/components/schemas/onboard_actions'
+        variables:
+          type: array
+          items:
+            $ref: '#/components/schemas/variable'
+
+    update_onboarding_rule_request:
+      type: object
+      required:
+        - name
+        - enable
+        - rule_type
+        - site_group
+        - match_criteria
+        - actions
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        enable:
+          type: boolean
+        rule_type:
+          type: string
+        site_group:
+          type: string
+        match_criteria:
+          $ref: '#/components/schemas/onboard_match_criteria'
+        actions:
+          $ref: '#/components/schemas/onboard_actions'
+        variables:
+          type: array
+          items:
+            $ref: '#/components/schemas/variable'
+
+    move_onboarding_rule_request:
+      type: object
+      required:
+        - position
+      properties:
+        position:
+          type: string
+          enum: [before, after, top, bottom]
+          description: Position to move the rule to
+        reference:
+          type: string
+          format: uuid
+          description: UUID of reference rule (required for before/after positions)
+
+    resolved_onboarding_rule:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        enabled:
+          type: boolean
+        rule_type:
+          type: string
+        site_group:
+          type: string
+        match_criteria:
+          type: object
+          additionalProperties: true
+        actions:
+          type: object
+          additionalProperties: true
+        variables:
+          type: array
+          items:
+            $ref: '#/components/schemas/variable'
+          description: Original variables with resolution expression
+        resolved_variables:
+          type: array
+          items:
+            $ref: '#/components/schemas/resolved_variable'
+          description: Variables resolved to their actual values
+        resolution_errors:
+          type: array
+          items:
+            type: string
+          description: Errors encountered during variable resolution
+        generated_at:
+          type: string
+
+    resolved_variable:
+      type: object
+      required:
+        - name
+        - type
+        - value
+      properties:
+        name:
+          type: string
+          description: Variable name
+        type:
+          type: string
+          description: Variable type
+        value:
+          description: Resolved value (type varies)
+
+    site_group:
+      type: object
+      required:
+        - id
+        - tenant_id
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+        name:
+          type: string
+          description: Site group name (unique within tenant)
+        description:
+          type: string
+        properties:
+          type: array
+          items:
+            type: string
+          description: |-
+            List of property names that are available for sites in this site group.
+            This defines which properties can be used in site property_values and which
+            properties can be referenced by onboarding rule variables for this site group.
+        created_at:
+          type: string
+          format: date-time
+        last_updated:
+          type: string
+          format: date-time
+
+    create_site_group_request:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Site group name (unique within tenant)
+        description:
+          type: string
+          description: Optional description of the site group
+        properties:
+          type: array
+          items:
+            type: string
+          description: |-
+            Optional list of property names (not UUIDs) that define the property schema
+            for this site group. Sites in this group must use properties from this list,
+            and onboarding rule variables for this site group can only reference properties
+            from this list.
+          example:
+            - "region_id"
+            - "site_id"
+            - "location"
+
+    update_site_group_request:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Site group name (unique within tenant)
+        description:
+          type: string
+          description: Optional description of the site group
+        properties:
+          type: array
+          items:
+            type: string
+          description: |-
+            Optional list of property names (not UUIDs) that define the property schema
+            for this site group. Property list updates are blocked if any unclaimed sites
+            reference this site group.
+          example:
+            - "region_id"
+            - "site_id"
+security:
+  - scmToken: []
+x-internal: false

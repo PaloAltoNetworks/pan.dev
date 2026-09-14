@@ -1,4 +1,4 @@
-:::warning Important
+:::warning[Important]
 This TA and App is now deprecated and will no longer receive updates or support. For continued support and future updates, please switch to the new app supported by Splunk.
 
 Please follow the [documentation](https://splunk.github.io/splunk-app-for-palo-alto-networks/Installationoverview/) for a migration path to use the Splunk supported
@@ -31,7 +31,7 @@ The Palo Alto Networks Splunk App and Add-on are designed to work together, and 
 
 Some organizations prefer not to install Add-ons on Search Heads. This is fine for log ingest, but will prevent some advanced features from functioning, such as [Adaptive Response](https://www.splunk.com/en_us/solutions/solution-areas/security-and-fraud/adaptive-response-initiative.html) and [Threat Intelligence](../threat-intelligence).
 
-:::info Important Changes
+:::info[Important Changes]
 
 Data Model acceleration is no longer enabled by default. Dashboards will not
 display any data until the data model is accelerated. See the section below

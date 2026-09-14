@@ -1,0 +1,956 @@
+openapi: 3.0.2
+info:
+    title: DLP API (Beta)
+    version: 1.0.0
+    description: Enterprise DLP Beta APIs
+    license:
+        name: MIT
+        url: https://opensource.org/license/mit
+    contact:
+        email: support@paloaltonetworks.com
+        name: Palo Alto Networks Technical Support
+        url: 'https://support.paloaltonetworks.com'
+servers:
+    -
+        url: 'https://api.dlp.paloaltonetworks.com'
+        description: Prod host
+tags:
+    - name: Incidents API (Beta)
+      description: Beta Incidents API — retrieve, filter, download, and update incidents
+paths:
+    /v4/api/incidents:
+        post:
+            tags:
+                - Incidents API (Beta)
+            summary: Retrieve initial incident records with token
+            description: |
+                This API is used for the initial retrieval of incident details. It allows you to
+                specify a time range, the desired page size, and an optional maximum number of rows
+                to fetch. Upon successful execution, it returns a set of incident records and a
+                pagination token that must be used for subsequent paginated requests via the
+                GET /incidents API;
+            operationId: getIncidentInventory
+            parameters:
+                - name: include_data_profiles
+                  in: query
+                  description: Flag to include data profiles.
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/IncidentInventoryRequest'
+                        example:
+                            time_range: HOUR_24
+                required: true
+            responses:
+                "200":
+                    description: Successful!
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IncidentInventoryResponse'
+                            example:
+                                rows:
+                                    - action: block
+                                      asset_name: test asset name
+                                      control_point: PRISMA_ACCESS
+                                      created_date: 1753121720515000
+                                      data_profile_id: "11995064"
+                                      destination: web-browsing
+                                      incident_id: 58feac56-e49d-43b3-ade3-c2d8e34ecd68
+                                      modified_date: 1753121720515739
+                                      policy_type: Network
+                                      report_id: "3082846756"
+                                      severity: "2"
+                                      source: palodlp11
+                                      source_region: US_STG
+                                      status: New
+                                      sub_policy_type: Data in Motion
+                                      url_domain: test url domain
+                                status: READY
+                                status_description: Query results are ready.
+                                query_token: test_token
+                                total_rows: 1
+                "400":
+                    description: Bad Request
+                "500":
+                    description: Internal Server Error
+        get:
+            tags:
+                - Incidents API (Beta)
+            summary: Retrieve paginated incident records using token
+            description: This API is used to fetch subsequent pages of incident records after an initial request to the POST /incidents API. It requires a token obtained from the initial POST request, along with page_size and offset to control pagination.
+            operationId: getIncidentInventoryTableResults
+            parameters:
+                - name: token
+                  in: query
+                  description: The pagination token received from the initial POST /incidents API call. This token identifies the specific query for which results are being paginated.
+                  required: true
+                  schema:
+                      type: string
+                - name: offset
+                  in: query
+                  description: The row offset from which to start fetching incident records. For the first paginated request, this would typically be page_size. For subsequent requests, it would be previous_offset + page_size
+                  required: true
+                  schema:
+                      type: string
+                - name: pageSize
+                  in: query
+                  description: The maximum number of incident records to return in this paginated response. This value should be between 1 and 1000
+                  required: true
+                  schema:
+                      type: string
+                - name: include_data_profiles
+                  in: query
+                  description: Flag to include data profiles
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Successful!
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IncidentInventoryResponse'
+                            example:
+                                rows:
+                                    - action: block
+                                      asset_name: test asset name
+                                      control_point: PRISMA_ACCESS
+                                      created_date: 1753121720515000
+                                      data_profile_id: "11995064"
+                                      destination: web-browsing
+                                      incident_id: 58feac56-e49d-43b3-ade3-c2d8e34ecd68
+                                      modified_date: 1753121720515739
+                                      policy_type: Network
+                                      report_id: "3082846756"
+                                      severity: "2"
+                                      source: palodlp11
+                                      source_region: US_STG
+                                      status: New
+                                      sub_policy_type: Data in Motion
+                                      url_domain: test url domain
+                                status: READY
+                                status_description: Query results are ready.
+                                query_token: test_token
+                                total_rows: 1
+                "400":
+                    description: Bad Request
+                "500":
+                    description: Internal Server Error
+    /v4/api/incidents/download:
+        post:
+            tags:
+                - Incidents API (Beta)
+            summary: Get signed download URL for incidents
+            description: |
+                Generate a secure, time-limited URL (valid for 5 minutes) to directly download incident
+                records as a CSV file. Define your desired dataset by providing a time_range, optional
+                filter criteria, and maxRows.
+            operationId: exportIncidentsAndGetUrl
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ResultsDownloadRequest'
+                        example:
+                            time_range: HOUR_24
+                required: true
+            responses:
+                "200":
+                    description: Successful!
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ResultsDownloadResponse'
+                            example:
+                                download_url: https://storage.googleapis.com/casb-data-platform-prod-uim-inc-export/1494634703/incidents_20250721_205140_e3f288124dec432c8f94ed4f5b49b19b.csv.gz?test_signed_url
+                "400":
+                    description: Bad Request
+                "500":
+                    description: Internal Server Error
+    /v4/api/incidents/management:
+        post:
+            tags:
+                - Incidents API (Beta)
+            summary: Update key details for incidents
+            description: |
+                Update key incident information like assignee details, resolution status, priority,
+                tags, and notes. Provide the incident_ids for the incidents you want to change, along
+                with an update_details object containing only the specific fields you wish to modify.
+            operationId: updateIncidents
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/IncidentUpdateRequest'
+                        example:
+                            incident_ids:
+                                - 5ba587fd-4b83-416d-998f-16d79c7da889
+                                - 58feac56-e49d-43b3-ade3-c2d8e34ecd68
+                            update_details:
+                                assignee_display_name: John Doe
+                                assignee_email: john.doe@example.com
+                                assignee_id: user123
+                                resolution_status: under_investigation
+                                priority: 2
+                                tag: security-review
+                                notes: Escalated for further investigation
+                                resolved_by: admin@example.com
+                required: true
+            responses:
+                "200":
+                    description: Successful!
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IncidentUpdateResults'
+                            example:
+                                success: 1
+                "400":
+                    description: Bad Request
+                "500":
+                    description: Internal Server Error
+    '/v4/api/incidents/{id}':
+        get:
+            tags:
+                - Incidents API (Beta)
+            summary: Retrieve incident details by ID
+            description: For a given incident id, return incident details.
+            operationId: getIncidentDetails
+            parameters:
+                - name: id
+                  in: path
+                  description: Incident ID.
+                  required: true
+                  schema:
+                      type: string
+                - name: includeSnippets
+                  in: query
+                  description: Include snippet details in the response.
+                  schema:
+                    type: boolean
+                    default: false
+            responses:
+                "200":
+                    description: Successful!
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IncidentDetailResponse'
+                            example:
+                                rows:
+                                    - id: 5ba587fd-4b83-416d-998f-16d79c7da889
+                                      tsg_id: "1016831479"
+                                      control_point: NGFW
+                                      created_date: 1752910252943000
+                                      modified_date: 1753137046114000
+                                      status: New
+                                      notes: test
+                                      severity: "5"
+                                      category: test
+                                      direction: upload
+                                      report_id: "229650498"
+                                      report_date: 1752910252937000
+                                      resolved_by: test
+                                      source: 188.188.188.10
+                                      destination: 185.125.188.57
+                                      url: test
+                                      priority: 1
+                                      action: block
+                                      asset_id: 5ba587fd-4b83-416d-998f-16d79c7da889
+                                      asset_name: UNKNOWN
+                                      asset_hash: test hash
+                                      asset_size: test
+                                      tag: test
+                                      asset_risk: 25
+                                      assigned_to: test
+                                      assignee_name: test
+                                      assignee_email: test
+                                      app_id: "109"
+                                      app_type: "0"
+                                      app_name: test
+                                      app_instance_id: test
+                                      app_tags:
+                                          - test1
+                                          - test2
+                                      data_profiles:
+                                          - id: "11995181"
+                                            name: AEL_Granular
+                                            version: test
+                                      data_patterns:
+                                          - id: 65779c793375232371f9886c
+                                            name: test
+                                            type: predefined
+                                            technique: regex
+                                            language: test
+                                            category_score: 0
+                                            high_confidence_frequency: 2
+                                            medium_confidence_frequency: 0
+                                            low_confidence_frequency: 4
+                                            sub_category_score: 0
+                                            total_detection_frequency: 4
+                                            total_strict_detection_frequency: 0
+                                            strict_detection_frequency: 0
+                                            detection_frequency: 4
+                                            weighted_frequency: 0
+                                            version: 1
+                                      peripheral_info:
+                                          group_id: ""
+                                          group_name: ""
+                                          id: test id
+                                          is_known: false
+                                          manufacturer_name: General
+                                          name: USB-4GB
+                                          product_id: "1000"
+                                          product_name: USB Flash Disk
+                                          serial_number: "0415090000013290"
+                                          type: usb
+                                          vendor_id: 090C
+                                      policy:
+                                          policy_id: test
+                                          policy_type: network
+                                          policy_version: test
+                                      device_info:
+                                          - id: test
+                                            name: test
+                                            ip: 188.188.188.10
+                                            serial_number: "024401003837"
+                                            loggedin_users:
+                                                - test
+                                      reason_for_action: test
+                                      endpoint_os_info:
+                                          dlp_client_version: test
+                                          gp_version: test
+                                          os_type: test
+                                          os_version: test
+                                      user_id: globaltestuser1
+                                      user_email: test
+                                      user_name: test
+                                      user_location: test
+                                      user_department: test
+                                      user_manager: test
+                                      exposure: test
+                                      exposure_details:
+                                          is_exposed_by_parent_folder: false
+                                          is_public_url: false
+                                          is_shared_url: false
+                                          is_sign_in_required: true
+                                          cloud_url: test cloud url
+                                          public_url: test public url
+                                      exception_rule_results:
+                                        - id: rule-12345
+                                          data_profile_id: "11995181"
+                                          source_user: john.doe@example.com
+                                          source_group: Engineering
+                                          destination_app: Slack
+                                          destination_url: https://slack.com
+                                          log_severity: medium
+                                          action: allow
+                                          version: 1
+                                status: READY
+                                status_description: Query results are ready.
+                                total_rows: 1
+                "400":
+                    description: Bad Request
+                "500":
+                    description: Internal Server Error
+components:
+    schemas:
+        IncidentInventoryRequest:
+            type: object
+            properties:
+                filter:
+                    type: string
+                    description: |
+                        Filter expression string
+                        <br>Operators supported: =, in and AND
+                        <br>Pattern: {FilterName} = {value} or {FilterName} in ({value1}, {value2}, ...)
+                        <br>Supported FilterName values:
+                        - Action: Filter by action taken (e.g., 'block', 'allow')
+                        - ApplicationName: Filter by application name
+                        - Asset: Filter by asset name
+                        - AssigneeId: Filter by assignee user ID
+                        - AssigneeName: Filter by assignee display name
+                        - Channel: Filter by channel (e.g., 'PRISMA_ACCESS', 'NGFW')
+                        - DataPattern: Filter by detection types/data patterns (e.g., 'SSN', 'Credit Card')
+                        - DataProfile: Filter by data profile ID
+                        - Destination: Filter by destination
+                        - IncidentId: Filter by specific incident ID
+                        - Priority: Filter by priority level (numeric values 1-5)
+                        - ReportId: Filter by report ID
+                        - Severity: Filter by severity level
+                                - 5 = Critical
+                                - 4 = High
+                                - 3 = Medium
+                                - 2 = Low
+                                - 1 = Informational
+                        - Source: Filter by source
+                        - Region: Filter by region (e.g., 'US', 'EU', 'UK', 'SG', 'IN', 'AU', 'CA', 'JP')
+                        - Status: Filter by incident status (e.g., 'New', 'open', 'under_investigation', 'closed')
+                        - UrlDomain: Filter by URL domain
+                        - Tag: Filter by incident tags
+                        
+                        Examples:
+                        - "Tag = 'Needs Escalation'"
+                        - "Status in ('New','open','under_investigation')"
+                        - "UrlDomain = 'dlptest.com'"
+                        - "Channel = 'PRISMA_ACCESS' AND DataProfile in ('11995030','11995033')"
+                    example: Tag = 'Needs Escalation'
+                    minLength: 1
+                time_range:
+                    type: string
+                    enum:
+                        - HOUR_1
+                        - HOUR_3
+                        - HOUR_24
+                        - DAY_7
+                        - DAY_30
+                        - DAY_90
+                        - CUSTOM
+                start_time:
+                    type: integer
+                    format: int64
+                    writeOnly: true
+                    description: "Required when time_range is CUSTOM. Start time as Unix timestamp in milliseconds(ms)."
+                end_time:
+                    type: integer
+                    format: int64
+                    writeOnly: true
+                    description: "Required when time_range is CUSTOM. Start time as Unix timestamp in milliseconds(ms)."
+                columns:
+                    type: array
+                    items:
+                        type: string
+                    writeOnly: true
+                    description: "Optional columns to include in the response"
+                sort_by:
+                    type: string
+                    writeOnly: true
+                    description: "Optional field to sort by"
+                sort_order:
+                    type: string
+                    writeOnly: true
+                    description: "Optional sort order (asc/desc)"
+                page_size:
+                    type: integer
+                    format: int32
+                    writeOnly: true
+                    description: "Size for pagination"
+                max_rows:
+                    type: integer
+                    format: int32
+                    writeOnly: true
+                    example: 10000
+                    description: "Maximum number of rows to return (optional, e.g., 1000)"
+            required:
+                - time_range
+        IncidentInventoryEntity:
+            type: object
+            properties:
+                action:
+                    type: string
+                asset_name:
+                    type: string
+                assignee_email:
+                    type: string
+                assignee_id:
+                    type: string
+                assignee_name:
+                    type: string
+                control_point:
+                    type: string
+                created_date:
+                    type: integer
+                    format: int64
+                data_profile_id:
+                    type: string
+                destination:
+                    type: string
+                incident_id:
+                    type: string
+                modified_date:
+                    type: integer
+                    format: int64
+                notes:
+                    type: string
+                peripheral_name:
+                    type: string
+                peripheral_type:
+                    type: string
+                policy_type:
+                    type: string
+                priority:
+                    type: integer
+                    format: int32
+                report_id:
+                    type: string
+                resolved_by:
+                    type: string
+                severity:
+                    type: string
+                source:
+                    type: string
+                source_region:
+                    type: string
+                status:
+                    type: string
+                sub_policy_type:
+                    type: string
+                tag:
+                    type: string
+                url_domain:
+                    type: string
+        IncidentInventoryResponse:
+            type: object
+            properties:
+                rows:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IncidentInventoryEntity'
+                status:
+                    type: string
+                    enum:
+                        - READY
+                        - PENDING
+                status_description:
+                    type: string
+                query_token:
+                    type: string
+                total_rows:
+                    type: integer
+                    format: int64
+        ResultsDownloadRequest:
+            type: object
+            properties:
+                filter:
+                    type: string
+                    description: |
+                        Filter expression string
+                        <br>Operators supported: =, in and AND
+                        <br>Pattern: {FilterName} = {value} or {FilterName} in ({value1}, {value2}, ...)
+                        <br>Supported FilterName values:
+                        - Action: Filter by action taken (e.g., 'block', 'allow')
+                        - ApplicationName: Filter by application name
+                        - Asset: Filter by asset name
+                        - AssigneeId: Filter by assignee user ID
+                        - AssigneeName: Filter by assignee display name
+                        - Channel: Filter by channel (e.g., 'PRISMA_ACCESS', 'NGFW')
+                        - DataPattern: Filter by detection types/data patterns (e.g., 'SSN', 'Credit Card')
+                        - DataProfile: Filter by data profile ID
+                        - Destination: Filter by destination
+                        - IncidentId: Filter by specific incident ID
+                        - Priority: Filter by priority level (numeric values 1-5)
+                        - ReportId: Filter by report ID
+                        - Severity: Filter by severity level
+                                - 5 = Critical
+                                - 4 = High
+                                - 3 = Medium
+                                - 2 = Low
+                                - 1 = Informational
+                        - Source: Filter by source
+                        - Region: Filter by region (e.g., 'US', 'EU', 'UK', 'SG', 'IN', 'AU', 'CA', 'JP')
+                        - Status: Filter by incident status (e.g., 'New', 'open', 'under_investigation', 'closed')
+                        - UrlDomain: Filter by URL domain
+                        - Tag: Filter by incident tags
+                        
+                        Examples:
+                        - "Tag = 'Needs Escalation'"
+                        - "Status in ('New','open','under_investigation')"
+                        - "UrlDomain = 'dlptest.com'"
+                        - "Channel = 'PRISMA_ACCESS' AND DataProfile in ('11995030','11995033')"
+                    example: Tag = 'Needs Escalation'
+                time_range:
+                    type: string
+                    enum:
+                        - HOUR_1
+                        - HOUR_3
+                        - HOUR_24
+                        - DAY_7
+                        - DAY_30
+                        - DAY_90
+                        - CUSTOM
+                start_time:
+                    type: integer
+                    format: int64
+                    writeOnly: true
+                    description: "Required when time_range is CUSTOM. Start time as Unix timestamp in milliseconds(ms)."
+                end_time:
+                    type: integer
+                    format: int64
+                    writeOnly: true
+                    description: "Required when time_range is CUSTOM. End time as Unix timestamp in milliseconds(ms)."
+                columns:
+                    type: array
+                    items:
+                        type: string
+                    writeOnly: true
+                    description: "Optional columns to include in the response"
+                sort_by:
+                    type: string
+                    writeOnly: true
+                    description: "Optional field to sort by"
+                sort_order:
+                    type: string
+                    writeOnly: true
+                    description: "Optional sort order (asc/desc)"
+                max_rows:
+                    type: integer
+                    format: int32
+                    writeOnly: true
+                    example: 10000
+                    description: "Maximum number of rows to return (optional, e.g., 1000)"
+                token:
+                    type: string
+            required:
+                - time_range
+        ResultsDownloadResponse:
+            type: object
+            properties:
+                download_url:
+                    type: string
+        IncidentUpdateDetails:
+            type: object
+            properties:
+                notes:
+                    type: string
+                assignee_id:
+                    type: string
+                assignee_email:
+                    type: string
+                assignee_display_name:
+                    type: string
+                resolved_by:
+                    type: string
+                resolution_status:
+                    type: string
+                priority:
+                    type: integer
+                    format: int32
+                tag:
+                    type: string
+        IncidentUpdateRequest:
+            type: object
+            properties:
+                incident_ids:
+                    type: array
+                    items:
+                        type: string
+                        format: uuid
+                    minItems: 1
+                update_details:
+                    $ref: '#/components/schemas/IncidentUpdateDetails'
+            required:
+                - incident_ids
+                - update_details
+        ErrorInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                    minLength: 1
+                error_message:
+                    type: string
+                    minLength: 1
+                error_code:
+                    type: string
+                    minLength: 1
+        IncidentUpdateResults:
+            type: object
+            properties:
+                success:
+                    type: integer
+                    format: int32
+                error:
+                    $ref: '#/components/schemas/ErrorInfo'
+        DataPattern:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                type:
+                    type: string
+                technique:
+                    type: string
+                language:
+                    type: string
+                category_score:
+                    type: integer
+                    format: int32
+                high_confidence_frequency:
+                    type: integer
+                    format: int32
+                medium_confidence_frequency:
+                    type: integer
+                    format: int32
+                low_confidence_frequency:
+                    type: integer
+                    format: int32
+                sub_category_score:
+                    type: integer
+                    format: int32
+                total_detection_frequency:
+                    type: integer
+                    format: int32
+                total_strict_detection_frequency:
+                    type: integer
+                    format: int32
+                strict_detection_frequency:
+                    type: integer
+                    format: int32
+                detection_frequency:
+                    type: integer
+                    format: int32
+                weighted_frequency:
+                    type: integer
+                    format: int32
+                version:
+                    type: integer
+                    format: int32
+        DataProfile:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                version:
+                    type: string
+        DeviceInfo:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                ip:
+                    type: string
+                serial_number:
+                    type: string
+                loggedin_users:
+                    type: array
+                    items:
+                        type: string
+        EndpointOsInfo:
+            type: object
+            properties:
+                dlp_client_version:
+                    type: string
+                gp_version:
+                    type: string
+                os_type:
+                    type: string
+                os_version:
+                    type: string
+        ExposureDetails:
+            type: object
+            properties:
+                is_exposed_by_parent_folder:
+                    type: boolean
+                is_public_url:
+                    type: boolean
+                is_shared_url:
+                    type: boolean
+                is_sign_in_required:
+                    type: boolean
+                cloud_url:
+                    type: string
+                public_url:
+                    type: string
+        ExceptionRuleEntity:
+          type: object
+          properties:
+            id:
+              type: string
+            data_profile_id:
+              type: string
+            source_user:
+              type: string
+            source_group:
+              type: string
+            destination_app:
+              type: string
+            destination_url:
+              type: string
+            log_severity:
+              type: string
+            action:
+              type: string
+            version:
+              type: integer
+              format: int64
+        IncidentDetailEntity:
+            type: object
+            properties:
+                id:
+                    type: string
+                tsg_id:
+                    type: string
+                control_point:
+                    type: string
+                created_date:
+                    type: integer
+                    format: int64
+                modified_date:
+                    type: integer
+                    format: int64
+                status:
+                    type: string
+                notes:
+                    type: string
+                severity:
+                    type: string
+                category:
+                    type: string
+                direction:
+                    type: string
+                report_id:
+                    type: string
+                report_date:
+                    type: integer
+                    format: int64
+                resolved_by:
+                    type: string
+                source:
+                    type: string
+                destination:
+                    type: string
+                url:
+                    type: string
+                priority:
+                    type: integer
+                    format: int32
+                action:
+                    type: string
+                asset_id:
+                    type: string
+                asset_name:
+                    type: string
+                asset_hash:
+                    type: string
+                asset_size:
+                    type: string
+                tag:
+                    type: string
+                asset_risk:
+                    type: number
+                    format: double
+                assigned_to:
+                    type: string
+                assignee_name:
+                    type: string
+                assignee_email:
+                    type: string
+                app_id:
+                    type: string
+                app_type:
+                    type: string
+                app_name:
+                    type: string
+                app_instance_id:
+                    type: string
+                app_tags:
+                    type: array
+                    items:
+                        type: string
+                data_profiles:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/DataProfile'
+                data_patterns:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/DataPattern'
+                peripheral_info:
+                    $ref: '#/components/schemas/PeripheralInfo'
+                policy:
+                    $ref: '#/components/schemas/Policy'
+                device_info:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/DeviceInfo'
+                reason_for_action:
+                    type: string
+                endpoint_os_info:
+                    $ref: '#/components/schemas/EndpointOsInfo'
+                user_id:
+                    type: string
+                user_email:
+                    type: string
+                user_name:
+                    type: string
+                user_location:
+                    type: string
+                user_department:
+                    type: string
+                user_manager:
+                    type: string
+                exposure:
+                    type: string
+                exposure_details:
+                    $ref: '#/components/schemas/ExposureDetails'
+                exception_rule_results:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ExceptionRuleEntity'
+        IncidentDetailResponse:
+            type: object
+            properties:
+                rows:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IncidentDetailEntity'
+                status:
+                    type: string
+                    enum:
+                        - READY
+                        - PENDING
+                status_description:
+                    type: string
+                query_token:
+                    type: string
+        PeripheralInfo:
+            type: object
+            properties:
+                group_id:
+                    type: string
+                group_name:
+                    type: string
+                id:
+                    type: string
+                is_known:
+                    type: boolean
+                manufacturer_name:
+                    type: string
+                name:
+                    type: string
+                product_id:
+                    type: string
+                product_name:
+                    type: string
+                serial_number:
+                    type: string
+                type:
+                    type: string
+                vendor_id:
+                    type: string
+        Policy:
+            type: object
+            properties:
+                policy_id:
+                    type: string
+                policy_type:
+                    type: string
+                policy_version:
+                    type: string
+    securitySchemes:
+        JWTAuth:
+            scheme: bearer
+            type: http
+security:
+    -
+        JWTAuth: []

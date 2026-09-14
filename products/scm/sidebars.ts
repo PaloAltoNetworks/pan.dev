@@ -74,10 +74,7 @@ module.exports = {
       label: "Release Information",
       collapsed: true,
       items: [
-        {
-          type: "doc",
-          id: "scm/docs/release-notes/changelog",
-        },
+
         {
           type: "category",
           label: "Release Notes",
@@ -87,14 +84,11 @@ module.exports = {
               type: "doc",
               id: "scm/docs/release-notes/release-notes",
             },
-            {
-              type: "doc",
-              id: "scm/docs/release-notes/november2024",
-            },
           ],
         },
       ],
-    },
+    },  
+                 
     {
       type: "category",
       label: "SASE Configuration",
@@ -124,6 +118,14 @@ module.exports = {
               id: "scm/api/config/sase/setup/snippet-sharing",
             },
             require("./api/config/sase/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/sase/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
@@ -222,7 +224,19 @@ module.exports = {
               type: "doc",
               id: "scm/api/config/ngfw/setup/snippet-sharing",
             },
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw/setup/device-onboarding/site-management",
+            },
             require("./api/config/ngfw/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/ngfw/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
@@ -284,6 +298,18 @@ module.exports = {
     },
     {
       type: "category",
+      label: "NGTS Configuration",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/ngts/ngts-api",
+        },
+        require("./api/config/ngts/sidebar"),
+      ],
+    },
+    {
+      type: "category",
       label: "Incidents API",
       collapsed: true,
       items: [
@@ -296,7 +322,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Posture API",
+      label: "Posture",
       collapsed: true,
       items: [
         {
@@ -305,19 +331,63 @@ module.exports = {
         },
         {
           type: "category",
-          label: "Checks",
+          label: "Posture Check APIs",
           collapsed: true,
           items: [
-            {
-              type: "category",
-              label: "Reports",
-              collapsed: true,
-              items: [require("./api/config/posture-management/sidebar")],
-            },
+            ...require("./api/config/posture-management/checks/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Compliance Center API",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/compliance-framework/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Policy Optimizer API",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/policy-optimizer/sidebar"),
+          ],
+        },
+        {
+          type: "category",
+          label: "Config Cleanup API",
+          collapsed: true,
+          items: [
+            ...require("./api/config/posture-management/config-cleanup/sidebar"),
           ],
         },
       ],
     },
+    {
+      type: "category",
+      label: "Advanced DNS Security Resolver Configuration",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          label: "Introduction",
+          id: "scm/api/config/adnsr/introduction-adnsr",
+        },
+        require("./api/config/adnsr/sidebar"),
+      ],
+    },
+    {
+      type: "category",
+      label: "NGFW Operations",
+      collapsed: true,
+      items: [
+            {
+              type: "doc",
+              id: "scm/api/config/ngfw-operations/introduction",
+            },
+            require("./api/config/ngfw-operations/sidebar"),
+          ],
+        },
     {
       type: "category",
       label: "Cloud NGFW Configuration",
@@ -347,6 +417,14 @@ module.exports = {
               id: "scm/api/config/cloudngfw/setup/snippet-sharing",
             },
             require("./api/config/cloudngfw/setup/sidebar"),
+            {
+              "type": "category",
+              "label": "Device Onboarding",
+              "collapsed": true,
+              "items": [
+                require("./api/config/cloudngfw/setup/device-onboarding/sidebar"),
+              ]
+            },
           ],
         },
         {
@@ -395,6 +473,10 @@ module.exports = {
     "scm/api/config/ciedss/ciedss",
     "scm/api/config/ciedss/usecases",
     require("./api/config/ciedss/sidebar"),
+  ],
+  scmcdug: [
+    "scm/api/config/ciedss/cdug/cdug-introduction",
+    require("./api/config/ciedss/cdug/sidebar"),
   ],
   scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
 };

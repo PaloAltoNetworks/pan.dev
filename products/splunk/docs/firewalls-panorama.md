@@ -3,7 +3,7 @@ id: firewalls-panorama
 title: Firewalls and Panorama
 ---
 
-:::warning Important
+:::warning[Important]
 This TA and App is now deprecated and will no longer receive updates or support. For continued support and future updates, please switch to the new app supported by Splunk.
 
 Please follow the [documentation](https://splunk.github.io/splunk-app-for-palo-alto-networks/Installationoverview/) for a migration path to use the Splunk supported
@@ -106,7 +106,7 @@ The Palo Alto Networks syslog documentation describes each option in detail:
 **Firewall and Panorama syslog to Splunk:**  
 [https://www.paloaltonetworks.com/documentation/81/pan-os/pan-os/monitoring/use-syslog-for-monitoring/configure-syslog-monitoring](https://www.paloaltonetworks.com/documentation/81/pan-os/pan-os/monitoring/use-syslog-for-monitoring/configure-syslog-monitoring)
 
-:::caution IMPORTANT
+:::warning[IMPORTANT]
 
 Firewall and Panorama logs must be sent in the **default format**. Custom formats,
 CEF, and LEEF format cannot be parsed by the Splunk Add-on.

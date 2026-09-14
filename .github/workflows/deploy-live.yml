@@ -21,14 +21,14 @@ jobs:
 
       steps:
         - name: Checkout repository
-          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+          uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
           with:
             persist-credentials: false
 
         - name: Setup node
-          uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+          uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
           with:
-            node-version: '20'
+            node-version: '22'
             cache: 'yarn'
 
         - name: Get yarn cache
@@ -57,19 +57,17 @@ jobs:
         # needed for fetching Hashicorp blog feed
         - name: Cache Playwright
           id: playwright-cache
-          uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+          uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
           with:
             path: |
               ~/.cache/ms-playwright
             key: ${{ runner.os }}-playwright-master-${{ hashFiles('package.json') }}
-            restore-keys: |
-              ${{ runner.os }}-playwright-master-
 
         - name: Install Playwright
           if: steps.playwright-cache.outputs.cache-hit != 'true'
           run: |
-            npx playwright install chromium
-            npx playwright install-deps chromium
+            yarn playwright install chromium
+            yarn playwright install-deps chromium
 
         - name: Build site
           run: |
@@ -102,15 +100,14 @@ jobs:
 
       steps:
         - name: Checkout repository
-          uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+          uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
           with:
             persist-credentials: false
 
         - name: Setup node
-          uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+          uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
           with:
-            node-version: '20'
-            cache: 'yarn'
+            node-version: '22'
 
         - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
           with:
@@ -128,20 +125,25 @@ jobs:
             export_environment_variables: false
 
         - name: Mask sensitive values in logs
+          env:
+            CREDS_PATH: ${{ steps.auth.outputs.credentials_file_path }}
+            GCP_PROJECT_NUMBER: ${{ secrets.GCP_PROJECT_NUMBER }}
           run: |
-            echo "::add-mask::${{ steps.auth.outputs.credentials_file_path }}"
-            echo "::add-mask::${{ secrets.GCP_PROJECT_NUMBER }}"
+            echo "::add-mask::$CREDS_PATH"
+            echo "::add-mask::$GCP_PROJECT_NUMBER"
 
         - name: Read GCP credentials
           id: creds
+          env:
+            CREDS_PATH: ${{ steps.auth.outputs.credentials_file_path }}
           run: |
-            creds=$(cat "${{ steps.auth.outputs.credentials_file_path }}")
+            creds=$(cat "$CREDS_PATH")
             echo "::add-mask::$creds"
             echo "sa_key=$creds" >> "$GITHUB_OUTPUT"
 
         - name: Deploy to Firebase
           id: deploy_live
-          uses: FirebaseExtended/action-hosting-deploy@e2eda2e106cfa35cdbcf4ac9ddaf6c4756df2c8c # v0.10.0
+          uses: FirebaseExtended/action-hosting-deploy@500ac625ca2dd40cbd15f7659af953801858032a # v0.11.0
           with:
             repoToken: '${{ secrets.GITHUB_TOKEN }}'
             firebaseServiceAccount: "${{ steps.creds.outputs.sa_key }}"
