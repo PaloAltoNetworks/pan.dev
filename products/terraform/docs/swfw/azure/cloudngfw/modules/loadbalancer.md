@@ -111,11 +111,11 @@ module "lbe" {
 ### Requirements
 
 - `terraform`, version: >= 1.5, < 2.0
-- `azurerm`, version: ~> 4.0
+- `azurerm`, version: ~> 4.42
 
 ### Providers
 
-- `azurerm`, version: ~> 4.0
+- `azurerm`, version: ~> 4.42
 
 
 
@@ -344,14 +344,15 @@ map(object({
     private_ip_address            = optional(string)
     gwlb_fip_id                   = optional(string)
     in_rules = optional(map(object({
-      name                = string
-      protocol            = string
-      port                = number
-      backend_port        = optional(number)
-      health_probe_key    = optional(string, "default")
-      floating_ip         = optional(bool, true)
-      session_persistence = optional(string, "Default")
-      nsg_priority        = optional(number)
+      name                    = string
+      protocol                = string
+      port                    = number
+      backend_port            = optional(number)
+      health_probe_key        = optional(string, "default")
+      floating_ip             = optional(bool, true)
+      session_persistence     = optional(string, "Default")
+      nsg_priority            = optional(number)
+      idle_timeout_in_minutes = optional(number)
     })), {})
     out_rules = optional(map(object({
       name                     = string
