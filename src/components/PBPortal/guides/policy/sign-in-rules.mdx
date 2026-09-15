@@ -1,0 +1,74 @@
+---
+title: 'Sign-in rules'
+sidebar_label: 'Sign-in rules'
+pb_guide:
+  group: Policy
+  groupOrder: 40
+  order: 20
+  summary: Sign-in rule fields and structure
+
+---
+
+Sign-in rules decide whether and how a user can sign in to the Prisma Browser. They are the first policy a session is evaluated against. Rules are evaluated top to bottom within their sections; the first matching rule wins. See [Policy overview](/prisma-browser/guide/rules) for concepts shared across all policy types (scope, sections, positions, publishing).
+
+Base path: `/seb-api/v1/policy/sign-in`.
+
+## Mandatory fields
+
+| Field | Required | Notes |
+|---|---|---|
+| `name` | Yes | 1-300 characters |
+| `mode` | Yes | `active` or `disabled` (case-insensitive) |
+| `action` | Yes | `allow`, `block`, or `prompt` |
+| `scope` | No (recommended) | Who the rule applies to. Omitting it applies the rule to everyone. |
+| `description` | No | Up to 300 characters |
+| `positioning` | No | Where to place the new rule (section + position) |
+
+A sign-in rule's only behavior is its `action`: let the user in (`allow`), keep them out (`block`), or make them confirm before continuing (`prompt`). There are no `controls` on sign-in rules.
+
+## Structure
+
+```json
+{
+  "name": "Block sign-in from unmanaged devices",
+  "mode": "active",
+  "action": "block",
+  "scope": {
+    "deviceGroups": { "deviceGroups": ["0DGEXAMPLEUNMANAGEDXXXXXXXX"] }
+  }
+}
+```
+
+## Create a sign-in rule
+
+```
+POST /seb-api/v1/policy/sign-in/rules
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/sign-in/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Allow sign-in for employees",
+        "mode": "active",
+        "action": "allow",
+        "scope": { "users": { "userGroups": ["0UGEXAMPLEEMPLOYEESXXXXXXXX"] } }
+      }'
+```
+
+### Response
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+The rule is created in the **draft**. Publish to enforce it (see [Draft and publish](/prisma-browser/guide/draft-and-publish)).
+
+## Sections
+
+Sign-in sections are created with `POST /seb-api/v1/policy/sign-in/sections` (only `name` is required) and ordered with the [positions endpoints](/prisma-browser/guide/reorder-rules-and-sections).
+
+## Related
+
+- [Policy overview](/prisma-browser/guide/rules)
+- [Change a rule's scope](/prisma-browser/guide/change-a-rule-scope)
+- [Reorder rules and sections](/prisma-browser/guide/reorder-rules-and-sections)

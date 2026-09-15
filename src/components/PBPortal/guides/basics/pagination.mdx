@@ -1,0 +1,61 @@
+---
+title: 'Pagination'
+sidebar_label: 'Pagination'
+pb_guide:
+  group: Basics
+  groupOrder: 10
+  order: 50
+  summary: Cursor pagination and the pageInfo response envelope
+
+---
+
+List endpoints return a **cursor-paginated envelope**: a consistent wrapper with a `pageInfo` block that tells you whether more results exist and what cursor to pass for the next page. Use this page to understand the envelope shape and loop through large collections safely.
+
+**On this page:** the envelope, query parameters, loop through every page.
+
+## The envelope
+
+Every list response has the same top-level shape:
+
+```json
+{
+  "pageInfo": { "hasNextPage": true, "cursor": "opaque-string", "totalCount": 137 },
+  "data": [ ],
+  "metadata": { }
+}
+```
+
+- `pageInfo.hasNextPage` (boolean): whether another page exists.
+- `pageInfo.cursor` (string, nullable): pass it back as `?cursor=` to fetch the next page.
+- `pageInfo.totalCount` (integer): total number of items matching the query across all pages. Populated on the first page (no cursor) by default; see `includeTotalCount` below.
+
+## Query parameters
+
+- `limit`: integer, 1 to 1000, default 100.
+- `cursor`: opaque string from the previous `pageInfo.cursor`. Do not construct or parse it.
+- `includeTotalCount`: optional boolean controlling whether `pageInfo.totalCount` is populated. Default: present on the first page (no cursor) and absent on subsequent pages. Set `=true` to force it on every page, or `=false` to skip it entirely. The count reflects the same filters as the list.
+
+Because the total is a property of the whole result set, the default gives it to a paginating client once up front (on the first page): read it there rather than expecting it on every page.
+
+`includeTotalCount` is supported on the object and policy list endpoints: users, devices, user groups, device groups, applications, applications-by-type, application groups, and the four policy GETs (security, customization, sign-in, access and data).
+
+:::note
+`/user-requests` is cursor-paginated but its `pageInfo` carries only `hasNextPage` and `cursor`: it has no `totalCount` and does not accept `includeTotalCount`.
+:::
+
+## Loop through every page
+
+```bash
+cursor=""
+while : ; do
+  resp=$(curl -sS "$PB_API_BASE/applications?limit=100&cursor=$cursor" -H "Authorization: Bearer $PB_TOKEN")
+  echo "$resp" | jq '.data[]'
+  cursor=$(echo "$resp" | jq -r '.pageInfo.cursor // empty')
+  [ -z "$cursor" ] && break
+done
+```
+
+:::note
+Policy list items are summaries. Fetch a rule's full body with `GET /policy/{type}/rules/{id}`.
+:::
+

@@ -1,0 +1,140 @@
+---
+title: "Bulk-sync a rule's applications"
+sidebar_label: "Bulk-sync a rule's applications"
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Policy management
+  subgroupOrder: 10
+  order: 40
+  summary: Sync a rule application list from automation
+
+---
+
+A common automation job: keep the list of SaaS applications governed by an access-and-data rule in sync with an external source (a CMDB, a risk feed, a spreadsheet). This walkthrough does it with **delta patch**, so you never have to read-modify-write the whole list and never clobber concurrent edits.
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Read [Delta patch](/prisma-browser/guide/delta-patch) and [Draft and publish](/prisma-browser/guide/draft-and-publish) first.
+
+The scenario: a rule currently scopes a set of SaaS applications. Your source of truth says some applications should be **added** and others **removed**. You will compute that delta and apply it in a single PATCH.
+
+---
+
+## 1. Identify the rule and the desired applications
+
+```bash
+export RULE_ID='0RLEXAMPLERULEXXXXXXXXXXXXXX'   # an access-and-data rule
+```
+
+You have a desired set of application IDs. You do not need to know the rule's current list: delta patch only needs what to add and what to remove.
+
+---
+
+## 2. (Optional) read the current list to compute a delta
+
+If your source gives you a full desired set rather than an explicit add/remove list, read the rule once, diff in your code, then send the delta. The current SaaS application IDs live at `applications.saas.specific.applicationIds`.
+
+### Python
+
+```python
+import os, requests
+
+base = os.environ["PB_API_BASE"]
+headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
+rule_id = os.environ["RULE_ID"]
+
+# Desired end state from your source of truth:
+desired = {"0AP01AAA...", "0AP01BBB...", "0AP01DDD..."}
+
+rule = requests.get(f"{base}/policy/access-and-data/rules/{rule_id}", headers=headers, timeout=30).json()
+saas = rule.get("applications", {}).get("saas", {}).get("specific", {})
+current = set(saas.get("applicationIds", []))
+
+to_add = sorted(desired - current)
+to_remove = sorted(current - desired)
+print("add:", to_add, "remove:", to_remove)
+```
+
+:::note
+Even though you read the current list here, you still send a **delta**, not a full replacement. That way, any application a concurrent editor added that is not part of your desired-set logic is left untouched if you choose to scope your diff narrowly. If your source truly owns the entire list, a full replacement (`applicationIds`) is also valid; see [Delta patch: when to use which](/prisma-browser/guide/delta-patch#when-to-use-which).
+:::
+
+---
+
+## 3. Apply the delta (PATCH the draft)
+
+Send only the additions and removals. Include `accessMode: "specific"` so the scope is in specific-applications mode.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "applications": {
+          "saas": {
+            "accessMode": "specific",
+            "specific": {
+              "addApplicationIds": ["0AP01DDDXXXXXXXXXXXXXXXXXXXXX"],
+              "removeApplicationIds": ["0AP01CCCXXXXXXXXXXXXXXXXXXXXX"]
+            }
+          }
+        }
+      }'
+```
+
+A `200` means the draft was updated:
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+---
+
+## 4. Verify and publish
+
+Read the rule back from the draft to confirm the new list, then publish.
+
+```bash
+# verify (draft)
+curl -sS "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+
+# publish
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Sync access-and-data rule apps from source of truth"}'
+```
+
+The `GET` returns the full rule (confirm the application list), and the publish returns `201` when a new active version is created.
+
+---
+
+## Why delta wins here
+
+- **No lost updates.** If a colleague added an application between your read and write, your delta does not erase it.
+- **Smaller payloads.** You send a handful of IDs, not the entire (possibly hundreds-long) list.
+- **Retry-safe.** Re-running the same delta is a no-op: adding an existing application or removing an absent one does not error. So if your job fails after the PATCH but before publish, run it again.
+
+---
+
+## Beyond applications
+
+The same add/remove pattern works for the rule's other lists. Combine them in one PATCH:
+
+```json
+{
+  "applications": {
+    "saas": {
+      "accessMode": "specific",
+      "specific": {
+        "addApplicationIds": ["0AP01DDD..."],
+        "addUrls": ["https://newtool.example.com"],
+        "removeWebClassifications": ["SocialNetworking"]
+      }
+    }
+  }
+}
+```
+
+See [Delta patch](/prisma-browser/guide/delta-patch#where-delta-applies) for the full list of delta-capable fields.
+

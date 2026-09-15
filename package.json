@@ -5,11 +5,11 @@
   "license": "",
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "yarn getAllFeeds && yarn gen-all && docusaurus start",
+    "start": "yarn gen-pb && yarn getAllFeeds && yarn gen-all && yarn validate-pb-release-notes && docusaurus start",
     "build": "run-script-os",
-    "build:windows": "set NODE_OPTIONS=--max_old_space_size=8192 && yarn gen-all && yarn docusaurus build",
-    "build:default": "export NODE_OPTIONS=--max_old_space_size=8192 && yarn gen-all && yarn docusaurus build",
-    "build-github": "export NODE_OPTIONS=--max_old_space_size=96000 && yarn getAllFeeds && yarn gen-all && DOCUSAURUS_PERF_LOGGER=true yarn docusaurus build",
+    "build:windows": "yarn gen-pb && set NODE_OPTIONS=--max_old_space_size=8192 && yarn gen-all && yarn validate-pb-release-notes && yarn docusaurus build",
+    "build:default": "yarn gen-pb && export NODE_OPTIONS=--max_old_space_size=8192 && yarn gen-all && yarn validate-pb-release-notes && yarn docusaurus build",
+    "build-github": "yarn gen-pb && export NODE_OPTIONS=--max_old_space_size=96000 && yarn getAllFeeds && yarn gen-all && yarn validate-pb-release-notes && DOCUSAURUS_PERF_LOGGER=true yarn docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -33,7 +33,13 @@
     "sos": "yarn clean && yarn install",
     "format": "prettier --write .",
     "format:diff": "prettier --list-different .",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "patch-package",
+    "gen-pb-guide": "node scripts/prisma-browser/build-guide-index.mjs",
+    "gen-pb-spec": "node scripts/prisma-browser/sync-spec.mjs",
+    "gen-pb": "yarn gen-pb-guide && yarn gen-pb-spec",
+    "validate-pb-release-notes": "node scripts/prisma-browser/validate-release-notes.mjs",
+    "sync-pb-design-system": "node scripts/prisma-browser/sync-coreui-design-system.mjs"
   },
   "husky": {
     "hooks": {
@@ -88,7 +94,9 @@
     "autoprefixer": "^10.5.4",
     "cross-env": "^10.1.0",
     "husky": "^9.1.7",
+    "js-yaml": "^4.1.0",
     "lint-staged": "^17.2.0",
+    "patch-package": "^8.0.1",
     "playwright": "^1.62.1",
     "postcss": "^8.5.26",
     "postcss-import": "^17.0.0",

@@ -1,0 +1,204 @@
+---
+title: 'Assets'
+sidebar_label: 'Assets'
+pb_guide:
+  group: Policy
+  groupOrder: 40
+  order: 60
+  summary: Upload logos, icons, images, and PAC files, then reference them by ID
+
+---
+
+**Assets** are the binary files that back the Prisma Browser branding and network configuration: a company logo, a browser icon, a new-tab background image, and a PAC (proxy auto-configuration) file. You upload a file once, the API stores it and returns a short **asset ID**, and you then reference that ID from a [customization rule](/prisma-browser/guide/customization-rules) control. The flow is always two steps: **upload the file, then reference the returned ID from a control**.
+
+Assets are the only multipart (file) uploads in the API. Every other call is JSON.
+
+**On this page:** asset types, upload-then-reference flow, limits and validation, endpoint reference, tips, examples.
+
+---
+
+## Asset types
+
+Each asset has its own upload endpoint and returns one ID field. That ID is what you set on the matching customization control.
+
+| Asset | Upload endpoint | Max size | Allowed files | Returns | Referenced by control |
+|---|---|---|---|---|---|
+| Company logo | `POST /assets/company-logo` | 1 MB | `.png` | `companyLogoId` | `companyLogo` (`companyLogoId`) |
+| Browser icon | `POST /assets/browser-icon` | 3 MB | `.png` | `browserIconId` | `browserIcon` (`browserIconId`) |
+| Background image | `POST /assets/background-image` | 3 MB | `.png`, `.svg`, `.jpg`, `.jpeg` | `backgroundImageId` | `backgroundImage` (`backgroundImageId`) |
+| PAC file | `POST /assets/pac-file` | 2 MB | `.pac`, `.dat`, `.js`, or no extension | `pacFileId` | `proxyAutoConfigurationPacFile` (`pacFileId`) |
+
+---
+
+## How the upload-then-reference flow works
+
+```mermaid
+flowchart LR
+    a["POST /assets/company-logo (file)"] --> b["201 -> companyLogoId"]
+    b --> c["PATCH customization rule: companyLogo.companyLogoId"]
+    c --> d["Publish"]
+```
+
+1. **Upload** the file with a `multipart/form-data` request whose single `file` part is the binary.
+2. **Capture** the returned ID (for example `companyLogoId`).
+3. **Reference** it from a customization rule control (for example the `companyLogo` control).
+4. **Publish** to make it live. Like all writes, the upload and the control change land in the [draft](/prisma-browser/guide/draft-and-publish) first.
+
+The upload response is intentionally minimal: only the ID you reference.
+
+```json
+{ "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" }
+```
+
+---
+
+## Limits and validation
+
+| Asset | Max size | Allowed files | Notes |
+|---|---|---|---|
+| Company logo | 1 MB | `.png` | SVG must be uploaded from Strata Cloud Manager |
+| Browser icon | 3 MB | `.png` | |
+| Background image | 3 MB | `.png`, `.svg`, `.jpg`, `.jpeg` | SVG is sanitized |
+| PAC file | 2 MB | `.pac`, `.dat`, `.js`, extensionless | |
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `POST` | `/assets/company-logo` | Upload a company logo, returns `companyLogoId` |
+| `POST` | `/assets/browser-icon` | Upload a browser icon, returns `browserIconId` |
+| `POST` | `/assets/background-image` | Upload a background image, returns `backgroundImageId` |
+| `POST` | `/assets/pac-file` | Upload a PAC file, returns `pacFileId` |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+
+:::caution
+**Validation errors.** A wrong extension or a failed validation returns `400`. A file over the size limit returns `413`.
+:::
+
+:::note
+**An upload edits the draft.** Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)).
+:::
+
+---
+
+## Examples
+
+Expand an example to see the request, response, and the control that references the returned ID.
+
+:::note
+Asset uploads are the exception to the usual rule of not printing a create response: the response is a single ID field, shown in each example because you need the exact field name to reference the asset.
+:::
+
+<details>
+<summary>Upload a company logo and use it in a rule</summary>
+
+Upload the PNG, then set the returned ID on the `companyLogo` control of a customization rule. See [Customization rules](/prisma-browser/guide/customization-rules) for the full control catalog.
+
+**Step 1: upload the file**
+
+```bash
+curl -sS -X POST "$PB_API_BASE/assets/company-logo" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -F "file=@./company-logo.png"
+```
+
+Response (`201 Created`):
+
+```json
+{ "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" }
+```
+
+**Step 2: reference the ID on a customization rule**
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/customization/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "controls": {
+          "companyLogo": { "mode": "setCompanyLogo", "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RL01CUSTOMIZATIONXXXXXXXXXXX" }
+```
+
+</details>
+
+<details>
+<summary>Upload a browser icon</summary>
+
+```bash
+curl -sS -X POST "$PB_API_BASE/assets/browser-icon" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -F "file=@./browser-icon.png"
+```
+
+Response (`201 Created`):
+
+```json
+{ "browserIconId": "0ASEXAMPLEBROWSERICONXXXXXX" }
+```
+
+Reference it with the `browserIcon` control (`mode: "setBrowserIcon"`, `browserIconId`).
+
+</details>
+
+<details>
+<summary>Upload a new-tab background image</summary>
+
+Background images accept `.png`, `.svg`, `.jpg`, and `.jpeg` (SVG is sanitized on upload).
+
+```bash
+curl -sS -X POST "$PB_API_BASE/assets/background-image" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -F "file=@./background.jpg"
+```
+
+Response (`201 Created`):
+
+```json
+{ "backgroundImageId": "0ASEXAMPLEBACKGROUNDXXXXXXX" }
+```
+
+Reference it with the `backgroundImage` control (`mode: "setImage"`, `backgroundImageId`).
+
+</details>
+
+<details>
+<summary>Upload a PAC file</summary>
+
+```bash
+curl -sS -X POST "$PB_API_BASE/assets/pac-file" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -F "file=@./proxy.pac"
+```
+
+Response (`201 Created`):
+
+```json
+{ "pacFileId": "0ASEXAMPLEPACFILEXXXXXXXXXX" }
+```
+
+Reference it with the `proxyAutoConfigurationPacFile` control (`pacFileId`).
+
+</details>
+
+---
+
+## Related
+
+- Policy: [Customization rules](/prisma-browser/guide/customization-rules) (the controls that reference these assets)
+- Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish)

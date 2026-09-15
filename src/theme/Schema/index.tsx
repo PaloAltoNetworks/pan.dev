@@ -1,0 +1,1323 @@
+/* ============================================================================
+ * Copyright (c) Palo Alto Networks
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ * ========================================================================== */
+
+import React, { useCallback, useMemo } from "react";
+
+import { translate } from "@docusaurus/Translate";
+import { useLocation } from "@docusaurus/router";
+import { setSchemaSelection } from "@theme/ApiExplorer/SchemaSelection/slice";
+import { useTypedDispatch } from "@theme/ApiItem/hooks";
+import { ClosingArrayBracket, OpeningArrayBracket } from "@theme/ArrayBrackets";
+import Details from "@theme/Details";
+import DiscriminatorTabs from "@theme/DiscriminatorTabs";
+import Markdown from "@theme/Markdown";
+import {
+  findPropertyDeep,
+  foldSiblingsIntoBranches,
+  getDiscriminator,
+  isCircularMarker,
+  mergeAllOf,
+  normalizeSchema,
+} from "@theme/Schema/normalize";
+import {
+  SchemaDepthProvider,
+  useSchemaDepth,
+  useSchemaExpansion,
+} from "@theme/SchemaExpansion";
+import SchemaItem from "@theme/SchemaItem";
+import SchemaTabs from "@theme/SchemaTabs";
+import TabItem from "@theme/TabItem";
+import clsx from "clsx";
+import isEmpty from "lodash/isEmpty";
+
+import {
+  getQualifierMessage,
+  getSchemaName,
+} from "docusaurus-theme-openapi-docs/lib/markdown/schema";
+import type { SchemaObject } from "docusaurus-theme-openapi-docs/lib/types";
+
+import { getPBQualifierMessage } from "../SchemaItem/pbQualifierMessage";
+
+const PB_BASE = "/prisma-browser";
+
+// Prisma Browser pages use the corrected constraint labels in
+// ../SchemaItem/pbQualifierMessage; every other product keeps the stock
+// upstream output, so this ejected component stays behaviour-neutral for them.
+// Apart from this hook and its two call sites below, the file is an unmodified
+// eject of docusaurus-theme-openapi-docs 5.2.0. See UPSTREAM-SYNC.md.
+function useQualifierMessage(): (schema?: SchemaObject) => string | undefined {
+  const { pathname } = useLocation();
+  return pathname.startsWith(PB_BASE)
+    ? getPBQualifierMessage
+    : getQualifierMessage;
+}
+
+interface MarkdownProps {
+  text: string | undefined;
+}
+
+// Renders string as markdown, useful for descriptions and qualifiers
+const MarkdownWrapper: React.FC<MarkdownProps> = ({ text }) => {
+  return (
+    <div style={{ marginTop: ".5rem", marginBottom: ".5rem" }}>
+      <Markdown>{text}</Markdown>
+    </div>
+  );
+};
+
+interface SummaryProps {
+  name: string;
+  schemaName: string | undefined;
+  schema: {
+    deprecated?: boolean;
+    nullable?: boolean;
+  };
+  required?: boolean | string[];
+}
+
+const Summary: React.FC<SummaryProps> = ({
+  name,
+  schemaName,
+  schema,
+  required,
+}) => {
+  const { deprecated, nullable } = schema;
+
+  const isRequired = Array.isArray(required)
+    ? required.includes(name)
+    : required === true;
+
+  return (
+    <summary>
+      <span className="openapi-schema__container">
+        <strong
+          className={clsx("openapi-schema__property", {
+            "openapi-schema__strikethrough": deprecated,
+          })}
+        >
+          {name}
+        </strong>
+        <span className="openapi-schema__name"> {schemaName}</span>
+        {(isRequired || deprecated || nullable) && (
+          <span className="openapi-schema__divider" />
+        )}
+        {nullable && (
+          <span className="openapi-schema__nullable">
+            {translate({
+              id: "theme.openapi.schemaItem.nullable",
+              message: "nullable",
+            })}
+          </span>
+        )}
+        {isRequired && (
+          <span className="openapi-schema__required">
+            {translate({
+              id: "theme.openapi.schemaItem.required",
+              message: "required",
+            })}
+          </span>
+        )}
+        {deprecated && (
+          <span className="openapi-schema__deprecated">
+            {translate({
+              id: "theme.openapi.schemaItem.deprecated",
+              message: "deprecated",
+            })}
+          </span>
+        )}
+      </span>
+    </summary>
+  );
+};
+
+// Common props interface
+interface SchemaProps {
+  schema: SchemaObject;
+  schemaType: "request" | "response";
+  /**
+   * Optional path identifier for tracking anyOf/oneOf selections.
+   * When provided, tab selections will be dispatched to Redux state
+   * to enable dynamic body example updates.
+   */
+  schemaPath?: string;
+}
+
+const AnyOneOf: React.FC<SchemaProps> = ({
+  schema,
+  schemaType,
+  schemaPath,
+}) => {
+  const key = schema.oneOf ? "oneOf" : "anyOf";
+  const schemaArray = schema[key];
+
+  // Empty oneOf/anyOf arrays are valid in OpenAPI specs but would cause the
+  // Tabs component to throw "requires at least one TabItem". Return null instead.
+  if (!schemaArray || !Array.isArray(schemaArray) || schemaArray.length === 0) {
+    return null;
+  }
+
+  const type = schema.oneOf
+    ? translate({ id: "theme.openapi.schemaItem.oneOf", message: "oneOf" })
+    : translate({ id: "theme.openapi.schemaItem.anyOf", message: "anyOf" });
+
+  // Generate a unique ID for this anyOf/oneOf to prevent tab value collisions
+  const uniqueId = React.useMemo(
+    () => Math.random().toString(36).substring(7),
+    []
+  );
+
+  // Try to get Redux dispatch - will be undefined if not inside a Provider
+  let dispatch: ReturnType<typeof useTypedDispatch> | undefined;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    dispatch = useTypedDispatch();
+  } catch {
+    // Not inside a Redux Provider, which is fine for response schemas
+    dispatch = undefined;
+  }
+
+  // Handle tab change - dispatch to Redux if schemaPath is provided
+  const handleTabChange = useCallback(
+    (index: number) => {
+      if (schemaPath && dispatch) {
+        dispatch(setSchemaSelection({ path: schemaPath, index }));
+      }
+    },
+    [schemaPath, dispatch]
+  );
+
+  return (
+    <>
+      <span className="badge badge--info" style={{ marginBottom: "1rem" }}>
+        {type}
+      </span>
+      <SchemaTabs
+        groupId={`schema-${uniqueId}`}
+        lazy
+        onChange={handleTabChange}
+      >
+        {schema[key]?.map((anyOneSchema: any, index: number) => {
+          // Use getSchemaName to include format info (e.g., "string<date-time>")
+          const computedSchemaName = getSchemaName(anyOneSchema);
+
+          // Determine label for the tab
+          // Prefer explicit title, then computed schema name, then raw type
+          let label =
+            anyOneSchema.title || computedSchemaName || anyOneSchema.type;
+          if (!label) {
+            if (anyOneSchema.oneOf) {
+              label = translate({
+                id: "theme.openapi.schemaItem.oneOf",
+                message: "oneOf",
+              });
+            } else if (anyOneSchema.anyOf) {
+              label = translate({
+                id: "theme.openapi.schemaItem.anyOf",
+                message: "anyOf",
+              });
+            } else {
+              label = `Option ${index + 1}`;
+            }
+          }
+
+          // Build the nested schemaPath for child anyOf/oneOf
+          const childSchemaPath = schemaPath
+            ? `${schemaPath}.${index}`
+            : undefined;
+
+          return (
+            // @ts-ignore
+            <TabItem
+              key={index}
+              label={label}
+              value={`${uniqueId}-${index}-item`}
+            >
+              {anyOneSchema.description && (
+                <div style={{ marginLeft: "1rem" }}>
+                  <MarkdownWrapper text={anyOneSchema.description} />
+                </div>
+              )}
+              {/* Handle primitive types directly */}
+              {(isPrimitive(anyOneSchema) || anyOneSchema.const) && (
+                <SchemaItem
+                  collapsible={false}
+                  name={undefined}
+                  schemaName={computedSchemaName}
+                  schema={anyOneSchema}
+                  discriminator={false}
+                  children={null}
+                />
+              )}
+
+              {/* Handle empty object as a primitive type */}
+              {anyOneSchema.type === "object" &&
+                !anyOneSchema.properties &&
+                !anyOneSchema.additionalProperties &&
+                !anyOneSchema.allOf &&
+                !anyOneSchema.oneOf &&
+                !anyOneSchema.anyOf && (
+                  <SchemaItem
+                    collapsible={false}
+                    name={undefined}
+                    schemaName={computedSchemaName}
+                    schema={anyOneSchema}
+                    discriminator={false}
+                    children={null}
+                  />
+                )}
+
+              {/* Handle actual object types with properties or nested schemas */}
+              {/* Note: In OpenAPI, properties implies type: object even if not explicitly set */}
+              {/* When the branch also has a nested oneOf/anyOf/allOf, skip
+                  Properties here and delegate to SchemaNode below:
+                  foldSiblingsIntoBranches will merge these properties into
+                  each inner variant, so rendering them inline as well would
+                  duplicate them per variant tab. See #1548. */}
+              {(anyOneSchema.type === "object" || !anyOneSchema.type) &&
+                anyOneSchema.properties &&
+                !anyOneSchema.oneOf &&
+                !anyOneSchema.anyOf &&
+                !anyOneSchema.allOf && (
+                  <Properties
+                    schema={anyOneSchema}
+                    schemaType={schemaType}
+                    schemaPath={childSchemaPath}
+                  />
+                )}
+              {/* Render a map variant's `additionalProperties` */}
+              {(anyOneSchema.type === "object" || !anyOneSchema.type) &&
+                anyOneSchema.additionalProperties &&
+                !anyOneSchema.oneOf &&
+                !anyOneSchema.anyOf &&
+                !anyOneSchema.allOf && (
+                  <AdditionalProperties
+                    schema={anyOneSchema}
+                    schemaType={schemaType}
+                  />
+                )}
+              {anyOneSchema.allOf && (
+                <SchemaNode
+                  schema={anyOneSchema}
+                  schemaType={schemaType}
+                  schemaPath={childSchemaPath}
+                />
+              )}
+              {anyOneSchema.oneOf && (
+                <SchemaNode
+                  schema={anyOneSchema}
+                  schemaType={schemaType}
+                  schemaPath={childSchemaPath}
+                />
+              )}
+              {anyOneSchema.anyOf && (
+                <SchemaNode
+                  schema={anyOneSchema}
+                  schemaType={schemaType}
+                  schemaPath={childSchemaPath}
+                />
+              )}
+              {anyOneSchema.items && (
+                <Items
+                  schema={anyOneSchema}
+                  schemaType={schemaType}
+                  schemaPath={childSchemaPath}
+                />
+              )}
+            </TabItem>
+          );
+        })}
+      </SchemaTabs>
+    </>
+  );
+};
+
+const Properties: React.FC<SchemaProps> = ({
+  schema,
+  schemaType,
+  schemaPath,
+}) => {
+  const discriminator = schema.discriminator;
+  if (discriminator && !discriminator.mapping) {
+    const anyOneOf = schema.oneOf ?? schema.anyOf ?? {};
+    const inferredMapping = {} as any;
+    Object.entries(anyOneOf).map(([_, anyOneSchema]: [string, any]) => {
+      // ensure discriminated property only renders once
+      if (
+        schema.properties![discriminator.propertyName] &&
+        anyOneSchema.properties[discriminator.propertyName]
+      )
+        delete anyOneSchema.properties[discriminator.propertyName];
+      return (inferredMapping[anyOneSchema.title] = anyOneSchema);
+    });
+    discriminator["mapping"] = inferredMapping;
+  }
+  if (Object.keys(schema.properties as {}).length === 0) {
+    // Hide placeholder only for discriminator cleanup artifacts; preserve
+    // empty object rendering for schemas that intentionally define no properties.
+    if (discriminator) {
+      return null;
+    }
+    return (
+      <SchemaItem
+        collapsible={false}
+        name=""
+        required={false}
+        schemaName="object"
+        schema={{}}
+      />
+    );
+  }
+
+  return (
+    <>
+      {Object.entries(schema.properties as {}).map(
+        ([key, val]: [string, any]) => (
+          <SchemaEdge
+            key={key}
+            name={key}
+            schema={val}
+            required={
+              Array.isArray(schema.required)
+                ? schema.required.includes(key)
+                : false
+            }
+            discriminator={discriminator}
+            schemaType={schemaType}
+            schemaPath={schemaPath ? `${schemaPath}.${key}` : undefined}
+          />
+        )
+      )}
+    </>
+  );
+};
+
+const PropertyDiscriminator: React.FC<SchemaEdgeProps> = ({
+  name,
+  schemaName,
+  schema,
+  schemaType,
+  discriminator,
+  required,
+}) => {
+  const buildQualifierMessage = useQualifierMessage();
+  if (!schema) {
+    return null;
+  }
+
+  return (
+    <>
+      <div className="openapi-discriminator__item openapi-schema__list-item">
+        <div>
+          <span className="openapi-schema__container">
+            <strong className="openapi-discriminator__name openapi-schema__property">
+              {name}
+            </strong>
+            {schemaName && (
+              <span className="openapi-schema__name"> {schemaName}</span>
+            )}
+            {required && <span className="openapi-schema__divider"></span>}
+            {required && (
+              <span className="openapi-schema__required">
+                {translate({
+                  id: "theme.openapi.schemaItem.required",
+                  message: "required",
+                })}
+              </span>
+            )}
+          </span>
+          <div style={{ marginLeft: "1rem" }}>
+            {schema.description && (
+              <MarkdownWrapper text={schema.description} />
+            )}
+            {buildQualifierMessage(discriminator) && (
+              <MarkdownWrapper text={buildQualifierMessage(discriminator)} />
+            )}
+          </div>
+          <DiscriminatorTabs className="openapi-tabs__discriminator">
+            {Object.keys(discriminator.mapping).map((key, index) => (
+              // @ts-ignore
+              <TabItem
+                key={index}
+                label={key}
+                value={`${index}-item-discriminator`}
+              >
+                {discriminator.mapping[key]?.description && (
+                  <div style={{ marginLeft: "1rem" }}>
+                    <MarkdownWrapper
+                      text={discriminator.mapping[key].description}
+                    />
+                  </div>
+                )}
+                <SchemaNode
+                  schema={discriminator.mapping[key]}
+                  schemaType={schemaType}
+                />
+              </TabItem>
+            ))}
+          </DiscriminatorTabs>
+        </div>
+      </div>
+      {schema.properties &&
+        Object.entries(schema.properties as {}).map(
+          ([key, val]: [string, any]) =>
+            key !== discriminator.propertyName && (
+              <SchemaEdge
+                key={key}
+                name={key}
+                schema={val}
+                required={
+                  Array.isArray(schema.required)
+                    ? schema.required.includes(key)
+                    : false
+                }
+                discriminator={false}
+                schemaType={schemaType}
+              />
+            )
+        )}
+    </>
+  );
+};
+
+interface DiscriminatorNodeProps {
+  discriminator: any;
+  schema: SchemaObject;
+  schemaType: "request" | "response";
+}
+
+const DiscriminatorNode: React.FC<DiscriminatorNodeProps> = ({
+  discriminator,
+  schema,
+  schemaType,
+}) => {
+  let discriminatedSchemas: any = {};
+  let inferredMapping: any = {};
+
+  // Search for the discriminator property in the schema, including nested
+  // structures. Cached recursive lookup replaces the O(subtree) findProperty
+  // walk that caused #1525's O(N^2) render cost.
+  const discriminatorProperty =
+    findPropertyDeep(schema, discriminator.propertyName) ?? {};
+
+  if (schema.allOf) {
+    const mergedSchemas = mergeAllOf(schema) as SchemaObject;
+    if (mergedSchemas.oneOf || mergedSchemas.anyOf) {
+      discriminatedSchemas = mergedSchemas.oneOf || mergedSchemas.anyOf;
+    }
+  } else if (schema.oneOf || schema.anyOf) {
+    discriminatedSchemas = schema.oneOf || schema.anyOf;
+  }
+
+  // Handle case where no mapping is defined
+  if (!discriminator.mapping) {
+    Object.entries(discriminatedSchemas).forEach(
+      ([_, subschema]: [string, any], index) => {
+        inferredMapping[subschema.title ?? `PROP${index}`] = subschema;
+      }
+    );
+    discriminator.mapping = inferredMapping;
+  }
+
+  // Merge sub schema discriminator property with parent
+  Object.keys(discriminator.mapping).forEach((key) => {
+    const subSchema = discriminator.mapping[key];
+
+    // Handle discriminated schema with allOf
+    let mergedSubSchema = {} as SchemaObject;
+    if (subSchema.allOf) {
+      mergedSubSchema = mergeAllOf(subSchema) as SchemaObject;
+    }
+
+    const subProperties = subSchema.properties || mergedSubSchema.properties;
+    // Add a safeguard check to avoid referencing subProperties if it's undefined
+    if (subProperties && subProperties[discriminator.propertyName]) {
+      if (schema.properties) {
+        schema.properties![discriminator.propertyName] = {
+          ...schema.properties![discriminator.propertyName],
+          ...subProperties[discriminator.propertyName],
+        };
+        if (subSchema.required && !schema.required) {
+          schema.required = subSchema.required;
+        }
+        // Avoid duplicating property
+        delete subProperties[discriminator.propertyName];
+      } else {
+        schema.properties = {};
+        schema.properties[discriminator.propertyName] =
+          subProperties[discriminator.propertyName];
+        // Avoid duplicating property
+        delete subProperties[discriminator.propertyName];
+      }
+    }
+  });
+
+  const name = discriminator.propertyName;
+  const schemaName = getSchemaName(discriminatorProperty);
+  // Default case for discriminator without oneOf/anyOf/allOf
+  return (
+    <PropertyDiscriminator
+      name={name}
+      schemaName={schemaName}
+      schema={schema}
+      schemaType={schemaType}
+      discriminator={discriminator}
+      required={
+        Array.isArray(schema.required)
+          ? schema.required.includes(name)
+          : schema.required
+      }
+    />
+  );
+};
+
+const AdditionalProperties: React.FC<SchemaProps> = ({
+  schema,
+  schemaType,
+}) => {
+  const additionalProperties = schema.additionalProperties;
+
+  if (!additionalProperties) return null;
+
+  if (isCircularMarker(additionalProperties)) {
+    return (
+      <SchemaItem
+        name="property name*"
+        required={false}
+        schemaName={additionalProperties}
+        schema={additionalProperties}
+        collapsible={false}
+        discriminator={false}
+        children={null}
+      />
+    );
+  }
+
+  // Handle free-form objects
+  if (additionalProperties === true || isEmpty(additionalProperties)) {
+    return (
+      <SchemaItem
+        name="property name*"
+        required={false}
+        schemaName="any"
+        schema={schema}
+        collapsible={false}
+        discriminator={false}
+      />
+    );
+  }
+
+  // Handle objects, arrays, complex schemas
+  if (
+    additionalProperties.properties ||
+    additionalProperties.items ||
+    additionalProperties.allOf ||
+    additionalProperties.additionalProperties ||
+    additionalProperties.oneOf ||
+    additionalProperties.anyOf
+  ) {
+    const title =
+      additionalProperties.title || getSchemaName(additionalProperties);
+    const required = schema.required || false;
+    return (
+      <SchemaNodeDetails
+        name="property name*"
+        schemaName={title}
+        required={required}
+        nullable={schema.nullable}
+        schema={additionalProperties}
+        schemaType={schemaType}
+      />
+    );
+  }
+
+  // Handle primitive types
+  if (
+    additionalProperties.type === "string" ||
+    additionalProperties.type === "boolean" ||
+    additionalProperties.type === "integer" ||
+    additionalProperties.type === "number" ||
+    additionalProperties.type === "object"
+  ) {
+    const schemaName = getSchemaName(additionalProperties);
+    return (
+      <SchemaItem
+        name="property name*"
+        required={false}
+        schemaName={schemaName}
+        schema={additionalProperties}
+        collapsible={false}
+        discriminator={false}
+        children={null}
+      />
+    );
+  }
+
+  // Unknown type
+  return null;
+};
+
+const SchemaNodeDetails: React.FC<SchemaEdgeProps> = ({
+  name,
+  schemaName,
+  schema,
+  required,
+  schemaType,
+  schemaPath,
+}) => {
+  const depth = useSchemaDepth();
+  const { level } = useSchemaExpansion();
+  const defaultOpen = depth < level;
+  const buildQualifierMessage = useQualifierMessage();
+  return (
+    <SchemaItem collapsible={true}>
+      <Details
+        key={`level-${level}`}
+        className="openapi-markdown__details"
+        open={defaultOpen}
+        summary={
+          <Summary
+            name={name}
+            schemaName={schemaName}
+            schema={schema}
+            required={required}
+          />
+        }
+      >
+        <div style={{ marginLeft: "1rem" }}>
+          {schema.description && <MarkdownWrapper text={schema.description} />}
+          {buildQualifierMessage(schema) && (
+            <MarkdownWrapper text={buildQualifierMessage(schema)} />
+          )}
+          <SchemaDepthProvider depth={depth + 1}>
+            <SchemaNode
+              schema={schema}
+              schemaType={schemaType}
+              schemaPath={schemaPath}
+            />
+          </SchemaDepthProvider>
+        </div>
+      </Details>
+    </SchemaItem>
+  );
+};
+
+const Items: React.FC<{
+  schema: any;
+  schemaType: "request" | "response";
+  schemaPath?: string;
+}> = ({ schema, schemaType, schemaPath }) => {
+  if (isCircularMarker(schema.items)) {
+    return (
+      <div style={{ marginLeft: ".5rem" }}>
+        <OpeningArrayBracket />
+        <SchemaItem
+          collapsible={false}
+          name=""
+          schemaName={schema.items}
+          schema={schema.items}
+          discriminator={false}
+          children={null}
+        />
+        <ClosingArrayBracket />
+      </div>
+    );
+  }
+
+  // Process schema.items to handle allOf merging
+  let itemsSchema = schema.items;
+  if (schema.items?.allOf) {
+    itemsSchema = mergeAllOf(schema.items) as SchemaObject;
+  }
+
+  // Handle complex schemas with multiple schema types
+  const hasOneOfAnyOf = itemsSchema?.oneOf || itemsSchema?.anyOf;
+  const hasProperties = itemsSchema?.properties;
+  const hasAdditionalProperties = itemsSchema?.additionalProperties;
+
+  // Build the items schema path
+  const itemsSchemaPath = schemaPath ? `${schemaPath}.items` : undefined;
+
+  if (hasOneOfAnyOf || hasProperties || hasAdditionalProperties) {
+    // Fold sibling properties into each oneOf/anyOf branch to avoid duplicate
+    // property rendering. See issue #1218.
+    const renderSchema =
+      hasOneOfAnyOf && hasProperties
+        ? foldSiblingsIntoBranches(itemsSchema)
+        : itemsSchema;
+    const renderHasProperties =
+      hasOneOfAnyOf && hasProperties ? false : hasProperties;
+    return (
+      <>
+        <OpeningArrayBracket />
+        {hasOneOfAnyOf && (
+          <AnyOneOf
+            schema={renderSchema}
+            schemaType={schemaType}
+            schemaPath={itemsSchemaPath}
+          />
+        )}
+        {renderHasProperties && (
+          <Properties
+            schema={itemsSchema}
+            schemaType={schemaType}
+            schemaPath={itemsSchemaPath}
+          />
+        )}
+        {hasAdditionalProperties && (
+          <AdditionalProperties schema={itemsSchema} schemaType={schemaType} />
+        )}
+        <ClosingArrayBracket />
+      </>
+    );
+  }
+
+  // Handles basic types (string, number, integer, boolean, object)
+  if (
+    itemsSchema?.type === "string" ||
+    itemsSchema?.type === "number" ||
+    itemsSchema?.type === "integer" ||
+    itemsSchema?.type === "boolean" ||
+    itemsSchema?.type === "object"
+  ) {
+    return (
+      <div style={{ marginLeft: ".5rem" }}>
+        <OpeningArrayBracket />
+        <SchemaItem
+          collapsible={false}
+          name="" // No name for array items
+          schemaName={getSchemaName(itemsSchema)}
+          schema={itemsSchema}
+          discriminator={false}
+          children={null}
+        />
+        <ClosingArrayBracket />
+      </div>
+    );
+  }
+
+  // Handles fallback case (use createEdges logic)
+  return (
+    <>
+      <OpeningArrayBracket />
+      {Object.entries(itemsSchema || {}).map(([key, val]: [string, any]) => (
+        <SchemaEdge
+          key={key}
+          name={key}
+          schema={val}
+          schemaType={schemaType}
+          required={
+            Array.isArray(schema.required)
+              ? schema.required.includes(key)
+              : false
+          }
+        />
+      ))}
+      <ClosingArrayBracket />
+    </>
+  );
+};
+
+interface SchemaEdgeProps {
+  name: string;
+  schemaName?: string;
+  schema: SchemaObject;
+  required?: boolean | string[];
+  nullable?: boolean | undefined;
+  discriminator?: any;
+  schemaType: "request" | "response";
+  schemaPath?: string;
+}
+
+const SchemaEdge: React.FC<SchemaEdgeProps> = ({
+  name,
+  schema,
+  required,
+  discriminator,
+  schemaType,
+  schemaPath,
+}) => {
+  if (
+    (schemaType === "request" && schema.readOnly) ||
+    (schemaType === "response" && schema.writeOnly)
+  ) {
+    return null;
+  }
+
+  if (isCircularMarker(schema)) {
+    return (
+      <SchemaItem
+        collapsible={false}
+        name={name}
+        required={Array.isArray(required) ? required.includes(name) : required}
+        schemaName={schema}
+        schema={schema}
+        discriminator={false}
+        children={null}
+      />
+    );
+  }
+
+  const schemaName = getSchemaName(schema);
+
+  if (discriminator && discriminator.propertyName === name) {
+    return (
+      <PropertyDiscriminator
+        name={name}
+        schemaName={schemaName}
+        schema={schema}
+        schemaType={schemaType}
+        discriminator={discriminator}
+        required={required}
+      />
+    );
+  }
+
+  if (schema.oneOf || schema.anyOf) {
+    // return <AnyOneOf schema={schema} schemaType={schemaType} />;
+    return (
+      <SchemaNodeDetails
+        name={name}
+        schemaName={schemaName}
+        schemaType={schemaType}
+        required={required}
+        schema={schema}
+        nullable={schema.nullable}
+        schemaPath={schemaPath}
+      />
+    );
+  }
+
+  if (schema.properties) {
+    return (
+      <SchemaNodeDetails
+        name={name}
+        schemaName={schemaName}
+        schemaType={schemaType}
+        required={required}
+        schema={schema}
+        nullable={schema.nullable}
+        schemaPath={schemaPath}
+      />
+    );
+  }
+
+  if (schema.additionalProperties) {
+    return (
+      <SchemaNodeDetails
+        name={name}
+        schemaName={schemaName}
+        schemaType={schemaType}
+        required={required}
+        schema={schema}
+        nullable={schema.nullable}
+        schemaPath={schemaPath}
+      />
+    );
+  }
+
+  if (schema.items?.properties) {
+    return (
+      <SchemaNodeDetails
+        name={name}
+        schemaName={schemaName}
+        required={required}
+        nullable={schema.nullable}
+        schema={schema}
+        schemaType={schemaType}
+        schemaPath={schemaPath}
+      />
+    );
+  }
+
+  if (schema.items?.anyOf || schema.items?.oneOf || schema.items?.allOf) {
+    return (
+      <SchemaNodeDetails
+        name={name}
+        schemaName={schemaName}
+        required={required}
+        nullable={schema.nullable}
+        schema={schema}
+        schemaType={schemaType}
+        schemaPath={schemaPath}
+      />
+    );
+  }
+
+  if (isCircularMarker(schema.items)) {
+    return (
+      <SchemaNodeDetails
+        name={name}
+        schemaName={schemaName}
+        required={required}
+        nullable={schema.nullable}
+        schema={schema}
+        schemaType={schemaType}
+        schemaPath={schemaPath}
+      />
+    );
+  }
+
+  if (schema.allOf) {
+    // handle circular properties
+    if (
+      schema.allOf &&
+      schema.allOf.length &&
+      schema.allOf.length === 1 &&
+      typeof schema.allOf[0] === "string"
+    ) {
+      return (
+        <SchemaItem
+          collapsible={false}
+          name={name}
+          required={
+            Array.isArray(required) ? required.includes(name) : required
+          }
+          schemaName={schema.allOf[0]}
+          schema={schema.allOf[0]}
+          discriminator={false}
+          children={null}
+        />
+      );
+    }
+    const mergedSchemas = mergeAllOf(schema) as SchemaObject;
+
+    if (
+      (schemaType === "request" && mergedSchemas.readOnly) ||
+      (schemaType === "response" && mergedSchemas.writeOnly)
+    ) {
+      return null;
+    }
+
+    const mergedSchemaName = getSchemaName(mergedSchemas);
+
+    if (mergedSchemas.oneOf || mergedSchemas.anyOf) {
+      return (
+        <SchemaNodeDetails
+          name={name}
+          schemaName={mergedSchemaName}
+          required={
+            Array.isArray(required) ? required.includes(name) : required
+          }
+          nullable={mergedSchemas.nullable}
+          schema={mergedSchemas}
+          schemaType={schemaType}
+          schemaPath={schemaPath}
+        />
+      );
+    }
+
+    if (mergedSchemas.properties !== undefined) {
+      return (
+        <SchemaNodeDetails
+          name={name}
+          schemaName={mergedSchemaName}
+          required={
+            Array.isArray(required) ? required.includes(name) : required
+          }
+          nullable={mergedSchemas.nullable}
+          schema={mergedSchemas}
+          schemaType={schemaType}
+          schemaPath={schemaPath}
+        />
+      );
+    }
+
+    if (mergedSchemas.items?.properties) {
+      return (
+        <SchemaNodeDetails
+          name={name}
+          schemaName={mergedSchemaName}
+          required={
+            Array.isArray(required) ? required.includes(name) : required
+          }
+          nullable={mergedSchemas.nullable}
+          schema={mergedSchemas}
+          schemaType={schemaType}
+          schemaPath={schemaPath}
+        />
+      );
+    }
+
+    return (
+      <SchemaItem
+        collapsible={false}
+        name={name}
+        required={Array.isArray(required) ? required.includes(name) : required}
+        schemaName={mergedSchemaName}
+        schema={mergedSchemas}
+        discriminator={false}
+        children={null}
+      />
+    );
+  }
+
+  return (
+    <SchemaItem
+      collapsible={false}
+      name={name}
+      required={Array.isArray(required) ? required.includes(name) : required}
+      schemaName={schemaName}
+      schema={schema}
+      discriminator={false}
+      children={null}
+    />
+  );
+};
+
+function renderChildren(
+  schema: SchemaObject,
+  schemaType: "request" | "response",
+  schemaPath?: string
+) {
+  // Fold sibling properties into each oneOf/anyOf branch to avoid duplicate
+  // property rendering. See issue #1218.
+  const hasOneOfAnyOf = !!(schema.oneOf || schema.anyOf);
+  const hasProperties = !!schema.properties;
+  const folded =
+    hasOneOfAnyOf && hasProperties ? foldSiblingsIntoBranches(schema) : schema;
+  const renderProperties =
+    hasOneOfAnyOf && hasProperties ? false : hasProperties;
+  return (
+    <>
+      {folded.oneOf && (
+        <AnyOneOf
+          schema={folded}
+          schemaType={schemaType}
+          schemaPath={schemaPath}
+        />
+      )}
+      {folded.anyOf && (
+        <AnyOneOf
+          schema={folded}
+          schemaType={schemaType}
+          schemaPath={schemaPath}
+        />
+      )}
+      {renderProperties && (
+        <Properties
+          schema={schema}
+          schemaType={schemaType}
+          schemaPath={schemaPath}
+        />
+      )}
+      {schema.additionalProperties && (
+        <AdditionalProperties schema={schema} schemaType={schemaType} />
+      )}
+      {schema.items && (
+        <Items
+          schema={schema}
+          schemaType={schemaType}
+          schemaPath={schemaPath}
+        />
+      )}
+    </>
+  );
+}
+
+const SchemaNode: React.FC<SchemaProps> = ({
+  schema: rawSchema,
+  schemaType,
+  schemaPath,
+}) => {
+  const schema = useMemo(() => normalizeSchema(rawSchema), [rawSchema]);
+
+  if (
+    (schemaType === "request" && schema.readOnly) ||
+    (schemaType === "response" && schema.writeOnly)
+  ) {
+    return null;
+  }
+
+  // Resolve discriminator recursively so nested oneOf/anyOf/allOf compositions
+  // can still render discriminator tabs. Cached via getDiscriminator so per-
+  // render cost is O(1) amortized (see #1525).
+  let workingSchema = schema;
+  const resolvedDiscriminator =
+    schema.discriminator ?? getDiscriminator(schema);
+  if (schema.allOf && !schema.discriminator && resolvedDiscriminator) {
+    workingSchema = mergeAllOf(schema) as SchemaObject;
+  }
+  if (!workingSchema.discriminator && resolvedDiscriminator) {
+    // Clone: getDiscriminator returns a nested branch's discriminator by
+    // reference, and DiscriminatorNode mutates `.mapping` when inferring
+    // variants. Without cloning, a branch that declares its own discriminator
+    // gets a mapping pointing back to itself and recurses forever.
+    workingSchema.discriminator = { ...resolvedDiscriminator };
+  }
+
+  if (workingSchema.discriminator) {
+    const { discriminator } = workingSchema;
+    return (
+      <DiscriminatorNode
+        discriminator={discriminator}
+        schema={workingSchema}
+        schemaType={schemaType}
+      />
+    );
+  }
+
+  // Handle allOf, oneOf, anyOf without discriminators
+  if (schema.allOf) {
+    // Check if allOf contains multiple oneOf/anyOf items that should be rendered separately
+    const oneOfItems = schema.allOf.filter(
+      (item: any) => item.oneOf || item.anyOf
+    );
+    const hasMultipleChoices = oneOfItems.length > 1;
+
+    if (hasMultipleChoices) {
+      // Render each oneOf/anyOf constraint first, then shared properties
+      const mergedSchemas = mergeAllOf(schema) as SchemaObject;
+
+      if (
+        (schemaType === "request" && mergedSchemas.readOnly) ||
+        (schemaType === "response" && mergedSchemas.writeOnly)
+      ) {
+        return null;
+      }
+
+      return (
+        <div>
+          {/* Render all oneOf/anyOf constraints first */}
+          {schema.allOf.map((item: any, index: number) => {
+            if (item.oneOf || item.anyOf) {
+              const itemSchemaPath = schemaPath
+                ? `${schemaPath}.allOf.${index}`
+                : undefined;
+              return (
+                <div key={index}>
+                  <AnyOneOf
+                    schema={item}
+                    schemaType={schemaType}
+                    schemaPath={itemSchemaPath}
+                  />
+                </div>
+              );
+            }
+            return null;
+          })}
+          {/* Then render shared properties from the merge */}
+          {mergedSchemas.properties && (
+            <Properties
+              schema={mergedSchemas}
+              schemaType={schemaType}
+              schemaPath={schemaPath}
+            />
+          )}
+          {mergedSchemas.items && (
+            <Items
+              schema={mergedSchemas}
+              schemaType={schemaType}
+              schemaPath={schemaPath}
+            />
+          )}
+        </div>
+      );
+    }
+
+    // For other allOf cases, use standard merge behavior
+    const mergedSchemas = mergeAllOf(schema) as SchemaObject;
+
+    if (
+      (schemaType === "request" && mergedSchemas.readOnly) ||
+      (schemaType === "response" && mergedSchemas.writeOnly)
+    ) {
+      return null;
+    }
+
+    // Fold sibling properties into each oneOf/anyOf branch to avoid duplicate
+    // property rendering. See issue #1218.
+    const hasOneOfAnyOf = !!(mergedSchemas.oneOf || mergedSchemas.anyOf);
+    const hasProperties = !!mergedSchemas.properties;
+    const folded =
+      hasOneOfAnyOf && hasProperties
+        ? foldSiblingsIntoBranches(mergedSchemas)
+        : mergedSchemas;
+    const renderProperties =
+      hasOneOfAnyOf && hasProperties ? false : hasProperties;
+
+    return (
+      <div>
+        {folded.oneOf && (
+          <AnyOneOf
+            schema={folded}
+            schemaType={schemaType}
+            schemaPath={schemaPath}
+          />
+        )}
+        {folded.anyOf && (
+          <AnyOneOf
+            schema={folded}
+            schemaType={schemaType}
+            schemaPath={schemaPath}
+          />
+        )}
+        {renderProperties && (
+          <Properties
+            schema={mergedSchemas}
+            schemaType={schemaType}
+            schemaPath={schemaPath}
+          />
+        )}
+        {mergedSchemas.items && (
+          <Items
+            schema={mergedSchemas}
+            schemaType={schemaType}
+            schemaPath={schemaPath}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Handle primitives
+  if (
+    schema.type &&
+    !schema.oneOf &&
+    !schema.anyOf &&
+    !schema.properties &&
+    !schema.allOf &&
+    !schema.items &&
+    !schema.additionalProperties
+  ) {
+    const schemaName = getSchemaName(schema);
+    return (
+      <SchemaItem
+        collapsible={false}
+        name={schema.type}
+        required={Boolean(schema.required)}
+        schemaName={schemaName}
+        schema={schema}
+        discriminator={false}
+        children={null}
+      />
+    );
+  }
+
+  return renderChildren(schema, schemaType, schemaPath);
+};
+
+export default SchemaNode;
+
+type PrimitiveSchemaType =
+  Exclude<NonNullable<SchemaObject["type"]>, "object" | "array"> | "null";
+
+const PRIMITIVE_TYPES: Record<PrimitiveSchemaType, true> = {
+  string: true,
+  number: true,
+  integer: true,
+  boolean: true,
+  null: true,
+} as const;
+
+const isPrimitive = (schema: SchemaObject) => {
+  // Enum-only schemas (without explicit type) should be treated as primitives
+  // This is valid JSON Schema where enum values define the constraints
+  if (schema.enum && !schema.type) {
+    return true;
+  }
+  return PRIMITIVE_TYPES[schema.type as PrimitiveSchemaType];
+};

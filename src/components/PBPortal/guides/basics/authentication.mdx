@@ -1,0 +1,153 @@
+---
+title: 'Authentication'
+sidebar_label: 'Authentication'
+pb_guide:
+  group: Basics
+  groupOrder: 10
+  order: 10
+  summary: OAuth2 client credentials, token scope, and service-account roles
+
+---
+
+Every Prisma Browser API call is authenticated with an **OAuth2 client-credentials** Bearer token.
+
+**On this page:** what you need, permissions and roles, get a token, use the token, errors you might hit, good practices. The Prisma Browser uses the **same authentication as the rest of the SASE platform**: you exchange a service account's client ID and secret for a short-lived token scoped to your Tenant Service Group (TSG), then send that token on every request. There are no per-endpoint API keys and no mTLS client certificates to manage. For the platform-wide version of this flow, see the SASE [Get Started](/sase/docs/getstarted/) docs.
+
+---
+
+## What you need
+
+This is the standard SASE setup. If you already make calls to another SASE API, you can reuse the same service account and TSG. There are three things to put in place:
+
+| # | What | Looks like | Set it up in Strata Cloud Manager |
+|---|---|---|---|
+| 1 | **TSG ID** (token scope) | `1234567890` | [Identify or create your TSG](/sase/docs/tenant-service-groups) |
+| 2 | **Service account** (client ID + secret) | `name@1234567890.iam.panserviceaccount.com` + a long random secret shown once | [Identify or create a service account](/sase/docs/service-accounts) |
+| 3 | **Role** on the service account | Super User or View-Only Administrator | [Assign one or more roles](/sase/docs/roles) |
+
+:::note
+Service accounts, TSGs, and roles are all managed in **Strata Cloud Manager** (the SASE platform), the same place other Strata Cloud Manager API credentials live. Without at least one role assigned, the token authenticates but every call returns `403`. See [Service accounts](/sase/docs/service-accounts), [TSGs](/sase/docs/tenant-service-groups), and [Roles](/sase/docs/roles).
+:::
+
+---
+
+## Permissions and roles
+
+The API works with exactly **two predefined roles**. You assign one to the service account in Strata Cloud Manager, and it determines what the token can do.
+
+| Role | Access | Use it for |
+|---|---|---|
+| **Super User** | Full read and write | Any create, update, delete, or publish |
+| **View-Only Administrator** | Read only (`GET` succeeds, writes return `403`) | Read-only integrations, reporting, audits |
+
+- **Custom or granular RBAC is not supported today.** You cannot scope a service account to specific endpoints, policy types, or objects; it is either full read/write (Super User) or read-only (View-Only Administrator). Finer-grained roles are planned for a future release.
+- **Least privilege:** give a read-only integration the View-Only Administrator role, and reserve Super User for automation that actually writes.
+- These roles are the same ones that gate the **Strata Cloud Manager UI**, so API access has parity with what an administrator can do in Strata Cloud Manager. For the full permission model and how roles map to Prisma Browser features, see the [Prisma Browser product documentation](https://docs.paloaltonetworks.com/prisma-access-browser).
+
+---
+
+## Step 1: Get a token
+
+Exchange your credentials at the auth token endpoint using HTTP Basic auth (client ID and secret) and a form body that requests the client-credentials grant scoped to your TSG. This is the same exchange documented in the SASE [Create an access token](/sase/docs/access-tokens) guide.
+
+| Environment | Token URL |
+|---|---|
+| prod | `https://auth.apps.paloaltonetworks.com/oauth2/access_token` |
+| qa | `https://auth.qa.appsvc.paloaltonetworks.com/auth/v1/oauth2/access_token` |
+
+Set your credentials as environment variables first (do not paste secrets into commands):
+
+```bash
+export PB_CLIENT_ID='name@1234567890.iam.panserviceaccount.com'
+export PB_CLIENT_SECRET='your-secret'
+export PB_TSG='1234567890'
+export PB_AUTH_URL='https://auth.apps.paloaltonetworks.com/oauth2/access_token'
+export PB_API_BASE='https://api.sase.paloaltonetworks.com/seb-api/v1'
+```
+
+```bash
+curl -sS -u "$PB_CLIENT_ID:$PB_CLIENT_SECRET" \
+  -d 'grant_type=client_credentials' \
+  -d "scope=tsg_id:$PB_TSG" \
+  "$PB_AUTH_URL"
+```
+
+### Response
+
+```json
+{
+  "access_token": "eyJhbGciOi...",
+  "token_type": "Bearer",
+  "expires_in": 899
+}
+```
+
+The token is a JWT and lasts about **15 minutes** (`expires_in` is in seconds). Cache it and re-fetch when it is close to expiring; do not request a new token per call.
+
+---
+
+## Step 2: Use the token
+
+Send the token in the `Authorization` header on every API request:
+
+```
+Authorization: Bearer <access_token>
+```
+
+Capture it into `PB_TOKEN` for the rest of the guide:
+
+```bash
+export PB_API_BASE='https://api.sase.paloaltonetworks.com/seb-api/v1'
+export PB_TOKEN="$(curl -sS -u "$PB_CLIENT_ID:$PB_CLIENT_SECRET" \
+  -d 'grant_type=client_credentials' -d "scope=tsg_id:$PB_TSG" \
+  "$PB_AUTH_URL" | python3 -c 'import sys,json; print(json.load(sys.stdin)["access_token"])')"
+```
+
+A reusable Python helper used throughout the guide:
+
+```python
+import os, time, requests
+
+_token = {"value": None, "exp": 0}
+
+def get_token():
+    if _token["value"] and time.time() < _token["exp"] - 60:
+        return _token["value"]
+    resp = requests.post(
+        os.environ["PB_AUTH_URL"],
+        auth=(os.environ["PB_CLIENT_ID"], os.environ["PB_CLIENT_SECRET"]),
+        data={"grant_type": "client_credentials", "scope": f"tsg_id:{os.environ['PB_TSG']}"},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    body = resp.json()
+    _token["value"] = body["access_token"]
+    _token["exp"] = time.time() + body.get("expires_in", 900)
+    return _token["value"]
+
+def auth_headers():
+    return {"Authorization": f"Bearer {get_token()}"}
+```
+
+---
+
+## Errors you might hit
+
+| HTTP | Cause | Fix |
+|---|---|---|
+| 401 at the token URL | Wrong client ID / secret, or wrong `scope` format | Re-check credentials; scope must be `tsg_id:<TSG>` |
+| 401 at the API | Token missing, malformed, or expired | Fetch a fresh token and retry |
+| 403 at the API | Token is valid but the service account lacks the role | Use a **Super User** account for writes |
+| 404 with empty body, only `via: 1.1 google` | Wrong path prefix | Ensure the path is under `/seb-api/v1` |
+
+---
+
+## Good practices
+
+- **Store secrets outside your code** (environment variables, a secrets manager). Never commit them.
+- **Reuse tokens** within their ~15-minute lifetime; refresh slightly early.
+- **Use least privilege**: a read-only integration should use a **View-Only Administrator** account. See [Permissions and roles](#permissions-and-roles).
+- The same token authorizes any Strata Cloud Manager service on `api.sase.paloaltonetworks.com`, not only the Prisma Browser, subject to the service account's roles.
+
+Next: make your first call in [Getting started](/prisma-browser/guide/getting-started).
+

@@ -1,0 +1,1977 @@
+/* Prisma Browser developer portal: scoped theme ported from the prototype.
+   Everything is scoped under .pb-portal so it never leaks into pan.dev chrome. */
+
+@use "./design-system/coreui-tokens";
+@use "./design-system/coreui-token-aliases";
+
+/* Core UI's base palette (used until the client sets html[data-pab-theme]) is
+   the pink brand default, so accent-colored UI (active tab, buttons) flashes
+   pink on first paint before hydration. Pin the accent palette to the light
+   values by default; dark mode still overrides via html[data-pab-theme="dark"]. */
+html:not([data-pab-theme="dark"]) .pb-portal,
+html:not([data-pab-theme="dark"]) .pb-headergroup {
+  --pab-color-primary: #485bff;
+  --pab-color-primary-01: #4021ff;
+  --pab-color-primary-02: #485bff;
+  --pab-color-primary-03: #7180ff;
+  --pab-color-primary-04: #8e99ff;
+  --pab-color-primary-05: #b3bbff;
+  --pab-color-primary-06: #d5daff;
+  --pab-color-primary-07: #e7e9ff;
+  --pab-color-primary-08: #f1f2ff;
+}
+
+/* ---------------- surface switcher ---------------- */
+/* The pan.dev navbar and the PB switcher are wrapped in one sticky container
+   (see src/theme/Navbar) so they scroll together as a single header and the
+   switcher can never slide behind the navbar. The group is the sticky element;
+   the navbar and switcher flow inside it. */
+.pb-headergroup {
+  position: sticky;
+  top: 0;
+  z-index: 300;
+}
+.pb-headergroup .navbar {
+  position: static;
+}
+/* The site keeps pan.dev's navbar.hideOnScroll. Inside the PB group the navbar
+   and switcher have to move as one unit, so cancel the theme's hide transform
+   here only; every non-PB page keeps the hide-on-scroll behaviour. */
+.pb-headergroup .navbar--hidden {
+  transform: none;
+}
+.pb-switcher {
+  background: #ffffff;
+  border-bottom: 1px solid var(--pb-border);
+}
+html[data-pab-theme="dark"] .pb-switcher {
+  background: #07080f;
+  border-bottom: 1px solid #1e2345;
+}
+.pb-switcher-inner {
+  padding: 0 24px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pb-switcher-spacer {
+  flex: 1;
+}
+.pb-bar-btn {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--pb-text-muted);
+  background: var(--pb-bg);
+  border: 1px solid var(--pb-border-strong);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.pb-bar-btn:hover {
+  border-color: var(--pb-text-soft);
+  color: var(--pb-text);
+  text-decoration: none;
+}
+.pb-bar-btn.primary {
+  color: var(--pab-color-text-invert);
+  background: var(--pb-accent);
+  border-color: var(--pb-accent);
+}
+.pb-bar-btn.primary:hover {
+  background: var(--pb-accent-hover);
+  border-color: var(--pb-accent-hover);
+  color: var(--pab-color-text-invert);
+}
+.pb-bar-btn-rss {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pb-bar-btn-rss svg {
+  display: block;
+}
+/* Draw attention to the per-surface CTA (Download spec / Subscribe) the moment
+   the user lands on that page: a quick pop-in plus two accent ripples. The
+   button only mounts on its surface, so the animation replays on each switch. */
+.pb-bar-cta {
+  animation:
+    pb-cta-pop 0.24s ease-out both,
+    pb-cta-ring 0.8s ease-out 0.08s 1;
+}
+@keyframes pb-cta-pop {
+  0% {
+    transform: scale(0.97);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes pb-cta-ring {
+  0% {
+    box-shadow: 0 0 0 0 var(--pb-accent-soft);
+  }
+  100% {
+    box-shadow: 0 0 0 6px rgba(0, 0, 0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pb-bar-cta {
+    animation: none;
+  }
+}
+.pb-switcher-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--pb-text);
+  white-space: nowrap;
+}
+.pb-switcher-brand:hover {
+  text-decoration: none;
+  color: var(--pb-text);
+}
+.pb-mark {
+  height: 36px;
+  width: auto;
+  flex: none;
+  object-fit: contain;
+  display: block;
+}
+html[data-pab-theme="dark"] .pb-mark {
+  filter: invert(1) hue-rotate(180deg);
+}
+.pb-switcher-sep {
+  width: 1px;
+  height: 22px;
+  background: var(--pb-border-strong);
+  flex: none;
+  margin: 0 2px;
+}
+/* theme toggle removed: pan.dev's global navbar already provides one */
+.pb-switcher-links {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pb-tab {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pb-text);
+  opacity: 0.7;
+  padding: 8px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.pb-tab:hover,
+.pb-tab.active {
+  color: #818cf8;
+  background: rgba(72, 91, 255, 0.18);
+  opacity: 1;
+  text-decoration: none;
+}
+.pb-tab.active {
+  background: rgba(72, 91, 255, 0.22);
+}
+html[data-pab-theme="light"] .pb-tab:hover,
+html[data-pab-theme="light"] .pb-tab.active {
+  color: var(--pb-neon-blue);
+}
+
+/* Disabled "coming soon" tab: visible but not interactive. */
+.pb-tab--soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+.pb-tab--soon:hover {
+  color: var(--pb-text);
+  background: transparent;
+}
+
+/* Shared "coming soon" pill (nav tab + overview card). */
+.pb-soon-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: var(--pb-neon-blue);
+  background: rgba(72, 91, 255, 0.16);
+  border: 1px solid color-mix(in srgb, var(--pb-neon-blue) 40%, transparent);
+  white-space: nowrap;
+}
+
+/* ---------------- guide shell ----------------
+   Mirrors pan.dev's native doc layout so Guide <-> API reference don't shift:
+   a flush-left rail of --doc-sidebar-width, content filling the rest. */
+.pb-portal {
+  --pb-sidebar: var(--doc-sidebar-width, 300px);
+  --pb-topstack: calc(var(--ifm-navbar-height, 60px) + 49px);
+}
+
+.pb-shell {
+  display: grid;
+  grid-template-columns: var(--pb-sidebar) minmax(0, 1fr);
+  align-items: start;
+}
+.pb-shell--with-toc {
+  grid-template-columns: var(--pb-sidebar) minmax(0, 1fr) 220px;
+}
+.pb-wide {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 32px 100px;
+}
+
+.pb-rail {
+  position: sticky;
+  top: var(--pb-topstack);
+  align-self: start;
+  height: calc(100vh - var(--pb-topstack));
+  overflow-y: auto;
+  padding: 22px 16px 60px;
+  border-right: 1px solid var(--pb-border);
+}
+.pb-filter {
+  width: 100%;
+  font: inherit;
+  font-size: 13px;
+  color: var(--pb-text);
+  background: var(--pb-bg-soft);
+  border: 1px solid var(--pb-border);
+  border-radius: 8px;
+  padding: 8px 11px;
+  margin-bottom: 16px;
+}
+
+.pb-filter:focus {
+  outline: none;
+  border-color: var(--pb-accent);
+}
+.pb-nav-group {
+  margin-bottom: 16px;
+}
+.pb-nav-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--pb-text-muted);
+  font-weight: 700;
+  margin: 0 0 6px 10px;
+}
+/* collapsible group heading rendered as a button */
+button.pb-nav-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: calc(100% - 10px);
+  padding: 4px 8px 4px 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+button.pb-nav-label:hover {
+  color: var(--pb-text);
+}
+.pb-nav-caret {
+  flex: none;
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease;
+}
+.pb-nav-group.is-open > .pb-nav-label .pb-nav-caret {
+  transform: rotate(0deg);
+}
+/* animate expand / collapse via grid-template-rows 0fr -> 1fr */
+.pb-nav-group-items {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+}
+.pb-nav-group.is-open > .pb-nav-group-items {
+  grid-template-rows: 1fr;
+}
+.pb-nav-group-items-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+.pb-nav-link {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 7px;
+  color: var(--pb-text-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  border-left: 2px solid transparent;
+}
+.pb-nav-link:hover {
+  background: var(--pb-bg-soft);
+  color: var(--pb-text);
+  text-decoration: none;
+}
+.pb-nav-link.active {
+  background: var(--pb-bg-soft);
+  color: var(--pb-accent);
+  font-weight: 600;
+  border-left-color: var(--pb-accent);
+}
+.pb-nav-empty {
+  color: var(--pb-text-soft);
+  font-size: 13px;
+  padding: 8px 10px;
+}
+/* level-3 expandable sub-group (e.g. Applications) inside a section */
+.pb-nav-subgroup {
+  margin: 2px 0;
+}
+button.pb-nav-sublabel {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pb-text-muted);
+  border-radius: 7px;
+}
+button.pb-nav-sublabel:hover {
+  background: var(--pb-bg-soft);
+  color: var(--pb-text);
+}
+.pb-nav-subitems {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
+}
+.pb-nav-subgroup.is-open > .pb-nav-subitems {
+  grid-template-rows: 1fr;
+}
+.pb-nav-subitems .pb-nav-link {
+  padding-left: 22px;
+}
+
+.pb-main {
+  min-width: 0;
+  padding: 30px 40px 100px;
+}
+.pb-doc {
+  max-width: 860px;
+}
+/* Hide the auto-generated heading anchor links in the guide body. */
+.pb-doc .hash-link {
+  display: none;
+}
+.pb-doc-h1 {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+  color: var(--pb-text);
+}
+/* page header row: H1 on the left, LLM download action on the right */
+.pb-doc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+.pb-doc-header .pb-doc-h1 {
+  margin: 0;
+}
+/* "for AI" split button (copy + download menu) beside the guide H1 */
+.pb-ai {
+  position: relative;
+  flex: none;
+  margin-top: 3px;
+}
+.pb-ai-split {
+  display: inline-flex;
+}
+.pb-ai-main,
+.pb-ai-caret {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pb-text);
+  background: var(--pb-bg-soft);
+  border: 1px solid var(--pb-border-strong);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition:
+    color 0.14s,
+    border-color 0.14s;
+}
+.pb-ai-main {
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 8px 0 0 8px;
+  border-right: 0;
+  white-space: nowrap;
+}
+.pb-ai-caret {
+  padding: 7px 10px;
+  border-radius: 0 8px 8px 0;
+}
+.pb-ai-main:hover,
+.pb-ai-caret:hover,
+.pb-ai-caret[aria-expanded="true"] {
+  color: var(--pb-accent);
+  border-color: var(--pb-accent);
+}
+.pb-ai-main.is-copied {
+  color: var(--pb-new);
+  border-color: var(--pb-new);
+}
+.pb-ai-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 20;
+  min-width: 232px;
+  background: var(--pb-bg);
+  border: 1px solid var(--pb-border-strong);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+.pb-ai-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pb-text);
+}
+.pb-ai-item:hover {
+  background: var(--pb-bg-soft);
+  color: var(--pb-accent);
+  text-decoration: none;
+}
+.pb-ai-item i {
+  width: 15px;
+  text-align: center;
+}
+@media (max-width: 600px) {
+  .pb-doc-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+/* right-side sticky TOC ("On This Page") */
+.pb-toc {
+  position: sticky;
+  top: var(--pb-topstack);
+  align-self: start;
+  padding: 32px 16px 60px;
+  border-left: 1px solid var(--pb-border);
+  font-size: 13px;
+}
+.pb-toc-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--pb-text-muted);
+  margin: 0 0 10px;
+}
+.pb-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pb-toc-item {
+  margin: 0;
+  padding: 0;
+}
+.pb-toc-item a {
+  display: block;
+  padding: 4px 8px;
+  border-left: 2px solid transparent;
+  border-radius: 0 4px 4px 0;
+  color: var(--pb-text-muted);
+  font-size: 13px;
+  line-height: 1.4;
+  text-decoration: none;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+.pb-toc-item a:hover {
+  color: var(--pb-text);
+  text-decoration: none;
+}
+.pb-toc-item--active > a {
+  color: var(--pb-accent);
+  border-left-color: var(--pb-accent);
+  font-weight: 600;
+}
+.pb-toc-h3 > a {
+  padding-left: 20px;
+  font-size: 12px;
+}
+
+/* prev / next */
+.pb-prevnext {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--pb-border);
+}
+.pb-prevnext a {
+  flex: 1 1 0;
+  border: 1px solid var(--pb-border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--pb-text);
+  background: var(--pb-bg);
+}
+.pb-prevnext a:hover {
+  border-color: var(--pb-accent);
+  text-decoration: none;
+}
+.pb-prevnext .nxt {
+  text-align: right;
+}
+.pb-prevnext .lbl {
+  font-size: 12px;
+  color: var(--pb-text-soft);
+}
+.pb-prevnext .ttl {
+  font-weight: 700;
+  color: var(--pb-accent);
+  margin-top: 2px;
+}
+
+/* ---------------- landing / overview (neon) ---------------- */
+.pb-portal {
+  --pb-neon-blue: #485bff;
+  --pb-neon-cyan: #00f0ff;
+  --pb-neon-purple: #b047ff;
+  /* fonts from the prototype: Outfit for UI, JetBrains Mono for code */
+  --pb-mono: "JetBrains Mono", ui-monospace, "Menlo", monospace;
+  font-family: "Outfit", var(--ifm-font-family-base), sans-serif;
+  /* page "ink" background from the prototype */
+  --pb-ink: #f0f4ff;
+}
+html[data-pab-theme="dark"] .pb-portal {
+  --pb-ink: #07080f;
+}
+/* Ink background belongs to the full-page portal surfaces (overview, guide,
+   release-notes, design-system). The API surface only wraps a fixed switcher
+   in .pb-portal, so applying a background/min-height there would paint a giant
+   block over the native reference UI. */
+.pb-portal:not([data-surface="api"]) {
+  background-color: var(--pb-ink);
+  min-height: calc(100vh - var(--ifm-navbar-height, 60px));
+}
+
+/* overview: aurora orbs: DOM elements with filter: blur, matching the HTML
+   prototype exactly. Two fixed blobs float behind the page content. */
+.pb-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: pb-orb-float 8s ease-in-out infinite;
+}
+.pb-orb-1 {
+  width: 500px;
+  height: 500px;
+  top: -100px;
+  left: -100px;
+  background: rgba(176, 71, 255, 0.3);
+  animation-delay: 0s;
+}
+.pb-orb-2 {
+  width: 400px;
+  height: 400px;
+  bottom: -50px;
+  right: -50px;
+  background: rgba(72, 91, 255, 0.4);
+  animation-delay: -4s;
+}
+@keyframes pb-orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(20px, -20px);
+  }
+}
+/* light mode: larger orbs, gradient fills, matching the prototype */
+html:not([data-pab-theme="dark"]) .pb-orb-1 {
+  width: 700px;
+  height: 700px;
+  top: -200px;
+  left: -100px;
+  background: linear-gradient(135deg, #c7d2fe, #a78bfa);
+  opacity: 0.6;
+  filter: blur(100px);
+}
+html:not([data-pab-theme="dark"]) .pb-orb-2 {
+  width: 600px;
+  height: 600px;
+  bottom: -150px;
+  right: -150px;
+  background: linear-gradient(135deg, #99f6e4, #67e8f9);
+  opacity: 0.5;
+  filter: blur(100px);
+}
+/* content sections sit above the orbs (z-index: 0) */
+.pb-portal[data-surface="overview"] .pb-hero,
+.pb-portal[data-surface="overview"] .pb-cards-section {
+  position: relative;
+  z-index: 1;
+}
+
+/* API reference: plain ink background, matching the developer guide surface
+   (no aurora glow: that's reserved for the overview). The
+   .pb-portal[data-surface="api"] wrapper only holds the fixed switcher, so the
+   background is painted as a fixed full-viewport layer (z-index below content)
+   behind the native reference UI. Keyed on data-theme (set early by Docusaurus)
+   to avoid a first-paint flash. */
+.pb-portal[data-surface="api"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: #f0f4ff;
+}
+html[data-theme="dark"] .pb-portal[data-surface="api"]::before {
+  background-color: #07080f;
+}
+
+.pb-hero {
+  position: relative;
+  padding: 40px 24px 8px;
+  text-align: center;
+}
+.pb-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.pb-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px 6px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--pb-border);
+  background: var(--pb-bg-soft);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--pb-text-muted);
+  margin-bottom: 26px;
+}
+.pb-eyebrow .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pb-neon-cyan);
+  box-shadow: 0 0 8px var(--pb-neon-cyan);
+  animation: pb-pulse 2s ease-in-out infinite;
+}
+@keyframes pb-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+.pb-hero h1 {
+  font-family: "Outfit", sans-serif;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  margin: 0 auto;
+  max-width: 720px;
+  background: linear-gradient(
+    120deg,
+    #0f172a 0%,
+    #485bff 35%,
+    #9333ea 55%,
+    #485bff 75%,
+    #0f172a 100%
+  );
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* color sweep across the headline; colors move, layout does not */
+  animation: pb-title-shimmer 6s ease-in-out infinite alternate;
+}
+@keyframes pb-title-shimmer {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 100% center;
+  }
+}
+html[data-pab-theme="dark"] .pb-hero h1 {
+  /* background-image only, so the base rule's background-size + animation persist */
+  background-image: linear-gradient(
+    120deg,
+    #ffffff 0%,
+    #b9c5ff 35%,
+    #00f0ff 55%,
+    #b9c5ff 75%,
+    #ffffff 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* respect users who prefer reduced motion: hold everything static */
+@media (prefers-reduced-motion: reduce) {
+  .pb-portal[data-surface="overview"],
+  .pb-hero h1 {
+    animation: none;
+  }
+}
+.pb-hero-sub {
+  font-size: 18px;
+  color: var(--pb-text-muted);
+  max-width: 560px;
+  margin: 20px auto 0;
+  line-height: 1.6;
+}
+.pb-hero-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+.pb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 26px;
+  border-radius: 12px;
+  border: 1px solid var(--pb-border-strong);
+  color: var(--pb-text);
+  background: var(--pb-bg);
+  cursor: pointer;
+  transition: 0.2s;
+}
+.pb-btn:hover {
+  border-color: var(--pb-text-soft);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+.pb-btn.primary {
+  background: var(--pb-accent);
+  border-color: var(--pb-accent);
+  color: #fff;
+  box-shadow: 0 8px 24px
+    color-mix(in srgb, var(--pb-neon-blue) 32%, transparent);
+}
+.pb-btn.primary:hover {
+  background: var(--pb-accent-hover);
+  border-color: var(--pb-accent-hover);
+  color: #fff;
+  box-shadow: 0 12px 32px
+    color-mix(in srgb, var(--pb-neon-blue) 45%, transparent);
+}
+.pb-btn.ghost {
+  color: var(--pb-text);
+  background: var(--pb-bg-soft);
+  border-color: var(--pb-border-strong);
+}
+.pb-btn.ghost:hover {
+  border-color: var(--pb-accent);
+  color: var(--pb-accent);
+}
+
+/* cards */
+.pb-cards-section {
+  max-width: 1100px;
+  margin: 52px auto 0;
+  padding: 0 32px;
+}
+.pb-cards-heading {
+  font-family: "Outfit", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: var(--pb-accent);
+  margin: 0 0 14px;
+}
+html[data-pab-theme="dark"] .pb-cards-heading {
+  color: var(--pb-neon-cyan);
+}
+.pb-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+.pb-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--pb-border);
+  border-radius: 14px;
+  padding: 22px;
+  background: var(--pb-bg);
+  overflow: hidden;
+  transition: 0.25s;
+}
+.pb-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(
+    180deg,
+    var(--pb-neon-blue),
+    var(--pb-neon-purple),
+    var(--pb-neon-cyan)
+  );
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.pb-card:hover {
+  border-color: var(--pb-accent);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 50px
+    color-mix(in srgb, var(--pb-neon-blue) 16%, transparent);
+  text-decoration: none;
+}
+.pb-card:hover::before {
+  opacity: 1;
+}
+.pb-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--pb-bg-soft);
+  border: 1px solid var(--pb-border);
+  display: grid;
+  place-items: center;
+  color: var(--pb-accent);
+  font-size: 19px;
+  margin-bottom: 12px;
+}
+.pb-card-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--pb-text);
+}
+.pb-card-title .ext {
+  color: var(--pb-text-soft);
+  font-weight: 400;
+}
+.pb-card-text {
+  font-size: 14px;
+  color: var(--pb-text-muted);
+  margin-top: 8px;
+  line-height: 1.55;
+}
+.pb-card-cta {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pb-accent);
+  margin-top: auto;
+  padding-top: 12px;
+}
+.pb-card-cta--muted {
+  color: var(--pb-text-muted);
+}
+
+/* Disabled "coming soon" card: no hover lift, no accent bar, not clickable. */
+.pb-card--soon {
+  cursor: default;
+  opacity: 0.7;
+}
+.pb-card--soon:hover {
+  border-color: var(--pb-border);
+  transform: none;
+  box-shadow: none;
+}
+.pb-card--soon:hover::before {
+  opacity: 0;
+}
+.pb-soon-pill-row {
+  margin-top: auto;
+  padding-top: 14px;
+}
+/* use cases: card-less, two per row, divided by hairlines */
+.pb-uc-section {
+  max-width: 1080px;
+  margin: 72px auto 0;
+}
+.pb-uc-title {
+  font-family: "Outfit", sans-serif;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 4px 0 8px;
+  color: var(--pb-text);
+}
+.pb-uc-lede {
+  text-align: center;
+  color: var(--pb-text-soft);
+  max-width: 600px;
+  margin: 0 auto 34px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.pb-uc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 56px;
+  row-gap: 0;
+}
+.pb-uc-item {
+  display: block;
+  padding: 30px 0;
+  border-top: 1px solid var(--pb-border);
+  transition: border-color 0.2s;
+}
+.pb-uc-item:hover {
+  border-top-color: var(--pb-border-strong);
+  text-decoration: none;
+}
+.pb-uc-item:hover .pb-uc-more i {
+  transform: translateX(5px);
+}
+.pb-uc-chip {
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  color: #fff;
+  font-size: 18px;
+  background: linear-gradient(
+    135deg,
+    var(--pb-neon-blue),
+    var(--pb-neon-purple) 55%,
+    var(--pb-neon-cyan)
+  );
+  box-shadow: 0 6px 18px
+    color-mix(in srgb, var(--pb-neon-blue) 32%, transparent);
+}
+.pb-uc-t {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--pb-text);
+}
+.pb-uc-b {
+  color: var(--pb-text-muted);
+  font-size: 14.5px;
+  margin-top: 8px;
+  line-height: 1.6;
+  max-width: 440px;
+}
+.pb-uc-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  color: var(--pb-accent);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+.pb-uc-more i {
+  transition: transform 0.2s;
+}
+
+.pb-section-h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 40px 0 4px;
+}
+
+/* subscribe */
+.pb-sub {
+  margin-top: 28px;
+  border: 1px solid var(--pb-border);
+  border-radius: 14px;
+  padding: 24px;
+  background: var(--pb-bg);
+}
+.pb-sub h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+}
+.pb-sub p {
+  font-size: 14px;
+  color: var(--pb-text-muted);
+  margin: 8px 0 16px;
+}
+.pb-sub-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pb-sub-form input[type="email"] {
+  flex: 1 1 240px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--pb-text);
+  background: var(--pb-bg);
+  border: 1px solid var(--pb-border-strong);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.pb-sub-form input[type="email"]:focus {
+  outline: none;
+  border-color: var(--pb-accent);
+  box-shadow: 0 0 0 3px var(--pb-accent-soft);
+}
+.pb-sub-done {
+  font-size: 14px;
+  color: var(--pb-text-muted);
+  background: var(--pb-new-bg);
+  border: 1px solid var(--pb-new);
+  border-radius: 10px;
+  padding: 13px 15px;
+}
+
+/* ---------------- release notes ---------------- */
+.pb-rn-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.pb-rn-head .pb-doc-h1 {
+  margin: 0;
+}
+.pb-rn-lead {
+  color: var(--pb-text-muted);
+  font-size: 15px;
+  max-width: 720px;
+  margin: 14px 0 22px;
+}
+.pb-rail-actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.mini-btn {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pb-text-muted);
+  background: var(--pb-bg);
+  border: 1px solid var(--pb-border-strong);
+  border-radius: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: 0.14s;
+}
+.mini-btn:hover {
+  border-color: var(--pb-text-soft);
+  color: var(--pb-text);
+}
+.pb-datelist {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.pb-datelist a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  color: var(--pb-text-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.pb-datelist a:hover {
+  background: var(--pb-bg-soft);
+  text-decoration: none;
+  color: var(--pb-text);
+}
+.pb-datelist a .n {
+  font-size: 11px;
+  color: var(--pb-text-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.pb-box {
+  border: 1px solid var(--pb-border);
+  border-radius: 12px;
+  background: var(--pb-bg);
+  margin-top: 14px;
+  overflow: hidden;
+  scroll-margin-top: 70px;
+}
+.pb-box-head {
+  display: grid;
+  grid-template-columns: 20px 172px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 15px 18px;
+  cursor: pointer;
+}
+.pb-box-head:hover {
+  background: var(--pb-bg-soft);
+}
+.pb-chev {
+  width: 16px;
+  height: 16px;
+  color: var(--pb-text-soft);
+  transition: transform 0.18s;
+}
+.pb-box.open .pb-chev {
+  transform: rotate(90deg);
+}
+.pb-box-date {
+  font-weight: 700;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.pb-box-headmain {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pb-counters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.pb-summary {
+  color: var(--pb-text-muted);
+  font-size: 14px;
+}
+.pb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--pb-border);
+  background: var(--pb-bg-soft);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pb-text-muted);
+  white-space: nowrap;
+}
+.pb-chip .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.pb-chip .cn {
+  font-variant-numeric: tabular-nums;
+  color: var(--pb-text);
+}
+.pb-box-body {
+  border-top: 1px solid var(--pb-border);
+  padding: 6px 18px 18px;
+}
+.pb-group {
+  padding-top: 14px;
+}
+.pb-group-label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: var(--pb-text-soft);
+  margin-bottom: 8px;
+}
+.pb-change {
+  padding: 11px 0;
+  border-top: 1px dashed var(--pb-border);
+}
+.pb-group .pb-change:first-of-type {
+  border-top: 0;
+}
+.pb-change-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.pb-change-main {
+  min-width: 0;
+}
+.pb-change-text {
+  font-size: 14.5px;
+  color: var(--pb-text);
+  margin: 0;
+}
+.pb-change-text code {
+  font-family: var(--pb-mono);
+  font-size: 12.8px;
+  background: var(--pb-bg-soft);
+  border: 1px solid var(--pb-border);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+.pb-endpoint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: var(--pb-mono);
+}
+.pb-todo {
+  margin-top: 8px;
+  font-size: 13.5px;
+  color: var(--pb-breaking-text);
+  background: var(--pb-breaking-bg);
+  border-radius: 7px;
+  padding: 7px 10px;
+}
+.pb-todo b {
+  font-weight: 700;
+}
+.pb-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.pb-badge .bd {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.pb-badge.breaking {
+  background: var(--pb-breaking-bg);
+  color: var(--pb-breaking-text);
+}
+.pb-badge.breaking .bd {
+  background: var(--pb-breaking);
+}
+.pb-badge.new {
+  background: var(--pb-new-bg);
+  color: var(--pb-new-text);
+}
+.pb-badge.new .bd {
+  background: var(--pb-new);
+}
+.pb-badge.changed {
+  background: var(--pb-changed-bg);
+  color: var(--pb-changed-text);
+}
+.pb-badge.changed .bd {
+  background: var(--pb-changed);
+}
+.pb-badge.deprecated {
+  background: var(--pb-deprecated-bg);
+  color: var(--pb-deprecated-text);
+}
+.pb-badge.deprecated .bd {
+  background: var(--pb-deprecated);
+}
+.pb-badge.removed {
+  background: var(--pb-removed-bg);
+  color: var(--pb-removed-text);
+}
+.pb-badge.removed .bd {
+  background: var(--pb-removed);
+}
+.pb-badge.fixed {
+  background: var(--pb-fixed-bg);
+  color: var(--pb-fixed-text);
+}
+.pb-badge.fixed .bd {
+  background: var(--pb-fixed);
+}
+.pb-diff {
+  margin-top: 9px;
+  border: 1px solid var(--pb-border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: var(--pb-mono);
+  font-size: 12.6px;
+  line-height: 1.7;
+}
+.pb-diff .line {
+  padding: 3px 12px;
+  white-space: pre;
+  overflow-x: auto;
+}
+.pb-diff .del {
+  background: var(--pab-color-negative-08);
+  color: var(--pab-color-negative-01);
+}
+.pb-diff .add {
+  background: var(--pab-color-positive-08);
+  color: var(--pab-color-positive-01);
+}
+.pb-diff .gut {
+  display: inline-block;
+  width: 14px;
+  color: var(--pb-text-soft);
+  user-select: none;
+}
+.pb-rn-empty {
+  margin-top: 26px;
+  color: var(--pb-text-soft);
+  font-size: 14px;
+}
+
+/* ---------------- subscribe modal ---------------- */
+.pb-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--pab-color-modal-backdrop);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.pb-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: var(--pb-bg);
+  border: 1px solid var(--pb-border);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: var(--pb-shadow-modal);
+  color: var(--pb-text);
+}
+.pb-modal h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--pb-text);
+  margin: 0;
+}
+.pb-modal-sub {
+  font-size: 14px;
+  color: var(--pb-text-muted);
+  margin: 8px 0 18px;
+  line-height: 1.5;
+}
+.pb-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 0;
+  background: none;
+  color: var(--pb-text-soft);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.pb-modal-close:hover {
+  background: var(--pb-bg-soft);
+  color: var(--pb-text);
+}
+.pb-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pb-modal-form input[type="email"] {
+  font: inherit;
+  font-size: 15px;
+  color: var(--pb-text);
+  background: var(--pb-bg);
+  border: 1px solid var(--pb-border-strong);
+  border-radius: 10px;
+  padding: 11px 13px;
+  width: 100%;
+}
+.pb-modal-form input[type="email"]:focus {
+  outline: none;
+  border-color: var(--pb-accent);
+  box-shadow: 0 0 0 3px var(--pb-accent-soft);
+}
+.pb-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.pb-sub-link {
+  background: none;
+  border: 0;
+  color: var(--pb-accent);
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 6px;
+  font-family: inherit;
+}
+.pb-sub-link:hover {
+  text-decoration: underline;
+}
+
+/* subscribe: rail button + modal sections */
+.pb-sub-btn {
+  color: var(--pb-accent);
+  border-color: var(--pb-accent);
+}
+.pb-sub-btn:hover {
+  color: var(--pb-accent);
+  border-color: var(--pb-accent);
+  background: var(--pb-accent-soft);
+}
+.pb-sub-section {
+  margin-top: 18px;
+}
+.pb-sub-section:first-of-type {
+  margin-top: 4px;
+}
+.pb-sub-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pb-text-soft);
+  margin-bottom: 8px;
+}
+.pb-sub-hint {
+  font-size: 13px;
+  color: var(--pb-text-muted);
+  margin: 0 0 6px;
+}
+.pb-sub-readers {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pb-sub-steps {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13.5px;
+  color: var(--pb-text-muted);
+  line-height: 1.6;
+}
+.pb-sub-steps li {
+  margin-bottom: 3px;
+}
+.pb-copyfield {
+  display: flex;
+  gap: 8px;
+}
+.pb-copyfield input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--pb-text);
+  background: var(--pb-bg-soft);
+  border: 1px solid var(--pb-border-strong);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.pb-copyfield input.mono {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 12.5px;
+}
+.pb-copyfield input:focus {
+  outline: none;
+  border-color: var(--pb-accent);
+  box-shadow: 0 0 0 3px var(--pb-accent-soft);
+}
+.pb-copyfield .mini-btn.copied {
+  color: var(--pb-new);
+  border-color: var(--pb-new);
+}
+.pb-rn-back {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin: 4px 0 0;
+}
+
+/* API-reference pages: offset the native doc sidebar below the persistent switcher */
+/* Prisma Browser API reference layout: render the surface switcher as a
+   full-width sub header pinned directly under the site navbar, with the left
+   API nav and the content column both starting below it. Keyed on the
+   Docusaurus-owned per-doc-id html class (Docusaurus manages
+   documentElement.className, so a JS-toggled class does not survive route
+   renders). Scoped to browser-mgmt pages only. */
+html[class*="docs-doc-id-prisma-browser/api/"] {
+  /* The grouped header (navbar + switcher) sits in normal flow, so the doc
+     content already starts below it. Docusaurus, however, still applies its
+     fixed-navbar compensations to the sidebar column (a negative margin-top that
+     pulls it up behind a navbar that is no longer fixed). Neutralise that so the
+     sidebar column starts level with the content instead of being dragged up
+     under the sub-header. */
+  .theme-doc-sidebar-container {
+    margin-top: 0;
+  }
+
+  /* The left API nav is sticky against the viewport, so pin it just below the
+     full header stack (navbar height + the 49px switcher). */
+  .theme-doc-sidebar-container [class*="sidebarViewport"] {
+    top: calc(var(--ifm-navbar-height, 60px) + 49px);
+    max-height: calc(100vh - var(--ifm-navbar-height, 60px) - 49px);
+  }
+
+  /* Drop the navbar-height top padding (there is no fixed navbar to clear) and
+     keep a small padding so the first item never sits flush against the
+     sub-header edge. */
+  .theme-doc-sidebar-container [class*="sidebarViewport"] > [class*="sidebar"] {
+    padding-top: 8px;
+  }
+
+  /* Wide screens: the doc content column is centered by default (margin: 0 auto)
+     which leaves a large empty band between the sidebar and the content on ultra
+     wide monitors. Align it to the left and let it use a bit more width. */
+  [class*="docMainContainer"] > .container {
+    margin-left: 0;
+    max-width: 1680px;
+  }
+
+  /* The auto-generated "Introduction" info page used to be hidden here with
+     `nav.menu > ul > li:first-child { display: none }`. It is now switched off at
+     the plugin level (showInfoPage: false), so that rule only hid the first real
+     section. Do not reinstate it. */
+
+  /* the active-category highlight sits on the link, which starts after the
+     row's caret ::before, so it never reaches the left edge. Move the highlight
+     to the full-width row (selectors mirror the theme's own high-specificity
+     !important rule so they win the cascade). */
+  .theme-doc-sidebar-menu
+    .menu__list-item
+    .menu__list-item-collapsible:has(> .menu__link--active) {
+    background: var(--ifm-menu-color-background-active);
+    border-radius: var(--ifm-menu-link-border-radius, 0.25rem);
+  }
+  .theme-doc-sidebar-menu
+    .menu__list-item
+    .menu__list-item-collapsible
+    .menu__link--active {
+    background: transparent !important;
+  }
+}
+
+/* ---------------- shared primitives ---------------- */
+.pb-code-panel {
+  position: relative;
+  margin-top: 9px;
+}
+.pb-code-panel pre {
+  margin: 0;
+  background: var(--pb-bg-soft);
+  border: 1px solid var(--pb-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+}
+.pb-code-panel code {
+  font-family: var(--pb-mono);
+  font-size: 12.6px;
+  line-height: 1.65;
+  color: var(--pb-text);
+  white-space: pre;
+  display: block;
+}
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font: var(--font-caption);
+  font-weight: 600;
+  color: var(--pab-color-secondary-05);
+  background: color-mix(in srgb, var(--pab-color-white) 7%, transparent);
+  border: 1px solid var(--pab-color-secondary-02);
+  border-radius: var(--border-radius-default);
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.copy-btn.copied {
+  color: var(--pab-color-positive);
+}
+.pb-chip .dot-breaking {
+  background: var(--pb-breaking);
+}
+.pb-chip .dot-new {
+  background: var(--pb-new);
+}
+.pb-chip .dot-changed {
+  background: var(--pb-changed);
+}
+.pb-chip .dot-deprecated {
+  background: var(--pb-deprecated);
+}
+.pb-chip .dot-removed {
+  background: var(--pb-removed);
+}
+.pb-chip .dot-fixed {
+  background: var(--pb-fixed);
+}
+
+/* ---------------- guide collapsible examples ----------------
+   Native <details> in guide MDX inherit Docusaurus's alert--info look
+   (blue background + left border), which reads too much like a :::note
+   admonition. Re-skin them as an interactive accordion: an accent rotating
+   caret plus a right-aligned Show/Hide affordance and a tinted open header,
+   so they are unmistakably expandable rows, not static callouts. */
+.pb-doc details {
+  margin: 14px 0;
+  padding: 0;
+  background: var(--pb-bg);
+  color: var(--pb-text);
+  border: 1px solid var(--pb-border);
+  border-left: 1px solid var(--pb-border);
+  border-radius: 10px;
+  box-shadow: none;
+  overflow: hidden;
+}
+.pb-doc details + details {
+  margin-top: 8px;
+}
+.pb-doc details > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Outfit", var(--ifm-font-family-base), sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--pb-text);
+  padding: 13px 16px;
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.15s ease;
+}
+.pb-doc details > summary::-webkit-details-marker {
+  display: none;
+}
+/* interactive disclosure caret (replaces Docusaurus's broken absolutely
+   positioned triangle: reset its position/border, draw our own). Only the
+   rotation animates: no margin shifts, so it spins in place and stays
+   aligned to the summary text. */
+.pb-doc details > summary::before {
+  content: "";
+  position: static;
+  top: auto;
+  left: auto;
+  flex: none;
+  box-sizing: border-box;
+  width: 8px;
+  height: 8px;
+  margin: 0;
+  border: 0 solid var(--pb-accent);
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+.pb-doc details[open] > summary::before {
+  transform: rotate(45deg);
+}
+/* explicit Show / Hide affordance, right-aligned, so an example row never
+   reads as a static note. */
+.pb-doc details > summary::after {
+  content: "Show";
+  margin-left: auto;
+  font-family: "Outfit", var(--ifm-font-family-base), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--pb-text-soft);
+}
+.pb-doc details[open] > summary::after {
+  content: "Hide";
+}
+.pb-doc details > summary:hover {
+  background: var(--pb-bg-soft);
+}
+.pb-doc details > summary:hover::after {
+  color: var(--pb-accent);
+}
+.pb-doc details[open] > summary {
+  border-bottom: 1px solid var(--pb-border);
+  background: var(--pb-bg-soft);
+}
+/* Docusaurus wraps the revealed body in the animated container div. Strip the
+   theme's info-alert border-top/margin (the stray colored line under the
+   header) and keep the reveal height stable by baking spacing into padding
+   instead of a first-child margin, so the expand animation stays smooth. */
+.pb-doc details > div {
+  margin-top: 0;
+  border-top: 0;
+  padding: 12px 16px 14px;
+}
+.pb-doc details > div > :first-child {
+  margin-top: 0;
+}
+.pb-doc details > div > :last-child {
+  margin-bottom: 0;
+}
+
+/* ---------------- design system workbench ---------------- */
+.pb-ds {
+  max-width: 1100px;
+}
+.pb-ds h1 {
+  margin: 0 0 12px;
+  color: var(--pb-text);
+}
+.pb-ds-section {
+  margin-top: 34px;
+}
+.pb-ds-section h2 {
+  color: var(--pb-text);
+  margin-bottom: 8px;
+}
+.pb-ds-section p {
+  color: var(--pb-text-muted);
+}
+.pb-freshness {
+  border: 1px solid var(--pb-border);
+  border-radius: 12px;
+  background: var(--pb-bg);
+  padding: 16px;
+  margin: 22px 0;
+}
+.pb-freshness-title {
+  font-weight: 800;
+  color: var(--pb-text);
+  margin-bottom: 10px;
+}
+.pb-freshness dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.pb-freshness div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+}
+.pb-freshness dt {
+  color: var(--pb-text-soft);
+  font-weight: 700;
+}
+.pb-freshness dd {
+  margin: 0;
+  color: var(--pb-text-muted);
+  font-family: var(--pb-mono);
+  word-break: break-word;
+}
+.pb-ds-swatches,
+.pb-ds-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.pb-ds-swatch {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--pb-border);
+  border-radius: 10px;
+  padding: 12px;
+}
+.pb-ds-swatch code {
+  grid-column: 2;
+  color: var(--pb-text-soft);
+}
+.pb-ds-swatch-chip {
+  grid-row: span 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+.swatch-primary {
+  background: var(--pab-color-primary);
+}
+.swatch-secondary {
+  background: var(--pab-color-secondary);
+}
+.swatch-information {
+  background: var(--pab-color-information);
+}
+.swatch-positive {
+  background: var(--pab-color-positive);
+}
+.swatch-warning {
+  background: var(--pab-color-warning);
+}
+.swatch-negative {
+  background: var(--pab-color-negative);
+}
+.pb-ds-spacing {
+  margin-top: 18px;
+  display: grid;
+  gap: 10px;
+}
+.pb-ds-space-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+.pb-ds-space-bar {
+  display: block;
+  height: 10px;
+  border-radius: var(--border-radius-circular);
+  background: var(--pab-color-primary);
+}
+.space-xxsmall {
+  width: var(--spacing-xxsmall);
+}
+.space-xsmall {
+  width: var(--spacing-xsmall);
+}
+.space-small {
+  width: var(--spacing-small);
+}
+.space-normal {
+  width: var(--spacing-normal);
+}
+.space-medium {
+  width: var(--spacing-medium);
+}
+.space-large {
+  width: var(--spacing-large);
+}
+.space-xlarge {
+  width: var(--spacing-xlarge);
+}
+.space-xxlarge {
+  width: var(--spacing-xxlarge);
+}
+.pb-ds-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+/* responsive */
+@media (max-width: 1280px) {
+  .pb-shell--with-toc {
+    grid-template-columns: var(--pb-sidebar) minmax(0, 1fr);
+  }
+  .pb-toc {
+    display: none;
+  }
+}
+@media (max-width: 996px) {
+  .pb-shell {
+    grid-template-columns: 1fr;
+  }
+  .pb-rail {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--pb-border);
+    padding: 16px 16px 8px;
+  }
+  .pb-main {
+    padding: 24px 16px 80px;
+  }
+  .pb-wide {
+    padding: 24px 16px 80px;
+  }
+  .pb-cards-section {
+    padding: 0 16px;
+  }
+  .pb-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pb-change-row {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+  .pb-box-head {
+    grid-template-columns: 18px 1fr;
+  }
+  .pb-box-date {
+    grid-column: 2;
+  }
+  .pb-box-headmain {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .pb-switcher-inner {
+    padding: 0 12px;
+    overflow-x: auto;
+    gap: 6px;
+  }
+  .pb-bar-btn {
+    font-size: 11.5px;
+    padding: 5px 8px;
+  }
+  .pb-cards {
+    grid-template-columns: 1fr;
+  }
+  .pb-uc-grid {
+    grid-template-columns: 1fr;
+    column-gap: 0;
+  }
+  .pb-freshness div {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .pb-bar-btn.primary {
+    display: none;
+  }
+}

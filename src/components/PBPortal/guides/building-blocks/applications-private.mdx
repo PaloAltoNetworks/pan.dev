@@ -1,0 +1,292 @@
+---
+title: 'Private applications'
+sidebar_label: 'Private applications'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 30
+  subgroup: Applications
+  summary: Define an internal application routed through Prisma Access
+
+---
+
+A **private application** (`type: private`) is an internal (private) application that is reached through Prisma Access rather than the public internet. You define it by its URLs plus a primary URL, and optionally by CIDR ranges and a DNS domain suffix. Reference it from an [access and data rule](/prisma-browser/guide/access-and-data-rules) directly or through an [application group](/prisma-browser/guide/application-groups).
+
+**On this page:** key fields, limits, retrieve, create, update, delete, endpoint reference, tips, examples.
+
+---
+
+## Key fields
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `name` | string | yes | Display name shown in policy and events |
+| `type` | string | yes | Must be `private` |
+| `urls` | array of URL objects | yes | Each is `{ "url": "...", "strict_mode": false }`. See Limits for the count |
+| `primaryUrl` | string | yes | The main URL used to represent the application |
+| `routeToPrisma` | boolean | yes | Whether traffic is routed through Prisma Access |
+| `cidrs` | array of strings | no | IPv4 CIDR ranges, /8 to /32; up to 100 |
+| `domainSuffix` | string (nullable) | no | DNS suffix appended to single-label hostnames (for example `corp.example.com`). Required when any URL or the primary URL uses a short hostname |
+| `description` | string | no | Up to 2500 characters |
+| `category` | string | no | One of the values from `GET /applications/categories` |
+| `classification` | string | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+| `tagIDs` | array or object | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+
+Each `urls` entry is an object with a `url` pattern and an optional `strict_mode` flag:
+
+```json
+{ "url": "hr.corp.example.com", "strict_mode": false }
+```
+
+| `strict_mode` | Behavior |
+|---|---|
+| `false` (default) | Protocol defaults to `https://` (wildcards are **not** allowed); no automatic `www` handling (`www` is a distinct prefix); IPv4 and port numbers are supported; a trailing `*` is added to paths. |
+| `true` | The URL is saved exactly as entered. No normalization. |
+
+:::caution
+**No wildcards in private URLs.** Unlike custom applications, the protocol and host do not accept `*`. The protocol always defaults to `https://`.
+:::
+
+---
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| URLs per application | 100 by default, raised per tenant on request, up to 15,000 |
+| `cidrs` per application | up to 100 (IPv4 only, /8 to /32) |
+| Tags per application | 63 |
+| `description` length | 2500 characters |
+| Counts against the tenant URL budget (custom + private + non-web) | 15,000 total |
+
+The per-application URL limit starts at 100 and can be raised for your tenant, up to 15,000. The same ceiling applies to the `add` and `remove` lists on a delta `PATCH`. The `cidrs` cap stays at 100 either way, and CIDRs count against the tenant URL budget alongside URLs. Both budgets are described in [Limits](/prisma-browser/guide/applications#limits) on the applications overview.
+
+---
+
+## Retrieve
+
+List private applications (supports `name`, `url`, pagination, `sort` / `order`):
+
+```
+GET /seb-api/v1/applications/type/private
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/applications/type/private" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`). `urls` are returned in their normalized string form:
+
+```json
+{
+  "data": [
+    {
+      "type": "private",
+      "id": "0AP01HRPORTALXXXXXXXXXXXXXXXX",
+      "name": "Internal HR Portal",
+      "description": "",
+      "category": "Uncategorized",
+      "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+      "urls": [ "https://hr.corp.example.com/*" ],
+      "primaryUrl": "hr.corp.example.com",
+      "routeToPrisma": true,
+      "domainSuffix": null
+    }
+    // ... more private applications
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 }
+}
+```
+
+Read one:
+
+```
+GET /seb-api/v1/applications/type/private/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/applications/type/private/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "type": "private",
+  "id": "0AP01HRPORTALXXXXXXXXXXXXXXXX",
+  "name": "Internal HR Portal",
+  "category": "Uncategorized",
+  "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+  "urls": [ "https://hr.corp.example.com/*" ],
+  "primaryUrl": "hr.corp.example.com",
+  "routeToPrisma": true,
+  "domainSuffix": null
+}
+```
+
+---
+
+## Create
+
+```
+POST /seb-api/v1/applications/type/private
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/private" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Internal HR Portal",
+        "type": "private",
+        "primaryUrl": "hr.corp.example.com",
+        "routeToPrisma": true,
+        "urls": [ { "url": "hr.corp.example.com" } ]
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01HRPORTALXXXXXXXXXXXXXXXX" }
+```
+
+Capture the ID for later snippets:
+
+```bash
+export APP_ID='0AP01HRPORTALXXXXXXXXXXXXXXXX'
+```
+
+To create many at once, use bulk create: `POST /seb-api/v1/applications/bulk-create/private` with a JSON array. See [Bulk operations](/prisma-browser/guide/applications#bulk-operations).
+
+---
+
+## Update
+
+`PATCH` updates only the fields you send (`type` is always required). The `urls` field accepts **replace** (send an array) or **delta** (`urls: { "add": [...], "remove": [...] }`). The `cidrs` and `tagIDs` fields support the same delta form. For `domainSuffix`, send a string to set it, JSON `null` to clear it, or omit it to leave it unchanged. To set `classification` or `tagIDs`, see [Tags and classification](/prisma-browser/guide/applications#tags-and-classification).
+
+```
+PATCH /seb-api/v1/applications/type/private/{id}
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/private/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "private",
+        "urls": { "add": [ { "url": "hr-api.corp.example.com" } ] }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AP01HRPORTALXXXXXXXXXXXXXXXX" }
+```
+
+Remember: this edits the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)). With [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) you can publish just this object.
+
+---
+
+## Delete
+
+```
+DELETE /seb-api/v1/applications/type/private/{id}
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/applications/type/private/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Returns `204` with an empty body.
+
+To delete many at once, use [bulk delete](/prisma-browser/guide/applications#bulk-operations) (`POST /applications/bulk-delete`, up to 2000 IDs, atomic).
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/applications/type/private` | List private applications (filter, paginate) |
+| `GET` | `/applications/type/private/{id}` | Read one private application |
+| `POST` | `/applications/type/private` | Create one private application |
+| `POST` | `/applications/bulk-create/private` | Create up to 1000 private applications |
+| `PATCH` | `/applications/type/private/{id}` | Update one private application |
+| `DELETE` | `/applications/type/private/{id}` | Delete one private application |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**Domain suffix for short hostnames.** If a URL or the primary URL is a single-label hostname (no dots), set `domainSuffix` so it resolves (for example `corp.example.com`). Without it, short hostnames are rejected.
+:::
+
+---
+
+## Examples
+
+<details>
+<summary>Create a private application with CIDRs and a domain suffix</summary>
+
+Covers a short hostname (`hr`) via `domainSuffix` and an internal IP range via `cidrs`.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/private" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Internal HR Portal",
+        "type": "private",
+        "primaryUrl": "hr.corp.example.com",
+        "routeToPrisma": true,
+        "domainSuffix": "corp.example.com",
+        "urls": [ { "url": "hr" }, { "url": "hr.corp.example.com" } ],
+        "cidrs": [ "10.10.0.0/16" ]
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01HRPORTALXXXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+<details>
+<summary>Add a URL and a CIDR in one call (delta)</summary>
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/private/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "private",
+        "urls": { "add": [ { "url": "hr-api.corp.example.com" } ] },
+        "cidrs": { "add": [ "10.20.0.0/16" ] }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AP01HRPORTALXXXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+---
+
+## Related
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Custom applications](/prisma-browser/guide/applications-custom), [Application groups](/prisma-browser/guide/application-groups)
+- Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), [Pagination](/prisma-browser/guide/pagination)

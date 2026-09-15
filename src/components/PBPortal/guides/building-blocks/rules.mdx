@@ -1,0 +1,116 @@
+---
+title: 'Policy'
+sidebar_label: 'Policy overview'
+pb_guide:
+  group: Policy
+  groupOrder: 40
+  order: 10
+  summary: Policy structure, rules, sections, actions, controls, and scope
+
+---
+
+Policy is how the Prisma Browser decides what users can do: who a rule applies to (scope) and what happens (an action or a set of controls). Policy is organized into separate **policy types**, each an ordered list of **rules** grouped into **sections** and evaluated top to bottom.
+
+This page covers what is common to all policy types. For the fields, structure, and mandatory inputs specific to each type, see its page.
+
+## The policy types
+
+| Policy type | Page | What it governs |
+|---|---|---|
+| Sign-in | [Sign-in rules](/prisma-browser/guide/sign-in-rules) | Whether and how users can sign in to the Prisma Browser |
+| Access and data | [Access and data rules](/prisma-browser/guide/access-and-data-rules) | Which applications and URLs are reachable, and how data moves (login and data controls, DLP) |
+| Security | [Security rules](/prisma-browser/guide/security-rules) | Browser hardening controls (extensions, cookies, certificates, developer tools) |
+| Customization | [Customization rules](/prisma-browser/guide/customization-rules) | Branding and look-and-feel controls (logo, theme, shortcuts, start pages) |
+
+Each policy type has the same shape of endpoints (substitute the type):
+
+```
+GET    /seb-api/v1/policy/{type}                 list rules + sections (paginated)
+POST   /seb-api/v1/policy/{type}/rules           create a rule
+GET    /seb-api/v1/policy/{type}/rules/{id}      get one rule (full detail)
+PATCH  /seb-api/v1/policy/{type}/rules/{id}      update a rule
+DELETE /seb-api/v1/policy/{type}/rules/{id}      delete a rule
+```
+
+:::note
+**No "list rules" endpoint.** You list a policy's rules by reading the whole policy (`GET /policy/{type}`), which returns rules and sections interleaved in evaluation order. List items are summaries; fetch a rule's full body with `GET /policy/{type}/rules/{id}`.
+:::
+
+## Scope: who a rule applies to
+
+`scope` selects users, user groups, device groups, IPs, and locations. Every segment supports `isAny` (apply to all) plus add/remove deltas so you can change membership without read-modify-write:
+
+```json
+{
+  "scope": {
+    "users": {
+      "addUsers": ["0UREXAMPLEUSERXXXXXXXXXXXXX"],
+      "removeUsers": ["0UREXAMPLEOLDUSERXXXXXXXXXX"],
+      "addUserGroups": ["0UGEXAMPLEGROUPXXXXXXXXXXXX"]
+    }
+  }
+}
+```
+
+| Scope segment | Add / remove fields |
+|---|---|
+| Users and user groups | `addUsers` / `removeUsers`, `addUserGroups` / `removeUserGroups` |
+| Device groups | `addDeviceGroups` / `removeDeviceGroups` |
+| Public / private IPs | `addPublicIps` / `removePublicIps`, `addPrivateIps` / `removePrivateIps` |
+| Locations | `addLocations` / `removeLocations` |
+
+`scope` is optional on create for every policy type, but leaving it off means the rule applies to everyone. Always set a scope unless you intend a tenant-wide rule. See [Change a rule's scope](/prisma-browser/guide/change-a-rule-scope).
+
+## Sections and positions
+
+Rules are organized into **sections** and evaluated in order. Sections are identical across all policy types: create one with `POST /policy/{type}/sections` (only `name` is required), and manage one with `GET / PUT / PATCH / DELETE /policy/{type}/sections/{id}`.
+
+Ordering is managed through the positions sub-resource of each type:
+
+- `PUT /policy/{type}/positions` submits the full ordered list of rules and sections. Index 0 is evaluated first; rules in a section must be contiguous.
+- `PATCH /policy/{type}/positions` applies partial moves (`top` / `bottom` / `before` / `after` an anchor, with a target section), applied atomically, without resubmitting the whole order.
+
+See [Reorder rules and sections](/prisma-browser/guide/reorder-rules-and-sections) for both approaches.
+
+## Action vs controls
+
+What a rule "does" depends on its type:
+
+| Policy type | What it carries |
+|---|---|
+| Sign-in | A single `action`: `allow`, `block`, or `prompt` |
+| Access and data | An `action` plus application scope, login controls, and data controls |
+| Security, Customization | A `controls` map (many named controls, each with its own settings) |
+
+:::note
+**Controls are replaced whole, not delta-patched.** In a `PATCH`, omitted controls are preserved and a control you include fully replaces its previous body. Sending `null` removes a control (at least one must remain). There is no per-element delta inside a control. To add one item to a control's list (for example, an allowed extension), read the control, append, and PATCH the whole control back. See [Manage allowed browser extensions](/prisma-browser/guide/manage-allowed-extensions).
+:::
+
+## Prompts and custom messages
+
+When an action or control prompts the user, a `userPrompt` object chooses how:
+
+| `mode` | What the user sees |
+|---|---|
+| `none` | No prompt |
+| `warnAndAllow` | A warning they can dismiss to continue |
+| `proceedWithReason` | They must type a justification to continue |
+| `adminApproval` | They submit a request an administrator must approve |
+
+The custom message text shown to the user (typically on a block) is a separate `customDialogText` object with `title` (1-80 chars, required), `description` (up to 360 chars), and an optional `externalLink` (`{ label, url }`). See each type's page for which actions and controls support prompts and custom text.
+
+## Patch semantics summary
+
+| Field kind | PATCH behavior |
+|---|---|
+| Scalars (`name`, `mode`) | Set to the new value |
+| Scope lists | Delta via `add…` / `remove…`, or full replace |
+| Application scope (access and data) | Delta via `addApplicationIds` / `addUrls` / etc., or full replace |
+| Controls (security, customization) | Whole-control replace; `null` removes; omitted preserved |
+
+See [Delta patch](/prisma-browser/guide/delta-patch) for the full model. Every write here targets the **draft**; publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)).
+
+## Related
+- Policy types: [Sign-in rules](/prisma-browser/guide/sign-in-rules), [Access and data rules](/prisma-browser/guide/access-and-data-rules), [Security rules](/prisma-browser/guide/security-rules), [Customization rules](/prisma-browser/guide/customization-rules)
+- Use cases: [Create and publish a rule](/prisma-browser/guide/create-and-publish-a-security-rule), [Change a rule's scope](/prisma-browser/guide/change-a-rule-scope), [Reorder rules and sections](/prisma-browser/guide/reorder-rules-and-sections)
+

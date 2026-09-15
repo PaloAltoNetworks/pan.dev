@@ -1,0 +1,75 @@
+---
+title: 'Quarantine a lost or compromised device'
+sidebar_label: 'Quarantine a lost or compromised device'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Incident response
+  subgroupOrder: 30
+  order: 20
+  summary: Suspend, archive, or remove a lost or compromised device
+
+---
+
+When a device is lost, stolen, or compromised, you can act on it immediately with device actions. Like user actions, these apply to the live device at once: no draft, no publish. See [Direct actions](/prisma-browser/guide/direct-actions) for the contrast with policy.
+
+**Use this when:** a device must be suspended, archived, or removed immediately (lost laptop, compromised endpoint, decommissioning).
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started).
+
+## The device actions
+
+All are `POST` calls that identify the target device(s) by ID, take effect immediately, and return `200`.
+
+| Goal | Endpoint | Effect |
+|---|---|---|
+| Suspend access now | `POST /seb-api/v1/devices/suspend` | Suspends the device. |
+| Restore access | `POST /seb-api/v1/devices/resume` | Resumes a suspended device. |
+| Archive a device | `POST /seb-api/v1/devices/archive` | Moves the device to archived state. |
+| Restore an archived device | `POST /seb-api/v1/devices/restore` | Restores an archived device. |
+| Remove permanently | `POST /seb-api/v1/devices/delete` | Permanently deletes the device. |
+| Invalidate sessions | `POST /seb-api/v1/devices/force-reauth` | Forces re-authentication on the device. |
+
+## Suspend a device immediately
+
+```bash
+curl -sS -X POST "$PB_API_BASE/devices/suspend" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "deviceIds": ["0DEEXAMPLELOSTLAPTOPXXXXXXX"] }'
+```
+
+Response (`200`):
+
+```json
+{ "suspendedDeviceIds": ["0DEEXAMPLELOSTLAPTOPXXXXXXX"], "message": "1 devices suspended successfully" }
+```
+
+## Decommission a device
+
+To retire a device permanently, resume it first if it is suspended, then delete it:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/devices/resume" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{ "deviceIds": ["0DEEXAMPLELOSTLAPTOPXXXXXXX"] }'
+
+curl -sS -X POST "$PB_API_BASE/devices/delete" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{ "deviceIds": ["0DEEXAMPLELOSTLAPTOPXXXXXXX"] }'
+```
+
+Each action returns `200` with a summary message, for example:
+
+```json
+{ "message": "1 devices deleted successfully" }
+```
+
+:::caution
+**A suspended device must be resumed before it can be deleted, and delete is permanent.**
+:::
+
+## Related
+
+- [Suspend a compromised user](/prisma-browser/guide/suspend-a-compromised-user)
+- Concepts: [Direct actions](/prisma-browser/guide/direct-actions), [Errors](/prisma-browser/guide/errors)
