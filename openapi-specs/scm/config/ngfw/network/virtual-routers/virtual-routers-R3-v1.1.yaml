@@ -97,102 +97,6 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
-    put:
-      tags: [Virtual Routers]
-      summary: Update a virtual router by name
-      description: Update a virtual router by folder/snippet/device + name query parameter.
-      operationId: UpdateVirtualRoutersByName
-      parameters:
-        - $ref: '#/components/parameters/folder'
-        - $ref: '#/components/parameters/snippet'
-        - $ref: '#/components/parameters/device'
-        - $ref: '#/components/parameters/name-required'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/virtual-routers'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/virtual-routers'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic_with_body'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-    delete:
-      tags: [Virtual Routers]
-      summary: Delete virtual routers by name
-      description: Delete one or more virtual routers by name.
-      operationId: DeleteVirtualRouters
-      parameters:
-        - $ref: '#/components/parameters/folder'
-        - $ref: '#/components/parameters/snippet'
-        - $ref: '#/components/parameters/device'
-        - $ref: '#/components/parameters/name-required'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteByNamesResponse'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-
-  '/virtual-routers:rename':
-    put:
-      tags: [Virtual Routers]
-      summary: Rename a virtual router
-      description: Rename an existing virtual router.
-      operationId: RenameVirtualRouters
-      parameters:
-        - $ref: '#/components/parameters/folder'
-        - $ref: '#/components/parameters/snippet'
-        - $ref: '#/components/parameters/device'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RenamePayload'
-      responses:
-        '200':
-          $ref: '#/components/responses/http_ok'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic_with_body'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
 
   '/virtual-routers/{id}':
     get:
@@ -274,40 +178,6 @@ paths:
         default:
           $ref: '#/components/responses/default_errors'
 
-  '/virtual-routers/{multi-clone}':
-    post:
-      tags: [Virtual Routers]
-      summary: Clone virtual routers
-      description: Clone one or more virtual routers to a destination folder/snippet/device.
-      operationId: MultiCloneVirtualRouters
-      parameters:
-        - name: multi-clone
-          in: path
-          required: true
-          schema:
-            type: string
-            enum: [multi-clone]
-          description: Must be the literal value "multi-clone".
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MultiCloneRequestInput'
-      responses:
-        '201':
-          description: Clone operation completed
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic_with_body'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-
 components:
   parameters:
     name:
@@ -315,13 +185,6 @@ components:
       in: query
       description: Filter results by name
       required: false
-      schema:
-        type: string
-    name-required:
-      name: name
-      in: query
-      description: The name(s) of the profile(s) to delete (comma-separated for multiple)
-      required: true
       schema:
         type: string
     limit:
@@ -501,36 +364,6 @@ components:
     EmptyObj:
       type: object
       description: Presence object — its existence signals enablement
-
-    DeleteByNamesResponse:
-      type: object
-      properties:
-        succeeded_items:
-          type: array
-          items:
-            type: string
-        failed_items:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              error:
-                type: string
-
-    RenamePayload:
-      type: object
-      required:
-        - name
-        - new_name
-      properties:
-        name:
-          type: string
-          description: Current resource name
-        new_name:
-          type: string
-          description: Desired new name
 
     VrAdminDists:
       type: object
@@ -810,39 +643,6 @@ components:
             balanced_round_robin:
               $ref: '#/components/schemas/EmptyObj'
 
-    MultiCloneRequestInput:
-      type: object
-      required:
-        - source
-        - destination
-      properties:
-        source:
-          type: array
-          items:
-            type: object
-            required:
-              - name
-            properties:
-              folder:
-                type: string
-              snippet:
-                type: string
-              device:
-                type: string
-              name:
-                type: string
-              predefined:
-                type: boolean
-        destination:
-          type: object
-          properties:
-            folder:
-              type: string
-            snippet:
-              type: string
-            device:
-              type: string
-
     # ---- Virtual Router Payload -----------------------------------------------
 
     virtual-routers:
@@ -865,6 +665,10 @@ components:
           type: string
           maxLength: 31
           pattern: '^[a-zA-Z\\d\\-\\_\\. ]+$'
+        description:
+          type: string
+          description: The description of the resource
+          maxLength: 1023
         interface:
           type: array
           items:
@@ -880,6 +684,43 @@ components:
           $ref: '#/components/schemas/VRProtocol'
         routing_table:
           $ref: '#/components/schemas/VRRoutingTable'
+      oneOf:
+        - type: object
+          title: folder
+          properties:
+            folder:
+              type: string
+              pattern: '^[a-zA-Z\d\-\_\. ]+$'
+              maxLength: 64
+              description: The folder in which the resource is defined
+              readOnly: true
+              example: All
+          required:
+            - folder
+        - type: object
+          title: snippet
+          properties:
+            snippet:
+              type: string
+              pattern: '^[a-zA-Z\d\-\_\. ]+$'
+              maxLength: 64
+              description: The snippet in which the resource is defined
+              readOnly: true
+              example: My Snippet
+          required:
+            - snippet
+        - type: object
+          title: device
+          properties:
+            device:
+              type: string
+              pattern: '^[a-zA-Z\d\-\_\. ]+$'
+              maxLength: 64
+              description: The device in which the resource is defined
+              readOnly: true
+              example: My Device
+          required:
+            - device
 
     VRProtocol:
       type: object

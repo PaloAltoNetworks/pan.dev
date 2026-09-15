@@ -97,98 +97,6 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
-    put:
-      tags: [Logical Routers]
-      summary: Update a logical router by name
-      description: Update a logical router by folder/snippet/device + name query parameter.
-      operationId: UpdateLogicalRoutersByName
-      parameters:
-        - $ref: '#/components/parameters/folder'
-        - $ref: '#/components/parameters/snippet'
-        - $ref: '#/components/parameters/device'
-        - $ref: '#/components/parameters/name-required'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/logical-routers'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/logical-routers'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic_with_body'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        '409':
-          $ref: '#/components/responses/conflict_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-    delete:
-      tags: [Logical Routers]
-      summary: Delete logical routers by name
-      description: Delete one or more logical routers by name.
-      operationId: DeleteLogicalRouters
-      parameters:
-        - $ref: '#/components/parameters/folder'
-        - $ref: '#/components/parameters/snippet'
-        - $ref: '#/components/parameters/device'
-        - $ref: '#/components/parameters/name-required'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteByNamesResponse'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        default:
-          $ref: '#/components/responses/default_errors'
-
-  '/logical-routers:rename':
-    put:
-      tags: [Logical Routers]
-      summary: Rename a logical router
-      description: Rename an existing logical router.
-      operationId: RenameLogicalRouters
-      parameters:
-        - $ref: '#/components/parameters/folder'
-        - $ref: '#/components/parameters/snippet'
-        - $ref: '#/components/parameters/device'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RenamePayload'
-      responses:
-        '200':
-          $ref: '#/components/responses/http_ok'
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic_with_body'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        '404':
-          $ref: '#/components/responses/not_found'
-        default:
-          $ref: '#/components/responses/default_errors'
 
   '/logical-routers/{id}':
     get:
@@ -270,38 +178,6 @@ paths:
         default:
           $ref: '#/components/responses/default_errors'
 
-  '/logical-routers/{multi-clone}':
-    post:
-      tags: [Logical Routers]
-      summary: Clone logical routers
-      description: Clone one or more logical routers to a destination folder/snippet/device.
-      operationId: MultiCloneLogicalRouters
-      parameters:
-        - name: multi-clone
-          in: path
-          required: true
-          schema:
-            type: string
-            enum: [multi-clone]
-          description: Must be the literal value "multi-clone".
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MultiCloneRequestInput'
-      responses:
-        '201':
-          description: Clone operation completed
-        '400':
-          $ref: '#/components/responses/bad_request_errors_basic_with_body'
-        '401':
-          $ref: '#/components/responses/auth_errors'
-        '403':
-          $ref: '#/components/responses/access_errors'
-        default:
-          $ref: '#/components/responses/default_errors'
-
 components:
   parameters:
     name:
@@ -309,13 +185,6 @@ components:
       in: query
       description: Filter results by name
       required: false
-      schema:
-        type: string
-    name-required:
-      name: name
-      in: query
-      description: The name(s) of the profile(s) to delete (comma-separated for multiple)
-      required: true
       schema:
         type: string
     limit:
@@ -491,38 +360,6 @@ components:
 
 
   schemas:
-    MultiCloneRequestInput:
-      type: object
-      required:
-        - source
-        - destination
-      properties:
-        source:
-          type: array
-          items:
-            type: object
-            required:
-              - name
-            properties:
-              folder:
-                type: string
-              snippet:
-                type: string
-              device:
-                type: string
-              name:
-                type: string
-              predefined:
-                type: boolean
-        destination:
-          type: object
-          properties:
-            folder:
-              type: string
-            snippet:
-              type: string
-            device:
-              type: string
 
     # ---- Virtual Router Payload -----------------------------------------------
 
@@ -530,36 +367,6 @@ components:
     EmptyObj:
       type: object
       description: Presence object — its existence signals enablement
-
-    DeleteByNamesResponse:
-      type: object
-      properties:
-        succeeded_items:
-          type: array
-          items:
-            type: string
-        failed_items:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              error:
-                type: string
-
-    RenamePayload:
-      type: object
-      required:
-        - name
-        - new_name
-      properties:
-        name:
-          type: string
-          description: Current resource name
-        new_name:
-          type: string
-          description: Desired new name
 
     # ---- RIP Auth Profile ----------------------------------------------------
 
@@ -2685,6 +2492,12 @@ components:
     logical-routers:
       type: object
       properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID of the resource
+          readOnly: true
+          example: 123e4567-e89b-12d3-a456-426655440000
         snippet_location:
           type: string
         override:
@@ -2694,6 +2507,10 @@ components:
           type: string
           maxLength: 63
           pattern: '^[a-zA-Z\\d\\-\\_\\. ]+$'
+        description:
+          type: string
+          description: The description of the resource
+          maxLength: 1023
         vrf:
           type: array
           items:
@@ -2743,6 +2560,43 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/DestinationIpGroup'
+      oneOf:
+        - type: object
+          title: folder
+          properties:
+            folder:
+              type: string
+              pattern: '^[a-zA-Z\d\-\_\. ]+$'
+              maxLength: 64
+              description: The folder in which the resource is defined
+              readOnly: true
+              example: All
+          required:
+            - folder
+        - type: object
+          title: snippet
+          properties:
+            snippet:
+              type: string
+              pattern: '^[a-zA-Z\d\-\_\. ]+$'
+              maxLength: 64
+              description: The snippet in which the resource is defined
+              readOnly: true
+              example: My Snippet
+          required:
+            - snippet
+        - type: object
+          title: device
+          properties:
+            device:
+              type: string
+              pattern: '^[a-zA-Z\d\-\_\. ]+$'
+              maxLength: 64
+              description: The device in which the resource is defined
+              readOnly: true
+              example: My Device
+          required:
+            - device
 
 
     generic_error:
