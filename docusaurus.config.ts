@@ -1082,6 +1082,7 @@ const config = {
           access: {
             specPath: "openapi-specs/access/prisma-access-config",
             outputDir: "products/access/api/prisma-access-config",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           browsermgmt: {
