@@ -96,30 +96,3 @@ export function PBCodePanel({ children, copyText }) {
     </div>
   );
 }
-
-export function PBFreshnessMarker({ source }) {
-  if (!source) return null;
-  return (
-    <aside className="pb-freshness">
-      <div className="pb-freshness-title">Design system source</div>
-      <dl>
-        <div>
-          <dt>Core UI</dt>
-          <dd>{source.sources?.coreui?.path}</dd>
-        </div>
-        <div>
-          <dt>Commit</dt>
-          <dd>{source.commit || "unknown"}</dd>
-        </div>
-        <div>
-          <dt>Generated</dt>
-          <dd>{source.generatedAt}</dd>
-        </div>
-        <div>
-          <dt>Command</dt>
-          <dd>{source.command}</dd>
-        </div>
-      </dl>
-    </aside>
-  );
-}

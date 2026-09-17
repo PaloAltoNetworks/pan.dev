@@ -14,7 +14,7 @@ export const TERRAFORM_URL = "";
 // defaults to the list-users endpoint. Tag that navigational entry with
 // ?ref=nav so analytics can separate "entered the API section" from genuine
 // interest in list-users (bookmarks, deep links, and sidebar clicks hit the
-// untagged URL). See src/components/PBPortal/ANALYTICS.md.
+// untagged URL).
 export const API_REF_URL = "/prisma-browser/api/list-users?ref=nav";
 
 export const PORTAL_TABS = [
