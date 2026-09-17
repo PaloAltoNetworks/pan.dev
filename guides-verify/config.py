@@ -8,7 +8,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-# Repo layout (this file lives in code/pb-browser-pan-dev-beta/guides-verify/)
+# Repo layout (this file lives in code/pan.dev/guides-verify/)
 HERE = Path(__file__).resolve().parent
 DOCS_REPO = HERE.parent
 GUIDES_DIR = DOCS_REPO / "src" / "components" / "PBPortal" / "guides"

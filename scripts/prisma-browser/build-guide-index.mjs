@@ -34,12 +34,12 @@ const staticOut = path.join(repoRoot, "static/prisma-browser");
 // Absolute base for rewriting site-relative links so an LLM sees real URLs.
 // The env vars carry a pages URL on GitLab CI and a per-PR Firebase channel on
 // preview builds, so a preview bundle links itself rather than production. The
-// fallback is the public beta host, which is what live builds and local runs
-// emit; on GA, point the env var at the pan.dev production domain.
+// fallback is the production host, which is what live builds and local runs
+// emit. Keep this in sync with `url` in docusaurus.config.ts.
 const SITE_URL = (
   process.env.GL_PAGES_URL ||
   process.env.CI_PAGES_URL ||
-  "https://prisma-browser-api-beta.pan.dev"
+  "https://pan.dev"
 ).replace(/\/+$/, "");
 // Served copy of the OpenAPI spec (see sync-spec.mjs). The LLM bundles link it
 // so a model fed the guides can still resolve fields the guides do not list.

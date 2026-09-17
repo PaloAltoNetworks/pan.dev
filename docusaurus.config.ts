@@ -87,17 +87,16 @@ const config = {
     faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
     v4: true
   },
-  title: "Develop with Palo Alto Networks (Prisma Browser Beta)",
+  title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
   url: process.env.GL_PAGES_URL
     ? process.env.GL_PAGES_URL
-    : process.env.CI_PAGES_URL ?? "https://pb-browser-beta.web.app",
+    : process.env.CI_PAGES_URL ?? "https://pan.dev",
   baseUrl: baseUrl,
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
-  projectName: "pb-browser-pan-dev-beta",
-  noIndex: true,
+  projectName: "pan.dev",
   markdown: { format: "detect", mermaid: true },
   themeConfig: {
     prism: {
@@ -164,14 +163,6 @@ const config = {
       },
     },
     hideOnScroll: true,
-    announcementBar: {
-      id: "pb_beta_preview_v2",
-      content:
-        "<b>Early preview.</b> The new policy APIs are in beta and may introduce breaking changes, follow the <a href='/prisma-browser/release-notes'>release notes</a>.",
-      backgroundColor: "#4f46e5",
-      textColor: "#ffffff",
-      isCloseable: true,
-    },
     navbar: {
       title: "",
       logo: {
@@ -910,6 +901,14 @@ const config = {
         priority: 0.5,
       },
     ],
+    [
+      require.resolve("./plugin-sitemap-coveo/src/index.cjs"),
+      {
+        id: "coveo-sitemap",
+        changefreq: "weekly",
+        priority: 0.5,
+      },
+    ],
     // Prisma Browser release notes: authored as MDX with structured front matter,
     // rendered by the swizzled blog theme (src/theme/BlogListPage + BlogPostPage)
     // into the PBPortal shell, and published as a native RSS feed.
@@ -1606,7 +1605,7 @@ const config = {
         routeBasePath: "/",
         path: "products",
         sidebarPath: "./sidebars.ts",
-        editUrl: "https://github.com/PaloAltoNetworks/pb-browser-pan-dev-beta/tree/master",
+        editUrl: "https://github.com/PaloAltoNetworks/pan.dev/tree/master",
         include: ["**/*.{md,mdx}"],
         docItemComponent: "@theme/ApiItem",
       },

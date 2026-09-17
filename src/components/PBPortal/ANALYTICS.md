@@ -4,9 +4,9 @@ How the Prisma Browser developer-docs site is instrumented for Google Analytics 
 
 ## Setup
 
-- GA4 is loaded site-wide via the `gtag` option in [`docusaurus.config.ts`](../../../docusaurus.config.ts) (Measurement ID `G-KZEDW5LLFM`, the shared `pan.dev` data stream).
-- `gtag` is injected in **production builds only**, so no events fire under `yarn start`. Test on a deployed build via GA DebugView / Realtime.
-- Filter all beta reporting by hostname `prisma-browser-api-beta.pan.dev`.
+- GA4 is loaded site-wide by [`docusaurus-plugin-gtm`](../../../docusaurus-plugin-gtm/index.js) (container `GTM-PLXD79N`, gated by the cookie-consent banner). The PB custom events below call the `window.gtag` that container installs, so they inherit the same consent gate. No `gtag` preset option is configured in `docusaurus.config.ts`: adding one would fire a second, ungated tag.
+- Events only fire once the visitor has accepted analytics cookies, and GTM is not loaded under `yarn start`. Test on a deployed build via GA DebugView / Realtime.
+- Filter PB reporting by hostname `pan.dev` and page path prefix `/prisma-browser`.
 
 ## Automatic (no code)
 
@@ -64,7 +64,3 @@ For manual announcements, append UTM by hand:
 
 - Slack: `?utm_source=slack&utm_medium=chat&utm_campaign=<note-slug>`
 - Email: `?utm_source=email&utm_medium=email&utm_campaign=<note-slug>`
-
-## Merge note (pan.dev)
-
-When this repo merges into pan.dev: (1) drop the `gtag` block in `docusaurus.config.ts` if pan.dev already wires one, to avoid double-counting; (2) the `Root.js` listener and this doc port over as-is since they key off PBPortal classNames.

@@ -1,4 +1,5 @@
 import React from "react";
+import Head from "@docusaurus/Head";
 import PBPortal from "@site/src/components/PBPortal";
 import source from "@site/src/components/PBPortal/design-system/coreui-source.json";
 import {
@@ -106,6 +107,12 @@ export default function PrismaBrowserDesignSystem() {
       title="Prisma Browser Design System"
       description="Standalone Prisma Browser docs components, tokens, and source metadata."
     >
+      {/* Internal component workbench, not documentation. The robots meta keeps
+          it out of search engines and the Algolia index, and @docusaurus/plugin-sitemap
+          reads the same meta to drop the route from sitemap.xml. */}
+      <Head>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
       <div className="pb-ds">
         <h1>Prisma Browser Docs Design System</h1>
         <p className="pb-rn-lead">
