@@ -182,9 +182,22 @@ function handleClick(e) {
     return;
   }
 
-  // Copy-code buttons (PBCodePanel examples + standard code blocks).
-  if (t.closest(".copy-btn")) {
-    track("code_copy", { page_path: path });
+  // Copy-code buttons. Two different buttons exist and only one carries
+  // .copy-btn, so matching that alone missed every copy of a guide example:
+  //   - PBCodePanel (release-note examples) renders button.copy-btn
+  //   - a fenced code block renders Docusaurus's own button, which shares
+  //     .clean-btn with the word-wrap toggle beside it in the same button
+  //     group. Excluding the toggle by class is stable across locales and
+  //     across the CSS-module hash, unlike matching its aria-label.
+  const exampleCopy = t.closest(".copy-btn");
+  const codeBlockCopy =
+    !exampleCopy &&
+    t.closest('[class*="buttonGroup"] button:not([class*="toggleButton"])');
+  if (exampleCopy || codeBlockCopy) {
+    track("code_copy", {
+      page_path: path,
+      source: exampleCopy ? "example_panel" : "code_block",
+    });
     return;
   }
 
