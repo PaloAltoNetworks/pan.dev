@@ -869,14 +869,17 @@ const config = {
       "@docusaurus/plugin-client-redirects",
       {
         redirects: [
-          // Legacy URLs from the pre-PBPortal browser-mgmt doc page.
+          // Legacy URLs from the pre-PBPortal browser-mgmt doc page. Both were
+          // section landing pages indexing the whole API surface, so they land
+          // on the portal overview, which offers the guide and the API
+          // reference. Deep links keep going to the operation they documented.
           {
             from: "/access/api/browser-mgmt",
-            to: "/prisma-browser/guide/guide-overview",
+            to: "/prisma-browser",
           },
           {
             from: "/access/api/browser-mgmt/browser-mgmt-api",
-            to: "/prisma-browser/guide/guide-overview",
+            to: "/prisma-browser",
           },
           {
             from: "/access/api/browser-mgmt/list-users",
