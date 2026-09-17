@@ -28,6 +28,7 @@ import clsx from "clsx";
 import { getQualifierMessage } from "docusaurus-theme-openapi-docs/lib/markdown/schema";
 import { guard } from "docusaurus-theme-openapi-docs/lib/markdown/utils";
 
+import { renderSchemaBadges } from "./badges";
 import { getPBQualifierMessage } from "./pbQualifierMessage";
 
 const PB_BASE = "/prisma-browser";
@@ -42,11 +43,6 @@ export interface Props {
   // TODO should probably be typed
   schema?: any;
   discriminator?: boolean;
-}
-
-interface Badge {
-  name: string;
-  color?: string;
 }
 
 const transformEnumDescriptions = (
@@ -82,9 +78,6 @@ ${enumDescriptions
   return "";
 };
 
-const toBadgeSlug = (name: string) =>
-  name.toLowerCase().trim().replace(/\s+/g, "-");
-
 export default function SchemaItem(props: Props) {
   const {
     children: collapsibleSchemaContent,
@@ -103,8 +96,6 @@ export default function SchemaItem(props: Props) {
   let nullable;
   let enumDescriptions: [string, string][] = [];
   let constValue: string | undefined;
-  let badges: Badge[] = [];
-
   if (schema) {
     deprecated = schema.deprecated;
     schemaDescription = schema.description;
@@ -116,7 +107,6 @@ export default function SchemaItem(props: Props) {
       schema.nullable ||
       (Array.isArray(schema.type) && schema.type.includes("null")); // support JSON Schema nullable
     constValue = schema.const;
-    badges = Array.isArray(schema["x-badges"]) ? schema["x-badges"] : [];
   }
 
   const renderRequired = guard(
@@ -149,20 +139,7 @@ export default function SchemaItem(props: Props) {
     </span>
   ));
 
-  const renderBadges = badges
-    .filter((badge) => badge && badge.name)
-    .map((badge, index) => (
-      <span
-        key={`${badge.name}-${index}`}
-        className={clsx(
-          "openapi-schema__badge",
-          `openapi-schema__badge--${toBadgeSlug(badge.name)}`
-        )}
-        style={badge.color ? { backgroundColor: badge.color } : undefined}
-      >
-        {badge.name}
-      </span>
-    ));
+  const renderBadges = renderSchemaBadges(schema);
 
   const renderEnumDescriptions = guard(
     getEnumDescriptionMarkdown(enumDescriptions),

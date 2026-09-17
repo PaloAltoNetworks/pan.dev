@@ -7,6 +7,12 @@ import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 
 import CookieConsent from "@site/src/components/CookieConsent";
 
+// Everything in this file that is Prisma Browser specific is gated on this
+// prefix, so no other product on pan.dev is affected by it.
+const PB_BASE = "/prisma-browser";
+
+const isPBRoute = (pathname) => String(pathname || "").startsWith(PB_BASE);
+
 // Fire a GA4 custom event. window.gtag is installed by docusaurus-plugin-gtm
 // and gated by the cookie-consent banner, so events queue behind the visitor's
 // analytics choice and this no-ops until (and unless) consent is granted.
@@ -22,7 +28,9 @@ function track(name, params) {
 // e.g. "/prisma-browser/api/list-users/?ref=nav?ref=nav", which splits analytics
 // and looks broken in the address bar. This only rewrites URLs that are actually
 // duplicated/malformed (a second "?" or more than one ref=nav); valid single-tag
-// URLs are left untouched, so it can never regress a clean navigation.
+// URLs are left untouched, so it can never regress a clean navigation. Callers
+// must gate on isPBRoute: a non-PB URL may legitimately carry a nested "?" in a
+// query value (e.g. ?redirect=/x?y=1), which this would rewrite.
 function normalizeNavRef() {
   if (typeof window === "undefined" || !window.history || !window.location) {
     return;
@@ -237,8 +245,10 @@ export default function Root({ children }) {
   const errorReporterApiKey = customFields.errorReporterApiKey;
   const { pathname, search } = useLocation();
 
-  // Keep ?ref=nav single on every route change (and initial load).
+  // Keep ?ref=nav single on every route change (and initial load), on Prisma
+  // Browser routes only.
   useEffect(() => {
+    if (!isPBRoute(pathname)) return;
     normalizeNavRef();
   }, [pathname, search]);
 
@@ -268,8 +278,13 @@ export default function Root({ children }) {
   // interactions gtag can't see on its own (spec download, RSS/subscribe,
   // release-note toggles, nav/CTA clicks, API "Try it", copy, and Algolia
   // search terms).
+  //
+  // Gated on Prisma Browser routes: the listeners are delegated on `document`,
+  // so without the gate they would also capture search terms and API-explorer
+  // clicks on every other product's pages.
   useEffect(() => {
     if (typeof document === "undefined") return undefined;
+    if (!isPBRoute(pathname)) return undefined;
 
     // Algolia DocSearch is client-side (no ?q= param), so GA4 can't capture
     // search terms automatically. Debounce input to log the settled term once.
@@ -309,7 +324,7 @@ export default function Root({ children }) {
       document.removeEventListener("input", handleInput, true);
       document.removeEventListener("keydown", handleKeydown, true);
     };
-  }, []);
+  }, [pathname]);
 
   return (
     <>
