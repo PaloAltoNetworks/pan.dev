@@ -1,0 +1,295 @@
+---
+title: 'Device groups'
+sidebar_label: 'Device groups'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 80
+  summary: Device posture groups and membership criteria
+
+---
+
+A **device group** scopes a rule to a set of devices. Attach the group to a rule once, then edit its membership to change which devices the rule covers. Unlike user groups, device-group membership is usually defined by **posture attributes** (disk encryption on, screen lock set, a minimum OS version) rather than an explicit roster, though you can also pin specific serial numbers.
+
+**On this page:** membership model, limits, examples, endpoint reference, tips.
+
+---
+
+## Membership model
+
+A device group's membership is usually computed from device posture rather than an explicit roster. You define the criteria with `attributes`, and you can also pin specific devices by serial number.
+
+| Field | Type | Notes |
+|---|---|---|
+| `name` | string | Required. 1 to 255 characters. |
+| `platform` | enum | Required. One of `Desktop Browser`, `Mobile Browser`, `Browser Extension`, `Chromebook`. |
+| `attributes` | object | Posture-based membership rules. |
+
+`attributes` defines which devices belong to the group by their posture. Available checks include screen lock, endpoint protection, firewall, disk encryption, OS version, and serial number. Each check supports a `negate` flag so you can express "does not have" conditions.
+
+:::note
+**Posture rules, not a fixed list.** A device joins or leaves the group automatically as its posture changes. This is the main difference from user groups: membership is computed, not enumerated.
+:::
+
+---
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| `name` length | 1 to 255 characters |
+| Devices per group | No limit |
+
+---
+
+## Examples
+
+### Retrieve
+
+#### List and filter
+
+Supports filtering by `deviceGroup.name` and `deviceGroup.platform`, created and updated time ranges (`deviceGroup.created_at_gte` / `_lte`, `deviceGroup.updated_at_gte` / `_lte`), `sort` (`deviceGroup.name`, `deviceGroup.platform`, `deviceGroup.created_at`, `deviceGroup.updated_at`) and `order`, and pagination (`limit` / `cursor`).
+
+```
+GET /seb-api/v1/device-groups
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/device-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 },
+  "data": [
+    {
+      "id": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX",
+      "name": "Encrypted desktops",
+      "platform": "Desktop Browser",
+      "createdBy": "0UR01EXAMPLEADMINXXXXXXXXXXXX",
+      "updatedBy": "0UR01EXAMPLEADMINXXXXXXXXXXXX",
+      "createdAt": "2026-01-15T10:00:00Z",
+      "updatedAt": "2026-01-15T10:00:00Z",
+      "attributes": { "diskEncryption": { "enabled": true } },
+      "devices": []
+    }
+  ]
+}
+```
+
+#### Get one
+
+```
+GET /seb-api/v1/device-groups/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/device-groups/$DG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX",
+  "name": "Encrypted desktops",
+  "platform": "Desktop Browser",
+  "createdBy": "0UR01EXAMPLEADMINXXXXXXXXXXXX",
+  "updatedBy": "0UR01EXAMPLEADMINXXXXXXXXXXXX",
+  "createdAt": "2026-01-15T10:00:00Z",
+  "updatedAt": "2026-01-15T10:00:00Z",
+  "attributes": { "diskEncryption": { "enabled": true } },
+  "devices": []
+}
+```
+
+:::note
+**The `devices` array is populated only on the active configuration version.** Pass `?configurationVersion=active` to retrieve the list of included devices. On the draft (the default), `devices` is returned empty.
+:::
+
+### Create
+
+```
+POST /seb-api/v1/device-groups
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/device-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Encrypted desktops",
+        "platform": "Desktop Browser",
+        "attributes": {
+          "diskEncryption": { "enabled": true }
+        }
+      }'
+```
+
+Response (`201`):
+
+```json
+{
+  "id": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX",
+  "deviceGroupId": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX"
+}
+```
+
+Capture the ID for later snippets:
+
+```bash
+export DG_ID='0DG01ENCRYPTEDXXXXXXXXXXXXXXX'
+```
+
+#### Key fields
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `name` | string | yes | 1 to 255 characters |
+| `platform` | enum | yes | One of `Desktop Browser`, `Mobile Browser`, `Browser Extension`, `Chromebook` |
+| `attributes` | object | no | Posture-based membership rules |
+
+### Update
+
+`PATCH` the group. To pin or unpin specific devices by serial number, send `serialsToAdd` / `serialsToRemove` (idempotent):
+
+```
+PATCH /seb-api/v1/device-groups/{id}
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/device-groups/$DG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "serialsToAdd": [ "C02XK1ABJGH5" ],
+        "serialsToRemove": [ "C02XK0OLDSER" ]
+      }'
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX",
+  "deviceGroupId": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX"
+}
+```
+
+:::note
+**Enable the serial-number attribute first.** `serialsToAdd` / `serialsToRemove` only work when the group has the serial-number attribute enabled (`attributes.serialNumber.enabled: true`). Otherwise the request returns `400` with `serial number attribute is not enabled for this device group`. Enable it at create time, or with a `PATCH` that sends `attributes.serialNumber`:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/device-groups/$DG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "attributes": { "serialNumber": { "enabled": true } } }'
+```
+:::
+
+To change posture-based membership, send updated `attributes`:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/device-groups/$DG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "attributes": {
+          "diskEncryption": { "enabled": true }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX",
+  "deviceGroupId": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX"
+}
+```
+
+To replace the **entire** group definition in one call, use `PUT`. Send the complete object: any attribute you omit is disabled, not left unchanged.
+
+```
+PUT /seb-api/v1/device-groups/{id}
+```
+
+```bash
+curl -sS -X PUT "$PB_API_BASE/device-groups/$DG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Encrypted desktops",
+        "platform": "Desktop Browser",
+        "attributes": {
+          "diskEncryption": { "enabled": true }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX",
+  "deviceGroupId": "0DG01ENCRYPTEDXXXXXXXXXXXXXXX"
+}
+```
+
+:::caution
+**Prefer `PATCH` for membership edits.** `PUT` replaces the whole group and disables any attribute you leave out, so it is easy to wipe posture rules by accident. Use `PUT` only when you intend to overwrite the entire definition; for add/remove serials or a single posture change, use `PATCH`.
+:::
+
+Remember: this edits the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)). With [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) you can publish just this object.
+
+### Delete
+
+```
+DELETE /seb-api/v1/device-groups/{id}
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/device-groups/$DG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Returns `204` with an empty body.
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/device-groups` | List device groups (paginate) |
+| `GET` | `/device-groups/{id}` | Read one device group |
+| `POST` | `/device-groups` | Create one device group |
+| `PATCH` | `/device-groups/{id}` | Update one device group (posture attributes or pinned serials) |
+| `PUT` | `/device-groups/{id}` | Replace one device group in full (omitted attributes are disabled) |
+| `DELETE` | `/device-groups/{id}` | Delete one device group |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::caution
+**No configuration-version envelope.** Device-group reads accept the `configurationVersion` query parameter but do not return the configuration-version metadata block that policy reads do. Do not rely on `metadata.configurationVersion` for device groups. This metadata block will be added soon.
+:::
+
+:::note
+**Idempotent serial edits.** Adding a serial already in the group, or removing one not present, is a safe no-op, which makes serial-pinning automation retry-safe.
+:::
+
+---
+
+## Related
+- Building blocks: [Devices](/prisma-browser/guide/devices), [Rules](/prisma-browser/guide/rules)
+- Concepts: [Direct actions](/prisma-browser/guide/direct-actions), [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish)

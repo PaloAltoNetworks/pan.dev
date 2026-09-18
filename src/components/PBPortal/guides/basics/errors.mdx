@@ -1,0 +1,76 @@
+---
+title: 'Errors'
+sidebar_label: 'Errors'
+pb_guide:
+  group: Basics
+  groupOrder: 10
+  order: 60
+  summary: Error response shape and common troubleshooting patterns
+
+---
+
+Every endpoint returns a structured **error envelope** so your automation can branch on typed codes rather than parsing prose. This page covers the envelope shape, common HTTP statuses, typed error codes, and how to handle them well.
+
+**On this page:** the envelope, common statuses, error codes, handling errors well.
+
+## The envelope
+
+```json
+{
+  "error": {
+    "code": "FIELD_VALIDATION_ERROR",
+    "message": "Human-readable description of what went wrong",
+    "details": { "errors": [ { "field": "name", "error": "must be 1 to 300 characters", "value": "" } ] },
+    "timestamp": "2026-05-31T10:00:00Z"
+  }
+}
+```
+
+`code` and `message` are always present; `timestamp` records when the error occurred. Some codes add a structured `details` object (see below). Branch on `error.code`, not on the human-readable `message`.
+
+## Common statuses
+
+| HTTP | Meaning | What to do |
+|---|---|---|
+| 400 | Request failed validation | Inspect `error.code` and `details`, fix the offending field, retry |
+| 401 | Missing or expired token | Fetch a new token (see [Authentication](/prisma-browser/guide/authentication)) |
+| 403 | Token valid but lacks permission | Use a Super User service account for writes |
+| 404 | Resource or configuration version not found | Verify the ID and `configurationVersion` |
+| 409 | Conflict (for example, publishing an empty draft, or a concurrent rule edit) | Inspect the message; often safe to ignore |
+| 422 | Well-formed request the server cannot act on | Inspect the message and adjust the request |
+| 500 | Server error | Retry with backoff; if persistent, contact support |
+
+`401` is enforced at the SASE platform (OAuth) layer, ahead of the policy handlers, so it carries the platform's own response rather than the envelope below.
+
+## Error codes
+
+The `error.code` is a typed discriminator. Some codes add a structured `details` object you can act on programmatically:
+
+| `error.code` | HTTP | `details` |
+|---|---|---|
+| `VALIDATION_ERROR` | 400 | none (generic validation failure) |
+| `FIELD_VALIDATION_ERROR` | 400 | `details.errors[]`, each with `field`, `error`, optional `index` and `value` |
+| `CONTIGUITY_VIOLATION` | 400 | `details.sectionId`, `details.ruleIds` (rules of a section not contiguous) |
+| `INCOMPLETE_ARRAY` | 400 | `details.missingRules`, `details.missingSections` (positions array omits existing items) |
+| `NOT_FOUND` | 404 | none |
+| `FIELD_REFERENCE_NOT_FOUND` | 404 | `details.errors[]` (a referenced rule, section, or anchor ID does not exist) |
+| `FORBIDDEN` | 403 | none |
+| `UNSUPPORTED_OPERATION` | 400 | none (for example, draft mode not enabled for the tenant) |
+| `CONFLICT` | 409 | none (the request conflicts with the current state of the resource) |
+| `UNPROCESSABLE_ENTITY` | 422 | none (well-formed request the server cannot act on) |
+| `NOT_IMPLEMENTED` | 501 | none |
+| `PROVIDER_IN_USE` | 409 | `details` naming what still references the cloud storage provider |
+
+The bulk device and user actions add their own codes: `DEVICES_NOT_FOUND`, `USERS_NOT_FOUND`, `INVALID_DEVICE_ID`, `INVALID_USER_ID`, `INVALID_STATUS_TRANSITION`, `UNEXPECTED_DEVICE_STATUS`, `CANNOT_DELETE_SUSPENDED_DEVICE` and `MAX_DEVICES_EXCEEDED`.
+
+The code vocabulary is open: handle unknown codes by falling back to the HTTP status.
+
+## Handling errors well
+
+- **Treat `4xx` as actionable, `5xx` as retryable.** For `400`, read `error.code` and, for field errors, `details.errors[].field`; for `401`, refresh the token; for `403`, check the service account's role. For `5xx`, retry with exponential backoff.
+- **Branch on `error.code` and HTTP status, not on `message`.** The human-readable text can change.
+
+:::note
+Every endpoint returns this envelope, including devices, users, user groups, device groups, cloud storage and [User requests](/prisma-browser/guide/user-requests). The `details` object is populated on the policy and object endpoints; elsewhere the response carries `error.code` and `error.message` only.
+:::
+

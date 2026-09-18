@@ -1,0 +1,348 @@
+---
+title: 'Desktop applications'
+sidebar_label: 'Desktop applications'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 50
+  subgroup: Applications
+  summary: Define a local desktop application by its executables, or reference one from the curated catalog
+
+---
+
+A **desktop application** represents a native application installed on the endpoint, identified by the executable file names it runs under. Use it when policy needs to recognize a program outside the browser. Reference it from an [access and data rule](/prisma-browser/guide/access-and-data-rules) directly or through an [application group](/prisma-browser/guide/application-groups).
+
+There are two types. You define a `localdesktopcustom` application yourself. A `localdesktopcatalog` application comes from the catalog that Palo Alto Networks curates, and is read-only.
+
+**On this page:** custom vs catalog, key fields, limits, retrieve, create, update, delete, endpoint reference, tips, examples.
+
+---
+
+## Custom vs catalog
+
+| | `localdesktopcustom` | `localdesktopcatalog` |
+|---|---|---|
+| Who defines it | You | Palo Alto Networks |
+| Scope | Your tenant only | Shared by all tenants |
+| Create, update, delete | Yes | No |
+| List and read | Yes | Yes |
+| Reference from a rule | Yes | Yes |
+| Set `classification` and `tagIDs` | Yes | Not yet. Setting them through the API is planned for a future release. Until then, set them on the Applications page in the Prisma Browser admin console in Strata Cloud Manager |
+| Executables | 1 to 50, you choose them | Fixed, curated |
+
+Both types are Windows-only, and both are matched the same way: the Prisma Browser compares the running process against the `originalFileName` entries in `executables`, case-insensitively.
+
+Check the catalog before you define your own application. If a catalog entry already covers the program, reference it instead of recreating it, and note that a custom application cannot reuse an executable name that a catalog entry already claims.
+
+---
+
+## Key fields
+
+For a `localdesktopcustom` application you send:
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `name` | string | yes | Display name shown in policy and events |
+| `type` | string | yes | Must be `localdesktopcustom` |
+| `executables` | object | yes | `{ "data": [ { "originalFileName": "app.exe" } ] }`; 1 to 50 entries |
+| `description` | string | no | Up to 2500 characters |
+| `category` | string | no | One of the values from `GET /applications/categories` |
+| `classification` | string | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+| `tagIDs` | array or object | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+
+A `localdesktopcatalog` application returns the same fields, including `classification` and `tags`, but accepts none of them: it has no create or update endpoint.
+
+Desktop applications have no `urls` list, so the URL object and strict mode do not apply.
+
+**Executable names** identify the program. They follow Windows file-name rules: up to 255 characters, no leading space, no trailing dot or space, none of the characters `<>:"/\|?*`, and no Windows reserved device name (`CON`, `PRN`, `AUX`, `NUL`, `COM1` to `COM9`, `LPT1` to `LPT9`). A name that contains "Prisma Access Browser" or "Prisma Browser" is rejected.
+
+---
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Executables per application | 1 to 50 |
+| Executable file name length | 255 characters |
+| `description` length | 2500 characters |
+
+---
+
+## Retrieve
+
+### Your desktop applications
+
+List the `localdesktopcustom` applications you defined (supports `name`, pagination, `sort` / `order`):
+
+```
+GET /seb-api/v1/applications/type/localdesktopcustom
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/applications/type/localdesktopcustom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    {
+      "type": "localdesktopcustom",
+      "id": "0AP01ACMEDESKTOPXXXXXXXXXXXXX",
+      "name": "Acme Desktop Client",
+      "description": "",
+      "category": "Uncategorized",
+      "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+      "executables": { "data": [ { "originalFileName": "acme-client.exe" } ] }
+    }
+    // ... more desktop applications
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 }
+}
+```
+
+Read one:
+
+```
+GET /seb-api/v1/applications/type/localdesktopcustom/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/applications/type/localdesktopcustom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "type": "localdesktopcustom",
+  "id": "0AP01ACMEDESKTOPXXXXXXXXXXXXX",
+  "name": "Acme Desktop Client",
+  "description": "Acme native client and helper",
+  "category": "Uncategorized",
+  "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+  "executables": {
+    "data": [
+      { "originalFileName": "acme-client.exe" },
+      { "originalFileName": "acme-helper.exe" }
+    ]
+  }
+}
+```
+
+### The desktop catalog
+
+The catalog holds roughly 80 well-known Windows applications curated by Palo Alto Networks, covering browsers (Google Chrome, Microsoft Edge, Mozilla Firefox, Brave, Vivaldi), developer tools (Visual Studio Code, IntelliJ, Git, Docker Desktop, MobaXterm), Office programs (Word, Excel, PowerPoint, Outlook, Teams), AI assistants (ChatGPT, Claude Desktop, Copilot, Perplexity Comet), file sharing (Box, Dropbox, Google Drive, OneDrive), collaboration (Slack, Zoom, Webex, WhatsApp), and Windows utilities (Windows PowerShell, Windows Terminal, Task Manager, Registry Editor). The list grows over time, so query it rather than hard-coding entries.
+
+List the catalog the same way you list your own applications:
+
+```
+GET /seb-api/v1/applications/type/localdesktopcatalog
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/applications/type/localdesktopcatalog" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "name=Zoom"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    {
+      "type": "localdesktopcatalog",
+      "id": "0APYWYTF8R2NS54S1V3NRT7GXBYAF",
+      "name": "Zoom",
+      "description": "Video conferencing tool providing high-quality meetings, webinars, and screen sharing.",
+      "category": "Internet Conferencing",
+      "metadata": { "createdTime": "2026-03-26T16:12:00Z", "lastUpdatedTime": "2026-03-26T16:12:00Z" },
+      "executables": { "data": [ { "originalFileName": "Zoom" } ] }
+    }
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 }
+}
+```
+
+To browse the whole catalog, drop the `name` filter and page through with `limit` and `cursor` (see [Pagination](/prisma-browser/guide/pagination)). To read a single entry, call `GET /seb-api/v1/applications/type/localdesktopcatalog/{id}`.
+
+### Reference a desktop application from a rule
+
+Both types are referenced the same way, by ID, in the `localDesktop` segment of an [access and data rule](/prisma-browser/guide/access-and-data-rules). Take the `id` from the list call above:
+
+```json
+{
+  "applications": {
+    "localDesktop": {
+      "accessMode": "specific",
+      "specific": { "applicationIds": [ "0APYWYTF8R2NS54S1V3NRT7GXBYAF" ] }
+    }
+  }
+}
+```
+
+`accessMode` takes three values: `none` for no desktop applications, `any` for every desktop application defined in the tenant, and `specific` for the IDs you list. The `localDesktop` segment applies to Windows devices only.
+
+---
+
+## Create
+
+```
+POST /seb-api/v1/applications/type/localdesktopcustom
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/localdesktopcustom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Acme Desktop Client",
+        "type": "localdesktopcustom",
+        "executables": { "data": [ { "originalFileName": "acme-client.exe" } ] }
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01ACMEDESKTOPXXXXXXXXXXXXX" }
+```
+
+Capture the ID for later snippets:
+
+```bash
+export APP_ID='0AP01ACMEDESKTOPXXXXXXXXXXXXX'
+```
+
+Only `localdesktopcustom` applications can be created. There is no create endpoint for `localdesktopcatalog`.
+
+To create many at once, use bulk create: `POST /seb-api/v1/applications/bulk-create/localdesktopcustom` with a JSON array. See [Bulk operations](/prisma-browser/guide/applications#bulk-operations).
+
+---
+
+## Update
+
+`PATCH` updates only the fields you send (`type` is always required). Sending `executables` replaces the whole list, so include every executable you want to keep. To set `classification` or `tagIDs`, see [Tags and classification](/prisma-browser/guide/applications#tags-and-classification). Only `localdesktopcustom` applications can be updated; there is no update endpoint for `localdesktopcatalog`.
+
+```
+PATCH /seb-api/v1/applications/type/localdesktopcustom/{id}
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/localdesktopcustom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "localdesktopcustom",
+        "executables": {
+          "data": [
+            { "originalFileName": "acme-client.exe" },
+            { "originalFileName": "acme-helper.exe" }
+          ]
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AP01ACMEDESKTOPXXXXXXXXXXXXX" }
+```
+
+Remember: this edits the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)). With [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) you can publish just this object.
+
+---
+
+## Delete
+
+```
+DELETE /seb-api/v1/applications/type/localdesktopcustom/{id}
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/applications/type/localdesktopcustom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Returns `204` with an empty body.
+
+To delete many at once, use [bulk delete](/prisma-browser/guide/applications#bulk-operations) (`POST /applications/bulk-delete`, up to 2000 IDs, atomic).
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/applications/type/localdesktopcustom` | List your desktop applications (filter, paginate) |
+| `GET` | `/applications/type/localdesktopcustom/{id}` | Read one of your desktop applications |
+| `POST` | `/applications/type/localdesktopcustom` | Create one desktop application |
+| `POST` | `/applications/bulk-create/localdesktopcustom` | Create up to 1000 desktop applications |
+| `PATCH` | `/applications/type/localdesktopcustom/{id}` | Update one desktop application |
+| `DELETE` | `/applications/type/localdesktopcustom/{id}` | Delete one desktop application |
+| `GET` | `/applications/type/localdesktopcatalog` | List the desktop catalog (filter, paginate) |
+| `GET` | `/applications/type/localdesktopcatalog/{id}` | Read one catalog desktop application |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**Executables replace, not merge.** A `PATCH` that includes `executables` replaces the entire list. To add or remove one executable, send the full intended list.
+:::
+
+:::caution
+**Executable names are unique across custom applications and the catalog.** A name can belong to only one desktop application. Reusing a name that another custom application or a catalog entry already claims returns `409`, and the error names the application that holds it. The comparison is case-insensitive, so `Acme.exe` and `acme.exe` collide. Search the catalog before you create, and reference the catalog entry rather than trying to redefine it.
+:::
+
+:::note
+**The catalog is read-only through this API.** There is no create, update, or delete endpoint for `localdesktopcatalog`. A catalog entry still returns `classification` and `tags` scoped to your tenant. Setting them through the API is planned for a future release. Until then, set them on the Applications page in the Prisma Browser admin console in Strata Cloud Manager.
+:::
+
+---
+
+## Examples
+
+<details>
+<summary>Create a desktop application with two executables</summary>
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/localdesktopcustom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Acme Desktop Client",
+        "type": "localdesktopcustom",
+        "description": "Acme native client and helper",
+        "executables": {
+          "data": [
+            { "originalFileName": "acme-client.exe" },
+            { "originalFileName": "acme-helper.exe" }
+          ]
+        }
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01ACMEDESKTOPXXXXXXXXXXXXX" }
+```
+
+</details>
+
+---
+
+## Related
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Custom applications](/prisma-browser/guide/applications-custom), [Application groups](/prisma-browser/guide/application-groups)
+- Policy: [Access and data rules](/prisma-browser/guide/access-and-data-rules)
+- Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), [Pagination](/prisma-browser/guide/pagination)

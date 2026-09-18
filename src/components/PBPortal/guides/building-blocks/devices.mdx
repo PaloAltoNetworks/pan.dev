@@ -1,0 +1,247 @@
+---
+title: 'Devices'
+sidebar_label: 'Devices'
+pb_guide:
+  group: Inventory
+  groupOrder: 20
+  order: 20
+  summary: List, filter by posture, and read the devices observed in your tenant
+
+---
+
+A **device** is an endpoint observed in your tenant: a machine or mobile device that has connected through the Prisma Browser. Like [users](/prisma-browser/guide/users), **you do not create devices through this API.** Devices are observed as they enroll and report posture, and the API lets you **list them, read one, filter by posture, and act on them** (archive, suspend, delete, force re-authentication). Each device carries a rich posture snapshot (OS, disk encryption, firewall, screen lock, endpoint protection) and an embedded `user`.
+
+**On this page:** what you can and cannot do, list and filter by posture, get one, key fields, lifecycle actions, endpoint reference, tips and gotchas.
+
+---
+
+## What you can and cannot do
+
+| Operation | Supported? | How |
+|---|---|---|
+| List / get | Yes | `GET /devices`, `GET /devices/{id}` |
+| Create / update | No | Devices are observed, not authored here |
+| Archive / restore / suspend / resume / delete / force re-auth | Yes, immediately | [Direct actions](/prisma-browser/guide/direct-actions) (no draft, no publish) |
+
+:::note
+**Devices are not part of the draft.** Reads return live state and the lifecycle actions below take effect at once. The [draft and publish](/prisma-browser/guide/draft-and-publish) model does not apply to devices. To govern devices with policy, use [device groups](/prisma-browser/guide/device-groups), which are draft-gated.
+:::
+
+---
+
+## List and filter by posture
+
+```
+GET /seb-api/v1/devices
+```
+
+```bash
+# macOS devices with disk encryption disabled, most recently seen first
+curl -sS -G "$PB_API_BASE/devices" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "device.os_type=macOS" \
+  --data-urlencode "device.disk_encryption_status=DiskEncryptionStatusDisabled" \
+  --data-urlencode "sort=device.last_seen" \
+  --data-urlencode "order=desc" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 },
+  "data": [
+    {
+      "id": "0DEEXAMPLEDEVICEXXXXXXXXXXX",
+      "externalId": "e3ad0cea-9dba-4d59-afd9-ae4e65b026ba",
+      "status": "active",
+      "hostname": "M-EXAMPLE01",
+      "serialNumber": "C02EXAMPLE01",
+      "osType": "macOS",
+      "osVersion": "26.4.0",
+      "osDisplayName": "macOS 26.4",
+      "deviceType": "laptop",
+      "platform": "Desktop Browser",
+      "screenLockStatus": "ScreenLockStatusEnabled",
+      "diskEncryptionStatus": "DiskEncryptionStatusEnabled",
+      "firewallStatus": "FireWallStatusEnabled",
+      "browserVersion": "150.41.0.46",
+      "ip": "203.0.113.10",
+      "macAddresses": [ "22:fe:8a:2b:33:b1" ],
+      "firstSeen": "2025-11-01T09:00:00Z",
+      "lastSeen": "2026-01-15T10:00:00Z"
+      // ... posture details: diskEncryptionDetails, firewallDetails, deviceEPP, embedded user
+    }
+    // ... more devices
+  ]
+}
+```
+
+You get a paginated envelope: `pageInfo` plus a `data` array of `Device` objects. Page through large tenants with the cursor (see [Pagination](/prisma-browser/guide/pagination)).
+
+### Query parameters
+
+| Parameter | Type | Notes |
+|---|---|---|
+| `device.hostname` | string | Filter by hostname. |
+| `device.os_type` | string | `windows`, `macOS`, `linux`, `ios`, `android`, `unknown`. |
+| `device.type` | string | `desktop`, `laptop`, `vm`, `smartphone`, `tablet`, `chromebook`, `unknown`. |
+| `device.firewall_status` | string | Firewall posture. |
+| `device.screen_lock_status` | string | Screen lock posture. |
+| `device.disk_encryption_status` | string | Disk encryption posture. |
+| `user.name` | string | Filter by the device owner's name. |
+| `device.first_seen_gte` | date-time | First seen at or after. |
+| `device.last_seen_gte` | date-time | Last seen at or after. |
+| `device.last_seen_lte` | date-time | Last seen at or before. |
+| `sort` | enum | `device.hostname`, `device.os_type`, `device.browser_version`, `device.first_seen`, `device.last_seen`, `user.name`. |
+| `order` | enum | `asc` or `desc`. |
+| `cursor` | string | Opaque pagination cursor. |
+| `limit` | integer | Page size. |
+
+---
+
+## Get one
+
+```
+GET /seb-api/v1/devices/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/devices/0DEEXAMPLEDEVICEXXXXXXXXXXX" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0DEEXAMPLEDEVICEXXXXXXXXXXX",
+  "externalId": "e3ad0cea-9dba-4d59-afd9-ae4e65b026ba",
+  "status": "active",
+  "hostname": "M-EXAMPLE01",
+  "serialNumber": "C02EXAMPLE01",
+  "osType": "macOS",
+  "osVersion": "26.4.0",
+  "deviceType": "laptop",
+  "platform": "Desktop Browser",
+  "screenLockStatus": "ScreenLockStatusEnabled",
+  "diskEncryptionStatus": "DiskEncryptionStatusEnabled",
+  "firewallStatus": "FireWallStatusEnabled",
+  "diskEncryptionDetails": { "products": [ { "vendorName": "Apple Inc.", "productName": "FileVault" } ] },
+  "browserVersion": "150.41.0.46",
+  "ip": "203.0.113.10",
+  "macAddresses": [ "22:fe:8a:2b:33:b1" ],
+  "firstSeen": "2025-11-01T09:00:00Z",
+  "lastSeen": "2026-01-15T10:00:00Z",
+  "user": {
+    "id": "0UREXAMPLEUSERXXXXXXXXXXXXX",
+    "email": "alice@example.com",
+    "name": "Alice Example"
+    // ...
+  }
+  // ... firewallDetails, deviceEPP, and other posture fields
+}
+```
+
+A missing ID returns `404`.
+
+---
+
+## Key fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | Unique identifier (`0DE...`). |
+| `status` | enum | `active`, `archived`, or `suspended`. |
+| `hostname` | string | Device hostname. |
+| `serialNumber` | string | Serial number. This is what [device groups](/prisma-browser/guide/device-groups) pin. |
+| `osType` | enum | `windows`, `macOS`, `linux`, `ios`, `android`, `unknown`. |
+| `osVersion` | string | OS version. |
+| `deviceType` | enum | `desktop`, `laptop`, `vm`, `smartphone`, `tablet`, `chromebook`, `unknown`. |
+| `platform` | object | Device platform. |
+| `screenLockStatus` | enum | `ScreenLockStatusUnknown` / `Disabled` / `Enabled`. |
+| `diskEncryptionStatus` | enum | `DiskEncryptionStatusUnknown` / `Disabled` / `Enabled`. |
+| `firewallStatus` | enum | `FireWallStatusUnknown` / `Disabled` / `Enabled`. |
+| `deviceEPP` | object | Endpoint protection posture. |
+| `crowdstrikeZTA` | object | CrowdStrike Zero Trust Assessment posture. |
+| `browserVersion` | string | The Prisma Browser version. |
+| `ip` | string | Last known IP (nullable). |
+| `macAddresses` | array | MAC addresses. |
+| `user` | object | The embedded [user](/prisma-browser/guide/users) associated with the device. |
+| `firstSeen` / `lastSeen` | date-time | Observation timestamps (read-only). |
+
+Mobile devices also report `mobileVendor`, `mobileHardware`, and `mobileIsRooted`.
+
+---
+
+## Lifecycle actions
+
+These are [direct actions](/prisma-browser/guide/direct-actions): they act on the live device immediately, with no draft or publish, and return `200`.
+
+| Goal | Endpoint | Effect |
+|---|---|---|
+| Suspend the device | `POST /seb-api/v1/devices/suspend` | Suspends the device. |
+| Resume the device | `POST /seb-api/v1/devices/resume` | Resumes a suspended device. |
+| Archive the device | `POST /seb-api/v1/devices/archive` | Moves the device to archived state. |
+| Restore the device | `POST /seb-api/v1/devices/restore` | Restores an archived device. |
+| Remove permanently | `POST /seb-api/v1/devices/delete` | Permanently deletes the device. |
+| Invalidate sessions | `POST /seb-api/v1/devices/force-reauth` | Forces re-authentication on the device. |
+
+```bash
+curl -sS -X POST "$PB_API_BASE/devices/suspend" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "deviceIds": ["0DEEXAMPLEDEVICEXXXXXXXXXXX"] }'
+```
+
+Response (`200`):
+
+```json
+{
+  "suspendedDeviceIds": [ "0DEEXAMPLEDEVICEXXXXXXXXXXX" ],
+  "message": "1 devices suspended successfully"
+}
+```
+
+For the full lost/compromised-device walkthrough, see [Quarantine a lost or compromised device](/prisma-browser/guide/quarantine-a-device).
+
+:::caution
+**A suspended device must be resumed before it can be deleted, and delete is permanent.**
+:::
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/devices` | List devices (filter, paginate) |
+| `GET` | `/devices/{id}` | Read one device |
+| `POST` | `/devices/suspend` | Suspend devices (direct action) |
+| `POST` | `/devices/resume` | Resume devices (direct action) |
+| `POST` | `/devices/archive` | Archive devices (direct action) |
+| `POST` | `/devices/restore` | Restore archived devices (direct action) |
+| `POST` | `/devices/delete` | Permanently delete devices (direct action) |
+| `POST` | `/devices/force-reauth` | Force re-authentication (direct action) |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**Filter by posture, then group by posture.** Use the list filters above to find devices in a given posture (for example disk encryption disabled), then govern them with a posture-based [device group](/prisma-browser/guide/device-groups). List filters are read-only diagnostics; device groups are what a rule references.
+:::
+
+:::note
+**Reverse with the pair, not a rollback.** Undo `suspend` with `resume` and `archive` with `restore`; there is no configuration version to revert because these actions bypass the draft.
+:::
+
+---
+
+## Related
+- Building blocks: [Device groups](/prisma-browser/guide/device-groups), [Users](/prisma-browser/guide/users)
+- Concepts: [Direct actions](/prisma-browser/guide/direct-actions), [Pagination](/prisma-browser/guide/pagination)
+- Use cases: [Quarantine a lost or compromised device](/prisma-browser/guide/quarantine-a-device)

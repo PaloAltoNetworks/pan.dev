@@ -1,0 +1,343 @@
+---
+title: 'Access and data rules'
+sidebar_label: 'Access and data rules'
+pb_guide:
+  group: Policy
+  groupOrder: 40
+  order: 30
+  summary: Access, login, data, and DLP controls on access-and-data rules
+
+---
+
+Access and data rules control which applications and URLs a user can reach, and how data moves once they are there: login controls, data controls (clipboard, file transfer, watermarking, and more), and Enterprise Data Loss Prevention (DLP). This is the richest policy type. See [Policy overview](/prisma-browser/guide/rules) for the shared concepts.
+
+Base path: `/seb-api/v1/policy/access-and-data`.
+
+## Mandatory fields
+
+| Field | Required | Notes |
+|---|---|---|
+| `name` | Yes | 1-300 characters |
+| `mode` | Yes | `active` or `disabled` |
+| `applications` | Yes | Which applications/URLs the rule targets. At least one segment must be configured. |
+| `access` | Yes | The access decision: `{ "action": "allow" \| "block" \| "prompt" \| "redirect" }`, plus optional access controls. |
+| `tracking` | Yes | Logging and evidence. Must include `logLevel` (`off`, `anonymized`, `on`, `enhanced`). |
+| `scope` | No (recommended) | Who the rule applies to. Omitting it applies to everyone. |
+| `loginControls` | No | Login behavior, keyed by type (`formLogin`, `passkeyLogin`, `idpLogin`, `socialLogin`). |
+| `dataControls` | No | Data protection controls + optional `dlpProfileId`. |
+
+## Structure
+
+The four building blocks of every access and data rule:
+
+| Block | Purpose |
+|---|---|
+| `applications` | Defines the target: `saas`, `private`, `nonWeb`, `localDesktop`, and `applicationGroups` segments, each with an `accessMode` of `none`, `any`, or `specific`. |
+| `access` | The decision (`allow`/`block`/`prompt`/`redirect`) plus access controls like `label`, `requireAuthentication`, and `openInPrismaBrowser`. |
+| `loginControls` | How users may authenticate to the target application (form login, passkeys, IdP, social). |
+| `dataControls` | What users may do with data: clipboard, file upload/download, watermarking, printing, screenshots, and DLP. |
+
+A complete rule with all five application segments, the access decision, login controls, data controls, and tracking:
+
+```json
+{
+  "name": "Finance SaaS - protected access",
+  "mode": "active",
+  "scope": { "users": { "userGroups": ["0UGEXAMPLEFINANCEXXXXXXXXXX"] } },
+  "applications": {
+    "saas": {
+      "accessMode": "specific",
+      "specific": { "applicationIds": ["0APEXAMPLEWORKDAYXXXXXXXXXX"] }
+    },
+    "private": { "accessMode": "none" },
+    "nonWeb": { "accessMode": "none" },
+    "localDesktop": { "accessMode": "none" },
+    "applicationGroups": { "accessMode": "none" }
+  },
+  "access": { "action": "allow" },
+  "loginControls": {
+    "formLogin": {
+      "action": "allowSpecificDomains",
+      "domains": ["@company.com"],
+      "mfaRequired": true
+    }
+  },
+  "dataControls": {
+    "clipboard": {
+      "dataIn":  { "active": true, "action": "block" },
+      "dataOut": { "active": true, "action": "block" }
+    },
+    "fileProtection": { "fileDownload": { "action": "block" } }
+  },
+  "tracking": { "logLevel": "on", "sessionRecording": false }
+}
+```
+
+`applicationGroups` accepts only `none` or `specific` (there is no `any`). `nonWeb` accepts `none`, `anyAdminDefined`, or `specific`. The remaining three segments (`saas`, `private`, `localDesktop`) accept `none`, `any`, or `specific`.
+
+## Create an access and data rule
+
+```
+POST /seb-api/v1/policy/access-and-data/rules
+```
+
+<details>
+<summary>Show request and response</summary>
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/access-and-data/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Finance SaaS - protected access",
+        "mode": "active",
+        "scope": { "users": { "userGroups": ["0UGEXAMPLEFINANCEXXXXXXXXXX"] } },
+        "applications": {
+          "saas": { "accessMode": "specific", "specific": { "applicationIds": ["0APEXAMPLEWORKDAYXXXXXXXXXX"] } },
+          "private": { "accessMode": "none" },
+          "nonWeb": { "accessMode": "none" }
+        },
+        "access": { "action": "allow" },
+        "dataControls": {
+          "clipboard": { "dataIn": {"active": true, "action": "block"}, "dataOut": {"active": true, "action": "block"} }
+        },
+        "tracking": { "logLevel": "on", "sessionRecording": false }
+      }'
+```
+
+Response:
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+:::note
+**Applications is required, and at least one segment must be set.** Configure at least one of `saas`, `private`, `nonWeb`, `localDesktop`, or `applicationGroups`. Use `accessMode: "any"` for "all applications of this kind" or `accessMode: "specific"` with the matching IDs/URLs. See [Applications](/prisma-browser/guide/applications).
+:::
+
+## Login and data controls
+
+- Login controls (`loginControls`) gate how users authenticate to the target application. See [Manage login and data controls](/prisma-browser/guide/manage-login-and-data-controls).
+- Data controls (`dataControls`) protect data in the session, and can attach an Enterprise DLP profile via `dlpProfileId`. See [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile).
+
+:::note
+**Controls are replaced whole on PATCH.** A control you include replaces its previous body; omitted controls are preserved; `null` removes a control. There is no per-element delta inside a control.
+:::
+
+## Sections
+
+Access-and-data sections are created with `POST /seb-api/v1/policy/access-and-data/sections` (only `name` is required) and ordered with the [positions endpoints](/prisma-browser/guide/reorder-rules-and-sections).
+
+## Examples
+
+Expand an example to see the request, response, and notes.
+
+<details>
+<summary>Deny-all baseline</summary>
+
+A catch-all rule that blocks all web access. Put it last (lowest priority) as a default-deny floor, then add higher-priority allow rules above it. Omitting `scope` applies it to everyone.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/access-and-data/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Default deny - all web access",
+        "mode": "active",
+        "applications": {
+          "saas": { "accessMode": "any" },
+          "private": { "accessMode": "any" },
+          "nonWeb": { "accessMode": "anyAdminDefined" }
+        },
+        "access": { "action": "block" },
+        "tracking": { "logLevel": "on", "sessionRecording": false }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+After creating it, move it to the bottom of the list with the [positions endpoints](/prisma-browser/guide/reorder-rules-and-sections).
+
+</details>
+
+<details>
+<summary>Allow a specific application, but prompt the user first</summary>
+
+Set `access.action` to `prompt` and configure `access.userPrompt`. Use `warnAndAllow` for a simple warning, or `proceedWithReason` to make the user type a justification. `durationMinutes` (a string enum, for example `"240"`) controls how long their choice is remembered.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/access-and-data/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Generative AI - allow with justification",
+        "mode": "active",
+        "applications": {
+          "saas": { "accessMode": "specific", "specific": { "applicationIds": ["0APEXAMPLEGENAIXXXXXXXXXXXX"] } }
+        },
+        "access": {
+          "action": "prompt",
+          "userPrompt": { "mode": "proceedWithReason", "durationMinutes": "240" }
+        },
+        "tracking": { "logLevel": "on", "sessionRecording": false }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Lock down a sensitive application</summary>
+
+Allow one high-value application, but clamp the data controls: block clipboard in both directions, block downloads, and attach an Enterprise DLP profile. See [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile) for how to discover the profile ID.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/access-and-data/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Workday - sensitive access",
+        "mode": "active",
+        "scope": { "users": { "userGroups": ["0UGEXAMPLEFINANCEXXXXXXXXXX"] } },
+        "applications": {
+          "saas": { "accessMode": "specific", "specific": { "applicationIds": ["0APEXAMPLEWORKDAYXXXXXXXXXX"] } }
+        },
+        "access": { "action": "allow" },
+        "dataControls": {
+          "clipboard": {
+            "dataIn":  { "active": true, "action": "block" },
+            "dataOut": { "active": true, "action": "block" }
+          },
+          "fileProtection": {
+            "fileDownload": { "action": "block" }
+          },
+          "dlpProfileId": "11995044"
+        },
+        "tracking": { "logLevel": "enhanced", "sessionRecording": false }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Business Applications group with DLP (two-service flow)</summary>
+
+Scope a rule to an existing application group (for example your "Business Applications" group), then discover a DLP profile ID from the separate Enterprise DLP API and attach it.
+
+**Step 1: list DLP profiles** (Enterprise DLP, a different host)
+
+```bash
+curl -sS "https://api.dlp.paloaltonetworks.com/v2/api/data-profiles?page=0&size=50" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+The profile ID is `content[].id`:
+
+```json
+{ "content": [ { "id": "11995044", "name": "PII - strict" } ] }
+```
+
+**Step 2: attach it to a rule scoped to the application group**
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/access-and-data/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Business apps - DLP",
+        "mode": "active",
+        "applications": {
+          "applicationGroups": {
+            "accessMode": "specific",
+            "specific": { "applicationGroupIds": ["0AGEXAMPLEBUSINESSAPPSXXXXX"] }
+          }
+        },
+        "access": { "action": "allow" },
+        "dataControls": {
+          "dlpProfileId": "11995044",
+          "fileProtection": { "fileUpload": { "action": "block" } }
+        },
+        "tracking": { "logLevel": "on", "sessionRecording": false }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+**Note:** `dlpProfileId` cannot stand alone. It must accompany at least one inline data control (here, `fileProtection`). See [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile).
+
+</details>
+
+<details>
+<summary>File protection (block uploads and downloads)</summary>
+
+`fileProtection` configures the download and upload directions independently. Each direction has its own `action`.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "dataControls": {
+          "fileProtection": {
+            "fileDownload": { "action": "block" },
+            "fileUpload": { "action": "block" }
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEACCESSRULEXXXXXXX" }
+```
+
+**Note:** to keep downloaded files usable only inside the Prisma Browser, set `fileDownload.action` to `useInPrismaBrowserOnly`; pair it with `fileUpload.action: "blockOnlyProtected"` so protected files cannot leave. (`allowProtectedBetweenRuleApps` is a legacy, read-only value: it may appear on pre-existing rules but is rejected on create/update.)
+
+</details>
+
+<details>
+<summary>Clipboard only within the rule's applications</summary>
+
+The clipboard control governs data crossing the boundary of the rule's applications. Block both directions so users can copy and paste **within** the protected applications, but cannot carry clipboard data in from, or out to, anything else.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "dataControls": {
+          "clipboard": {
+            "dataIn":  { "active": true, "action": "block" },
+            "dataOut": { "active": true, "action": "block" }
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEACCESSRULEXXXXXXX" }
+```
+
+Set `excludeOmnibox: true` on a direction to leave the address bar out of the restriction.
+
+</details>
+
+## Related
+
+- [Policy overview](/prisma-browser/guide/rules)
+- [Manage login and data controls](/prisma-browser/guide/manage-login-and-data-controls), [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile)
+- [Govern URLs with an allow/block list](/prisma-browser/guide/manage-allow-block-list), [Applications](/prisma-browser/guide/applications)

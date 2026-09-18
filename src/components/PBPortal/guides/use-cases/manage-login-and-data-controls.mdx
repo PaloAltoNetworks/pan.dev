@@ -1,0 +1,125 @@
+---
+title: 'Manage login and data controls'
+sidebar_label: 'Manage login and data controls'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Content controls
+  subgroupOrder: 20
+  order: 20
+  summary: Configure login and data controls on access-and-data rules
+
+---
+
+Access and data rules carry two control groups: `loginControls` (how users may authenticate to the target application) and `dataControls` (what they may do with data once inside, such as clipboard, file transfer, watermarking, and printing). This page shows how to set and update them from automation.
+
+**Use this when:** you need to enforce or adjust login behavior or data protection on an existing access and data rule.
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Have an access and data rule's ID. New to this policy type? Read [Access and data rules](/prisma-browser/guide/access-and-data-rules) first.
+
+```bash
+export RULE_ID='0RLEXAMPLEACCESSRULEXXXXXXX'
+```
+
+:::caution
+**Controls are replaced whole, never delta-patched.** In a PATCH, a control you include fully replaces its previous body, omitted controls are preserved, and sending `null` removes a control. There is no per-element delta inside a control. Always send the complete control object you want.
+:::
+
+## Login controls
+
+`loginControls` is keyed by control type:
+
+| Key | Purpose |
+|---|---|
+| `formLogin` | Username/password form login (allow, block, or restrict to domains; MFA; account shield) |
+| `passkeyLogin` | Passkey login (allow/block, optional MFA) |
+| `idpLogin` | Identity-provider (SSO and SAML) login, across the board or for specific provider domains |
+| `socialLogin` | Consumer social login (Google, Microsoft, Facebook, GitHub, X, LinkedIn, Apple), with `googleAllowedDomains` to keep corporate Google Workspace domains working |
+
+For the settings each control accepts, see the [Create an Access and Data rule](/prisma-browser/api/create-access-and-data-rule) reference.
+
+Restrict form login to corporate domains:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "loginControls": {
+          "formLogin": {
+            "action": "allowSpecificDomains",
+            "domains": ["@company.com"],
+            "mfaRequired": true
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEACCESSRULEXXXXXXX" }
+```
+
+## Data controls
+
+`dataControls` is keyed by control type. Common keys include `clipboard`, `fileProtection`, `webpageWatermarking`, `screenshot`, `print`, `genAIPrompt`, `camera`, and `microphone`. (For attaching an Enterprise Data Loss Prevention (DLP) profile, see [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile).)
+
+Block clipboard in and out, and enable watermarking:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "dataControls": {
+          "clipboard": {
+            "dataIn":  { "active": true, "action": "block" },
+            "dataOut": { "active": true, "action": "block" }
+          },
+          "webpageWatermarking": {
+            "action": "enable",
+            "settings": { "opacityPercentage": 25, "densityLevel": "standard" }
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEACCESSRULEXXXXXXX" }
+```
+
+## Remove a control
+
+Send the control key with `null`:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{ "dataControls": { "webpageWatermarking": null } }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEACCESSRULEXXXXXXX" }
+```
+
+## Publish
+
+Control edits land on the **draft**. Publish to enforce them:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{"description": "Tighten login and data controls"}'
+```
+
+Returns `201` when a new active version is created, or `409` with `{"message": "No pending changes found in the current draft"}` if the draft is empty.
+
+## Related
+
+- [Access and data rules](/prisma-browser/guide/access-and-data-rules), [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile)
+- [Delta patch](/prisma-browser/guide/delta-patch), [Draft and publish](/prisma-browser/guide/draft-and-publish)

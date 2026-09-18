@@ -1,0 +1,63 @@
+---
+title: 'Direct actions'
+sidebar_label: 'Direct actions'
+pb_guide:
+  group: Basics
+  groupOrder: 10
+  order: 30
+  summary: Immediate user and device actions outside draft publishing
+
+---
+
+Most of this API follows the [draft and publish](/prisma-browser/guide/draft-and-publish) model: you stage changes, then make them live. **Direct actions** are the exception. They act on live users and devices **immediately**, with no draft and no publish step. Suspending a user takes effect at once.
+
+**On this page:** draft model vs direct actions, direct actions vs policy controls, the shipped direct actions, related.
+
+Use this page to understand the distinction. For step-by-step examples, see the remediation use cases [Suspend a compromised user](/prisma-browser/guide/suspend-a-compromised-user) and [Quarantine a lost or compromised device](/prisma-browser/guide/quarantine-a-device).
+
+---
+
+## Draft model vs direct actions
+
+| | Draft model | Direct actions |
+|---|---|---|
+| What it changes | Configuration (rules, objects) | Live identity / device state |
+| When it takes effect | After you publish | Immediately |
+| `configurationVersion` | Applies | Does not apply |
+| Reversible by | Publishing a new version | A paired action (for example resume) |
+| Examples | Create a rule, edit a group | Suspend a user, force re-auth a device |
+
+:::note
+**No draft, no undo via publish.** Because direct actions are immediate, there is no "draft" to review and no publish to gate them. Treat them like operational commands: validate inputs, and reverse with the paired action (resume, restore) rather than by reverting a configuration version.
+:::
+
+---
+
+## Direct actions vs policy controls
+
+This trips people up, so it is worth stating plainly. Some capabilities that sound like immediate "remediation" are actually **policy controls**, which are draft-gated:
+
+| You want to... | This is... | How it works |
+|---|---|---|
+| Suspend a user right now | Direct action | `POST /users/suspend`, immediate |
+| Force a device to re-authenticate | Direct action | `POST /devices/force-reauth`, immediate |
+| Clear browser data on matching devices | Policy control (`flushBrowserData`) | Set on a security rule, takes effect on publish |
+
+---
+
+## The shipped direct actions
+
+| Target | Actions |
+|---|---|
+| Users | `suspend`, `resume`, `force-reauth` |
+| Devices | `archive`, `restore`, `suspend`, `resume`, `delete`, `force-reauth` |
+
+All are `POST` calls under `/users` and `/devices` that return `200` on success. For request bodies and ordering rules, see [Suspend a compromised user](/prisma-browser/guide/suspend-a-compromised-user) and [Quarantine a lost or compromised device](/prisma-browser/guide/quarantine-a-device).
+
+---
+
+## Related
+
+- Use cases: [Suspend a compromised user](/prisma-browser/guide/suspend-a-compromised-user), [Quarantine a lost or compromised device](/prisma-browser/guide/quarantine-a-device)
+- Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Errors](/prisma-browser/guide/errors)
+
