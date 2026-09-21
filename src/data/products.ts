@@ -24,12 +24,19 @@ export type MenuProduct = {
 
 export type MenuGroup = {
   label: string;
+  /** Theme class the homepage cards colour themselves with. */
+  colorclass: string;
+  /** Shown on the homepage card, not in the drawer. */
+  description: string;
   products: MenuProduct[];
 };
 
 export const MENU_GROUPS: MenuGroup[] = [
   {
     label: "Cloud Native Security",
+    colorclass: "cloud-native-security",
+    description:
+      "Discover the APIs, tools and techniques necessary for bringing DevOps practices to the cloud.",
     products: [
       {
         label: "Prisma Cloud Enterprise Edition",
@@ -47,6 +54,9 @@ export const MENU_GROUPS: MenuGroup[] = [
   },
   {
     label: "Security Operations",
+    colorclass: "security-operations",
+    description:
+      "Browse reference docs, tutorials, the XSOAR Marketplace and more.",
     products: [
       {
         label: "Cortex XSOAR",
@@ -84,6 +94,9 @@ export const MENU_GROUPS: MenuGroup[] = [
   },
   {
     label: "Network Security",
+    colorclass: "network-security",
+    description:
+      "Learn how to make the most of the PAN-OS APIs, SDKs, Expedition, Terraform, Ansible, and more.",
     products: [
       {
         label: "Prisma AIRS",
@@ -195,6 +208,8 @@ export const MENU_GROUPS: MenuGroup[] = [
   },
   {
     label: "Strata Cloud Manager",
+    colorclass: "scm",
+    description: "Discover Strata Cloud Manager APIs.",
     products: [
       {
         label: "Strata Cloud Manager",
@@ -213,6 +228,9 @@ export const MENU_GROUPS: MenuGroup[] = [
   },
   {
     label: "Secure Access Service Edge",
+    colorclass: "sase",
+    description:
+      "Discover Prisma SASE APIs, including Prisma Access and Prisma SD-WAN.",
     products: [
       {
         label: "Prisma SASE",
@@ -360,6 +378,8 @@ export const MENU_GROUPS: MenuGroup[] = [
   },
   {
     label: "Partner Integrations",
+    colorclass: "partner-integrations",
+    description: "Discover technology partner integrations.",
     products: [
       {
         label: "Automation",
@@ -381,6 +401,9 @@ export const MENU_GROUPS: MenuGroup[] = [
   },
   {
     label: "Cross-Platform",
+    colorclass: "cross-platform",
+    description:
+      "Learn about opportunities across Palo Alto Networks platforms.",
     products: [
       {
         label: "Service Status",
@@ -397,6 +420,8 @@ export const MENU_GROUPS: MenuGroup[] = [
   },
   {
     label: "Idira",
+    colorclass: "idira",
+    description: "Explore resources and community content for IDIRA",
     products: [
       {
         label: "Idira Resources",
