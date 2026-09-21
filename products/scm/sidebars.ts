@@ -498,6 +498,19 @@ module.exports = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "AI Gateway Onboarding",
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "scm/api/config/ai-gateway/introduction",
+        },
+        require("./api/config/ai-gateway/sidebar"),
+      ],
+    },
+
   ],
   scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
   scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],

@@ -220,7 +220,12 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-        "Other Configuration": [
+                "Other Configuration": [
+          {
+            to: "scm/api/config/ai-gateway/introduction",
+            label: "AI Gateway Onboarding",
+            icon: "api-doc",
+          },
           {
             to: "/prisma-browser/guide/guide-overview",
             label: "Prisma Access Browser",
