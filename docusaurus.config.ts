@@ -535,6 +535,12 @@ const config = {
                       icon: "api-doc",
                     },
                     {
+                      to: "sase/api/activation",
+                      label: "Activation Service",
+                      icon: "api-doc",
+                    },
+
+                    {
                       to: "/access/api/prisma-access-config",
                       label: "Prisma Access Configuration",
                       icon: "api-doc",
@@ -1344,6 +1350,12 @@ const config = {
           scmsub: {
             specPath: "openapi-specs/scm/subscription",
             outputDir: "products/scm/api/subscription",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          scmactivation: {
+            specPath: "openapi-specs/scm/activation",
+            outputDir: "products/scm/api/activation",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           tenancy: {
