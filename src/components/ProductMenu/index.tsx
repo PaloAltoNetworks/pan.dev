@@ -121,7 +121,12 @@ function searchGroups(query: string): MenuGroup[] {
 function matchedLinks(
   product: MenuProduct,
   query: string
-): { overviewHit: boolean; overviewLabel: string; docs: MenuLink[]; apiDocs: MenuLink[] } | null {
+): {
+  overviewHit: boolean;
+  overviewLabel: string;
+  docs: MenuLink[];
+  apiDocs: MenuLink[];
+} | null {
   const q = normalize(query);
   if (!q) {
     return null;
@@ -440,6 +445,16 @@ function ProductMenuDesktop(): JSX.Element {
   const enterOnRender = useRef<string | null>(null);
 
   const enterSubmenu = useCallback((label: string) => {
+    // Reaching a row with the arrow keys already activates it, so the submenu
+    // is usually on screen by now. Setting the same label again would not
+    // re-render, and the effect below would never run, so focus it directly.
+    const rendered = drawerRef.current?.querySelector<HTMLElement>(
+      `#${submenuIdFor(label)} a`
+    );
+    if (rendered) {
+      rendered.focus();
+      return;
+    }
     enterOnRender.current = label;
     setActiveProduct(label);
   }, []);
@@ -642,100 +657,104 @@ function ProductMenuDesktop(): JSX.Element {
                               ))}
                             {!searching &&
                               group.products.map((product) => {
-                              const isActive = activeProduct === product.label;
-                              const isCurrent =
-                                currentProduct === product.label;
-                              const submenuId = submenuIdFor(product.label);
-                              return (
-                                <li
-                                  className={clsx(
-                                    styles.productItem,
-                                    isActive && styles.productItemActive,
-                                    isCurrent && styles.productItemCurrent
-                                  )}
-                                  key={product.label}
-                                  onMouseEnter={() =>
-                                    setActiveProduct(product.label)
-                                  }
-                                >
-                                  <button
-                                    type="button"
-                                    ref={(el) => {
-                                      if (el) {
-                                        rowRefs.current.set(product.label, el);
-                                      } else {
-                                        rowRefs.current.delete(product.label);
-                                      }
-                                    }}
-                                    className={styles.product}
-                                    aria-expanded={isActive}
-                                    aria-controls={
-                                      isActive ? submenuId : undefined
-                                    }
-                                    aria-current={
-                                      isCurrent ? "true" : undefined
-                                    }
-                                    tabIndex={
-                                      rovedProduct === product.label ? 0 : -1
-                                    }
-                                    onFocus={() =>
+                                const isActive =
+                                  activeProduct === product.label;
+                                const isCurrent =
+                                  currentProduct === product.label;
+                                const submenuId = submenuIdFor(product.label);
+                                return (
+                                  <li
+                                    className={clsx(
+                                      styles.productItem,
+                                      isActive && styles.productItemActive,
+                                      isCurrent && styles.productItemCurrent
+                                    )}
+                                    key={product.label}
+                                    onMouseEnter={() =>
                                       setActiveProduct(product.label)
                                     }
-                                    onClick={() =>
-                                      setActiveProduct(
-                                        isActive ? null : product.label
-                                      )
-                                    }
-                                    onKeyDown={(event) => {
-                                      const k = event.key;
-                                      if (k === "ArrowDown") {
-                                        event.preventDefault();
-                                        moveRow(product.label, 1);
-                                      } else if (k === "ArrowUp") {
-                                        event.preventDefault();
-                                        moveRow(product.label, -1);
-                                      } else if (k === "Home") {
-                                        event.preventDefault();
-                                        focusRow(visible[0]);
-                                      } else if (k === "End") {
-                                        event.preventDefault();
-                                        focusRow(visible[visible.length - 1]);
-                                      } else if (
-                                        k === "ArrowRight" ||
-                                        k === "Enter" ||
-                                        k === " "
-                                      ) {
-                                        // preventDefault stops Enter and Space
-                                        // from firing onClick, which would
-                                        // close the submenu being entered.
-                                        event.preventDefault();
-                                        enterSubmenu(product.label);
-                                      }
-                                    }}
                                   >
-                                    {product.label}
-                                    <span
-                                      className={styles.caret}
-                                      aria-hidden="true"
-                                    />
-                                  </button>
-
-                                  {isActive && (
-                                    <ProductSubmenu
-                                      product={product}
-                                      submenuId={submenuId}
-                                      onNavigate={close}
-                                      onKeyDown={(event) => {
-                                        if (event.key === "ArrowLeft") {
-                                          event.preventDefault();
-                                          focusRow(product.label);
+                                    <button
+                                      type="button"
+                                      ref={(el) => {
+                                        if (el) {
+                                          rowRefs.current.set(
+                                            product.label,
+                                            el
+                                          );
+                                        } else {
+                                          rowRefs.current.delete(product.label);
                                         }
                                       }}
-                                    />
-                                  )}
-                                </li>
-                              );
-                            })}
+                                      className={styles.product}
+                                      aria-expanded={isActive}
+                                      aria-controls={
+                                        isActive ? submenuId : undefined
+                                      }
+                                      aria-current={
+                                        isCurrent ? "true" : undefined
+                                      }
+                                      tabIndex={
+                                        rovedProduct === product.label ? 0 : -1
+                                      }
+                                      onFocus={() =>
+                                        setActiveProduct(product.label)
+                                      }
+                                      onClick={() =>
+                                        setActiveProduct(
+                                          isActive ? null : product.label
+                                        )
+                                      }
+                                      onKeyDown={(event) => {
+                                        const k = event.key;
+                                        if (k === "ArrowDown") {
+                                          event.preventDefault();
+                                          moveRow(product.label, 1);
+                                        } else if (k === "ArrowUp") {
+                                          event.preventDefault();
+                                          moveRow(product.label, -1);
+                                        } else if (k === "Home") {
+                                          event.preventDefault();
+                                          focusRow(visible[0]);
+                                        } else if (k === "End") {
+                                          event.preventDefault();
+                                          focusRow(visible[visible.length - 1]);
+                                        } else if (
+                                          k === "ArrowRight" ||
+                                          k === "Enter" ||
+                                          k === " "
+                                        ) {
+                                          // preventDefault stops Enter and Space
+                                          // from firing onClick, which would
+                                          // close the submenu being entered.
+                                          event.preventDefault();
+                                          enterSubmenu(product.label);
+                                        }
+                                      }}
+                                    >
+                                      {product.label}
+                                      <span
+                                        className={styles.caret}
+                                        aria-hidden="true"
+                                      />
+                                    </button>
+
+                                    {isActive && (
+                                      <ProductSubmenu
+                                        product={product}
+                                        submenuId={submenuId}
+                                        onNavigate={close}
+                                        onKeyDown={(event) => {
+                                          if (event.key === "ArrowLeft") {
+                                            event.preventDefault();
+                                            focusRow(product.label);
+                                          }
+                                        }}
+                                      />
+                                    )}
+                                  </li>
+                                );
+                              })}
                           </ul>
                         </div>
                       ))}
