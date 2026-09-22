@@ -23,55 +23,165 @@ See [Compliance Frameworks APIs](/scm/api/config/posture-management/compliance-f
 
 ## August 2026
 
-### Posture Management — Policy Optimizer API (New)
+**Product:** Strata Cloud Manager — Activation Service
+### NGFW, SASE — Routing APIs (New)
 
-Retrieve security rules with optimization recommendations and their suggested replacement rules.
+New R3 routing APIs introduce Logical Routers, Virtual Routers, and VR Routing Profiles for both NGFW and SASE platforms, enabling programmatic management of routing topologies and routing policy profiles.
 
-| Method | Endpoint | Description |
-| ------ | -------- | ----------- |
-| GET | `/posture/policy-optimizer/v1/security-rules` | List security rules with optimization recommendations |
-| GET | `/posture/policy-optimizer/v1/security-rules/{id}` | Get security rule optimization recommendations by ID |
+<details><summary>View endpoints</summary>
 
-See [Policy Optimizer API](/scm/api/config/posture-management/policy-optimizer/policy-optimizer-api/) for full details.
-
----
-
-### Posture Management — Posture Check Upload Initiation API (New)
-
-Upload configuration files for Best Practice Assessment (BPA) processing and manage custom posture checks programmatically.
-
-<details><summary>View endpoints (10)</summary>
+**NGFW Logical Routers**
 
 | Method | Endpoint | Description |
 | ------ | -------- | ----------- |
-| POST | `/posture/checks/v1/reports/config-file-upload` | Initiate a config file upload for BPA processing |
-| GET | `/posture/checks/v1/reports/{id}/bpa-result` | Get BPA processing status and result |
-| GET | `/posture/checks/v1/all-checks` | List posture checks (custom and predefined) |
-| POST | `/posture/checks/v1/all-checks` | Create a custom posture check |
-| GET | `/posture/checks/v1/all-checks/{id}` | Get a posture check by ID |
-| PUT | `/posture/checks/v1/all-checks/{id}` | Update a custom posture check |
-| DELETE | `/posture/checks/v1/all-checks/{id}` | Delete a custom posture check |
-| POST | `/posture/checks/v1/all-checks/{id}:clone` | Clone a posture check |
-| POST | `/posture/checks/v1/all-checks/batch-upsert` | Batch create or update posture checks |
-| POST | `/posture/checks/v1/all-checks/batch-delete` | Batch delete posture checks |
+| GET | `/config/network/v1/logical-routers` | List logical routers |
+| POST | `/config/network/v1/logical-routers` | Create a logical router |
+| GET | `/config/network/v1/logical-routers/{id}` | Get a logical router |
+| PUT | `/config/network/v1/logical-routers/{id}` | Update a logical router |
+| DELETE | `/config/network/v1/logical-routers/{id}` | Delete a logical router |
+
+**NGFW Virtual Routers**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/virtual-routers` | List virtual routers |
+| POST | `/config/network/v1/virtual-routers` | Create a virtual router |
+| GET | `/config/network/v1/virtual-routers/{id}` | Get a virtual router |
+| PUT | `/config/network/v1/virtual-routers/{id}` | Update a virtual router |
+| DELETE | `/config/network/v1/virtual-routers/{id}` | Delete a virtual router |
+
+**NGFW VR Routing Profiles**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/vr-routing-profiles` | List VR routing profiles |
+| POST | `/config/network/v1/vr-routing-profiles` | Create a VR routing profile |
+| GET | `/config/network/v1/vr-routing-profiles/{id}` | Get a VR routing profile |
+| PUT | `/config/network/v1/vr-routing-profiles/{id}` | Update a VR routing profile |
+| DELETE | `/config/network/v1/vr-routing-profiles/{id}` | Delete a VR routing profile |
+
+**SASE Logical Routers**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/logical-routers` | List logical routers |
+| POST | `/config/network/v1/logical-routers` | Create a logical router |
+| GET | `/config/network/v1/logical-routers/{id}` | Get a logical router |
+| PUT | `/config/network/v1/logical-routers/{id}` | Update a logical router |
+| DELETE | `/config/network/v1/logical-routers/{id}` | Delete a logical router |
+
+**SASE Virtual Routers**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/virtual-routers` | List virtual routers |
+| POST | `/config/network/v1/virtual-routers` | Create a virtual router |
+| GET | `/config/network/v1/virtual-routers/{id}` | Get a virtual router |
+| PUT | `/config/network/v1/virtual-routers/{id}` | Update a virtual router |
+| DELETE | `/config/network/v1/virtual-routers/{id}` | Delete a virtual router |
+
+**SASE VR Routing Profiles**
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/network/v1/vr-routing-profiles` | List VR routing profiles |
+| POST | `/config/network/v1/vr-routing-profiles` | Create a VR routing profile |
+| GET | `/config/network/v1/vr-routing-profiles/{id}` | Get a VR routing profile |
+| PUT | `/config/network/v1/vr-routing-profiles/{id}` | Update a VR routing profile |
+| DELETE | `/config/network/v1/vr-routing-profiles/{id}` | Delete a VR routing profile |
 
 </details>
 
-See [Posture Check Upload Initiation API](/scm/api/config/posture-management/checks/posture-check-upload-initiation-api/) for full details.
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
 
 ---
 
-### Posture Management — Config Cleanup API (New)
+### NGFW — Device Settings API (New)
 
-Identify unused or redundant security rules across Strata Cloud Manager and Panorama deployments.
+Comprehensive R3 Device Settings API for NGFW providing full programmatic control over device-level configuration including interfaces, zones, service routes, high availability, DNS, NTP, and more (~6800 lines of spec coverage).
+
+See [NGFW Device Settings APIs](/scm/api/config/ngfw/device/device-api/) for full details.
+
+---
+
+### NGFW, SASE — Application Tags API (New)
+
+New R3 Application Tags APIs enable management of application tag definitions for both NGFW and SASE platforms, supporting dynamic policy grouping and application classification workflows.
 
 | Method | Endpoint | Description |
 | ------ | -------- | ----------- |
-| GET | `/posture/config-cleanup/v1/zerohit-rules` | Get security rules with zero traffic hits |
+| GET | `/config/objects/v1/application-tags` | List application tags |
+| POST | `/config/objects/v1/application-tags` | Create an application tag |
+| GET | `/config/objects/v1/application-tags/{id}` | Get an application tag |
+| PUT | `/config/objects/v1/application-tags/{id}` | Update an application tag |
+| DELETE | `/config/objects/v1/application-tags/{id}` | Delete an application tag |
 
-See [Config Cleanup API](/scm/api/config/posture-management/config-cleanup/config-cleanup-api/) for full details.
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
 
 ---
+
+### Cloud NGFW — Application Tags API (New)
+
+R3 Application Tags support extended to Cloud NGFW, providing consistent application tagging and policy grouping across all three platforms.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/config/objects/v1/application-tags` | List application tags |
+| POST | `/config/objects/v1/application-tags` | Create an application tag |
+| GET | `/config/objects/v1/application-tags/{id}` | Get an application tag |
+| PUT | `/config/objects/v1/application-tags/{id}` | Update an application tag |
+| DELETE | `/config/objects/v1/application-tags/{id}` | Delete an application tag |
+
+See [Cloud NGFW APIs](/scm/api/config/cloudngfw/) for full details.
+
+---
+
+### SASE — Deployment Services API (Updated)
+
+R3 update to the Deployment Services API introduces expanded service management capabilities for SASE deployments.
+
+See [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+
+---
+
+### NGFW, SASE — Network Services API (Updated)
+
+R3 release of the Network Services API for both NGFW and SASE platforms with updated schemas and expanded endpoint coverage.
+
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+
+---
+
+### Config Operations, Config Setup, Device Onboarding — R3 Updates (Updated)
+
+R3 release updates across Config Operations, Config Setup, and Device Onboarding APIs for SASE, NGFW, and Cloud NGFW platforms with improved schemas and additional endpoint coverage.
+
+See [Configuration Operations APIs](/scm/api/config/sase/operations/operations-api/) for full details.
+
+---
+
+### Identity Services, Security Services, Objects — R3 Updates (Updated)
+
+R3 release updates to Identity Services, Security Services, and Objects APIs across SASE, NGFW, and Cloud NGFW platforms with schema improvements and expanded resource management capabilities.
+
+See [Identity Services APIs](/scm/api/config/sase/identity/identity-api), [Security Services APIs](/scm/api/config/sase/security/security-api/), and [Objects APIs](/scm/api/config/sase/objects/objects-api/) for full details.
+
+---
+
+### Posture Management — Policy Optimizer API (New)
+
+Added [Activation Service APIs](/scm/api/activation/introduction) and Asset Service APIs to SCM. These APIs enable programmatic management of tenant activation, license allocation, and instance lifecycle operations.
+
+New endpoints:
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /activation/api/v1/shared-instances` | Share a CIE instance with child TSGs |
+| `POST /activation/api/v1/activate` | Activate or amend Prisma Access licenses |
+| `GET /activation/api/v1/offboard/validation` | Validate offboard readiness |
+| `POST /activation/api/v1/offboard` | Offboard a product instance |
+| `GET /asset/api/v1/entitlement-groups` | Fetch entitlement group details |
+| `GET /asset/api/v1/instances` | Get product instance status |
 
 ## July 2026
 

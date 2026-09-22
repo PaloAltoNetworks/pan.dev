@@ -268,6 +268,7 @@ export const MENU_GROUPS: MenuGroup[] = [
           { label: "Identity and Access Management", to: "/sase/api/iam" },
           { label: "Authentication Service", to: "/sase/api/auth" },
           { label: "Subscription Service", to: "/sase/api/subscription" },
+          { label: "Activation Service", to: "/sase/api/activation" },
           {
             label: "Prisma Access Configuration",
             to: "/access/api/prisma-access-config",

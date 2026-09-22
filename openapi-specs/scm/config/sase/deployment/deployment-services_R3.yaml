@@ -1288,6 +1288,208 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
+  /remote-networks:query:
+    post:
+      tags:
+        - Remote Networks
+      summary: Query remote networks
+      description: |
+        Query remote networks with filter criteria. Only one filter parameter should be provided at a time.
+        String filters (name, region) support case-insensitive substring matching.
+      operationId: QueryRemoteNetworks
+      requestBody:
+        description: Filter criteria for querying remote networks (one filter at a time)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Filter by remote network name (case-insensitive substring match)
+                  example: "branch-west"
+                region:
+                  type: string
+                  description: Filter by region display name (case-insensitive substring match)
+                  example: "US East"
+                ecmp_load_balancing:
+                  type: string
+                  enum:
+                    - enable
+                    - disable
+                  description: Filter by ECMP load balancing status
+                rn_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: Filter by remote network UUIDs
+                  example: ["f8b4a4f6-cd29-41ad-958f-e2a14b9b92ee", "16eaaf25-0b38-45cf-9511-f049015ac8e8"]
+            examples:
+              filter-by-name:
+                summary: Filter by name
+                value:
+                  name: "branch"
+              filter-by-region:
+                summary: Filter by region
+                value:
+                  region: "US East"
+              filter-by-ecmp:
+                summary: Filter by ECMP load balancing
+                value:
+                  ecmp_load_balancing: "enable"
+              filter-by-ids:
+                summary: Filter by remote network IDs
+                value:
+                  rn_ids: ["f8b4a4f6-cd29-41ad-958f-e2a14b9b92ee"]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - type: array
+                        items:
+                          $ref: '#/components/schemas/remote-networks'
+                  limit:
+                    type: integer
+                    default: 200
+                  offset:
+                    type: integer
+                    default: 0
+                  total:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+  /sites:query:
+    post:
+      tags:
+        - Sites
+      summary: Query sites
+      description: |
+        Query sites with filter criteria. Only one filter parameter should be provided at a time.
+        String filters (name, country, state, city, zip_code, qos_profile) support case-insensitive substring matching.
+      operationId: QuerySites
+      requestBody:
+        description: Filter criteria for querying sites (one filter at a time)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Filter by site name (case-insensitive substring match)
+                  example: "SF-Branch"
+                type:
+                  type: string
+                  description: Filter by site type
+                  example: "branch"
+                type_ne:
+                  type: string
+                  description: Exclude sites with this type (negation filter)
+                  example: "inbound-access"
+                license_type:
+                  type: string
+                  enum:
+                    - FWAAS-SITE-10Mbps
+                    - FWAAS-SITE-25Mbps
+                    - FWAAS-SITE-50Mbps
+                    - FWAAS-SITE-250Mbps
+                    - FWAAS-SITE-1000Mbps
+                    - FWAAS-SITE-2500Mbps
+                  description: Filter by site license type
+                country:
+                  type: string
+                  description: Filter by country (case-insensitive substring match)
+                  example: "United States"
+                state:
+                  type: string
+                  description: Filter by state/province (case-insensitive substring match)
+                  example: "California"
+                city:
+                  type: string
+                  description: Filter by city (case-insensitive substring match)
+                  example: "San Francisco"
+                zip_code:
+                  type: string
+                  description: Filter by ZIP/postal code (case-insensitive substring match)
+                  example: "94105"
+                qos_profile:
+                  type: string
+                  description: Filter by QoS profile name (case-insensitive substring match)
+                  example: "high-priority"
+                rn_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: Filter sites by remote network UUIDs (matches sites with members having these IDs)
+                  example: ["f8b4a4f6-cd29-41ad-958f-e2a14b9b92ee"]
+            examples:
+              filter-by-name:
+                summary: Filter by name
+                value:
+                  name: "SF-Branch"
+              filter-by-type:
+                summary: Filter by type
+                value:
+                  type: "branch"
+              filter-by-country:
+                summary: Filter by country
+                value:
+                  country: "United States"
+              filter-by-rn-ids:
+                summary: Filter by remote network IDs
+                value:
+                  rn_ids: ["f8b4a4f6-cd29-41ad-958f-e2a14b9b92ee"]
+              filter-exclude-type:
+                summary: Exclude sites by type
+                value:
+                  type_ne: "inbound-access"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - type: array
+                        items:
+                          $ref: '#/components/schemas/sites'
+                  limit:
+                    type: integer
+                    default: 200
+                  offset:
+                    type: integer
+                    default: 0
+                  total:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
 components:
   securitySchemes:
     scmOAuth:

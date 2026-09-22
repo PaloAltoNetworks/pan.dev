@@ -697,6 +697,12 @@ const config = {
             outputDir: "products/scm/api/subscription",
             sidebarOptions: { groupPathsBy: "tag" },
           },
+          scmactivation: {
+            specPath: "openapi-specs/scm/activation",
+            outputDir: "products/scm/api/activation",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           tenancy: {
             specPath: "openapi-specs/sase/tenancy",
             outputDir: "products/sase/api/tenancy",
