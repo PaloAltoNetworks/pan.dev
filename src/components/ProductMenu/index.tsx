@@ -46,6 +46,10 @@ function openSiteSearch(query: string): boolean {
     if (!input) {
       if (Date.now() < deadline) {
         window.requestAnimationFrame(seed);
+      } else {
+        // The modal never mounted its input in time; fall back to the search
+        // page rather than leaving the user in an empty modal with a lost term.
+        window.location.assign(`/search?q=${encodeURIComponent(query)}`);
       }
       return;
     }
@@ -310,25 +314,38 @@ function ProductMenuDesktop(): JSX.Element {
 
   const moveRow = useCallback(
     (from: string, delta: number) => {
-      if (visible.length === 0) {
+      const i = visible.indexOf(from);
+      if (i === -1) {
+        // The row was filtered out from under us; nothing to move relative to.
         return;
       }
-      const i = visible.indexOf(from);
       const next = visible[(i + delta + visible.length) % visible.length];
       focusRow(next);
     },
     [visible, focusRow]
   );
 
+  // Set when a keyboard action asks to move focus into a submenu. The focus can
+  // only happen after the submenu has rendered, so it is deferred to the effect
+  // below rather than guessed at with a single animation frame.
+  const enterOnRender = useRef<string | null>(null);
+
   const enterSubmenu = useCallback((label: string) => {
+    enterOnRender.current = label;
     setActiveProduct(label);
-    window.requestAnimationFrame(() => {
-      const panel = drawerRef.current?.querySelector<HTMLElement>(
-        `#${submenuIdFor(label)} a`
-      );
-      panel?.focus();
-    });
   }, []);
+
+  useEffect(() => {
+    const label = enterOnRender.current;
+    if (!label || activeProduct !== label) {
+      return;
+    }
+    enterOnRender.current = null;
+    const panel = drawerRef.current?.querySelector<HTMLElement>(
+      `#${submenuIdFor(label)} a`
+    );
+    panel?.focus();
+  }, [activeProduct]);
 
   useEffect(() => {
     if (!open) {
@@ -433,7 +450,7 @@ function ProductMenuDesktop(): JSX.Element {
             className={styles.overlay}
             onMouseDown={(event) => {
               if (!drawerRef.current?.contains(event.target as Node)) {
-                close();
+                closeAndRefocus();
               }
             }}
           >
@@ -530,7 +547,9 @@ function ProductMenuDesktop(): JSX.Element {
                                     }}
                                     className={styles.product}
                                     aria-expanded={isActive}
-                                    aria-controls={submenuId}
+                                    aria-controls={
+                                      isActive ? submenuId : undefined
+                                    }
                                     aria-current={
                                       isCurrent ? "true" : undefined
                                     }
