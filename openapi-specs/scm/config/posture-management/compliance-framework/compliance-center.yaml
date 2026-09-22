@@ -1371,7 +1371,7 @@ paths:
       tags:
         - Benchmark Monitoring
       summary: Get Benchmark Monitoring Data
-      description: "Retrieve compliance monitoring data for benchmarked frameworks with filtering and pagination"
+      description: "Retrieve compliance monitoring data for benchmarked frameworks with filtering and pagination. Filters restrict results to only the specified values. Empty or omitted filters apply no restrictions."
       operationId: "getBenchmarkMonitoring"
       security:
         - BearerAuth: []
@@ -1384,55 +1384,55 @@ paths:
             schema:
               type: object
               properties:
-                product:
-                  type: string
-                  description: "Product filter"
-                  enum:
-                    - sase
-                    - ngfw
-                    - all
                 bpc_status:
                   type: array
                   description: "BPC status filter"
+                  example: []
                   items:
                     type: string
                 severity:
                   type: array
                   description: "Severity filter"
+                  example: []
                   items:
                     type: string
                 bpc_id:
                   type: array
                   description: "BPC ID filter"
+                  example: []
                   items:
                     type: string
                 object_type:
                   type: array
                   description: "Object type filter"
+                  example: []
                   items:
                     type: string
                 object_id:
                   type: array
                   description: "Object ID filter"
+                  example: []
                   items:
                     type: string
                 remediation_location:
                   type: array
                   description: "Remediation location filter"
+                  example: []
                   items:
                     type: string
                 action:
                   type: array
                   description: "Action filter"
+                  example: []
                   items:
                     type: string
                 device_type:
                   type: array
                   description: "Device type filter"
+                  example: []
                   items:
                     type: string
             example:
-              product: "ngfw"
               bpc_status: []
               severity: []
               bpc_id: ["100", "102", "103", "104", "105", "107", "108", "109", "111", "117", "12", "121", "122", "123", "124", "125", "126", "127", "128", "129", "13", "130", "131", "132", "133", "134", "136", "138", "139", "141", "142", "143", "144", "145", "149", "150", "151", "154", "155", "157", "158", "159", "16", "164", "165", "17", "173", "174", "177", "178", "182", "183", "184", "185", "186", "187", "188", "189", "19", "190", "194", "196", "197", "199", "200", "203", "207", "208", "21", "211", "212", "215", "216", "217", "223", "224", "227", "228", "231", "233", "234", "241", "242", "243", "247", "249", "253", "259", "26", "260", "261", "262", "263", "264", "267", "268", "27", "271", "272", "273", "276", "277", "278", "279", "280", "281", "282", "283", "284", "285", "287", "288", "289", "292", "293", "294", "295", "296", "297", "298", "299", "3", "300", "301", "302", "303", "304", "305", "306", "307", "308", "311", "312", "317", "32", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "33", "330", "331", "332", "333", "339", "340", "341", "344", "345", "346", "347", "38", "4", "40", "41", "42", "43", "44", "45", "47", "49", "5", "51", "52", "53", "55", "57", "58", "6", "60", "63", "65", "67", "68", "69", "7", "71", "72", "74", "76", "77", "78", "79", "80", "86", "87", "89", "9", "90", "91", "92", "94", "95", "97", "98"]
@@ -1453,10 +1453,38 @@ paths:
                     type: array
                     items:
                       type: string
+                  asset_attributes:
+                    type: array
+                    description: "Asset attributes including device serial and hostname"
+                    items:
+                      type: object
+                      properties:
+                        device_serial:
+                          type: string
+                          description: "Device serial number"
+                        hostname:
+                          type: string
+                          description: "Device hostname"
                   bpc_id:
                     type: array
                     items:
                       type: string
+                  bpc_to_control_groups:
+                    type: object
+                    description: "Mapping of BPC IDs to their associated control frameworks and control groups"
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          cf_id:
+                            type: string
+                            description: "Control Framework ID"
+                          control_groups:
+                            type: array
+                            description: "List of control groups"
+                            items:
+                              type: string
                   bpc_id_count:
                     type: array
                     items:
@@ -1548,7 +1576,20 @@ paths:
                     format: int64
               example:
                 device_serial: ["026101000023", "007951000388678", "007051000239252", "007051000239253", "007958000455738", "007951000388704"]
+                asset_attributes:
+                  - device_serial: "026101000023"
+                    hostname: "hostname-026101000023"
+                  - device_serial: "007951000388678"
+                    hostname: "hostname-007951000388678"
+                  - device_serial: "007051000239252"
+                    hostname: "hostname-007051000239252"
                 bpc_id: ["44", "45", "89", "47", "271", "272", "196", "273", "197", "111", "155", "159", "117", "90", "91", "92", "94", "51", "95", "52", "53", "97", "55", "12", "13", "57", "58", "19", "241", "121", "242", "122", "243", "200", "3", "4", "203", "5", "6", "249", "7", "128", "207", "9", "208", "60", "21", "253", "132", "177", "178", "212", "215", "259", "216", "217", "33", "38", "260", "261", "262", "263", "340", "264", "341", "100", "102", "223", "267", "344", "103", "345", "104", "346", "105", "347", "227", "107", "228", "108", "109", "40", "42", "86", "43", "87"]
+                bpc_to_control_groups:
+                  "10":
+                    - cf_id: "CCF-0000-00000-00000"
+                      control_groups: ["AC-1 : Account Management", "AC-1(1) : Automated System Account Management"]
+                    - cf_id: "CCF-1111-11111-11111"
+                      control_groups: ["AC-1 : Account Management", "AC-1(1) : Automated System Account Management"]
                 bpc_id_count: [4, 3, 6, 3, 3, 3, 4, 4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 4, 6, 4, 4, 6, 6, 6, 5, 6, 6, 2, 6, 6, 6, 6, 6, 3, 28, 28, 6, 28, 28, 6, 28, 1, 4, 28, 28, 31, 6, 7, 1, 1, 1, 31, 6, 4, 6, 6, 3, 7, 4, 6, 6, 6, 4, 6, 4, 5, 6, 6, 17, 4, 6, 4, 6, 4, 6, 6, 4, 6, 12, 6, 6, 7, 3, 4, 4, 4]
                 manager: ["ngfw"]
                 action: ["", "alert", "block"]
@@ -1604,7 +1645,7 @@ paths:
       tags:
         - Benchmark Monitoring
       summary: Download Benchmark Data
-      description: "Download benchmark monitoring data in specified format (CSV, etc.)"
+      description: "Download benchmark monitoring data in specified format (CSV, etc.). Filters restrict results to only the specified values. Empty or omitted filters apply no restrictions."
       operationId: "getBenchmarkMonitoringDownload"
       security:
         - BearerAuth: []
@@ -1660,55 +1701,55 @@ paths:
             schema:
               type: object
               properties:
-                product:
-                  type: string
-                  description: "Product filter"
-                  enum:
-                    - sase
-                    - ngfw
-                    - all
                 bpc_status:
                   type: array
                   description: "BPC status filter"
+                  example: []
                   items:
                     type: string
                 severity:
                   type: array
                   description: "Severity filter"
+                  example: []
                   items:
                     type: string
                 bpc_id:
                   type: array
                   description: "BPC ID filter"
+                  example: []
                   items:
                     type: string
                 object_type:
                   type: array
                   description: "Object type filter"
+                  example: []
                   items:
                     type: string
                 object_id:
                   type: array
                   description: "Object ID filter"
+                  example: []
                   items:
                     type: string
                 remediation_location:
                   type: array
                   description: "Remediation location filter"
+                  example: []
                   items:
                     type: string
                 action:
                   type: array
                   description: "Action filter"
+                  example: []
                   items:
                     type: string
                 device_type:
                   type: array
                   description: "Device type filter"
+                  example: []
                   items:
                     type: string
             example:
-              product: "ngfw"
               bpc_status: []
               severity: []
               bpc_id: ["100", "102", "103", "104", "105", "107", "108", "109", "111", "117", "12", "121", "122", "123", "124", "125", "126", "127", "128", "129", "13", "130", "131", "132", "133", "134", "136", "138", "139", "141", "142", "143", "144", "145", "149", "150", "151", "154", "155", "157", "158", "159", "16", "164", "165", "17", "173", "174", "177", "178", "182", "183", "184", "185", "186", "187", "188", "189", "19", "190", "194", "196", "197", "199", "200", "203", "207", "208", "21", "211", "212", "215", "216", "217", "223", "224", "227", "228", "231", "233", "234", "241", "242", "243", "247", "249", "253", "259", "26", "260", "261", "262", "263", "264", "267", "268", "27", "271", "272", "273", "276", "277", "278", "279", "280", "281", "282", "283", "284", "285", "287", "288", "289", "292", "293", "294", "295", "296", "297", "298", "299", "3", "300", "301", "302", "303", "304", "305", "306", "307", "308", "311", "312", "317", "32", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "33", "330", "331", "332", "333", "339", "340", "341", "344", "345", "346", "347", "38", "4", "40", "41", "42", "43", "44", "45", "47", "49", "5", "51", "52", "53", "55", "57", "58", "6", "60", "63", "65", "67", "68", "69", "7", "71", "72", "74", "76", "77", "78", "79", "80", "86", "87", "89", "9", "90", "91", "92", "94", "95", "97", "98"]
@@ -1725,15 +1766,17 @@ paths:
             **CSV Format Columns:**
             1. BPC Title - Description of the best practice check
             2. Device Serial - Serial number of the device
-            3. Bpc Id - Best Practice Check ID
-            4. Product - Product type (ngfw, sase, all)
-            5. Object Type - Type of configuration object
-            6. Severity - Severity level (Critical, Warning, Informational)
-            7. Location - Configuration location context
-            8. Remediation Location - Full path to the remediation location
-            9. Object Id - Object identifier
-            10. Bpc Status - Status of the check (pass, fail, exception)
-            11. User Excluded - Whether the check was user-excluded (true/false)
+            3. Hostname - Device hostname
+            4. Bpc Id - Best Practice Check ID
+            5. Control Groups - Associated control groups for the BPC
+            6. Product - Product type (ngfw, sase, all)
+            7. Object Type - Type of configuration object
+            8. Severity - Severity level (Critical, Warning, Informational)
+            9. Location - Configuration location context
+            10. Remediation Location - Full path to the remediation location
+            11. Object Id - Object identifier
+            12. Bpc Status - Status of the check (pass, fail, exception)
+            13. User Excluded - Whether the check was user-excluded (true/false)
           content:
             application/octet-stream:
               schema:
@@ -1744,9 +1787,10 @@ paths:
                 type: string
                 format: binary
               example: |
-                BPC Title,Device Serial,Bpc Id,Product,Object Type,Severity,Location,Remediation Location,Object Id,Bpc Status,User Excluded
-                The Permitted IP Addresses list on the management interface of the firewall should be used to prevent access from unauthorized sources,007051000239252,100,ngfw,device_setup_management_interface,Informational,,tsgid:1001536090/Device:007051000239252/Device Setup Management Interface:Device Setup Management Interface/,Device Setup Management Interface,fail,false
-                Administrative management interface services should not allow unencrypted protocols like HTTP and Telnet,007051000239252,102,ngfw,device_setup_management_interface,Warning,,tsgid:1001536090/Device:007051000239252/Device Setup Management Interface:Device Setup Management Interface/,Device Setup Management Interface,pass,false
+                BPC Title,Device Serial,Hostname,Bpc Id,Control Groups,Product,Object Type,Severity,Location,Remediation Location,Object Id,Bpc Status,User Excluded
+                The Permitted IP Addresses list on the management interface of the firewall should be used to prevent access from unauthorized sources,007099000023154,PA-VM,100,AC-2 : Account Management -> AC-2(1) : Automated System Account Management,ngfw,device_setup_management_interface,Informational,,tsgid:1443076947/Device:007099000023154/Device Setup Management Interface:Device Setup Management Interface/,Device Setup Management Interface,fail,false
+                The Permitted IP Addresses list on the management interface of the firewall should be used to prevent access from unauthorized sources,007999000025056,,100,AC-2 : Account Management -> AC-2(1) : Automated System Account Management,ngfw,device_setup_management_interface,Informational,,tsgid:1443076947/Device:007999000025056/Device Setup Management Interface:Device Setup Management Interface/,Device Setup Management Interface,fail,false
+                The Permitted IP Addresses list on the management interface of the firewall should be used to prevent access from unauthorized sources,007999000025854,,100,AC-2 : Account Management -> AC-2(1) : Automated System Account Management,ngfw,device_setup_management_interface,Informational,,tsgid:1443076947/Device:007999000025854/Device Setup Management Interface:Device Setup Management Interface/,Device Setup Management Interface,fail,false
         '400':
           description: "Bad request - invalid format, compression type, or filter criteria"
           content:
