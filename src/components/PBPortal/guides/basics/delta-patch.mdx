@@ -1,0 +1,264 @@
+---
+title: 'Delta patch'
+sidebar_label: 'Delta patch'
+pb_guide:
+  group: Basics
+  groupOrder: 10
+  order: 40
+  summary: Add and remove list values without read-modify-write races
+
+---
+
+When you update a rule that contains **lists** (application IDs, URLs, web classifications, scope members), you have two ways to change them: replace the whole list, or send only the items to add or remove. The second option, **delta patch**, is what makes large-scale automation safe and simple. This page explains when to use each.
+
+Delta patch is a Prisma Browser convenience: you do not have to read the current list, compute the new one, and write it back. You say "add these, remove those", and the server applies the delta.
+
+**On this page:** three ways to change a field, where delta applies, full replacement vs delta, worked example, when to use which, rules and edge cases, per-intent examples.
+
+---
+
+## Three ways to change a field in a PATCH
+
+`PATCH` is partial: send only the fields you want to change, and omit the rest. For the fields you do send, the semantics depend on the field type:
+
+| Field kind | How a PATCH changes it | Example |
+|---|---|---|
+| **Scalar** (string, boolean, enum) | Set directly to the new value | `accessMode: "specific"` |
+| **List, full replacement** | Replace the entire list with the value you send | `applicationIds: [a, b, c]` |
+| **List, delta** | Add or remove specific items, leaving the rest intact | `addApplicationIds: [d]`, `removeApplicationIds: [a]` |
+
+For every delta-capable list, there are three sibling fields:
+
+- `<field>` : full replacement (the new complete list)
+- `add<Field>` : items to add to the current list
+- `remove<Field>` : items to remove from the current list
+
+You pick **one strategy per field**: send the full-replacement field, or the add/remove pair, not both.
+
+---
+
+## Where delta applies
+
+Delta patch is available on the **access-and-data rule** `PATCH` for its list fields, including:
+
+| List | Full replace | Add | Remove |
+|---|---|---|---|
+| SaaS application IDs | `applicationIds` | `addApplicationIds` | `removeApplicationIds` |
+| URLs | `urls` | `addUrls` | `removeUrls` |
+| Web classifications | `webClassifications` | `addWebClassifications` | `removeWebClassifications` |
+| Private application IDs | `applicationIds` | `addApplicationIds` | `removeApplicationIds` |
+
+These live under the application scope of the rule (for example `applications.saas.specific.*`).
+
+---
+
+## Full replacement vs delta: why it matters
+
+Consider an access-and-data rule whose SaaS scope currently allows applications `[A, B, C]`, and you want to add `D` and remove `A`.
+
+### Full replacement (read-modify-write)
+
+You must first **read** the current list, compute `[B, C, D]` yourself, then **write** it back:
+
+```json
+{
+  "applications": {
+    "saas": {
+      "accessMode": "specific",
+      "specific": { "applicationIds": ["B", "C", "D"] }
+    }
+  }
+}
+```
+
+Problem: between your read and your write, anyone else (another script, an administrator in Strata Cloud Manager) might have added `E`. Your write silently erases `E`. This is a classic lost-update race.
+
+### Delta (no read needed)
+
+State your intent directly. No read, no race over the items you did not touch:
+
+```json
+{
+  "applications": {
+    "saas": {
+      "accessMode": "specific",
+      "specific": {
+        "addApplicationIds": ["D"],
+        "removeApplicationIds": ["A"]
+      }
+    }
+  }
+}
+```
+
+If someone else added `E` in the meantime, it stays. You only changed what you asked to change.
+
+---
+
+## Worked example
+
+Add application `0AP01ADD...` and remove application `0AP01OLD...` from a rule's SaaS scope. `RULE_ID` is an access-and-data rule.
+
+```bash
+export RULE_ID='0RLEXAMPLERULEXXXXXXXXXXXXXX'
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "applications": {
+          "saas": {
+            "accessMode": "specific",
+            "specific": {
+              "addApplicationIds": ["0AP01ADDXXXXXXXXXXXXXXXXXXXXX"],
+              "removeApplicationIds": ["0AP01OLDXXXXXXXXXXXXXXXXXXXXX"]
+            }
+          }
+        }
+      }'
+```
+
+A successful `PATCH` returns `200` with the rule ID:
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+Remember: this changed the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)).
+
+---
+
+## When to use which
+
+| Use full replacement when... | Use delta when... |
+|---|---|
+| You are the sole owner of the list and want it to be exactly this set | Multiple sources edit the same rule |
+| You are recreating a rule from a known desired state (IaC apply) | You are reacting to events ("add this newly risky application") |
+| The list is short and you have just read it | You want to avoid read-modify-write entirely |
+
+---
+
+## Rules and edge cases
+
+- **Pick one strategy per field.** Sending both `applicationIds` and `addApplicationIds` for the same list is contradictory; send one.
+- **Set the mode too if you are turning the scope on.** Adding specific applications usually means `accessMode: "specific"`. Send it in the same PATCH.
+- **Idempotency.** Adding an item already present, or removing one already absent, is a safe no-op rather than an error. This makes delta patches retry-safe.
+- **Minimum items.** Add/remove arrays expect at least one item; omit the field entirely if you have nothing to add or remove.
+
+## Per-intent examples
+
+Each PATCH states one intent directly, with no read-modify-write. All target an access-and-data rule at `$RULE_ID`. Expand the intent you need.
+
+<details>
+<summary>Add one SaaS application to the rule's scope</summary>
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{
+        "applications": {
+          "saas": {
+            "accessMode": "specific",
+            "specific": { "addApplicationIds": ["0AP01ADDXXXXXXXXXXXXXXXXXXXXX"] }
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+<details>
+<summary>Remove one SaaS application</summary>
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{
+        "applications": {
+          "saas": {
+            "accessMode": "specific",
+            "specific": { "removeApplicationIds": ["0AP01OLDXXXXXXXXXXXXXXXXXXXXX"] }
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+<details>
+<summary>Add and remove a user group on the rule's scope</summary>
+
+`scope.users` supports `addUsers`/`removeUsers` and `addUserGroups`/`removeUserGroups`.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{
+        "scope": {
+          "users": {
+            "addUserGroups": ["0UGEXAMPLECONTRACTORSXXXXXX"],
+            "removeUserGroups": ["0UGEXAMPLEINTERNSXXXXXXXXXX"]
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+<details>
+<summary>Add and remove a URL</summary>
+
+URL items are objects; `addUrls`/`removeUrls` live under the same `specific` block.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{
+        "applications": {
+          "saas": {
+            "accessMode": "specific",
+            "specific": {
+              "addUrls": [ { "url": "newsite.example.com" } ],
+              "removeUrls": [ { "url": "oldsite.example.com" } ]
+            }
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+:::note
+Adding an item already present, or removing one already absent, is a safe no-op rather than an error, so these PATCHes are retry-safe. Send `accessMode: "specific"` in the same PATCH when you are turning the scope on.
+:::
+
+---
+
+Next: see this in a full workflow in [Bulk-update rule applications with delta patch](/prisma-browser/guide/bulk-update-rule-applications-with-delta).
+

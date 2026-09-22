@@ -1,0 +1,199 @@
+---
+title: 'Add or remove users on a rule'
+sidebar_label: 'Add or remove users on a rule'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Policy management
+  subgroupOrder: 10
+  order: 50
+  summary: Add or remove users directly or through groups
+
+---
+
+Add or remove the people a rule applies to. You can put users (or user groups) directly on the rule's scope, or manage a [local user group](/prisma-browser/guide/user-groups) and reference it from the rule. Same outcome, different operational trade-offs.
+
+**Use this when:**
+
+- You want to change who a rule covers from automation.
+- You are deciding whether to scope a rule by individual users or by a managed group.
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Read [Policy overview](/prisma-browser/guide/rules), [User groups](/prisma-browser/guide/user-groups), and [Delta patch](/prisma-browser/guide/delta-patch) first.
+
+```bash
+export RULE_ID='0RLEXAMPLERULEXXXXXXXXXXXXXX'
+```
+
+---
+
+## Approaches
+
+| Approach | How it works | Best when | Tradeoffs |
+|---|---|---|---|
+| **A. Directly on the rule** | Add/remove users and user groups in the rule's `scope` via delta patch | A small, rule-specific audience | The rule object changes on every membership edit; not reusable |
+| **B. Via a local user group** | Manage one [local user group](/prisma-browser/guide/user-groups); reference it from the rule once | The audience changes often, or several rules share it | One extra object; you publish the group, not the rule |
+
+**Recommendation:** use **B** when the audience churns or is shared (it isolates membership changes from the rule and pairs with [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish)). Use **A** for a small, stable, rule-specific set.
+
+---
+
+## Approach A: directly on the rule
+
+Add and remove users and groups in the rule scope. Deltas leave everyone else in scope untouched:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/security/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "scope": {
+          "users": {
+            "addUsers": ["0UR01CAROLXXXXXXXXXXXXXXXXXXX"],
+            "removeUsers": ["0UR01BOBXXXXXXXXXXXXXXXXXXXXX"],
+            "addUserGroups": ["0UG01ENGXXXXXXXXXXXXXXXXXXXXX"]
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+:::note
+To scope a rule to everyone, send `"users": { "isAny": true }`. To go back to a specific list, send the `add…` fields with `isAny` omitted or false.
+:::
+
+---
+
+## Approach B: via a local user group
+
+### 1. Create (or reuse) a local user group
+
+```bash
+curl -sS -X POST "$PB_API_BASE/user-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "DevTools block - scope", "userIds": ["0UR01ALICEXXXXXXXXXXXXXXXXXXX"] }'
+```
+
+```json
+{ "id": "0UG01SCOPEXXXXXXXXXXXXXXXXXXX" }
+```
+
+```bash
+export UG_ID='0UG01SCOPEXXXXXXXXXXXXXXXXXXX'
+```
+
+### 2. Reference the group from the rule (once)
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/security/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "scope": { "users": { "addUserGroups": ["'"$UG_ID"'"] } } }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+### 3. From now on, edit the group, not the rule
+
+```bash
+curl -sS -X PUT "$PB_API_BASE/user-groups/$UG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "users": [ { "userId": "0UR01DANXXXXXXXXXXXXXXXXXXXXX", "action": "add" } ] }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0UG01SCOPEXXXXXXXXXXXXXXXXXXX", "userGroupId": "0UG01SCOPEXXXXXXXXXXXXXXXXXXX" }
+```
+
+The rule stays put; only the group changes. Publish the group (with [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), publish only `0UG...`).
+
+:::note
+This is the foundation of a [gradual rollout](/prisma-browser/guide/gradual-rollout-with-user-group): keep adding members to the group over time and the rule's reach expands with each publish.
+:::
+
+---
+
+## Verify and publish
+
+```bash
+curl -sS "$PB_API_BASE/policy/security/rules/$RULE_ID" -H "Authorization: Bearer $PB_TOKEN"
+
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Update rule audience"}'
+```
+
+The `GET` returns the full rule so you can confirm the scope:
+
+```json
+{
+  "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX",
+  "name": "Block developer tools",
+  "scope": {
+    "users": {
+      "isAny": false,
+      "userGroups": [ { "id": "0UG01SCOPEXXXXXXXXXXXXXXXXXXX", "name": "DevTools block - scope" } ]
+    }
+    // ... other scope segments
+  }
+  // ... controls, metadata
+}
+```
+
+The publish returns `201` when a new active version is created.
+
+---
+
+## Full script (Python, approach B)
+
+```python
+import os, requests
+
+base = os.environ["PB_API_BASE"]
+headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
+rule_id = os.environ["RULE_ID"]
+
+# 1. Create a local user group
+ug_id = requests.post(f"{base}/user-groups", headers=headers,
+    json={"name": "DevTools block - scope", "userIds": ["0UR01ALICEXXXXXXXXXXXXXXXXXXX"]},
+    timeout=30).json()["id"]
+
+# 2. Reference it from the rule (once)
+requests.patch(f"{base}/policy/security/rules/{rule_id}", headers=headers,
+    json={"scope": {"users": {"addUserGroups": [ug_id]}}}, timeout=30).raise_for_status()
+
+# 3. Ongoing: change membership on the group
+def set_members(add=(), remove=()):
+    users = [{"userId": u, "action": "add"} for u in add] + \
+            [{"userId": u, "action": "remove"} for u in remove]
+    if users:
+        requests.put(f"{base}/user-groups/{ug_id}", headers=headers,
+                     json={"users": users}, timeout=30).raise_for_status()
+
+set_members(add=["0UR01DANXXXXXXXXXXXXXXXXXXXXX"])
+
+# 4. Publish only the group
+requests.post(f"{base}/configuration-management/draft/partial-publish", headers=headers,
+    json={"entityIds": [ug_id], "description": "Expand rule audience"}, timeout=30)
+```
+
+---
+
+## Related
+- Building blocks: [Rules](/prisma-browser/guide/rules), [User groups](/prisma-browser/guide/user-groups)
+- Concepts: [Delta patch](/prisma-browser/guide/delta-patch), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish)
+- Related use cases: [Roll out a rule gradually](/prisma-browser/guide/gradual-rollout-with-user-group), [Change a rule's scope](/prisma-browser/guide/change-a-rule-scope)
+

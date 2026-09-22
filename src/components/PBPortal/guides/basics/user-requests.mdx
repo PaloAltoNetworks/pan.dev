@@ -1,0 +1,80 @@
+---
+title: 'User requests'
+sidebar_label: 'User requests'
+pb_guide:
+  group: User requests
+  groupOrder: 50
+  order: 10
+  summary: List, approve, decline, and revoke admin-approval requests
+
+---
+
+A **user request** is created when a user matches a rule whose prompt is set to **administrator approval**.
+
+**On this page:** how requests are generated, managing requests through the API, request lifecycle, request types, filtering and sorting, approval timeframes, related. Instead of being allowed or blocked outright, the user submits a request, and an administrator decides. You configure the trigger on a rule, and you manage the resulting requests through the user-requests API.
+
+---
+
+## How requests are generated
+
+On a [rule](/prisma-browser/guide/rules) (or a control that supports prompting), set the prompt mode to `adminApproval`:
+
+```json
+{ "userPrompt": { "mode": "adminApproval", "durationMinutes": 540 } }
+```
+
+| `mode` | Behavior |
+|---|---|
+| `warnAndAllow` | User dismisses a warning and continues. No request created. |
+| `proceedWithReason` | User types a justification and continues. No administrator step. |
+| `adminApproval` | User submits a request an administrator must approve. A **request** is created. |
+
+`durationMinutes` controls how long an approval is remembered before the user is challenged again (default 540, that is 9 hours). See [Rules: prompts and custom messages](/prisma-browser/guide/rules#prompts-and-custom-messages).
+
+---
+
+## Managing requests through the API
+
+The user-requests API lets you list pending requests, inspect one, approve or decline it, and revoke an approval that is no longer wanted. These are **direct operations**: they take effect immediately and do not go through draft and publish.
+
+| Operation | Endpoint |
+|---|---|
+| List requests | `GET /seb-api/v1/user-requests` |
+| Get one request | `GET /seb-api/v1/user-requests/{id}` |
+| Approve or decline | `POST /seb-api/v1/user-requests/{id}/action` |
+| Revoke an approval | `POST /seb-api/v1/user-requests/{id}/revoke` |
+
+### Request lifecycle
+
+A request moves through these statuses:
+
+| Status | Meaning |
+|---|---|
+| `Pending` | Submitted by the user, awaiting an administrator decision. |
+| `Approved` | An administrator approved it; the user is allowed for the bypass timeframe. |
+| `Declined` | An administrator declined it; the user stays blocked. |
+| `Revoked` | A previously approved request was withdrawn. |
+
+### Request types
+
+| `request.type` | Triggered by |
+|---|---|
+| `WebAccess` | A web access (URL) that a rule blocked or prompted on. |
+| `AppLogin` | A sign-in to an application that a rule blocked or prompted on. |
+
+### Filtering and sorting
+
+`GET /user-requests` supports filtering by `request.type`, `request.user_id`, `request.device_id`, `request.rule_id`, `request.url`, `request.responded_by`, and `request.status`, plus `sort` (for example `request.created_at`, `request.status`) and `order`. It is cursor-paginated (`limit` + `cursor`); see [Pagination](/prisma-browser/guide/pagination).
+
+### Approval timeframes
+
+When you approve a request, `adminBypassTimeframe` sets how long the approval holds before the user is challenged again. Allowed values: `Once`, `10m`, `1h`, `4h`, `9h`, `12h`, `24h`, `3d`, `7d`, `14d`, `30d`, `60d`, `90d`.
+
+---
+
+## Related
+
+- Use case: [Handle user access requests](/prisma-browser/guide/handle-user-access-requests) (poll, approve/decline, revoke)
+- Building blocks: [Rules](/prisma-browser/guide/rules) (prompts and custom messages)
+- Concepts: [Direct actions](/prisma-browser/guide/direct-actions) for immediate user/device remediation
+

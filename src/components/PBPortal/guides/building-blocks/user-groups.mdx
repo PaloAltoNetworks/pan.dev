@@ -1,0 +1,272 @@
+---
+title: 'User groups'
+sidebar_label: 'User groups'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 70
+  summary: Local and IdP-synced user groups for rule scope
+
+---
+
+A **user group** scopes a rule to a set of users. Groups come in two flavors: **local** groups you create and manage directly through this API, and **sso** groups synced from your identity provider (IdP). A rule references a group via its scope, and you control who the rule applies to by editing the group's membership. Use a **local** group when you want a rule's audience driven by your own logic (a script, a CMDB, a rollout schedule).
+
+**On this page:** membership model, limits, examples, endpoint reference, tips.
+
+---
+
+## Membership model
+
+The `provider` field tells you where a group comes from:
+
+| `provider` | Origin | Can you edit membership via the API? |
+|---|---|---|
+| `local` | Created through this API (or the console) | Yes, you own it |
+| `sso` | Synced from your IdP using the Cloud Identity Engine | No, membership is governed upstream |
+
+:::note
+**Use local groups for automation.** When you want a rule's audience to be driven by your own logic (a script, a CMDB, a rollout schedule), create a **local** user group and manage its members through the API. SSO groups mirror the IdP; change them there, not here.
+:::
+
+---
+
+## Examples
+
+### Retrieve
+
+#### List and filter
+
+```
+GET /seb-api/v1/user-groups
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/user-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 },
+  "data": [
+    {
+      "id": "0UG01PILOTXXXXXXXXXXXXXXXXXXX",
+      "name": "Pilot - DevTools block",
+      "lastUpdated": "2026-01-15T10:00:00Z",
+      "createdAt": "2026-01-15T10:00:00Z",
+      "provider": "local"
+    }
+    // ... more groups
+  ]
+}
+```
+
+Results are cursor-paginated: the response carries a `pageInfo` object. Pass the next `cursor` value to page through large result sets.
+
+| Query param | Notes |
+|---|---|
+| `limit` | Number of groups to return. |
+| `cursor` | Opaque string marking where to resume listing. |
+
+#### Get one
+
+```
+GET /seb-api/v1/user-groups/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/user-groups/$UG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0UG01PILOTXXXXXXXXXXXXXXXXXXX",
+  "name": "Pilot - DevTools block",
+  "lastUpdated": "2026-01-15T10:00:00Z",
+  "createdAt": "2026-01-15T10:00:00Z",
+  "provider": "local",
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } }
+}
+```
+
+### Create
+
+```
+POST /seb-api/v1/user-groups
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/user-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Pilot - DevTools block",
+        "userIds": [
+          "0UR01ALICEXXXXXXXXXXXXXXXXXXX",
+          "0UR01BOBXXXXXXXXXXXXXXXXXXXXX"
+        ]
+      }'
+```
+
+Response (`201`). The `userGroupId` field is a deprecated alias for `id`:
+
+```json
+{
+  "id": "0UG01PILOTXXXXXXXXXXXXXXXXXXX",
+  "userGroupId": "0UG01PILOTXXXXXXXXXXXXXXXXXXX"
+}
+```
+
+Capture the ID for later snippets:
+
+```bash
+export UG_ID='0UG01PILOTXXXXXXXXXXXXXXXXXXX'
+```
+
+#### Key fields
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `name` | string | Yes | Display name. |
+| `userIds` | array | Yes | Member user IDs (`0UR...`). |
+
+### Update
+
+Membership edits use **PUT** with a list of per-user actions. This is incremental: you send only the users to add or remove, not the full roster.
+
+:::note
+**PUT behaves like a PATCH here.** It accepts only incremental per-user membership actions, not a complete replacement of the full roster. You send a list of users to add or remove, and only those changes are applied.
+:::
+
+```
+PUT /seb-api/v1/user-groups/{id}
+```
+
+```bash
+# Add one user, remove another
+curl -sS -X PUT "$PB_API_BASE/user-groups/$UG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "users": [
+          { "userId": "0UR01CAROLXXXXXXXXXXXXXXXXXXX", "action": "add" },
+          { "userId": "0UR01BOBXXXXXXXXXXXXXXXXXXXXX", "action": "remove" }
+        ]
+      }'
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0UG01PILOTXXXXXXXXXXXXXXXXXXX",
+  "userGroupId": "0UG01PILOTXXXXXXXXXXXXXXXXXXX"
+}
+```
+
+:::caution
+**Draft mode for local user groups is rolling out.** On most tenants, changes to a user group (including membership edits) land in the **draft** and go live only when you publish. On a tenant that has not received the rollout yet, the same edits apply directly to the **active** version and there is nothing to publish.
+
+To confirm which mode a tenant is in, open the user groups page in Strata Cloud Manager. If you can switch between the Published and Draft versions there, the tenant is draft-gated and your automation must publish after every write.
+:::
+
+### Delete
+
+```
+DELETE /seb-api/v1/user-groups/{id}
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/user-groups/$UG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0UG01PILOTXXXXXXXXXXXXXXXXXXX",
+  "userGroupId": "0UG01PILOTXXXXXXXXXXXXXXXXXXX"
+}
+```
+
+### Publish with partial publish
+
+The typical [gradual rollout](/prisma-browser/guide/gradual-rollout-with-user-group) loop is: edit group membership, then partial publish only that group so unrelated draft edits are left untouched. Partial publish is available through the API (not yet in the UI). The `id` to publish comes back in the response of the write itself, so no extra lookup is needed.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/partial-publish" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "entityIds": ["'"$UG_ID"'"], "description": "ServiceNow INC0042311: contractor offboarding" }'
+```
+
+Returns `201` with the new configuration version and the IDs that went live. Creating and deleting groups follow the same pattern: perform the write, then publish the `id` it returned.
+
+If the group has no pending change, for example because the write added a user who was already a member, the call returns `404`:
+
+```json
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "No pending change found for one or more of the specified entities.",
+    "timestamp": "2026-08-06T09:15:00Z",
+    "details": []
+  }
+}
+```
+
+See [Publish a single object (partial publish)](/prisma-browser/guide/automate-with-partial-publish) for the full error matrix.
+
+### Read back what is live
+
+Reads default to the draft, so a group you have edited but not published still comes back from a plain `GET`. To verify what is actually enforced, ask for the active version:
+
+```bash
+curl -sS "$PB_API_BASE/user-groups/$UG_ID?configurationVersion=active" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/user-groups` | List user groups (paginate) |
+| `GET` | `/user-groups/{id}` | Read one user group |
+| `POST` | `/user-groups` | Create a user group |
+| `PUT` | `/user-groups/{id}` | Add or remove members (incremental) |
+| `DELETE` | `/user-groups/{id}` | Delete a user group |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**One call changes who a rule covers.** Editing a group's membership changes the audience of every rule that references it, without touching the rules themselves. Publish just that group with partial publish (API only today) so the membership change does not ship unrelated draft edits. See [Publish a single object (partial publish)](/prisma-browser/guide/automate-with-partial-publish).
+:::
+
+:::note
+**`userGroupId` is deprecated.** Responses still return a `userGroupId` field for backward compatibility; use `id`.
+:::
+
+:::note
+**Reference from a rule's scope.** A rule scopes to a group via `scope.users.userGroups`. Add or remove groups on a rule with `addUserGroups` / `removeUserGroups` (see [Rules](/prisma-browser/guide/rules) and [Manage users on a rule](/prisma-browser/guide/manage-users-on-a-rule)).
+:::
+
+---
+
+## Related
+- Building blocks: [Rules](/prisma-browser/guide/rules)
+- Concepts: [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish)
+- Use cases: [Add or remove users on a rule](/prisma-browser/guide/manage-users-on-a-rule), [Roll out a rule gradually](/prisma-browser/guide/gradual-rollout-with-user-group), [Change a rule's scope](/prisma-browser/guide/change-a-rule-scope)

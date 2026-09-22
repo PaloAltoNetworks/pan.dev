@@ -1,0 +1,165 @@
+---
+title: 'Manage allowed browser extensions'
+sidebar_label: 'Manage allowed browser extensions'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Content controls
+  subgroupOrder: 20
+  order: 40
+  summary: Manage the allowed browser extension list
+
+---
+
+Maintain the list of browser extensions a [security rule](/prisma-browser/guide/rules) allows, adding or removing extension IDs from automation. Extensions are configured inside the rule's `allowedOrBlockedExtensions` control, so the workflow is different from list fields elsewhere in the API: there is no per-element delta, you read the control, change the array, and write it back whole.
+
+**Use this when:**
+
+- You curate a list of approved Chrome extensions and want a script to keep it current.
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Read [Policy overview](/prisma-browser/guide/rules) first.
+
+```bash
+export RULE_ID='0RLEXAMPLEEXTENSIONSXXXXXXXX'   # a security rule
+```
+
+:::caution
+**Pair an allow list with a block-all baseline.** An allow list only matters if everything else is blocked. Make sure a baseline rule (or any lower-priority rule that matches the same users) sets the extensions policy to block all, and let this higher-priority rule carry the allow list. Without a block-all baseline, extensions not on your list are still allowed by default.
+:::
+
+:::caution
+**Gotcha: controls have no delta.** Unlike a rule's scope or an access-and-data application list, controls are replaced **whole**. There is no `addExtension` / `removeExtension`. To change the list you must GET the rule, edit the `extensions` array yourself, and PATCH the entire control back. Read-modify-write is required here, so guard against concurrent editors (read immediately before you write).
+:::
+
+---
+
+## 1. Read the current control
+
+```bash
+curl -sS "$PB_API_BASE/policy/security/rules/$RULE_ID" -H "Authorization: Bearer $PB_TOKEN"
+```
+
+The relevant slice of the response:
+
+```json
+{
+  "controls": {
+    "allowedOrBlockedExtensions": {
+      "mode": "allowByList",
+      "extensions": [
+        { "id": "aapbdbdomjkkjkaonfhkkikfgjllcleb" }
+      ]
+    }
+  }
+}
+```
+
+| Field | Notes |
+|---|---|
+| `mode` | `allowAll`, `blockAll`, `allowByList`, or `blockByListOrRisk`. Use `allowByList` to allow only the listed extensions. |
+| `extensions` | Array of `{ id }`. Each `id` is a 32-character Chrome extension ID (`a`-`p` only). Up to 1000. |
+
+---
+
+## 2. Compute the new array
+
+In your code, append the extension IDs to add and drop the ones to remove. The result is the complete new list.
+
+---
+
+## 3. PATCH the whole control
+
+Send the full control body with the updated `extensions` array. Include `mode` so the control stays in allow-by-list mode:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/security/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "controls": {
+          "allowedOrBlockedExtensions": {
+            "mode": "allowByList",
+            "extensions": [
+              { "id": "aapbdbdomjkkjkaonfhkkikfgjllcleb" },
+              { "id": "bfnaelmomeimhlpmgjnjophhpkkoljpa" }
+            ]
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEEXTENSIONSXXXXXXXX" }
+```
+
+:::note
+Other controls on the rule are untouched. In a PATCH, controls you do not mention are preserved; only `allowedOrBlockedExtensions` is replaced because that is the only key you sent.
+:::
+
+---
+
+## Verify and publish
+
+```bash
+curl -sS "$PB_API_BASE/policy/security/rules/$RULE_ID" -H "Authorization: Bearer $PB_TOKEN"
+
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Update allowed extensions"}'
+```
+
+The `GET` returns the full rule (confirm the `extensions` array), and the publish returns `201` when a new active version is created.
+
+---
+
+## Full script (Python)
+
+```python
+import os, requests
+
+base = os.environ["PB_API_BASE"]
+headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
+rule_id = os.environ["RULE_ID"]
+
+def sync_extensions(to_add, to_remove):
+    # 1. Read immediately before writing (controls have no delta)
+    rule = requests.get(f"{base}/policy/security/rules/{rule_id}", headers=headers, timeout=30).json()
+    control = rule.get("controls", {}).get("allowedOrBlockedExtensions", {"mode": "allowByList", "extensions": []})
+
+    # 2. Compute the new array
+    current = {e["id"] for e in control.get("extensions", [])}
+    current |= set(to_add)
+    current -= set(to_remove)
+
+    # 3. PATCH the whole control back
+    body = {"controls": {"allowedOrBlockedExtensions": {
+        "mode": control.get("mode", "allowByList"),
+        "extensions": [{"id": i} for i in sorted(current)],
+    }}}
+    resp = requests.patch(f"{base}/policy/security/rules/{rule_id}", headers=headers, json=body, timeout=30)
+    resp.raise_for_status()
+    return resp.json()["id"]
+
+sync_extensions(
+    to_add=["bfnaelmomeimhlpmgjnjophhpkkoljpa"],
+    to_remove=[],
+)
+
+# Publish (full, or partial-publish is not yet available for policy objects)
+requests.post(f"{base}/configuration-management/draft/publish", headers=headers,
+              json={"description": "Update allowed extensions"}, timeout=30)
+```
+
+:::note
+[partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) does not yet support policy objects, so publish the whole draft (or stage extension changes in their own publish cycle).
+:::
+
+---
+
+## Related
+- Policy: [Policy overview](/prisma-browser/guide/rules), [Security rules](/prisma-browser/guide/security-rules)
+- Concepts: [Delta patch](/prisma-browser/guide/delta-patch) (why controls differ from list fields)
+

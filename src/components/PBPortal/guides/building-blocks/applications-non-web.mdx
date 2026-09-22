@@ -1,0 +1,254 @@
+---
+title: 'Non-web applications'
+sidebar_label: 'Non-web applications'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 40
+  subgroup: Applications
+  summary: Define an RDP or SSH remote connection by address, protocol, and port
+
+---
+
+A **non-web application** (`type: non-web`) represents a remote connection over RDP or SSH, defined by its network address, protocol, and port rather than by URLs. The only protocols supported are `rdp` and `ssh`. Reference it from an [access and data rule](/prisma-browser/guide/access-and-data-rules) directly or through an [application group](/prisma-browser/guide/application-groups).
+
+**On this page:** key fields, limits, retrieve, create, update, delete, endpoint reference, tips, examples.
+
+---
+
+## Key fields
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `name` | string | yes | Display name shown in policy and events |
+| `type` | string | yes | Must be `non-web` |
+| `address` | string | yes | Host or IP address of the target host. Accepted on write and returned on read |
+| `protocol` | string | yes | Remote-access protocol: `rdp` or `ssh` |
+| `port` | string | yes | Port or port range |
+| `routeToPrisma` | boolean | no | Whether traffic is routed through Prisma Access |
+| `description` | string | no | Up to 2500 characters |
+| `classification` | string | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+| `tagIDs` | array or object | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+
+`address`, `protocol`, and `port` together form the connection tuple, and that tuple identifies the application: two non-web applications cannot share all three.
+
+You do not supply a `urls` list, but reads return one. The Prisma Browser generates a single `chrome-extension://` entry that the Prisma Browser Extension uses to hand the connection off to the right remote-connection handler. It is derived from the application ID and the protocol, not from `address`, so it looks unrelated to what you sent. Treat it as read-only.
+
+---
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| `description` length | 2500 characters |
+
+---
+
+## Retrieve
+
+List non-web applications (supports `name`, pagination, `sort` / `order`):
+
+```
+GET /seb-api/v1/applications/type/non-web
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/applications/type/non-web" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`). The application is returned with its `address`, `protocol`, `port`, and `routeToPrisma`, plus a generated `urls` entry:
+
+```json
+{
+  "data": [
+    {
+      "type": "non-web",
+      "id": "0AP01SSHBASTIONXXXXXXXXXXXXXX",
+      "name": "Internal SSH",
+      "description": "Bastion host SSH",
+      "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+      "urls": [ "chrome-extension://<extension-id>/internal-ssh.html?appid=0AP01SSHBASTIONXXXXXXXXXXXXXX" ],
+      "address": "bastion.corp.example.com",
+      "protocol": "ssh",
+      "port": "22",
+      "routeToPrisma": true
+    }
+    // ... more non-web applications
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 }
+}
+```
+
+Read one:
+
+```
+GET /seb-api/v1/applications/type/non-web/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/applications/type/non-web/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "type": "non-web",
+  "id": "0AP01SSHBASTIONXXXXXXXXXXXXXX",
+  "name": "Internal SSH",
+  "description": "Bastion host SSH",
+  "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+  "urls": [ "chrome-extension://<extension-id>/internal-ssh.html?appid=0AP01SSHBASTIONXXXXXXXXXXXXXX" ],
+  "address": "bastion.corp.example.com",
+  "protocol": "ssh",
+  "port": "22",
+  "routeToPrisma": true
+}
+```
+
+---
+
+## Create
+
+```
+POST /seb-api/v1/applications/type/non-web
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/non-web" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Internal SSH",
+        "type": "non-web",
+        "address": "bastion.corp.example.com",
+        "protocol": "ssh",
+        "port": "22"
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01SSHBASTIONXXXXXXXXXXXXXX" }
+```
+
+Capture the ID for later snippets:
+
+```bash
+export APP_ID='0AP01SSHBASTIONXXXXXXXXXXXXXX'
+```
+
+To create many at once, use bulk create: `POST /seb-api/v1/applications/bulk-create/non-web` with a JSON array. See [Bulk operations](/prisma-browser/guide/applications#bulk-operations).
+
+---
+
+## Update
+
+`PATCH` updates only the fields you send (`type` is always required). Send any of `address`, `protocol`, `port`, or `routeToPrisma` to change them, or `classification` and `tagIDs` (see [Tags and classification](/prisma-browser/guide/applications#tags-and-classification)).
+
+```
+PATCH /seb-api/v1/applications/type/non-web/{id}
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/non-web/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "non-web",
+        "port": "2222"
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AP01SSHBASTIONXXXXXXXXXXXXXX" }
+```
+
+Remember: this edits the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)). With [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) you can publish just this object.
+
+---
+
+## Delete
+
+```
+DELETE /seb-api/v1/applications/type/non-web/{id}
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/applications/type/non-web/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Returns `204` with an empty body.
+
+To delete many at once, use [bulk delete](/prisma-browser/guide/applications#bulk-operations) (`POST /applications/bulk-delete`, up to 2000 IDs, atomic).
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/applications/type/non-web` | List non-web applications (filter, paginate) |
+| `GET` | `/applications/type/non-web/{id}` | Read one non-web application |
+| `POST` | `/applications/type/non-web` | Create one non-web application |
+| `POST` | `/applications/bulk-create/non-web` | Create up to 1000 non-web applications |
+| `PATCH` | `/applications/type/non-web/{id}` | Update one non-web application |
+| `DELETE` | `/applications/type/non-web/{id}` | Delete one non-web application |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**You do not set URLs, but reads return one.** Non-web applications are matched by `address`, `protocol`, and `port`, not by URL patterns. The single `urls` entry in the response is a generated `chrome-extension://` handoff link built from the application ID and protocol, not from the address you sent. Do not try to write it or match on it. If you need URL-based matching, use a [custom](/prisma-browser/guide/applications-custom) or [private](/prisma-browser/guide/applications-private) application.
+:::
+
+:::caution
+**The connection tuple must be unique.** Creating a second non-web application with the same `address`, `protocol`, and `port` as an existing one is rejected. Change at least one of the three.
+:::
+
+---
+
+## Examples
+
+<details>
+<summary>Create a non-web SSH connection</summary>
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/non-web" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Internal SSH",
+        "type": "non-web",
+        "description": "Bastion host SSH",
+        "address": "bastion.corp.example.com",
+        "protocol": "ssh",
+        "port": "22",
+        "routeToPrisma": true
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01SSHBASTIONXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+---
+
+## Related
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Private applications](/prisma-browser/guide/applications-private), [Application groups](/prisma-browser/guide/application-groups)
+- Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), [Pagination](/prisma-browser/guide/pagination)
