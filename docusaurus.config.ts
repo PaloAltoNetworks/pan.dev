@@ -1029,6 +1029,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          aigateway: {
+            specPath: "openapi-specs/scm/config/ai-gateway",
+            outputDir: "products/scm/api/config/ai-gateway",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",

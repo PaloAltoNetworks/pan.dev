@@ -1,0 +1,408 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: AI Gateway Onboarding
+  description: |
+    APIs for onboarding and managing the AI Gateway plugin within Strata Cloud Manager.
+    The AI Gateway inspects and secures traffic to AI/ML services by applying HIP-based
+    access control, source/destination policy, decryption, and security profile groups
+    to internet and private network access.
+
+    AI Gateway Onboarding is a singleton resource: the underlying PAN-OS schema
+    (plugins/cloud_services/ai-gateway/onboarding) allows at most one entry per
+    folder/snippet/device container, so the container itself is the identifier.
+    There is no per-resource ID path.
+
+    © 2026 Palo Alto Networks, Inc.
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    email: support@paloaltonetworks.com
+    name: Palo Alto Networks Technical Support
+    url: 'https://support.paloaltonetworks.com'
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: 'https://api.strata.paloaltonetworks.com/config/ai-gateway/v1'
+    description: Current
+tags:
+  - name: AI Gateway Onboarding
+    description: AI Gateway onboarding and configuration management
+paths:
+
+  /ai-gateway-onboarding:
+    get:
+      tags: [AI Gateway Onboarding]
+      summary: Get AI Gateway onboarding
+      description: Retrieve the AI Gateway onboarding entry for a folder, snippet, or device.
+      operationId: GetAIGatewayOnboarding
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ai-gateway-onboarding'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    post:
+      tags: [AI Gateway Onboarding]
+      summary: Create AI Gateway onboarding
+      description: Create the AI Gateway onboarding entry for a folder, snippet, or device.
+      operationId: CreateAIGatewayOnboarding
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ai-gateway-onboarding'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ai-gateway-onboarding'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    put:
+      tags: [AI Gateway Onboarding]
+      summary: Update AI Gateway onboarding
+      description: Update the AI Gateway onboarding entry for a folder, snippet, or device.
+      operationId: UpdateAIGatewayOnboarding
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ai-gateway-onboarding'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ai-gateway-onboarding'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      tags: [AI Gateway Onboarding]
+      summary: Delete AI Gateway onboarding
+      description: Delete the AI Gateway onboarding entry for a folder, snippet, or device.
+      operationId: DeleteAIGatewayOnboarding
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+components:
+  parameters:
+    folder:
+      name: folder
+      in: query
+      description: The folder in which the resource is defined.
+      required: false
+      schema:
+        type: string
+        example: Prisma Access
+    snippet:
+      name: snippet
+      in: query
+      description: The snippet in which the resource is defined.
+      required: false
+      schema:
+        type: string
+    device:
+      name: device
+      in: query
+      description: The device in which the resource is defined.
+      required: false
+      schema:
+        type: string
+
+  securitySchemes:
+    scmOAuth:
+      type: oauth2
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the
+        OAuth 2.0 Client Credentials flow. Please use the client_id,
+        client_secret values associated with an IAM service account along
+        with a scope value of tsg_id:XXXXXXXXXX, where XXXXXXXXXX is the
+        Tenant Service Group (TSG) ID. The resulting JWT access token should
+        be attached to all API calls as a Bearer token in the Authorization
+        header (ex. Authorization: Bearer tokenstring).
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.apps.paloaltonetworks.com/oauth2/access_token
+          scopes:
+            tsg_id: 'Your tenant service group (tsg_id:XXXXXXXXXX)'
+    scmToken:
+      type: http
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the
+        OAuth 2.0 Client Credentials flow. Please use the client_id,
+        client_secret values associated with an IAM service account along
+        with a scope value of tsg_id:XXXXXXXXXX, where XXXXXXXXXX is the
+        Tenant Service Group (TSG) ID. The resulting JWT access token should
+        be attached to all API calls as a Bearer token in the Authorization
+        header (ex. Authorization: Bearer tokenstring).
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    http_ok:
+      description: OK
+    auth_errors:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+    access_errors:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+    bad_request_errors_basic:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+    bad_request_errors_basic_with_body:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+    not_found:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+    conflict_errors:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+    default_errors:
+      description: General Errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+
+  schemas:
+    ai-gateway-onboarding:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: |
+            The UUID assigned to the resource by the management plane. This is
+            informational only - the resource is addressed by its container
+            (folder/snippet/device), not by this ID.
+          readOnly: true
+          example: 123e4567-e89b-12d3-a456-426655440000
+        name:
+          type: string
+          description: The name of the AI Gateway onboarding entry.
+          maxLength: 63
+          pattern: '^[a-zA-Z\d\-_\. ]+$'
+        hostname:
+          type: string
+          description: The hostname assigned to the AI Gateway.
+          maxLength: 255
+        enable_internet_access:
+          type: boolean
+          description: Whether internet-bound AI traffic is inspected by the AI Gateway.
+        enable_private_network_access:
+          type: boolean
+          description: Whether private network-bound AI traffic is inspected by the AI Gateway.
+        security_policy:
+          type: object
+          description: The security policy applied to traffic passing through the AI Gateway.
+          properties:
+            hip_profiles:
+              type: array
+              description: HIP profiles required for access.
+              items:
+                type: string
+            source_ip_list:
+              type: array
+              description: Named source IP ranges permitted to use the AI Gateway.
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: The name of the source IP entry.
+                  ip:
+                    type: string
+                    description: The source IP address or CIDR range.
+                required:
+                  - name
+                  - ip
+            destination_list:
+              type: array
+              description: Named destinations the AI Gateway security policy applies to.
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: The name of the destination entry.
+                  destination_type:
+                    type: object
+                    oneOf:
+                      - type: object
+                        title: fqdn
+                        properties:
+                          fqdn:
+                            type: string
+                            description: The fully qualified domain name of the destination.
+                        required:
+                          - fqdn
+                      - type: object
+                        title: ip
+                        properties:
+                          ip:
+                            type: string
+                            description: The destination IP address or CIDR range.
+                        required:
+                          - ip
+                      - type: object
+                        title: url_category
+                        properties:
+                          url_category:
+                            type: string
+                            description: The URL category of the destination.
+                        required:
+                          - url_category
+                required:
+                  - name
+                  - destination_type
+            decryption_profile:
+              type: string
+              description: The decryption profile applied to AI Gateway traffic.
+            security_profile_group:
+              type: string
+              description: The security profile group applied to AI Gateway traffic.
+      required:
+        - name
+      oneOf:
+        - type: object
+          title: folder
+          properties:
+            folder:
+              type: string
+              pattern: '^[a-zA-Z\d\-_\. ]+$'
+              maxLength: 64
+              description: The folder in which the resource is defined
+              example: Prisma Access
+          required:
+            - folder
+        - type: object
+          title: snippet
+          properties:
+            snippet:
+              type: string
+              pattern: '^[a-zA-Z\d\-_\. ]+$'
+              maxLength: 64
+              description: The snippet in which the resource is defined
+              example: My Snippet
+          required:
+            - snippet
+        - type: object
+          title: device
+          properties:
+            device:
+              type: string
+              pattern: '^[a-zA-Z\d\-_\. ]+$'
+              maxLength: 64
+              description: The device in which the resource is defined
+              example: My Device
+          required:
+            - device
+
+    generic_error:
+      type: object
+      properties:
+        _errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              details:
+                oneOf:
+                  - type: string
+                  - type: object
+              help:
+                type: string
+        _request_id:
+          type: string
+
+security:
+  - scmOAuth: []
+  - scmToken: []

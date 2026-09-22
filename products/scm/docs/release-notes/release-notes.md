@@ -21,6 +21,25 @@ Additional endpoint and schema updates.
 
 See [Compliance Frameworks APIs](/scm/api/config/posture-management/compliance-framework/compliance-center/) for full details.
 
+---
+
+### Scm — Ai Gateway (New)
+
+These APIs enable aPIs for onboarding and managing the AI Gateway plugin within Strata Cloud Manager.
+
+<details><summary>View endpoints (4)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/ai-gateway-onboarding` | Get AI Gateway onboarding |
+| POST | `/ai-gateway-onboarding` | Create AI Gateway onboarding |
+| PUT | `/ai-gateway-onboarding` | Update AI Gateway onboarding |
+| DELETE | `/ai-gateway-onboarding` | Delete AI Gateway onboarding |
+
+</details>
+
+See [Ai Gateway APIs](/scm/api/config/ai-gateway/ai-gateway-onboarding/) for full details.
+
 ## August 2026
 
 ### NGFW, SASE — Routing APIs (New)
