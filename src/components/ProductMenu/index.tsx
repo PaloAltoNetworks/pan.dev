@@ -468,9 +468,15 @@ function ProductMenuDesktop(): JSX.Element {
         setActiveProduct(label);
         return;
       }
-      // Only a rightward move is plausibly on its way to the open submenu.
-      // Running down the list is browsing, and waiting there just feels slow.
-      const headingForPanel = from !== null && event.clientX - from.x >= 2;
+      // The submenu runs the full height beside the list, so direction alone
+      // cannot separate the two gestures: any rightward drift reaches it
+      // eventually, and treating that as intent puts a hold on the ordinary
+      // hand wobble of a scan down the list. Which axis leads does separate
+      // them. Browsing travels down the rows, so dy leads; crossing to the
+      // panel travels across them, so dx does.
+      const dx = from === null ? 0 : event.clientX - from.x;
+      const dy = from === null ? 0 : event.clientY - from.y;
+      const headingForPanel = dx >= 2 && dx > Math.abs(dy);
       if (!headingForPanel) {
         setActiveProduct(label);
         return;
