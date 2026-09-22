@@ -1,0 +1,2591 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Virtual Routers
+  description: |
+    APIs for managing Virtual Routers within Strata Cloud Manager.
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    email: support@paloaltonetworks.com
+    name: Palo Alto Networks Technical Support
+    url: 'https://support.paloaltonetworks.com'
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: 'https://api.strata.paloaltonetworks.com/config/network/v1'
+    description: Current
+  - url: 'https://api.sase.paloaltonetworks.com/sase/config/v1'
+    description: Legacy
+tags:
+  - name: Virtual Routers
+    description: Virtual Routers management
+paths:
+
+  /virtual-routers:
+    get:
+      tags: [Virtual Routers]
+      summary: List virtual routers
+      description: Retrieve a list of virtual routers.
+      operationId: ListVirtualRouters
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/virtual-routers'
+                  limit:
+                    type: integer
+                    default: 200
+                  offset:
+                    type: integer
+                    default: 0
+                  total:
+                    type: integer
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    post:
+      tags: [Virtual Routers]
+      summary: Create a virtual router
+      description: Create a new virtual router.
+      operationId: CreateVirtualRouters
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/virtual-routers'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/virtual-routers'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    put:
+      tags: [Virtual Routers]
+      summary: Update a virtual router by name
+      description: Update a virtual router by folder/snippet/device + name query parameter.
+      operationId: UpdateVirtualRoutersByName
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+        - $ref: '#/components/parameters/name-required'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/virtual-routers'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/virtual-routers'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      tags: [Virtual Routers]
+      summary: Delete virtual routers by name
+      description: Delete one or more virtual routers by name.
+      operationId: DeleteVirtualRouters
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+        - $ref: '#/components/parameters/name-required'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteByNamesResponse'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  '/virtual-routers:rename':
+    put:
+      tags: [Virtual Routers]
+      summary: Rename a virtual router
+      description: Rename an existing virtual router.
+      operationId: RenameVirtualRouters
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/snippet'
+        - $ref: '#/components/parameters/device'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenamePayload'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  '/virtual-routers/{id}':
+    get:
+      tags: [Virtual Routers]
+      summary: Get a virtual router by UUID
+      description: Retrieve an existing virtual router by UUID.
+      operationId: GetVirtualRoutersByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/virtual-routers'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+    put:
+      tags: [Virtual Routers]
+      summary: Update a virtual router by UUID
+      description: Update an existing virtual router by UUID.
+      operationId: UpdateVirtualRoutersByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/virtual-routers'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/virtual-routers'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+    delete:
+      tags: [Virtual Routers]
+      summary: Delete a virtual router by UUID
+      description: Delete an existing virtual router by UUID.
+      operationId: DeleteVirtualRoutersByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  '/virtual-routers/{multi-clone}':
+    post:
+      tags: [Virtual Routers]
+      summary: Clone virtual routers
+      description: Clone one or more virtual routers to a destination folder/snippet/device.
+      operationId: MultiCloneVirtualRouters
+      parameters:
+        - name: multi-clone
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [multi-clone]
+          description: Must be the literal value "multi-clone".
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiCloneRequestInput'
+      responses:
+        '201':
+          description: Clone operation completed
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+components:
+  parameters:
+    name:
+      name: name
+      in: query
+      description: Filter results by name
+      required: false
+      schema:
+        type: string
+    name-required:
+      name: name
+      in: query
+      description: The name(s) of the profile(s) to delete (comma-separated for multiple)
+      required: true
+      schema:
+        type: string
+    limit:
+      name: limit
+      in: query
+      description: The maximum number of results per page
+      required: false
+      schema:
+        type: integer
+        default: 200
+    offset:
+      name: offset
+      in: query
+      description: The offset into the list of results returned
+      required: false
+      schema:
+        type: integer
+        default: 0
+    folder:
+      name: folder
+      in: query
+      description: The folder in which the resource is defined
+      required: false
+      schema:
+        type: string
+        example: All
+    snippet:
+      name: snippet
+      in: query
+      description: The snippet in which the resource is defined
+      required: false
+      schema:
+        type: string
+    device:
+      name: device
+      in: query
+      description: The device in which the resource is defined
+      required: false
+      schema:
+        type: string
+    uuid:
+      name: id
+      in: path
+      description: The UUID of the resource
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 123e4567-e89b-12d3-a456-426655440000
+
+  securitySchemes:
+    scmOAuth:
+      type: oauth2
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the
+        OAuth 2.0 Client Credentials flow. Please use the `client_id`,
+        `client_secret` values associated with an IAM service account along
+        with a scope value of `tsg_id:XXXXXXXXXX`, where XXXXXXXXXX is the
+        Tenant Service Group (TSG) ID. The resulting JWT access token should
+        be attached to all API calls as a `Bearer` token in the `Authorization`
+        header (ex. `Authorization: Bearer tokenstring`).
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.apps.paloaltonetworks.com/oauth2/access_token
+          scopes:
+            tsg_id: 'Your tenant service group (tsg_id:XXXXXXXXXX)'
+    scmToken:
+      type: http
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the
+        OAuth 2.0 Client Credentials flow. Please use the `client_id`,
+        `client_secret` values associated with an IAM service account along
+        with a scope value of `tsg_id:XXXXXXXXXX`, where XXXXXXXXXX is the
+        Tenant Service Group (TSG) ID. The resulting JWT access token should
+        be attached to all API calls as a `Bearer` token in the `Authorization`
+        header (ex. `Authorization: Bearer tokenstring`).
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  responses:
+    http_ok:
+      description: OK
+    auth_errors:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            auth_not_authenticated:
+              $ref: '#/components/examples/json_401_panui_auth_not_authenticated'
+            invalid_credential:
+              $ref: '#/components/examples/json_401_panui_auth_invalid_credential'
+    access_errors:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            auth_unauthorized:
+              $ref: '#/components/examples/json_403_panui_auth_unauthorized'
+    bad_request_errors_basic:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            input_format_mismatch:
+              $ref: '#/components/examples/json_400_panui_restapi_input_format_mismatch'
+            missing_query_parameter:
+              $ref: '#/components/examples/json_400_panui_restapi_missing_query_parameter'
+            invalid_query_parameter:
+              $ref: '#/components/examples/json_400_panui_restapi_invalid_query_parameter'
+    bad_request_errors_basic_with_body:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            input_format_mismatch:
+              $ref: '#/components/examples/json_400_panui_restapi_input_format_mismatch'
+            missing_query_parameter:
+              $ref: '#/components/examples/json_400_panui_restapi_missing_query_parameter'
+            invalid_query_parameter:
+              $ref: '#/components/examples/json_400_panui_restapi_invalid_query_parameter'
+            missing_body:
+              $ref: '#/components/examples/json_400_panui_restapi_missing_body'
+            invalid_object:
+              $ref: '#/components/examples/json_400_panui_mgmt_invalid_object'
+    not_found:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            object_not_present:
+              $ref: '#/components/examples/json_404_panui_mgmt_object_not_present'
+    conflict_errors:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            object_not_unique:
+              $ref: '#/components/examples/json_409_panui_mgmt_object_not_unique'
+            name_not_unique:
+              $ref: '#/components/examples/json_409_panui_mgmt_name_not_unique'
+            reference_not_zero:
+              $ref: '#/components/examples/json_409_panui_mgmt_reference_not_zero'
+    default_errors:
+      description: General Errors
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          examples:
+            version_not_supported:
+              $ref: '#/components/examples/json_501_panui_restapi_version_not_supported'
+            method_not_allowed:
+              $ref: '#/components/examples/json_501_panui_restapi_method_not_supported'
+            action_not_supported:
+              $ref: '#/components/examples/json_405_panui_restapi_action_not_supported'
+            bad_xpath:
+              $ref: '#/components/examples/json_400_panui_mgmt_bad_xpath'
+            invalid_command:
+              $ref: '#/components/examples/json_400_panui_mgmt_invalid_command'
+
+
+  schemas:
+
+    EmptyObj:
+      type: object
+      description: Presence object — its existence signals enablement
+
+    DeleteByNamesResponse:
+      type: object
+      properties:
+        succeeded_items:
+          type: array
+          items:
+            type: string
+        failed_items:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              error:
+                type: string
+
+    RenamePayload:
+      type: object
+      required:
+        - name
+        - new_name
+      properties:
+        name:
+          type: string
+          description: Current resource name
+        new_name:
+          type: string
+          description: Desired new name
+
+    VrAdminDists:
+      type: object
+      properties:
+        static:
+          type: integer
+          nullable: true
+        static_ipv6:
+          type: integer
+          nullable: true
+        ospf_int:
+          type: integer
+          nullable: true
+        ospf_ext:
+          type: integer
+          nullable: true
+        ospfv3_int:
+          type: integer
+          nullable: true
+        ospfv3_ext:
+          type: integer
+          nullable: true
+        ibgp:
+          type: integer
+          nullable: true
+        ebgp:
+          type: integer
+          nullable: true
+        rip:
+          type: integer
+          nullable: true
+
+    Bfd:
+      type: object
+      properties:
+        profile:
+          type: string
+
+    RouteTable:
+      type: object
+      properties:
+        unicast:
+          $ref: '#/components/schemas/EmptyObj'
+        multicast:
+          $ref: '#/components/schemas/EmptyObj'
+        both:
+          $ref: '#/components/schemas/EmptyObj'
+        no_install:
+          $ref: '#/components/schemas/EmptyObj'
+
+    PathMonitor:
+      type: object
+      properties:
+        enable:
+          type: boolean
+          nullable: true
+        failure_condition:
+          type: string
+        hold_time:
+          type: integer
+          nullable: true
+        monitor_destinations:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              enable:
+                type: boolean
+                nullable: true
+              source:
+                type: string
+              source_override:
+                type: string
+              destination:
+                type: string
+              destination_fqdn:
+                type: string
+              interval:
+                type: integer
+                nullable: true
+              count:
+                type: integer
+                nullable: true
+
+    # BGP sub-schemas
+
+    Med:
+      type: object
+      properties:
+        always_compare_med:
+          type: boolean
+          nullable: true
+        deterministic_med_comparison:
+          type: boolean
+          nullable: true
+
+    GracefulRestartBGP:
+      type: object
+      properties:
+        enable:
+          type: boolean
+          nullable: true
+        stale_route_time:
+          type: integer
+          nullable: true
+        max_peer_restart_time:
+          type: integer
+          nullable: true
+        local_restart_time:
+          type: integer
+          nullable: true
+
+    AsPath:
+      type: object
+      properties:
+        none:
+          $ref: '#/components/schemas/EmptyObj'
+        remove:
+          $ref: '#/components/schemas/EmptyObj'
+        prepend:
+          type: integer
+          nullable: true
+        remove_and_prepend:
+          type: integer
+          nullable: true
+
+    ExtendedCommunity:
+      type: object
+      properties:
+        none:
+          $ref: '#/components/schemas/EmptyObj'
+        remove_all:
+          $ref: '#/components/schemas/EmptyObj'
+        remove_regex:
+          type: string
+        append:
+          type: array
+          items: {}
+        overwrite:
+          type: array
+          items: {}
+
+    Match:
+      type: object
+      properties:
+        route_table:
+          type: string
+        address_prefix:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              exact:
+                type: boolean
+                nullable: true
+        nexthop:
+          type: array
+          items:
+            type: string
+        from_peer:
+          type: array
+          items:
+            type: string
+        med:
+          type: integer
+          nullable: true
+        as_path:
+          type: object
+          properties:
+            regex:
+              type: string
+        community:
+          type: object
+          properties:
+            regex:
+              type: string
+        extended_community:
+          type: object
+          properties:
+            regex:
+              type: string
+
+    UpdateWithWeight:
+      type: object
+      properties:
+        local_preference:
+          type: integer
+          nullable: true
+        med:
+          type: integer
+          nullable: true
+        weight:
+          type: integer
+          nullable: true
+        nexthop:
+          type: string
+        origin:
+          type: string
+        as_path_limit:
+          type: integer
+          nullable: true
+        as_path:
+          $ref: '#/components/schemas/AsPath'
+        community:
+          $ref: '#/components/schemas/ExtendedCommunity'
+        extended_community:
+          $ref: '#/components/schemas/ExtendedCommunity'
+
+    GracefulRestart:
+      type: object
+      properties:
+        enable:
+          type: boolean
+          nullable: true
+        grace_period:
+          type: integer
+          nullable: true
+        helper_enable:
+          type: boolean
+          nullable: true
+        strict_LSA_checking:
+          type: boolean
+          nullable: true
+        max_neighbor_restart_time:
+          type: integer
+          nullable: true
+
+    Ecmp:
+      type: object
+      properties:
+        enable:
+          type: boolean
+          nullable: true
+        max_path:
+          type: integer
+          nullable: true
+        symmetric_return:
+          type: boolean
+          nullable: true
+        strict_source_path:
+          type: boolean
+          nullable: true
+        algorithm:
+          type: object
+          properties:
+            ip_modulo:
+              $ref: '#/components/schemas/EmptyObj'
+            ip_hash:
+              type: object
+              properties:
+                src_only:
+                  type: boolean
+                  nullable: true
+                use_port:
+                  type: boolean
+                  nullable: true
+                hash_seed:
+                  type: integer
+                  nullable: true
+            weighted_round_robin:
+              type: object
+              properties:
+                interface:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      weight:
+                        type: integer
+                        nullable: true
+            balanced_round_robin:
+              $ref: '#/components/schemas/EmptyObj'
+
+    MultiCloneRequestInput:
+      type: object
+      required:
+        - source
+        - destination
+      properties:
+        source:
+          type: array
+          items:
+            type: object
+            required:
+              - name
+            properties:
+              folder:
+                type: string
+              snippet:
+                type: string
+              device:
+                type: string
+              name:
+                type: string
+              predefined:
+                type: boolean
+        destination:
+          type: object
+          properties:
+            folder:
+              type: string
+            snippet:
+              type: string
+            device:
+              type: string
+
+    # ---- Virtual Router Payload -----------------------------------------------
+
+    virtual-routers:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID of the resource
+          readOnly: true
+          example: 123e4567-e89b-12d3-a456-426655440000
+        snippet_location:
+          type: string
+        override:
+          type: boolean
+          nullable: true
+        name:
+          type: string
+          maxLength: 31
+          pattern: '^[a-zA-Z\\d\\-\\_\\. ]+$'
+        interface:
+          type: array
+          items:
+            type: string
+          description: Interfaces assigned to this virtual router.
+        admin_dists:
+          $ref: '#/components/schemas/VrAdminDists'
+        ecmp:
+          $ref: '#/components/schemas/Ecmp'
+        multicast:
+          $ref: '#/components/schemas/VRMulticast'
+        protocol:
+          $ref: '#/components/schemas/VRProtocol'
+        routing_table:
+          $ref: '#/components/schemas/VRRoutingTable'
+
+    VRProtocol:
+      type: object
+      properties:
+        bgp:
+          $ref: '#/components/schemas/VRBgp'
+        ospf:
+          $ref: '#/components/schemas/VROspf'
+        ospfv3:
+          $ref: '#/components/schemas/VROspfv3'
+        rip:
+          $ref: '#/components/schemas/VRRip'
+        redist_profile:
+          type: array
+          description: IPv4 redistribution profiles.
+          items:
+            $ref: '#/components/schemas/VRRedistEntry'
+        redist_profile_ipv6:
+          type: array
+          description: IPv6 redistribution profiles.
+          items:
+            $ref: '#/components/schemas/VRRedistEntry'
+
+    # ---- VR Multicast ---------------------------------------------------------
+
+    VRMulticast:
+      type: object
+      properties:
+        enable:
+          type: boolean
+          nullable: true
+        route_ageout_time:
+          type: integer
+          nullable: true
+        spt_threshold:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              threshold:
+                type: string
+        ssm_address_space:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              group_address:
+                type: string
+              included:
+                type: boolean
+                nullable: true
+        rp:
+          $ref: '#/components/schemas/VRMulticastRp'
+        interface_group:
+          type: array
+          items:
+            $ref: '#/components/schemas/VRMulticastIfGroup'
+
+    VRMulticastRp:
+      type: object
+      properties:
+        local_rp:
+          type: object
+          properties:
+            static_rp:
+              type: object
+              properties:
+                interface:
+                  type: string
+                address:
+                  type: string
+                override:
+                  type: boolean
+                  nullable: true
+                group_addresses:
+                  type: array
+                  items:
+                    type: string
+            candidate_rp:
+              type: object
+              properties:
+                interface:
+                  type: string
+                address:
+                  type: string
+                priority:
+                  type: integer
+                  nullable: true
+                advertisement_interval:
+                  type: integer
+                  nullable: true
+                group_addresses:
+                  type: array
+                  items:
+                    type: string
+        external_rp:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              group_addresses:
+                type: array
+                items:
+                  type: string
+              override:
+                type: boolean
+                nullable: true
+
+    VRMulticastIfGroup:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        interface:
+          type: array
+          items:
+            type: string
+        group_permission:
+          type: object
+          properties:
+            any_source_multicast:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  group_address:
+                    type: string
+                  included:
+                    type: boolean
+                    nullable: true
+            source_specific_multicast:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  group_address:
+                    type: string
+                  source_address:
+                    type: string
+                  included:
+                    type: boolean
+                    nullable: true
+        igmp:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              nullable: true
+            version:
+              type: string
+              enum: ['v1', 'v2', 'v3']
+            mode:
+              type: string
+            max_query_response_time:
+              type: integer
+              nullable: true
+            query_interval:
+              type: integer
+              nullable: true
+            last_member_query_interval:
+              type: integer
+              nullable: true
+            immediate_leave:
+              type: boolean
+              nullable: true
+            robustness:
+              type: string
+            max_groups:
+              type: string
+            max_sources:
+              type: string
+            router_alert_policing:
+              type: boolean
+              nullable: true
+        pim:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              nullable: true
+            assert_interval:
+              type: integer
+              nullable: true
+            hello_interval:
+              type: integer
+              nullable: true
+            join_prune_interval:
+              type: integer
+              nullable: true
+            dr_priority:
+              type: integer
+              nullable: true
+            bsr_border:
+              type: boolean
+              nullable: true
+            allowed_neighbors:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+
+    # ---- VR BGP ---------------------------------------------------------------
+
+    VRBgp:
+      type: object
+      properties:
+        enable:
+          type: boolean
+          nullable: true
+        router_id:
+          type: string
+        local_as:
+          type: string
+        install_route:
+          type: boolean
+          nullable: true
+        enforce_first_as:
+          type: boolean
+          nullable: true
+        graceful_shutdown:
+          type: boolean
+          nullable: true
+        ecmp_multi_as:
+          type: boolean
+          nullable: true
+        allow_redist_default_route:
+          type: boolean
+          nullable: true
+        reject_default_route:
+          type: boolean
+          nullable: true
+        global_bfd:
+          $ref: '#/components/schemas/Bfd'
+        routing_options:
+          $ref: '#/components/schemas/VRBgpRoutingOptions'
+        dampening_profile:
+          type: array
+          items:
+            $ref: '#/components/schemas/VRDampeningProfile'
+        auth_profile:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              secret:
+                type: string
+                format: password
+        peer_group:
+          type: array
+          items:
+            $ref: '#/components/schemas/VRBgpPeerGroup'
+        redist_rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/VRBgpRedistEntry'
+        policy:
+          $ref: '#/components/schemas/VRBgpPolicy'
+
+    VRBgpRoutingOptions:
+      type: object
+      properties:
+        confederation_member_as:
+          type: string
+        default_local_preference:
+          type: integer
+          nullable: true
+        as_format:
+          type: string
+          enum: ['2-byte', '4-byte']
+        reflector_cluster_id:
+          type: string
+        aggregate:
+          type: object
+          properties:
+            aggregate_med:
+              type: boolean
+              nullable: true
+        med:
+          $ref: '#/components/schemas/Med'
+        graceful_restart:
+          $ref: '#/components/schemas/GracefulRestartBGP'
+
+    VRDampeningProfile:
+      type: object
+      properties:
+        name:
+          type: string
+        enable:
+          type: boolean
+          nullable: true
+        cutoff:
+          type: number
+          format: float
+          nullable: true
+        reuse:
+          type: number
+          format: float
+          nullable: true
+        max_hold_time:
+          type: integer
+          nullable: true
+        decay_half_life_reachable:
+          type: integer
+          nullable: true
+        decay_half_life_unreachable:
+          type: integer
+          nullable: true
+
+    VRBgpPeerGroup:
+      type: object
+      properties:
+        name:
+          type: string
+        enable:
+          type: boolean
+          nullable: true
+        aggregated_confed_as_path:
+          type: boolean
+          nullable: true
+        soft_reset_with_stored_info:
+          type: boolean
+          nullable: true
+        type:
+          type: object
+          description: BGP peer group type — exactly one should be set.
+          properties:
+            ibgp:
+              $ref: '#/components/schemas/VREbgpType'
+            ebgp_confed:
+              $ref: '#/components/schemas/VREbgpType'
+            ibgp_confed:
+              $ref: '#/components/schemas/VREbgpType'
+            ebgp:
+              $ref: '#/components/schemas/VREbgpType'
+        peer:
+          type: array
+          items:
+            $ref: '#/components/schemas/VRBgpPeer'
+
+    VREbgpType:
+      type: object
+      properties:
+        import_nexthop:
+          type: string
+          enum: ['original', 'use-self']
+        export_nexthop:
+          type: string
+          enum: ['resolve', 'use-self']
+        remove_private_as:
+          type: boolean
+          nullable: true
+
+    VRBgpPeer:
+      type: object
+      properties:
+        name:
+          type: string
+        enable:
+          type: boolean
+          nullable: true
+        peer_as:
+          type: string
+        peering_type:
+          type: string
+          enum: ['unspecified', 'bilateral']
+        reflector_client:
+          type: string
+          enum: ['non-client', 'client', 'meshed-client']
+        address_family_identifier:
+          type: string
+          description: Address family identifier (e.g. "ipv4", "ipv6").
+        subsequent_address_family_identifier:
+          type: object
+          properties:
+            unicast:
+              type: boolean
+              nullable: true
+            multicast:
+              type: boolean
+              nullable: true
+        enable_sender_side_loop_detection:
+          type: boolean
+          nullable: true
+        enable_mp_bgp:
+          type: boolean
+          nullable: true
+        local_address:
+          type: object
+          properties:
+            interface:
+              type: string
+            ip:
+              type: string
+        peer_address:
+          type: object
+          properties:
+            ip:
+              type: string
+            fqdn:
+              type: string
+        max_prefixes:
+          type: string
+        max_orf_entries:
+          type: integer
+          nullable: true
+        connection_options:
+          type: object
+          properties:
+            keep_alive_interval:
+              type: integer
+              nullable: true
+            hold_time:
+              type: integer
+              nullable: true
+            idle_hold_time:
+              type: integer
+              nullable: true
+            min_route_adv_interval:
+              type: integer
+              nullable: true
+            multihop:
+              type: string
+            open_delay_time:
+              type: integer
+              nullable: true
+            incoming_bgp_connection:
+              type: object
+              properties:
+                remote_port:
+                  type: integer
+                  nullable: true
+                allow:
+                  type: boolean
+                  nullable: true
+            outgoing_bgp_connection:
+              type: object
+              properties:
+                local_port:
+                  type: integer
+                  nullable: true
+                allow:
+                  type: boolean
+                  nullable: true
+            max_prefixes:
+              type: string
+            authentication:
+              type: string
+        bfd:
+          $ref: '#/components/schemas/Bfd'
+
+    VRBgpRedistEntry:
+      type: object
+      properties:
+        name:
+          type: string
+        address_family_identifier:
+          type: string
+        route_table:
+          type: string
+        enable:
+          type: boolean
+          nullable: true
+        set_origin:
+          type: string
+          enum: ['igp', 'egp', 'incomplete']
+        set_med:
+          type: integer
+          nullable: true
+        set_local_preference:
+          type: integer
+          nullable: true
+        set_as_path_limit:
+          type: integer
+          nullable: true
+        set_community:
+          type: array
+          items:
+            type: string
+        set_extended_community:
+          type: array
+          items:
+            type: string
+        metric:
+          type: integer
+          nullable: true
+
+    VRBgpPolicy:
+      type: object
+      properties:
+        import:
+          type: object
+          properties:
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  enable:
+                    type: boolean
+                    nullable: true
+                  used_by:
+                    type: array
+                    items:
+                      type: string
+                  match:
+                    $ref: '#/components/schemas/Match'
+                  action:
+                    type: object
+                    description: Exactly one of deny or allow should be set.
+                    properties:
+                      deny:
+                        $ref: '#/components/schemas/EmptyObj'
+                      allow:
+                        type: object
+                        properties:
+                          dampening:
+                            type: string
+                          update:
+                            $ref: '#/components/schemas/UpdateWithWeight'
+        export:
+          type: object
+          properties:
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  enable:
+                    type: boolean
+                    nullable: true
+                  used_by:
+                    type: array
+                    items:
+                      type: string
+                  match:
+                    $ref: '#/components/schemas/Match'
+                  action:
+                    type: object
+                    properties:
+                      deny:
+                        $ref: '#/components/schemas/EmptyObj'
+                      allow:
+                        type: object
+                        properties:
+                          update:
+                            $ref: '#/components/schemas/UpdateWithWeight'
+        conditional_advertisement:
+          type: object
+          properties:
+            policy:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  enable:
+                    type: boolean
+                    nullable: true
+                  used_by:
+                    type: array
+                    items:
+                      type: string
+                  non_exist_filters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        enable:
+                          type: boolean
+                          nullable: true
+                        match:
+                          $ref: '#/components/schemas/Match'
+                  advertise_filters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        enable:
+                          type: boolean
+                          nullable: true
+                        match:
+                          $ref: '#/components/schemas/Match'
+        aggregation:
+          type: object
+          properties:
+            address:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  prefix:
+                    type: string
+                  enable:
+                    type: boolean
+                    nullable: true
+                  summary:
+                    type: boolean
+                    nullable: true
+                  as_set:
+                    type: boolean
+                    nullable: true
+                  aggregate_route_attributes:
+                    $ref: '#/components/schemas/UpdateWithWeight'
+                  suppress_filters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        enable:
+                          type: boolean
+                          nullable: true
+                        match:
+                          $ref: '#/components/schemas/Match'
+                  advertise_filters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        enable:
+                          type: boolean
+                          nullable: true
+                        match:
+                          $ref: '#/components/schemas/Match'
+
+    # ---- VR OSPF --------------------------------------------------------------
+
+    VROspfTimers:
+      type: object
+      properties:
+        lsa_interval:
+          type: integer
+          nullable: true
+        spf_calculation_delay:
+          type: integer
+          nullable: true
+
+    VROspf:
+      type: object
+      properties:
+        router_id:
+          type: string
+        global_bfd:
+          $ref: '#/components/schemas/Bfd'
+        enable:
+          type: boolean
+          nullable: true
+        rfc1583:
+          type: boolean
+          nullable: true
+        reject_default_route:
+          type: boolean
+          nullable: true
+        allow_redist_default_route:
+          type: boolean
+          nullable: true
+        timers:
+          $ref: '#/components/schemas/VROspfTimers'
+        auth_profile:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              password:
+                type: string
+                format: password
+              md5:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: integer
+                      nullable: true
+                    key:
+                      type: string
+                      format: password
+                    preferred:
+                      type: boolean
+                      nullable: true
+        area:
+          type: array
+          items:
+            $ref: '#/components/schemas/VROspfArea'
+        export_rules:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              new_path_type:
+                type: string
+                enum: ['ext-1', 'ext-2']
+              new_tag:
+                type: string
+              metric:
+                type: integer
+                nullable: true
+        graceful_restart:
+          $ref: '#/components/schemas/GracefulRestart'
+
+    VROspfArea:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Area ID (e.g. "0.0.0.0").
+        type:
+          type: object
+          description: Exactly one area type should be set.
+          properties:
+            normal:
+              $ref: '#/components/schemas/EmptyObj'
+            stub:
+              type: object
+              properties:
+                accept_summary:
+                  type: boolean
+                  nullable: true
+                default_route:
+                  type: object
+                  properties:
+                    advertise:
+                      type: object
+                      properties:
+                        metric:
+                          type: integer
+                          nullable: true
+                        type:
+                          type: string
+                          enum: ['ext-1', 'ext-2']
+            nssa:
+              type: object
+              properties:
+                accept_summary:
+                  type: boolean
+                  nullable: true
+                default_route:
+                  type: object
+                  properties:
+                    advertise:
+                      type: object
+                      properties:
+                        metric:
+                          type: integer
+                          nullable: true
+                        type:
+                          type: string
+                          enum: ['ext-1', 'ext-2']
+                nssa_ext_range:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      advertise:
+                        $ref: '#/components/schemas/EmptyObj'
+                      suppress:
+                        $ref: '#/components/schemas/EmptyObj'
+        range:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Network prefix.
+              advertise:
+                $ref: '#/components/schemas/EmptyObj'
+              suppress:
+                $ref: '#/components/schemas/EmptyObj'
+        interface:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              enable:
+                type: boolean
+                nullable: true
+              passive:
+                type: boolean
+                nullable: true
+              priority:
+                type: integer
+                nullable: true
+              metric:
+                type: integer
+                nullable: true
+              authentication:
+                type: string
+              link_type:
+                type: object
+                properties:
+                  broadcast:
+                    $ref: '#/components/schemas/EmptyObj'
+                  p2p:
+                    $ref: '#/components/schemas/EmptyObj'
+                  p2mp:
+                    type: object
+                    properties:
+                      neighbor:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            priority:
+                              type: integer
+                              nullable: true
+              hello_interval:
+                type: integer
+                nullable: true
+              dead_counts:
+                type: integer
+                nullable: true
+              retransmit_interval:
+                type: integer
+                nullable: true
+              transit_delay:
+                type: integer
+                nullable: true
+              gr_delay:
+                type: integer
+                nullable: true
+              bfd:
+                $ref: '#/components/schemas/Bfd'
+              neighbor:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: Neighbor IP address.
+        virtual_link:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              neighbor_id:
+                type: string
+              transit_area_id:
+                type: string
+              enable:
+                type: boolean
+                nullable: true
+              hello_interval:
+                type: integer
+                nullable: true
+              dead_counts:
+                type: integer
+                nullable: true
+              retransmit_interval:
+                type: integer
+                nullable: true
+              transit_delay:
+                type: integer
+                nullable: true
+              authentication:
+                type: string
+              bfd:
+                $ref: '#/components/schemas/Bfd'
+
+    # ---- VR OSPFv3 ------------------------------------------------------------
+    # Structural differences from VR OSPF:
+    #   - interface: adds instance_id and gr_delay; neighbor uses IPv6 unicast addresses
+    #   - virtual-link: uses standard bfd (not vr_bfd), adds instance_id
+    #   - auth_profile uses IPsec (ESP/AH with SPI)
+
+    VROspfv3:
+      type: object
+      properties:
+        enable:
+          type: boolean
+          nullable: true
+        reject_default_route:
+          type: boolean
+          nullable: true
+        allow_redist_default_route:
+          type: boolean
+          nullable: true
+        router_id:
+          type: string
+        global_bfd:
+          $ref: '#/components/schemas/Bfd'
+        disable_transit_traffic:
+          type: boolean
+          nullable: true
+        timers:
+          $ref: '#/components/schemas/VROspfTimers'
+        auth_profile:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              spi:
+                type: string
+              esp:
+                type: object
+                properties:
+                  authentication:
+                    type: object
+                    description: Exactly one algorithm or none.
+                    properties:
+                      sha1:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                            format: password
+                      sha256:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                            format: password
+                      sha384:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                            format: password
+                      sha512:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                            format: password
+                      md5:
+                        type: object
+                        properties:
+                          key:
+                            type: string
+                            format: password
+                      none:
+                        $ref: '#/components/schemas/EmptyObj'
+                  encryption:
+                    type: object
+                    properties:
+                      algorithm:
+                        type: string
+                        enum: ['des', '3des', 'aes-128-cbc', 'aes-192-cbc', 'aes-256-cbc', 'null']
+                      key:
+                        type: string
+                        format: password
+              ah:
+                type: object
+                description: AH — same algorithm set as ESP authentication (no encryption).
+                properties:
+                  sha1:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        format: password
+                  sha256:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        format: password
+                  sha384:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        format: password
+                  sha512:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        format: password
+                  md5:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                        format: password
+        area:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              authentication:
+                type: string
+              type:
+                type: object
+                description: Exactly one area type should be set.
+                properties:
+                  normal:
+                    $ref: '#/components/schemas/EmptyObj'
+                  stub:
+                    type: object
+                    properties:
+                      accept_summary:
+                        type: boolean
+                        nullable: true
+                      default_route:
+                        type: object
+                        properties:
+                          advertise:
+                            type: object
+                            properties:
+                              metric:
+                                type: integer
+                                nullable: true
+                              type:
+                                type: string
+                                enum: ['ext-1', 'ext-2']
+                  nssa:
+                    type: object
+                    properties:
+                      accept_summary:
+                        type: boolean
+                        nullable: true
+                      default_route:
+                        type: object
+                        properties:
+                          advertise:
+                            type: object
+                            properties:
+                              metric:
+                                type: integer
+                                nullable: true
+                              type:
+                                type: string
+                                enum: ['ext-1', 'ext-2']
+                      nssa_ext_range:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            advertise:
+                              $ref: '#/components/schemas/EmptyObj'
+                            suppress:
+                              $ref: '#/components/schemas/EmptyObj'
+              range:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    advertise:
+                      $ref: '#/components/schemas/EmptyObj'
+                    suppress:
+                      $ref: '#/components/schemas/EmptyObj'
+              interface:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    enable:
+                      type: boolean
+                      nullable: true
+                    passive:
+                      type: boolean
+                      nullable: true
+                    priority:
+                      type: integer
+                      nullable: true
+                    metric:
+                      type: integer
+                      nullable: true
+                    instance_id:
+                      type: integer
+                      nullable: true
+                    authentication:
+                      type: string
+                    link_type:
+                      type: object
+                      properties:
+                        broadcast:
+                          $ref: '#/components/schemas/EmptyObj'
+                        p2p:
+                          $ref: '#/components/schemas/EmptyObj'
+                        p2mp:
+                          type: object
+                          properties:
+                            neighbor:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                  priority:
+                                    type: integer
+                                    nullable: true
+                    hello_interval:
+                      type: integer
+                      nullable: true
+                    dead_counts:
+                      type: integer
+                      nullable: true
+                    retransmit_interval:
+                      type: integer
+                      nullable: true
+                    transit_delay:
+                      type: integer
+                      nullable: true
+                    gr_delay:
+                      type: integer
+                      nullable: true
+                    bfd:
+                      $ref: '#/components/schemas/Bfd'
+                    neighbor:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            description: Neighbor link-local IPv6 address (fe80::/10).
+              virtual_link:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    neighbor_id:
+                      type: string
+                    transit_area_id:
+                      type: string
+                    enable:
+                      type: boolean
+                      nullable: true
+                    instance_id:
+                      type: integer
+                      nullable: true
+                    hello_interval:
+                      type: integer
+                      nullable: true
+                    dead_counts:
+                      type: integer
+                      nullable: true
+                    retransmit_interval:
+                      type: integer
+                      nullable: true
+                    transit_delay:
+                      type: integer
+                      nullable: true
+                    authentication:
+                      type: string
+                    bfd:
+                      $ref: '#/components/schemas/Bfd'
+        export_rules:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              new_path_type:
+                type: string
+                enum: ['ext-1', 'ext-2']
+              new_tag:
+                type: string
+              metric:
+                type: integer
+                nullable: true
+        graceful_restart:
+          $ref: '#/components/schemas/GracefulRestart'
+
+    # ---- VR RIP ---------------------------------------------------------------
+    # VR RIP differences from LR:
+    #   - timers is a structured object (not a string reference)
+    #   - auth_profile is an inline entry array (not a string reference)
+    #   - interface default_route is a structured object
+    #   - no split_horizon on interface
+
+    VRRip:
+      type: object
+      properties:
+        enable:
+          type: boolean
+          nullable: true
+        allow_redist_default_route:
+          type: boolean
+          nullable: true
+        reject_default_route:
+          type: boolean
+          nullable: true
+        global_bfd:
+          $ref: '#/components/schemas/Bfd'
+        timers:
+          type: object
+          properties:
+            delete_intervals:
+              type: integer
+              nullable: true
+            expire_intervals:
+              type: integer
+              nullable: true
+            interval_seconds:
+              type: integer
+              nullable: true
+            update_intervals:
+              type: integer
+              nullable: true
+        auth_profile:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              password:
+                type: string
+                format: password
+              md5:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: integer
+                      nullable: true
+                    key:
+                      type: string
+                      format: password
+                    preferred:
+                      type: boolean
+                      nullable: true
+        interface:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              enable:
+                type: boolean
+                nullable: true
+              mode:
+                type: string
+                enum: ['normal', 'passive', 'send-only']
+              authentication:
+                type: string
+              bfd:
+                $ref: '#/components/schemas/Bfd'
+              default_route:
+                type: object
+                description: Exactly one of disable or advertise should be set.
+                properties:
+                  disable:
+                    $ref: '#/components/schemas/EmptyObj'
+                  advertise:
+                    type: object
+                    properties:
+                      metric:
+                        type: integer
+                        nullable: true
+        export_rules:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              metric:
+                type: integer
+                nullable: true
+
+    # ---- VR Redistribution Profiles -------------------------------------------
+    # VR redist_profile is an inline entry array.
+    # action: no_redist / redist choices.
+    # filter: type, interface, destination, nexthop, bgp, and ospf (IPv4) or ospfv3 (IPv6).
+
+    VRRedistEntry:
+      type: object
+      properties:
+        name:
+          type: string
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 255
+          nullable: true
+        filter:
+          type: object
+          properties:
+            type:
+              type: array
+              items:
+                type: string
+                enum: ['bgp', 'connect', 'ospf', 'rip', 'static']
+            interface:
+              type: array
+              items:
+                type: string
+            destination:
+              type: array
+              items:
+                type: string
+            nexthop:
+              type: array
+              items:
+                type: string
+            ospf:
+              type: object
+              properties:
+                area:
+                  type: array
+                  items:
+                    type: string
+                path_type:
+                  type: array
+                  items:
+                    type: string
+                    enum: ['ext-1', 'ext-2', 'inter-area', 'intra-area']
+                tag:
+                  type: array
+                  items:
+                    type: string
+            ospfv3:
+              type: object
+              description: Same structure as ospf; used for IPv6 redist profiles.
+              properties:
+                area:
+                  type: array
+                  items:
+                    type: string
+                path_type:
+                  type: array
+                  items:
+                    type: string
+                    enum: ['ext-1', 'ext-2', 'inter-area', 'intra-area']
+                tag:
+                  type: array
+                  items:
+                    type: string
+            bgp:
+              type: object
+              properties:
+                community:
+                  type: array
+                  items:
+                    type: string
+                extended_community:
+                  type: array
+                  items:
+                    type: string
+        action:
+          type: object
+          description: Exactly one of no_redist or redist should be set.
+          properties:
+            no_redist:
+              $ref: '#/components/schemas/EmptyObj'
+            redist:
+              $ref: '#/components/schemas/EmptyObj'
+
+    # ---- VR Routing Table / Static Routes -------------------------------------
+    # VR nexthop differences vs LR: no receive, next_lr, tunnel options.
+    # Adds allow_loopback_src on static routes.
+
+    VRRoutingTable:
+      type: object
+      properties:
+        ip:
+          type: object
+          properties:
+            static_route:
+              type: array
+              items:
+                $ref: '#/components/schemas/VRStaticRoute'
+        ipv6:
+          type: object
+          properties:
+            static_route:
+              type: array
+              items:
+                $ref: '#/components/schemas/VRStaticRouteIpv6'
+
+    VRStaticRoute:
+      type: object
+      properties:
+        name:
+          type: string
+        destination:
+          type: string
+          description: Destination network in CIDR notation.
+        interface:
+          type: string
+        nexthop:
+          type: object
+          description: Exactly one nexthop type should be set.
+          properties:
+            discard:
+              $ref: '#/components/schemas/EmptyObj'
+            ip_address:
+              type: string
+            fqdn:
+              type: string
+            next_vr:
+              type: string
+              description: Name of the next virtual router.
+        admin_dist:
+          type: integer
+          minimum: 10
+          maximum: 240
+          nullable: true
+        metric:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          nullable: true
+        option:
+          type: object
+          properties:
+            passive:
+              $ref: '#/components/schemas/EmptyObj'
+        route_table:
+          $ref: '#/components/schemas/RouteTable'
+        bfd:
+          $ref: '#/components/schemas/Bfd'
+        path_monitor:
+          $ref: '#/components/schemas/PathMonitor'
+        allow_loopback_src:
+          type: boolean
+          nullable: true
+
+    VRStaticRouteIpv6:
+      type: object
+      properties:
+        name:
+          type: string
+        destination:
+          type: string
+          description: Destination IPv6 network in CIDR notation.
+        interface:
+          type: string
+        nexthop:
+          type: object
+          description: Exactly one nexthop type should be set (no fqdn for IPv6).
+          properties:
+            discard:
+              $ref: '#/components/schemas/EmptyObj'
+            ipv6_address:
+              type: string
+            next_vr:
+              type: string
+        admin_dist:
+          type: integer
+          minimum: 10
+          maximum: 240
+          nullable: true
+        metric:
+          type: integer
+          minimum: 1
+          maximum: 65535
+          nullable: true
+        route_table:
+          type: object
+          description: IPv6 supports unicast and no_install only.
+          properties:
+            unicast:
+              $ref: '#/components/schemas/EmptyObj'
+            no_install:
+              $ref: '#/components/schemas/EmptyObj'
+        bfd:
+          $ref: '#/components/schemas/Bfd'
+        path_monitor:
+          type: object
+          description: Path monitor for IPv6 — same as PathMonitor but without destination_fqdn.
+          properties:
+            enable:
+              type: boolean
+              nullable: true
+            failure_condition:
+              type: string
+              enum: ['any', 'all']
+            hold_time:
+              type: integer
+              nullable: true
+            monitor_destinations:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  enable:
+                    type: boolean
+                    nullable: true
+                  source:
+                    type: string
+                  destination:
+                    type: string
+                  interval:
+                    type: integer
+                    nullable: true
+                  count:
+                    type: integer
+                    nullable: true
+        allow_loopback_src:
+          type: boolean
+          nullable: true
+
+
+    generic_error:
+      type: object
+      properties:
+        _errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              details:
+                type: object
+        _request_id:
+          type: string
+
+
+  examples:
+    json_401_panui_auth_not_authenticated:
+      summary: Not Authenticated
+      value:
+        _errors:
+          - code: E016
+            message: Not Authenticated
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_401_panui_auth_invalid_credential:
+      summary: Invalid Credential
+      value:
+        _errors:
+          - code: E016
+            message: Invalid Credential
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_403_panui_auth_unauthorized:
+      summary: Unauthorized
+      value:
+        _errors:
+          - code: E007
+            message: Unauthorized
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_501_panui_restapi_version_not_supported:
+      summary: Version Not Supported
+      value:
+        _errors:
+          - code: E012
+            message: Version Not Supported
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_501_panui_restapi_method_not_supported:
+      summary: Method Not Supported
+      value:
+        _errors:
+          - code: E012
+            message: Method Not Supported
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_400_panui_restapi_input_format_mismatch:
+      summary: Input Format Mismatch
+      value:
+        _errors:
+          - code: E003
+            message: 'Input Format Mismatch: input-format=json'
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_400_panui_restapi_missing_query_parameter:
+      summary: Missing Query Parameter
+      value:
+        _errors:
+          - code: E003
+            message: 'Missing Query Parameter: folder'
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_400_panui_restapi_invalid_query_parameter:
+      summary: Invalid Query Parameter
+      value:
+        _errors:
+          - code: E003
+            message: 'Invalid Query Parameter: location=invalid'
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_400_panui_restapi_missing_body:
+      summary: Missing Body
+      value:
+        _errors:
+          - code: E003
+            message: Missing Body
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_405_panui_restapi_action_not_supported:
+      summary: Action Not Supported
+      value:
+        _errors:
+          - code: E012
+            message: 'Action Not Supported: move'
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_400_panui_mgmt_bad_xpath:
+      summary: Bad XPath
+      value:
+        _errors:
+          - code: E013
+            message: Bad XPath
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_404_panui_mgmt_object_not_present:
+      summary: Object Not Present
+      value:
+        _errors:
+          - code: E005
+            message: Object Not Present
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_409_panui_mgmt_object_not_unique:
+      summary: Object Not Unique
+      value:
+        _errors:
+          - code: E016
+            message: Object Not Unique
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_409_panui_mgmt_name_not_unique:
+      summary: Name Not Unique
+      value:
+        _errors:
+          - code: E006
+            message: Name Not Unique
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_409_panui_mgmt_reference_not_zero:
+      summary: Reference Not Zero
+      value:
+        _errors:
+          - code: E009
+            message: Reference Not Zero
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_400_panui_mgmt_invalid_object:
+      summary: Invalid Object
+      value:
+        _errors:
+          - code: E003
+            message: Invalid Object
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+    json_400_panui_mgmt_invalid_command:
+      summary: Invalid Command
+      value:
+        _errors:
+          - code: E003
+            message: Invalid Command
+            details: {}
+        _request_id: 123e4567-e89b-12d3-a456-426655440000
+
+
+security:
+  - scmOAuth: []
+  - scmToken: []
