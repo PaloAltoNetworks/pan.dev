@@ -11,10 +11,23 @@ export type MenuLink = {
   label: string;
   to: string;
   external?: boolean;
+  /**
+   * Acronyms a customer is likely to type for this specific link that its label
+   * does not contain, e.g. "DLP" for "Data Loss Prevention API". Matched by the
+   * filter but not shown.
+   */
+  aliases?: string[];
 };
 
 export type MenuProduct = {
   label: string;
+  /**
+   * Acronyms or names a customer is likely to type that the visible label does
+   * not already contain. Matched by the filter but not shown. Only set where it
+   * adds a term normalization cannot reach: "CDSS", not "SDWAN" (which already
+   * normalizes from "SD-WAN") or "XSOAR" (already in the label).
+   */
+  aliases?: string[];
   /** Where the product name itself goes: its landing page, or its first doc. */
   overview: string;
   overviewExternal?: boolean;
@@ -141,6 +154,7 @@ export const MENU_GROUPS: MenuGroup[] = [
       },
       {
         label: "Cloud NGFW",
+        aliases: ["CNGFW"],
         overview: "/cloudngfw/docs",
         docs: [
           { label: "Introduction", to: "/cloudngfw/docs" },
@@ -153,6 +167,7 @@ export const MENU_GROUPS: MenuGroup[] = [
       },
       {
         label: "Strata Logging Service",
+        aliases: ["SLS"],
         overview: "/cdl/docs/log-forwarding",
         docs: [
           {
@@ -172,6 +187,7 @@ export const MENU_GROUPS: MenuGroup[] = [
       },
       {
         label: "Cloud-Delivered Security Services",
+        aliases: ["CDSS"],
         overview: "/cdss/docs",
         docs: [
           { label: "Cloud-Delivered Security Services", to: "/cdss/docs" },
@@ -184,8 +200,12 @@ export const MENU_GROUPS: MenuGroup[] = [
           { label: "Threat Vault APIs", to: "/threat-vault/api" },
           { label: "IoT API", to: "/iot/api" },
           { label: "DNS Security API", to: "/dns-security/api" },
-          { label: "Data Loss Prevention API", to: "/dlp/api" },
-          { label: "Email Data Loss Prevention API", to: "/email-dlp/api" },
+          { label: "Data Loss Prevention API", to: "/dlp/api", aliases: ["DLP"] },
+          {
+            label: "Email Data Loss Prevention API",
+            to: "/email-dlp/api",
+            aliases: ["DLP", "EDLP"],
+          },
           {
             label: "SaaS Security API",
             to: "https://docs.paloaltonetworks.com/saas-security/data-security/add-cloud-apps-to-saas-security-api",
@@ -213,6 +233,7 @@ export const MENU_GROUPS: MenuGroup[] = [
     products: [
       {
         label: "Strata Cloud Manager",
+        aliases: ["SCM"],
         overview: "/strata-cloud-manager",
         docs: [
           { label: "Home Page", to: "/strata-cloud-manager" },
@@ -308,6 +329,7 @@ export const MENU_GROUPS: MenuGroup[] = [
       },
       {
         label: "Prisma Browser Management",
+        aliases: ["PB"],
         overview: "/prisma-browser",
         docs: [
           { label: "Overview", to: "/prisma-browser" },
@@ -326,6 +348,7 @@ export const MENU_GROUPS: MenuGroup[] = [
       },
       {
         label: "Prisma Access Insights",
+        aliases: ["PAI"],
         overview: "/access/docs/insights",
         docs: [
           {

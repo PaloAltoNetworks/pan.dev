@@ -82,26 +82,79 @@ function productLinks(product: MenuProduct): {
   };
 }
 
+// Strips separators and case so "panos" matches "PAN-OS" and "cloudngfw"
+// matches "Cloud NGFW". Each label is normalized on its own rather than joined,
+// so a query cannot bridge two adjacent labels.
+const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+
 /** Searches the group and product names plus every link label beneath them. */
 function searchGroups(query: string): MenuGroup[] {
-  const q = query.trim().toLowerCase();
+  const q = normalize(query);
   if (!q) {
     return MENU_GROUPS;
   }
+  const hit = (s: string) => normalize(s).includes(q);
+  const linkTerms = (l: MenuLink) => [l.label, ...(l.aliases ?? [])];
   return MENU_GROUPS.map((group) => ({
     ...group,
     products: group.products.filter((product) =>
       [
         product.label,
         group.label,
-        ...product.docs.map((l) => l.label),
-        ...product.apiDocs.map((l) => l.label),
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(q)
+        ...(product.aliases ?? []),
+        ...product.docs.flatMap(linkTerms),
+        ...product.apiDocs.flatMap(linkTerms),
+      ].some(hit)
     ),
   })).filter((group) => group.products.length > 0);
+}
+
+/**
+ * The links under a product that match the query. When only the product or
+ * group name matched, every link is returned so the expanded row still shows
+ * where to go. Returns null when nothing matches.
+ */
+function matchedLinks(
+  product: MenuProduct,
+  query: string
+): { overviewHit: boolean; overviewLabel: string; docs: MenuLink[]; apiDocs: MenuLink[] } | null {
+  const q = normalize(query);
+  if (!q) {
+    return null;
+  }
+  const hit = (s: string) => normalize(s).includes(q);
+  const linkHit = (l: MenuLink) => hit(l.label) || (l.aliases ?? []).some(hit);
+  const { overviewLabel, docs, apiDocs } = productLinks(product);
+  const overviewHit = hit(overviewLabel);
+  const mDocs = docs.filter(linkHit);
+  const mApi = apiDocs.filter(linkHit);
+  const leafHit = overviewHit || mDocs.length > 0 || mApi.length > 0;
+  return leafHit
+    ? { overviewHit, overviewLabel, docs: mDocs, apiDocs: mApi }
+    : { overviewHit: true, overviewLabel, docs, apiDocs };
+}
+
+/** Emphasises the raw query substring in a label. A normalize-only match
+ * (e.g. "panos" against "PAN-OS") renders without a mark. */
+function Highlight({
+  text,
+  query,
+}: {
+  text: string;
+  query: string;
+}): JSX.Element {
+  const q = query.trim();
+  const at = q ? text.toLowerCase().indexOf(q.toLowerCase()) : -1;
+  if (at < 0) {
+    return <>{text}</>;
+  }
+  return (
+    <>
+      {text.slice(0, at)}
+      <mark className={styles.mark}>{text.slice(at, at + q.length)}</mark>
+      {text.slice(at + q.length)}
+    </>
+  );
 }
 
 /** The product owning the longest internal path that prefixes the route. */
@@ -259,6 +312,61 @@ function ProductSubmenu({
   );
 }
 
+/**
+ * A single product rendered as a search result: the name plus every matching
+ * link expanded inline, so the match is visible without a click. Used only
+ * while the filter box has text.
+ */
+function ProductSearchResult({
+  product,
+  query,
+  onNavigate,
+}: {
+  product: MenuProduct;
+  query: string;
+  onNavigate: () => void;
+}): JSX.Element | null {
+  const match = matchedLinks(product, query);
+  if (!match) {
+    return null;
+  }
+  const renderLink = (link: MenuLink) => (
+    <li key={`${link.label}:${link.to}`}>
+      <MenuAnchor
+        className={styles.link}
+        to={link.to}
+        external={link.external}
+        onClick={onNavigate}
+      >
+        <Highlight text={link.label} query={query} />
+      </MenuAnchor>
+    </li>
+  );
+  return (
+    <li className={styles.productItem}>
+      <p className={styles.searchProduct}>
+        <Highlight text={product.label} query={query} />
+      </p>
+      <ul className={styles.linkList}>
+        {match.overviewHit && (
+          <li>
+            <MenuAnchor
+              className={styles.link}
+              to={product.overview}
+              external={product.overviewExternal}
+              onClick={onNavigate}
+            >
+              <Highlight text={match.overviewLabel} query={query} />
+            </MenuAnchor>
+          </li>
+        )}
+        {match.docs.map(renderLink)}
+        {match.apiDocs.map(renderLink)}
+      </ul>
+    </li>
+  );
+}
+
 function ProductMenuDesktop(): JSX.Element {
   const [open, setOpen] = useState(false);
   const [activeProduct, setActiveProduct] = useState<string | null>(null);
@@ -277,6 +385,7 @@ function ProductMenuDesktop(): JSX.Element {
     [groups]
   );
   const currentProduct = useMemo(() => productForPath(pathname), [pathname]);
+  const searching = query.trim().length > 0;
   const active = groups
     .flatMap((g) => g.products)
     .find((p) => p.label === activeProduct);
@@ -438,7 +547,10 @@ function ProductMenuDesktop(): JSX.Element {
             }}
           >
             <div
-              className={clsx(styles.drawer, active && styles.drawerWide)}
+              className={clsx(
+                styles.drawer,
+                active && !searching && styles.drawerWide
+              )}
               ref={drawerRef}
               role="dialog"
               aria-modal="true"
@@ -502,7 +614,17 @@ function ProductMenuDesktop(): JSX.Element {
                         <div className={styles.group} key={group.label}>
                           <h2 className={styles.groupTitle}>{group.label}</h2>
                           <ul className={styles.productList}>
-                            {group.products.map((product) => {
+                            {searching &&
+                              group.products.map((product) => (
+                                <ProductSearchResult
+                                  key={product.label}
+                                  product={product}
+                                  query={query}
+                                  onNavigate={close}
+                                />
+                              ))}
+                            {!searching &&
+                              group.products.map((product) => {
                               const isActive = activeProduct === product.label;
                               const isCurrent =
                                 currentProduct === product.label;
