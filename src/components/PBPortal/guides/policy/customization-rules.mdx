@@ -1,0 +1,221 @@
+---
+title: 'Customization rules'
+sidebar_label: 'Customization rules'
+pb_guide:
+  group: Policy
+  groupOrder: 40
+  order: 50
+  summary: Brand the Prisma Browser with logo, theme, shortcuts, and start pages
+
+---
+
+Customization rules change the look, feel, and end-user experience of the Prisma Browser: the logo, theme color, home page, new-tab page, pinned shortcuts, and more. A customization rule has the **same shape as a [security rule](/prisma-browser/guide/security-rules)**: a `controls` map keyed by control name. Only the path (`/policy/customization`) and the available control names differ. See [Policy overview](/prisma-browser/guide/rules) for the shared concepts.
+
+Base path: `/seb-api/v1/policy/customization`.
+
+## Mandatory fields
+
+| Field | Required | Notes |
+|---|---|---|
+| `name` | Yes | 1 to 300 characters |
+| `mode` | Yes | `active` or `disabled` |
+| `controls` | Yes | A map of control name to settings. Add at least one control to enforce policy. |
+| `scope` | No (recommended) | Who the rule applies to. Omitting it applies the rule to everyone. |
+| `description` | No | Up to 300 characters |
+
+## Branding assets come from the Assets API
+
+Controls that display a file (logo, browser icon, background image, PAC file) do not take the binary directly. You first upload the file with the [Assets API](/prisma-browser/guide/assets), which returns an asset ID, then set that ID on the control. For example, `companyLogo.companyLogoId` is the value returned by `POST /assets/company-logo`.
+
+```json
+{
+  "name": "Corporate branding",
+  "mode": "active",
+  "scope": { "users": { "isAny": true } },
+  "controls": {
+    "companyLogo": { "mode": "setCompanyLogo", "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" },
+    "themeColor": { "mode": "custom", "color": "#485BFF" }
+  }
+}
+```
+
+## Create a customization rule
+
+```
+POST /seb-api/v1/policy/customization/rules
+```
+
+<details>
+<summary>Show request and response</summary>
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Corporate branding",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": { "themeColor": { "mode": "custom", "color": "#485BFF" } }
+      }'
+```
+
+Response:
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+## Delete a customization rule
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/policy/customization/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Returns `204` with an empty body.
+
+## Sections
+
+Customization sections are created with `POST /seb-api/v1/policy/customization/sections` (only `name` is required) and ordered with the [positions endpoints](/prisma-browser/guide/reorder-rules-and-sections).
+
+:::note
+Every write edits the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)).
+:::
+
+## Examples
+
+Expand an example to see the request, response, and notes.
+
+<details>
+<summary>Upload a logo and apply it (Assets API + companyLogo control)</summary>
+
+The flagship two-API flow: upload the PNG to get a `companyLogoId`, then set it on the `companyLogo` control. See [Assets](/prisma-browser/guide/assets) for all four asset types and their limits.
+
+**Step 1: upload the logo** (multipart, the only file upload in the API)
+
+```bash
+curl -sS -X POST "$PB_API_BASE/assets/company-logo" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -F "file=@./company-logo.png"
+```
+
+Response (`201 Created`):
+
+```json
+{ "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" }
+```
+
+**Step 2: set the returned ID on a customization rule**
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Company logo",
+        "mode": "active",
+        "controls": {
+          "companyLogo": { "mode": "setCompanyLogo", "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+**Note:** to remove the custom logo later, set `companyLogo` to `{ "mode": "noCompanyLogo" }`. The company logo accepts only `.png` via the API. See [Assets](/prisma-browser/guide/assets).
+
+</details>
+
+<details>
+<summary>Set a fixed theme color</summary>
+
+Force one theme color for everyone with `mode: "custom"` and a `#RRGGBB` hex value.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Brand theme color",
+        "mode": "active",
+        "controls": { "themeColor": { "mode": "custom", "color": "#485BFF" } }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Pin managed shortcuts to the new-tab page</summary>
+
+The `managedShortcuts` control sets the applications that appear on the new-tab page and in bookmarks. Use `mode: "setShortcuts"` and provide a `shortcuts` list.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Company shortcuts",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": {
+          "managedShortcuts": {
+            "mode": "setShortcuts",
+            "shortcuts": [
+              { "name": "Workday", "url": "https://workday.example.com", "pinned": true },
+              { "name": "Wiki", "url": "https://wiki.example.com", "pinned": true },
+              { "name": "Support", "url": "https://support.example.com" }
+            ]
+          }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Set the home page and new-tab page</summary>
+
+Point the Home button at a fixed URL (`homePage.mode: "customUrl"`) and open new tabs to a custom page (`newTabPage.pageType: "customUrl"`).
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Company start pages",
+        "mode": "active",
+        "controls": {
+          "homePage": {
+            "mode": "customUrl",
+            "customUrl": "https://intranet.example.com",
+            "showHomePageButton": true
+          },
+          "newTabPage": {
+            "pageType": "customUrl",
+            "customUrl": "https://intranet.example.com/start"
+          }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+## Related
+
+- [Policy overview](/prisma-browser/guide/rules), [Security rules](/prisma-browser/guide/security-rules)
+- Building blocks: [Assets](/prisma-browser/guide/assets)

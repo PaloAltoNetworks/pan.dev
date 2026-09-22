@@ -1,0 +1,326 @@
+---
+title: 'Custom applications'
+sidebar_label: 'Custom applications'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 20
+  subgroup: Applications
+  summary: Define a SaaS or web application by its URLs
+
+---
+
+A **custom application** (`type: custom`) is a SaaS or web application you define by a list of URL patterns. Use it when the application is not already in the [application catalog](/prisma-browser/guide/applications-catalog) and you want policy to recognize that traffic by a name of your choosing. Reference it from an [access and data rule](/prisma-browser/guide/access-and-data-rules) directly or through an [application group](/prisma-browser/guide/application-groups).
+
+**On this page:** key fields, limits, retrieve, create, update, delete, endpoint reference, tips, examples.
+
+:::note
+Check the [application catalog](/prisma-browser/guide/applications-catalog) first. If the application already exists there, reference the `catalog` application instead of recreating it as `custom`.
+:::
+
+---
+
+## Key fields
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `name` | string | yes | Display name shown in policy and events |
+| `type` | string | yes | Must be `custom` |
+| `urls` | array of URL objects | yes | Each is `{ "url": "...", "strict_mode": false }`. See Limits for the count |
+| `description` | string | no | Up to 2500 characters |
+| `category` | string | no | One of the values from `GET /applications/categories` |
+| `classification` | string | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+| `tagIDs` | array or object | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+
+Each `urls` entry is an object with a `url` pattern and an optional `strict_mode` flag:
+
+```json
+{ "url": "wiki.acme.example.com", "strict_mode": false }
+```
+
+| `strict_mode` | Behavior |
+|---|---|
+| `false` (default) | Protocol defaults to `*://`; `www` subdomain logic is applied; a trailing `/*` is added if no path is given. So `wiki.acme.example.com` becomes `*://wiki.acme.example.com/*`. |
+| `true` | The URL is saved exactly as entered. No normalization. Use this when you need an exact path match (for example `https://app.example.com/admin` and nothing else). |
+
+---
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| URLs per application | 100 by default, raised per tenant on request, up to 15,000 |
+| `description` length | 2500 characters |
+| Tags per application | 63 |
+| Counts against the tenant URL budget (custom + private + non-web) | 15,000 total |
+
+The per-application URL limit starts at 100 and can be raised for your tenant, up to 15,000. The same ceiling applies to the `add` and `remove` lists on a delta `PATCH`. Both limits are described in [Limits](/prisma-browser/guide/applications#limits) on the applications overview.
+
+---
+
+## Retrieve
+
+List custom applications (supports `name`, `url`, pagination, `sort` / `order`):
+
+```
+GET /seb-api/v1/applications/type/custom
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "name=wiki" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    {
+      "type": "custom",
+      "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX",
+      "name": "Acme Wiki",
+      "description": "",
+      "category": "Uncategorized",
+      "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+      "urls": [ "*://wiki.acme.example.com/*" ]
+    }
+    // ... more applications
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 }
+}
+```
+
+Read one:
+
+```
+GET /seb-api/v1/applications/type/custom/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/applications/type/custom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`). Note that `urls` are returned in their normalized string form:
+
+```json
+{
+  "type": "custom",
+  "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX",
+  "name": "Acme Wiki",
+  "category": "Uncategorized",
+  "metadata": {
+    "createdTime": "2026-01-15T10:00:00Z",
+    "lastUpdatedTime": "2026-01-15T10:00:00Z",
+    "createdBy": "api-service-account",
+    "lastUpdatedBy": "api-service-account",
+    "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 }
+  },
+  "urls": [ "*://wiki.acme.example.com/*" ]
+}
+```
+
+---
+
+## Create
+
+```
+POST /seb-api/v1/applications/type/custom
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Acme Wiki",
+        "type": "custom",
+        "urls": [ { "url": "wiki.acme.example.com" } ]
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX" }
+```
+
+Capture the ID for later snippets:
+
+```bash
+export APP_ID='0AP01ACMEWIKIXXXXXXXXXXXXXXXX'
+```
+
+To create many at once, use bulk create (1 to 1000 per call): `POST /seb-api/v1/applications/bulk-create/custom` with a JSON array of the same bodies. See [Bulk operations](/prisma-browser/guide/applications#bulk-operations).
+
+---
+
+## Update
+
+`PATCH` updates only the fields you send. The `urls` field accepts two forms:
+
+- **Replace** the whole list: send a `urls` array. The new list fully replaces the old one.
+- **Delta** add/remove: send `urls: { "add": [...], "remove": [...] }`. Use this to add or remove specific URLs without re-sending the entire list, which avoids overwriting concurrent edits.
+
+Either way, the total after the change cannot exceed your tenant's per-application URL limit. `classification` and `tagIDs` accept the same replace-or-delta treatment; see [Tags and classification](/prisma-browser/guide/applications#tags-and-classification).
+
+```
+PATCH /seb-api/v1/applications/type/custom/{id}
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/custom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "custom",
+        "urls": { "add": [ { "url": "docs.acme.example.com" } ] }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX" }
+```
+
+Remember: this edits the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)). With [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) you can publish just this object.
+
+---
+
+## Delete
+
+```
+DELETE /seb-api/v1/applications/type/custom/{id}
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/applications/type/custom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Returns `204` with an empty body.
+
+To delete many at once, use [bulk delete](/prisma-browser/guide/applications#bulk-operations) (`POST /applications/bulk-delete`, up to 2000 IDs, atomic).
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/applications/type/custom` | List custom applications (filter, paginate) |
+| `GET` | `/applications/type/custom/{id}` | Read one custom application |
+| `POST` | `/applications/type/custom` | Create one custom application |
+| `POST` | `/applications/bulk-create/custom` | Create up to 1000 custom applications |
+| `PATCH` | `/applications/type/custom/{id}` | Update one custom application |
+| `DELETE` | `/applications/type/custom/{id}` | Delete one custom application |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**One application, many URLs.** A single custom application holds 100 URLs by default, and more if your tenant limit is raised. For an allow/block list, keep one application and add or remove URLs on it rather than creating an application per URL. See [Govern URLs with an allow/block list](/prisma-browser/guide/manage-allow-block-list).
+:::
+
+:::caution
+**Strict mode changes matching.** With `strict_mode: false` the pattern is expanded (host-wide match). With `strict_mode: true` it is matched exactly as entered. Use strict mode only when you need a single exact path.
+:::
+
+---
+
+## Examples
+
+<details>
+<summary>Create with mixed strict and non-strict URLs</summary>
+
+`wiki...` is expanded host-wide; the admin path is matched exactly.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Acme Wiki",
+        "type": "custom",
+        "description": "Internal wiki",
+        "urls": [
+          { "url": "wiki.acme.example.com", "strict_mode": false },
+          { "url": "https://wiki.acme.example.com/admin", "strict_mode": true }
+        ]
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+<details>
+<summary>Add and remove URLs in one call (delta)</summary>
+
+Adds one URL and removes another without re-sending the full list.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/custom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "custom",
+        "urls": {
+          "add": [ { "url": "docs.acme.example.com" } ],
+          "remove": [ { "url": "old.acme.example.com" } ]
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+<details>
+<summary>Replace the entire URL list</summary>
+
+Sending a `urls` array replaces the whole list.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/custom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "custom",
+        "urls": [
+          { "url": "wiki.acme.example.com" },
+          { "url": "docs.acme.example.com" }
+        ]
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX" }
+```
+
+</details>
+
+---
+
+## Related
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Private applications](/prisma-browser/guide/applications-private), [Application groups](/prisma-browser/guide/application-groups)
+- Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), [Pagination](/prisma-browser/guide/pagination)
+- Use cases: [Govern URLs with an allow/block list](/prisma-browser/guide/manage-allow-block-list)

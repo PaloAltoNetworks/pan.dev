@@ -1,0 +1,209 @@
+---
+title: 'Application catalog'
+sidebar_label: 'Application catalog'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 15
+  subgroup: Applications
+  summary: Browse and reference read-only SaaS apps from the Universal Application Directory
+
+---
+
+The **application catalog** is the Universal Application Directory (UAD): a curated library of SaaS and web applications maintained by Palo Alto Networks. Catalog applications have `type: catalog` and are updated regularly as services add domains, change URLs, or earn new certifications. You can list, read, and reference catalog applications in rules, but you cannot create, edit, or delete them.
+
+For curated desktop applications, see the `localdesktopcatalog` type on [Desktop applications](/prisma-browser/guide/applications-desktop).
+
+**On this page:** what you can and cannot do, list and filter, get one, key fields, endpoint reference, tips.
+
+---
+
+## What you can and cannot do
+
+| Operation | Supported? | Notes |
+|---|---|---|
+| List catalog apps | Yes | GET `/applications` with `type=catalog` |
+| Read one catalog app | Yes | GET `/applications/{id}` |
+| Reference in a rule | Yes | By ID, directly or via an application group |
+| Read `classification` and `tags` | Yes | Returned like any other application. See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+| Set `classification` and `tagIDs` | Not yet | Catalog apps have no create or update endpoint. Setting them through the API is planned for a future release. Until then, set them on the Applications page in the Prisma Browser admin console in Strata Cloud Manager |
+| Create / edit / delete | No | Catalog apps are managed by Palo Alto Networks |
+| Draft and publish | N/A | Catalog apps are read-only. The draft model does not apply |
+
+---
+
+## List and filter
+
+Filter the full applications list to `type=catalog`. Supports `name` search, pagination (`limit` / `cursor`), and `sort` / `order`.
+
+```
+GET /seb-api/v1/applications
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/applications" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "type=catalog" \
+  --data-urlencode "name=figma" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    {
+      "type": "catalog",
+      "id": "0AP01FIGMAXXXXXXXXXXXXXXXXXXX",
+      "name": "Figma",
+      "description": "Collaborative interface design tool.",
+      "category": "Design",
+      "metadata": { "createdTime": "2024-04-26T12:48:39Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+      "urls": [ "*://www.figma.com/*", "*://figma.com/*" ],
+      "catalog_name": "figma"
+    }
+    // ... more catalog applications
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": true, "cursor": "gaFpvTBBUDAx...", "totalCount": 1 }
+}
+```
+
+To include compliance and security metadata in the response, add `includeCatalogAttributes=true`:
+
+```bash
+curl -sS -G "$PB_API_BASE/applications" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "type=catalog" \
+  --data-urlencode "name=figma" \
+  --data-urlencode "includeCatalogAttributes=true"
+```
+
+Response (`200`). Each item gains a `catalog_attributes` object; unknown values are `null`:
+
+```json
+{
+  "data": [
+    {
+      "type": "catalog",
+      "id": "0AP01FIGMAXXXXXXXXXXXXXXXXXXX",
+      "name": "Figma",
+      "category": "Design",
+      "urls": [ "*://figma.com/*" ],
+      "catalog_name": "figma",
+      "catalog_attributes": {
+        "encryption_in_transit": true,
+        "encryption_at_rest": true,
+        "soc2": true,
+        "iso_27001": true,
+        "gdpr": true,
+        "hipaa": null
+        // ... many more compliance attributes, null when unknown
+      }
+    }
+    // ... more catalog applications
+  ],
+  "pageInfo": { "hasNextPage": true, "cursor": "gaFpvTBBUDAx...", "totalCount": 1 }
+}
+```
+
+---
+
+## Get one
+
+```
+GET /seb-api/v1/applications/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/applications/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "type": "catalog",
+  "id": "0AP01FIGMAXXXXXXXXXXXXXXXXXXX",
+  "name": "Figma",
+  "description": "Collaborative interface design tool.",
+  "category": "Design",
+  "metadata": { "createdTime": "2024-04-26T12:48:39Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+  "urls": [ "*://figma.com/*" ],
+  "catalog_name": "figma"
+}
+```
+
+To include catalog attributes on a single-app read, append `?includeCatalogAttributes=true` to the URL.
+
+---
+
+## Key fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | Prefixed with `0AP...` |
+| `type` | string | Always `catalog` for these objects |
+| `name` | string | Display name as it appears in the directory |
+| `catalog_name` | string | Canonical catalog identifier (may differ from `name`) |
+| `urls` | array | The URL patterns that identify this application. Maintained by Palo Alto Networks |
+| `classification` | string | Read-only through this API. See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
+| `tags` | array | Read-only through this API. Objects of `{ id, name }` |
+
+### catalog_attributes
+
+Returned when `includeCatalogAttributes=true` is set. Contains security and compliance metadata for the application:
+
+| Attribute | Type | What it indicates |
+|---|---|---|
+| `encryption_in_transit` | boolean | Data is encrypted in transit |
+| `encryption_at_rest` | boolean | Data is encrypted at rest |
+| `data_retention` | string | Data retention policy or period |
+| `soc1` | boolean | SOC 1 certified |
+| `soc2` | boolean | SOC 2 certified |
+| `iso_27001` | boolean | ISO 27001 certified |
+| `gdpr` | boolean | GDPR compliant |
+| `hipaa` | boolean | HIPAA compliant |
+| `pci` | boolean | PCI DSS compliant |
+| `finra` | boolean | FINRA compliant |
+
+Not every application has values for every attribute. A missing or `null` value means the information is not available in the catalog for that app.
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/applications` | List applications; filter by `type=catalog` |
+| `GET` | `/applications/{id}` | Read one catalog application |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**Check the catalog before creating a SaaS application.** If the application already exists in the catalog, reference the `catalog` entry instead of recreating it as `custom`. You inherit its maintained URL list and compliance metadata, and Palo Alto Networks keeps it up to date. Only create a `custom` application when the catalog has no match.
+:::
+
+:::note
+**Catalog apps are maintained and updated regularly.** You do not need to manage their URLs. When a SaaS application adds or changes domains, the catalog entry is updated automatically. This is the main advantage of referencing a catalog app over a custom app for well-known services.
+:::
+
+:::note
+**Request `?includeCatalogAttributes=true` only when you need it.** The compliance metadata is not included by default to keep response payloads small. Add the parameter when you are auditing or building a catalog browser.
+:::
+
+:::note
+**Classification and tags are returned, but you cannot set them through this API yet.** A catalog application returns `classification` and `tags` like any other application, and those values are scoped to your tenant. Setting them through the API is planned for a future release. Until then, set them on the Applications page in the Prisma Browser admin console in Strata Cloud Manager.
+:::
+
+---
+
+## Related
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Custom applications](/prisma-browser/guide/applications-custom), [Desktop applications](/prisma-browser/guide/applications-desktop), [Application groups](/prisma-browser/guide/application-groups)
+- Concepts: [Pagination](/prisma-browser/guide/pagination)

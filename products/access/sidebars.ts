@@ -50,10 +50,6 @@ module.exports = {
     "access/api/insights/insights-api",
     require("./api/insights/sidebar"),
   ],
-  sasebrowsermgmt: [
-    "access/api/browser-mgmt/browser-mgmt-api",
-    require("./api/browser-mgmt/sidebar"),
-  ],
   saseztna: [
     "access/api/ztna/ztna-connector-api",
     require("./api/ztna/sidebar"),

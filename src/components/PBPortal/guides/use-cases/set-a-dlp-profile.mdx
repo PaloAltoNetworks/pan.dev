@@ -1,0 +1,113 @@
+---
+title: 'Set a DLP profile on a rule'
+sidebar_label: 'Set a DLP profile on a rule'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Content controls
+  subgroupOrder: 20
+  order: 30
+  summary: Discover and attach Enterprise DLP profiles
+
+---
+
+An access and data rule can enforce an Enterprise DLP (data loss prevention) data profile through `dataControls.dlpProfileId`. The profile itself is defined in Enterprise DLP, a separate service, so this is a two-part task: look up the profile ID in the DLP API, then attach it to your rule.
+
+**Use this when:** you want a rule in the Prisma Browser to apply an existing Enterprise DLP data profile (for example, to detect and block sensitive content on upload or in the clipboard).
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Access to Enterprise DLP for the same tenant.
+
+## 1. Find available DLP profile IDs
+
+DLP data profiles are managed by Enterprise DLP, on a different host (`https://api.dlp.paloaltonetworks.com`) and documented at [pan.dev/dlp/api/](https://pan.dev/dlp/api/). List the profiles to discover valid IDs; the profile ID is `content[].id`.
+
+```
+GET https://api.dlp.paloaltonetworks.com/v2/api/data-profiles
+```
+
+```bash
+curl -sS "https://api.dlp.paloaltonetworks.com/v2/api/data-profiles?page=0&size=50" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+### Response (shape)
+
+```json
+{
+  "content": [
+    { "id": "11995044", "name": "PII - strict" },
+    { "id": "11995051", "name": "PCI - block upload" }
+  ]
+}
+```
+
+Fetch one profile by ID with `GET /v2/api/data-profiles/{resourceId}`.
+
+:::note
+**The DLP API is a separate service.** It uses a different host and its own access. The Prisma Browser does not list DLP profiles; it only references them by ID. The token must be authorized for both services on the same tenant.
+:::
+
+## 2. Attach the profile to your rule
+
+Set `dataControls.dlpProfileId` on the access and data rule. Use the `id` value from the DLP API (the same string shown in the Enterprise DLP UI).
+
+```bash
+export RULE_ID='0RLEXAMPLEACCESSRULEXXXXXXX'
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "dataControls": {
+          "dlpProfileId": "11995044",
+          "fileProtection": {
+            "fileUpload": { "action": "block" }
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEACCESSRULEXXXXXXX" }
+```
+
+:::caution
+**A DLP profile cannot stand alone.** `dlpProfileId` must accompany at least one inline data control (or a control set). Sending `dlpProfileId` with no controls is rejected. The example pairs it with `fileProtection` so the profile actually drives enforcement.
+:::
+
+:::caution
+**The ID is validated.** It must reference a data profile that already exists in Enterprise DLP for the same tenant, or the rule write returns `400`. The Policy API resolves it to an internal reference at write time; you never supply or see that internal ID.
+:::
+
+## 3. Confirm and publish
+
+Reads return the profile as an expanded object rather than the flat ID:
+
+```json
+"dataControls": { "dlpProfile": { "id": "11995044", "name": "PII - strict" } }
+```
+
+Publish to enforce it:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{"description": "Attach DLP profile to finance rule"}'
+```
+
+Returns `201` when a new active version is created.
+
+## Tips and gotchas
+
+- **Profile-control compatibility is validated.** Some controls only work with certain profile types; an incompatible pairing is rejected with `400`. To save anyway (the incompatible control becomes a runtime no-op), set `dataControls.bypassDlpProfileValidation: true`. Use this deliberately.
+- **Same tenant, both services.** The DLP profile and the Browser rule must belong to the same tenant.
+
+## Related
+
+- [Manage login and data controls](/prisma-browser/guide/manage-login-and-data-controls), [Access and data rules](/prisma-browser/guide/access-and-data-rules)
+- Reference: [Enterprise DLP API](https://pan.dev/dlp/api/)
+

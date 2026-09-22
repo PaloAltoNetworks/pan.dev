@@ -1,0 +1,114 @@
+---
+title: 'Handle user access requests'
+sidebar_label: 'Handle user access requests'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Content controls
+  subgroupOrder: 20
+  order: 50
+  summary: Poll, approve, decline, and revoke access requests
+
+---
+
+When a rule prompts for **admin approval**, the user submits a request instead of being allowed or blocked outright. This walkthrough automates the administrator side: poll for pending requests, approve or decline them with a bypass timeframe, and revoke an approval if circumstances change. See [User requests](/prisma-browser/guide/user-requests) for how the prompt is configured.
+
+**Use this when:** you want a helpdesk, SOAR, or chat-ops workflow to triage access requests instead of having an administrator watch Strata Cloud Manager.
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). At least one rule with a prompt set to `adminApproval`.
+
+:::note
+**These are direct operations.** Approving, declining, and revoking take effect immediately. There is no draft or publish step.
+:::
+
+## 1. List pending requests
+
+Filter by `request.status=Pending` to get the queue. The list is cursor-paginated.
+
+```bash
+curl -sS "$PB_API_BASE/user-requests?request.status=Pending&sort=request.created_at&order=asc&limit=50" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+### Response (shape)
+
+```json
+{
+  "pageInfo": { "nextCursor": "eyJvIjoxMH0" },
+  "data": [
+    {
+      "id": "0URLEXAMPLEREQUESTXXXXXXXXX",
+      "userId": "0UREXAMPLEUSERXXXXXXXXXXXXX",
+      "type": "WebAccess",
+      "status": "Pending",
+      "url": "https://files.example.com/share",
+      "reason": "Need to download the vendor SOW",
+      "ruleId": "0RLEXAMPLEACCESSRULEXXXXXXX",
+      "createdAt": "2026-06-29T08:14:00Z"
+    }
+  ]
+}
+```
+
+You can narrow the queue further with `request.type` (`WebAccess` or `AppLogin`), `request.user_id`, `request.rule_id`, or `request.url`.
+
+## 2. Approve or decline a request
+
+`POST /user-requests/{id}/action` with `action` set to `approve` or `decline`. On approval, set `adminBypassTimeframe` to control how long the approval holds before the user is challenged again. Add an `adminComment` for the audit trail.
+
+```bash
+export REQUEST_ID='0URLEXAMPLEREQUESTXXXXXXXXX'
+```
+
+```bash
+# Approve for 24 hours
+curl -sS -X POST "$PB_API_BASE/user-requests/$REQUEST_ID/action" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "action": "approve",
+        "adminBypassTimeframe": "24h",
+        "adminComment": "Approved: vendor SOW download"
+      }'
+
+# Or decline
+curl -sS -X POST "$PB_API_BASE/user-requests/$REQUEST_ID/action" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "action": "decline", "adminComment": "Use the approved vendor portal instead" }'
+```
+
+Response (`200`) returns the updated request:
+
+```json
+{ "id": "0URLEXAMPLEREQUESTXXXXXXXXX", "status": "Approved" }
+```
+
+Allowed `adminBypassTimeframe` values: `Once`, `10m`, `1h`, `4h`, `9h`, `12h`, `24h`, `3d`, `7d`, `14d`, `30d`, `60d`, `90d`. Use `Once` for a single passage and a longer window for repeat access.
+
+## 3. Revoke an approval
+
+If an approval should no longer stand (for example, the user left the project), revoke it. This withdraws an already-approved request and moves it to `Revoked`.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/user-requests/$REQUEST_ID/revoke" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "revokerComment": "Access no longer required" }'
+```
+
+Response (`200`) returns the updated request:
+
+```json
+{ "id": "0URLEXAMPLEREQUESTXXXXXXXXX", "status": "Revoked" }
+```
+
+## Tips and gotchas
+
+- **Approve idempotency.** Acting on a request that is not `Pending` is rejected; check `status` before acting if you run the poller frequently.
+- **Bypass timeframe is per approval.** It is independent of the rule prompt's `durationMinutes`; the value you send on approval wins for that request.
+- **Audit fields are populated for you.** `respondedBy`, `responseTime`, `revokedBy`, and `revokedAt` are set from the calling identity and timestamps, so use a dedicated service account if you want a clean audit trail.
+
+## Related
+
+- Concepts: [User requests](/prisma-browser/guide/user-requests), [Pagination](/prisma-browser/guide/pagination)

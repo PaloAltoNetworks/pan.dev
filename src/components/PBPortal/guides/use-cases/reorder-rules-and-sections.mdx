@@ -1,0 +1,141 @@
+---
+title: 'Reorder rules and sections'
+sidebar_label: 'Reorder rules and sections'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Policy management
+  subgroupOrder: 10
+  order: 30
+  summary: Reorder rules and sections safely
+
+---
+
+Rules are evaluated top to bottom, so order is policy. Each policy type exposes a `positions` sub-resource for changing the order of its rules and sections. You can resubmit the full order (`PUT`) or apply a few targeted moves (`PATCH`). This page shows both.
+
+**Use this when:** you need to raise a rule's priority, move a rule into a different section, or reorder sections.
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Pick your policy type (`sign-in`, `security`, `access-and-data`, or `customization`).
+
+```bash
+export TYPE='security'
+```
+
+## See the current order
+
+Read the policy; it returns rules and sections interleaved in evaluation order.
+
+```bash
+curl -sS "$PB_API_BASE/policy/$TYPE" -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`). Rules and sections are interleaved in evaluation order:
+
+```json
+{
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 3 },
+  "data": [
+    { "type": "Section", "id": "0SREXAMPLEHIGHRISKXXXXXXXXXX", "position": 1, "name": "High risk" },
+    { "type": "Rule", "id": "0RLEXAMPLEBLOCKDEVTOOLSXXXXX", "position": 2, "name": "Block dev tools", "mode": "active", "evaluationOrder": 1 },
+    { "type": "Rule", "id": "0RLEXAMPLEALLOWBASELINEXXXXX", "position": 3, "name": "Allow baseline", "mode": "active", "evaluationOrder": 2 }
+    // ... more rules and sections
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } }
+}
+```
+
+## Option A: Replace the whole order (PUT)
+
+Submit the complete, ordered list of every rule and section. Index 0 is evaluated first. All existing rules and sections must be present, and a section's rules must be contiguous.
+
+```
+PUT /seb-api/v1/policy/{type}/positions
+```
+
+Each entry is either a section or a rule. A rule names the section it belongs to via `sectionId` (omit or `null` for a standalone rule).
+
+```bash
+curl -sS -X PUT "$PB_API_BASE/policy/$TYPE/positions" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "positions": [
+          { "type": "Section", "id": "0SREXAMPLEHIGHRISKXXXXXXXXXX" },
+          { "type": "Rule", "id": "0RLEXAMPLEBLOCKDEVTOOLSXXXXX", "sectionId": "0SREXAMPLEHIGHRISKXXXXXXXXXX" },
+          { "type": "Rule", "id": "0RLEXAMPLEALLOWBASELINEXXXXX" }
+        ]
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "message": "Positions updated successfully", "itemsUpdated": 3 }
+```
+
+:::caution
+**PUT is all-or-nothing.** You must include every rule and section. If you only know the few items you want to move, use `PATCH` instead so you don't have to reconstruct the entire list.
+:::
+
+## Option B: Apply targeted moves (PATCH)
+
+Submit an ordered list of moves. Each move repositions one rule or section into a container (`target.sectionId`) using a position keyword (`top`, `bottom`, `before`, `after`) plus an anchor when using `before`/`after`. Moving a section carries its child rules with it. Moves apply atomically: if one fails, nothing changes and the failing move's index is returned.
+
+```
+PATCH /seb-api/v1/policy/{type}/positions
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/$TYPE/positions" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "moves": [
+          {
+            "subject": { "type": "Rule", "id": "0RLEXAMPLEBLOCKDEVTOOLSXXXXX" },
+            "target": { "position": "top", "sectionId": "0SREXAMPLEHIGHRISKXXXXXXXXXX" }
+          },
+          {
+            "subject": { "type": "Rule", "id": "0RLEXAMPLENEWRULEXXXXXXXXXXX" },
+            "target": {
+              "position": "after",
+              "anchor": { "type": "Rule", "id": "0RLEXAMPLEBLOCKDEVTOOLSXXXXX" },
+              "sectionId": "0SREXAMPLEHIGHRISKXXXXXXXXXX"
+            }
+          }
+        ]
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "message": "Positions updated successfully", "itemsUpdated": 2 }
+```
+
+## Rules to remember
+
+- `top` / `bottom` place the subject first/last in the container and take no anchor.
+- `before` / `after` require an `anchor` sibling in the same container.
+- A rule's container is a section (`sectionId`) or the top level (`sectionId: null`).
+- Baseline (default) rules are pinned at the bottom and cannot be moved or used as anchors.
+
+## Publish
+
+Order changes land on the **draft**. Publish to enforce the new evaluation order:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{"description": "Reorder security rules"}'
+```
+
+Returns `201` (a new active version is created). With an empty draft it returns `409`:
+
+```json
+{ "message": "No pending changes found in the current draft" }
+```
+
+## Related
+
+- [Policy overview](/prisma-browser/guide/rules), [Draft and publish](/prisma-browser/guide/draft-and-publish)

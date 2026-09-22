@@ -111,7 +111,7 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "scm/api/config/sase/network configurations/network-api",
+            to: "scm/api/config/sase/network/network-api",
             label: "Network Configurations",
             icon: "api-doc",
           },
@@ -227,7 +227,7 @@ export default function SCMLandingPage() {
         ],
         "Other Configuration": [
           {
-            to: "/access/api/browser-mgmt/browser-mgmt-api",
+            to: "/prisma-browser/guide/guide-overview",
             label: "Prisma Access Browser",
             icon: "api-doc",
           },
