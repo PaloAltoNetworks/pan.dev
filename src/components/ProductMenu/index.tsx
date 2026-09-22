@@ -25,6 +25,9 @@ const isInternal = (to: string) => to.startsWith("/");
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+/** How long a row must be held before it takes over an open submenu. */
+const HOVER_INTENT_MS = 250;
+
 /**
  * Hands a query to the navbar's Algolia modal instead of the /search page.
  * The modal mounts lazily on first open, so the input is polled for rather
@@ -402,11 +405,25 @@ function ProductMenuDesktop(): JSX.Element {
   // Roving tabindex: exactly one product row is in the tab sequence.
   const rovedProduct = activeProduct ?? visible[0] ?? null;
 
+  // Travelling from a row to its own submenu means crossing the rows below it.
+  // Switching on contact would swap the panel out from under the pointer, so a
+  // row only takes over once it has been held. Leaving the row before then
+  // cancels it, which is what makes a diagonal sweep to the submenu survive.
+  const hoverTimer = useRef<number | null>(null);
+
+  const cancelHover = useCallback(() => {
+    if (hoverTimer.current !== null) {
+      window.clearTimeout(hoverTimer.current);
+      hoverTimer.current = null;
+    }
+  }, []);
+
   const close = useCallback(() => {
+    cancelHover();
     setOpen(false);
     setActiveProduct(null);
     setQuery("");
-  }, []);
+  }, [cancelHover]);
 
   const closeAndRefocus = useCallback(() => {
     close();
@@ -438,6 +455,24 @@ function ProductMenuDesktop(): JSX.Element {
     },
     [visible, focusRow]
   );
+
+  const hoverProduct = useCallback(
+    (label: string) => {
+      cancelHover();
+      // Nothing is open yet, so there is no panel to protect: open on contact.
+      if (activeProduct === null) {
+        setActiveProduct(label);
+        return;
+      }
+      hoverTimer.current = window.setTimeout(() => {
+        hoverTimer.current = null;
+        setActiveProduct(label);
+      }, HOVER_INTENT_MS);
+    },
+    [activeProduct, cancelHover]
+  );
+
+  useEffect(() => cancelHover, [cancelHover]);
 
   // Set when a keyboard action asks to move focus into a submenu. The focus can
   // only happen after the submenu has rendered, so it is deferred to the effect
@@ -671,8 +706,9 @@ function ProductMenuDesktop(): JSX.Element {
                                     )}
                                     key={product.label}
                                     onMouseEnter={() =>
-                                      setActiveProduct(product.label)
+                                      hoverProduct(product.label)
                                     }
+                                    onMouseLeave={cancelHover}
                                   >
                                     <button
                                       type="button"
