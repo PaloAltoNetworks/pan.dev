@@ -410,6 +410,8 @@ function ProductMenuDesktop(): JSX.Element {
   // row only takes over once it has been held. Leaving the row before then
   // cancels it, which is what makes a diagonal sweep to the submenu survive.
   const hoverTimer = useRef<number | null>(null);
+  /** Last pointer position seen in the list, used to tell the direction. */
+  const lastPoint = useRef<{ x: number; y: number } | null>(null);
 
   const cancelHover = useCallback(() => {
     if (hoverTimer.current !== null) {
@@ -457,10 +459,19 @@ function ProductMenuDesktop(): JSX.Element {
   );
 
   const hoverProduct = useCallback(
-    (label: string) => {
+    (label: string, event: React.MouseEvent) => {
       cancelHover();
+      const from = lastPoint.current;
+      lastPoint.current = { x: event.clientX, y: event.clientY };
       // Nothing is open yet, so there is no panel to protect: open on contact.
       if (activeProduct === null) {
+        setActiveProduct(label);
+        return;
+      }
+      // Only a rightward move is plausibly on its way to the open submenu.
+      // Running down the list is browsing, and waiting there just feels slow.
+      const headingForPanel = from !== null && event.clientX - from.x >= 2;
+      if (!headingForPanel) {
         setActiveProduct(label);
         return;
       }
@@ -623,7 +634,15 @@ function ProductMenuDesktop(): JSX.Element {
               aria-modal="true"
               aria-label="Developer docs"
             >
-              <div className={styles.listPane}>
+              <div
+                className={styles.listPane}
+                onMouseMove={(event) => {
+                  lastPoint.current = { x: event.clientX, y: event.clientY };
+                }}
+                onMouseLeave={() => {
+                  lastPoint.current = null;
+                }}
+              >
                 <div className={styles.drawerHeader}>
                   <input
                     ref={searchRef}
@@ -705,8 +724,8 @@ function ProductMenuDesktop(): JSX.Element {
                                       isCurrent && styles.productItemCurrent
                                     )}
                                     key={product.label}
-                                    onMouseEnter={() =>
-                                      hoverProduct(product.label)
+                                    onMouseEnter={(event) =>
+                                      hoverProduct(product.label, event)
                                     }
                                     onMouseLeave={cancelHover}
                                   >
