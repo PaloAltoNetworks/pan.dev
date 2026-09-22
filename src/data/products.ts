@@ -53,9 +53,9 @@ export const MENU_GROUPS: MenuGroup[] = [
     products: [
       {
         label: "Prisma Cloud Enterprise Edition",
-        overview: "/prisma-cloud/docs",
-        docs: [{ label: "API Workflows", to: "/prisma-cloud/docs" }],
-        apiDocs: [{ label: "Prisma Cloud API", to: "/prisma-cloud/api" }],
+        overview: "/prisma-cloud/docs/",
+        docs: [{ label: "API Workflows", to: "/prisma-cloud/docs/" }],
+        apiDocs: [{ label: "Prisma Cloud API", to: "/prisma-cloud/api/" }],
       },
       {
         label: "Prisma Cloud Compute Edition",
@@ -113,31 +113,31 @@ export const MENU_GROUPS: MenuGroup[] = [
     products: [
       {
         label: "Prisma AIRS",
-        overview: "/airs",
-        docs: [{ label: "Prisma AIRS", to: "/airs" }],
+        overview: "/airs/",
+        docs: [{ label: "Prisma AIRS", to: "/airs/" }],
         apiDocs: [
           {
             label: "Prisma AIRS AI Runtime: API Intercept",
-            to: "/prisma-airs/api/airuntimesecurity/airuntimesecurityapi",
+            to: "/prisma-airs/api/airuntimesecurity/airuntimesecurityapi/",
           },
           {
             label: "Prisma AIRS AI Red Teaming",
-            to: "/prisma-airs-redteam/api/ai-integration/introduction",
+            to: "/prisma-airs-redteam/api/ai-integration/introduction/",
           },
           {
             label: "Prisma AIRS AI Model Security",
-            to: "/prisma-airs-model-security/api/aisecuritymodel/aisecuritymodel",
+            to: "/prisma-airs-model-security/api/aisecuritymodel/aisecuritymodel/",
           },
         ],
       },
       {
         label: "PAN-OS",
-        overview: "/panos/docs",
+        overview: "/panos/docs/",
         docs: [
-          { label: "APIs, SDKs, & Tutorials", to: "/panos/docs" },
-          { label: "Terraform for VM-Series", to: "/swfw" },
-          { label: "Terraform for PAN-OS", to: "/terraform/docs/panos" },
-          { label: "Ansible", to: "/ansible/docs/panos" },
+          { label: "APIs, SDKs, & Tutorials", to: "/panos/docs/" },
+          { label: "Terraform for VM-Series", to: "/swfw/" },
+          { label: "Terraform for PAN-OS", to: "/terraform/docs/panos/" },
+          { label: "Ansible", to: "/ansible/docs/panos/" },
         ],
         apiDocs: [
           {
@@ -155,11 +155,11 @@ export const MENU_GROUPS: MenuGroup[] = [
       {
         label: "Cloud NGFW",
         aliases: ["CNGFW"],
-        overview: "/cloudngfw/docs",
+        overview: "/cloudngfw/docs/",
         docs: [
-          { label: "Introduction", to: "/cloudngfw/docs" },
-          { label: "Terraform - AWS", to: "/terraform/docs/cloudngfw" },
-          { label: "Terraform - Azure", to: "/terraform/docs/cloudngfw" },
+          { label: "Introduction", to: "/cloudngfw/docs/" },
+          { label: "Terraform - AWS", to: "/terraform/docs/cloudngfw/" },
+          { label: "Terraform - Azure", to: "/terraform/docs/cloudngfw/" },
         ],
         apiDocs: [
           { label: "Cloud NGFW for AWS API", to: "/cloudngfw/aws/api/" },
@@ -168,42 +168,46 @@ export const MENU_GROUPS: MenuGroup[] = [
       {
         label: "Strata Logging Service",
         aliases: ["SLS"],
-        overview: "/cdl/docs/log-forwarding",
+        overview: "/cdl/docs/log-forwarding/",
         docs: [
           {
             label: "Log Forwarding Developer's Guide",
-            to: "/cdl/docs/log-forwarding",
+            to: "/cdl/docs/log-forwarding/",
           },
           {
             label: "Log Forwarding Change Log",
-            to: "/cdl/docs/logforwarding/release-notes/changelog",
+            to: "/cdl/docs/logforwarding/release-notes/changelog/",
           },
           {
             label: "Log Forwarding Release Notes",
-            to: "/cdl/docs/logforwarding/release-notes/relnotes",
+            to: "/cdl/docs/logforwarding/release-notes/relnotes/",
           },
         ],
-        apiDocs: [{ label: "Log Forwarding", to: "/cdl/api/log-forwarding" }],
+        apiDocs: [{ label: "Log Forwarding", to: "/cdl/api/log-forwarding/" }],
       },
       {
         label: "Cloud-Delivered Security Services",
         aliases: ["CDSS"],
-        overview: "/cdss/docs",
+        overview: "/cdss/docs/",
         docs: [
-          { label: "Cloud-Delivered Security Services", to: "/cdss/docs" },
+          { label: "Cloud-Delivered Security Services", to: "/cdss/docs/" },
         ],
         apiDocs: [
           {
             label: "AIOps for NGFW Best Practice Assessment API",
-            to: "/aiops-ngfw-bpa/api",
+            to: "/aiops-ngfw-bpa/api/",
           },
-          { label: "Threat Vault APIs", to: "/threat-vault/api" },
-          { label: "IoT API", to: "/iot/api" },
-          { label: "DNS Security API", to: "/dns-security/api" },
-          { label: "Data Loss Prevention API", to: "/dlp/api", aliases: ["DLP"] },
+          { label: "Threat Vault APIs", to: "/threat-vault/api/" },
+          { label: "IoT API", to: "/iot/api/" },
+          { label: "DNS Security API", to: "/dns-security/api/" },
+          {
+            label: "Data Loss Prevention API",
+            to: "/dlp/api/",
+            aliases: ["DLP"],
+          },
           {
             label: "Email Data Loss Prevention API",
-            to: "/email-dlp/api",
+            to: "/email-dlp/api/",
             aliases: ["DLP", "EDLP"],
           },
           {
@@ -220,8 +224,8 @@ export const MENU_GROUPS: MenuGroup[] = [
       },
       {
         label: "Expedition",
-        overview: "/expedition/docs",
-        docs: [{ label: "Expedition", to: "/expedition/docs" }],
+        overview: "/expedition/docs/",
+        docs: [{ label: "Expedition", to: "/expedition/docs/" }],
         apiDocs: [],
       },
     ],
@@ -234,13 +238,13 @@ export const MENU_GROUPS: MenuGroup[] = [
       {
         label: "Strata Cloud Manager",
         aliases: ["SCM"],
-        overview: "/strata-cloud-manager",
+        overview: "/strata-cloud-manager/",
         docs: [
-          { label: "Home Page", to: "/strata-cloud-manager" },
-          { label: "Developer's Guide", to: "/scm/docs/home" },
+          { label: "Home Page", to: "/strata-cloud-manager/" },
+          { label: "Developer's Guide", to: "/scm/docs/home/" },
           {
             label: "Strata Cloud Manager API Best Practices",
-            to: "/scm/docs/api-best-practices",
+            to: "/scm/docs/api-best-practices/",
           },
         ],
         apiDocs: [],
@@ -255,145 +259,145 @@ export const MENU_GROUPS: MenuGroup[] = [
     products: [
       {
         label: "Prisma SASE",
-        overview: "/sase/docs",
+        overview: "/sase/docs/",
         docs: [
-          { label: "Prisma SASE Developer's Guide", to: "/sase/docs" },
+          { label: "Prisma SASE Developer's Guide", to: "/sase/docs/" },
           {
             label: "Prisma SASE Release Notes",
-            to: "/sase/docs/release-notes/release-notes",
+            to: "/sase/docs/release-notes/release-notes/",
           },
         ],
         apiDocs: [
-          { label: "Tenancy Service", to: "/sase/api/tenancy" },
-          { label: "Identity and Access Management", to: "/sase/api/iam" },
-          { label: "Authentication Service", to: "/sase/api/auth" },
-          { label: "Subscription Service", to: "/sase/api/subscription" },
-          { label: "Activation Service", to: "/sase/api/activation" },
+          { label: "Tenancy Service", to: "/sase/api/tenancy/" },
+          { label: "Identity and Access Management", to: "/sase/api/iam/" },
+          { label: "Authentication Service", to: "/sase/api/auth/" },
+          { label: "Subscription Service", to: "/sase/api/subscription/" },
+          { label: "Activation Service", to: "/sase/api/activation/" },
           {
             label: "Prisma Access Configuration",
-            to: "/access/api/prisma-access-config",
+            to: "/access/api/prisma-access-config/",
           },
           {
             label: "ZTNA Connector",
-            to: "/access/api/ztna/ztna-connector-api",
+            to: "/access/api/ztna/ztna-connector-api/",
           },
-          { label: "Prisma SD-WAN", to: "/sdwan/api" },
-          { label: "Aggregate Monitoring", to: "/sase/api/mt-monitor" },
+          { label: "Prisma SD-WAN", to: "/sdwan/api/" },
+          { label: "Aggregate Monitoring", to: "/sase/api/mt-monitor/" },
           {
             label: "Multitenant Notifications",
-            to: "/sase/api/mt-notifications",
+            to: "/sase/api/mt-notifications/",
           },
           {
             label: "Service Provider Interconnect",
-            to: "/sase/api/mt-interconnect/introduction",
+            to: "/sase/api/mt-interconnect/introduction/",
           },
           {
             label: "Prisma Browser for MSPs",
-            to: "/sase/api/pab-msp/pab-msp-api",
+            to: "/sase/api/pab-msp/pab-msp-api/",
           },
           {
             label: "SASE 5G Manage Services",
-            to: "/sase/api/manage-services-5g/introduction",
+            to: "/sase/api/manage-services-5g/introduction/",
           },
           {
             label: "SASE 5G Monitor Services",
-            to: "/sase/api/monitor-services-5g/introduction-monitor",
+            to: "/sase/api/monitor-services-5g/introduction-monitor/",
           },
           {
             label: "Prisma Access Configuration Orchestration",
-            to: "/sase/api/introduction",
+            to: "/sase/api/introduction/",
           },
-          { label: "SaaS Security Posture Management", to: "/sase/api/sspm" },
+          { label: "SaaS Security Posture Management", to: "/sase/api/sspm/" },
           {
             label: "Identity Security Posture Management",
-            to: "/sase/api/identity-sspm",
+            to: "/sase/api/identity-sspm/",
           },
-          { label: "Autonomous DEM", to: "/access/api/adem/introduction" },
-          { label: "Log Forwarding", to: "/cdl/api/log-forwarding" },
+          { label: "Autonomous DEM", to: "/access/api/adem/introduction/" },
+          { label: "Log Forwarding", to: "/cdl/api/log-forwarding/" },
         ],
       },
       {
         label: "Prisma Access Configuration",
-        overview: "/access/docs/prisma-access-config",
+        overview: "/access/docs/prisma-access-config/",
         docs: [
           {
             label: "Prisma Access Configuration Developer's Guide",
-            to: "/access/docs/prisma-access-config",
+            to: "/access/docs/prisma-access-config/",
           },
         ],
         apiDocs: [
           {
             label: "Prisma Access Configuration",
-            to: "/access/api/prisma-access-config",
+            to: "/access/api/prisma-access-config/",
           },
         ],
       },
       {
         label: "Prisma Browser Management",
         aliases: ["PB"],
-        overview: "/prisma-browser",
+        overview: "/prisma-browser/",
         docs: [
-          { label: "Overview", to: "/prisma-browser" },
+          { label: "Overview", to: "/prisma-browser/" },
           {
             label: "Developer Guide",
-            to: "/prisma-browser/guide/guide-overview",
+            to: "/prisma-browser/guide/guide-overview/",
           },
-          { label: "Release Notes", to: "/prisma-browser/release-notes" },
+          { label: "Release Notes", to: "/prisma-browser/release-notes/" },
         ],
         apiDocs: [
           {
             label: "Prisma Browser Management",
-            to: "/prisma-browser/api/list-users?ref=nav",
+            to: "/prisma-browser/api/list-users/?ref=nav",
           },
         ],
       },
       {
         label: "Prisma Access Insights",
         aliases: ["PAI"],
-        overview: "/access/docs/insights",
+        overview: "/access/docs/insights/",
         docs: [
           {
             label: "Get Started 1.0",
-            to: "/access/docs/insights/getting_started-10",
+            to: "/access/docs/insights/getting_started-10/",
           },
           {
             label: "Get Started 2.0",
-            to: "/access/docs/insights/getting_started-20",
+            to: "/access/docs/insights/getting_started-20/",
           },
           {
             label: "Get Started 3.0",
-            to: "/access/docs/insights/getting_started-30",
+            to: "/access/docs/insights/getting_started-30/",
           },
-          { label: "API FAQs", to: "/access/docs/insights/pai-faqs" },
+          { label: "API FAQs", to: "/access/docs/insights/pai-faqs/" },
         ],
         apiDocs: [
           {
             label: "Prisma Access Insights 1.0",
-            to: "/access/api/insights/1.0",
+            to: "/access/api/insights/1.0/",
           },
           {
             label: "Prisma Access Insights 2.0",
-            to: "/access/api/insights/2.0",
+            to: "/access/api/insights/2.0/",
           },
-          { label: "Prisma Access Insights 3.0", to: "/access/api/insights" },
+          { label: "Prisma Access Insights 3.0", to: "/access/api/insights/" },
         ],
       },
       {
         label: "Prisma SD-WAN",
-        overview: "/sdwan/docs",
-        docs: [{ label: "Prisma SD-WAN Overview", to: "/sdwan/docs" }],
+        overview: "/sdwan/docs/",
+        docs: [{ label: "Prisma SD-WAN Overview", to: "/sdwan/docs/" }],
         apiDocs: [
-          { label: "Prisma SD-WAN Unified", to: "/sdwan/api" },
-          { label: "Prisma SD-WAN Legacy", to: "/sdwan/api/legacy" },
+          { label: "Prisma SD-WAN Unified", to: "/sdwan/api/" },
+          { label: "Prisma SD-WAN Legacy", to: "/sdwan/api/legacy/" },
         ],
       },
       {
         label: "Prisma SASE Service Status",
-        overview: "/sase/docs/saseservicestatusapi",
+        overview: "/sase/docs/saseservicestatusapi/",
         docs: [
           {
             label: "Prisma SASE Service Status API",
-            to: "/sase/docs/saseservicestatusapi",
+            to: "/sase/docs/saseservicestatusapi/",
           },
         ],
         apiDocs: [],
@@ -407,18 +411,18 @@ export const MENU_GROUPS: MenuGroup[] = [
     products: [
       {
         label: "Automation",
-        overview: "/terraform",
+        overview: "/terraform/",
         docs: [
-          { label: "Terraform for Software NGFW", to: "/swfw" },
-          { label: "Terraform and Palo Alto Networks", to: "/terraform" },
-          { label: "Ansible", to: "/ansible" },
+          { label: "Terraform for Software NGFW", to: "/swfw/" },
+          { label: "Terraform and Palo Alto Networks", to: "/terraform/" },
+          { label: "Ansible", to: "/ansible/" },
         ],
         apiDocs: [],
       },
       {
         label: "SIEM",
-        overview: "/splunk/docs",
-        docs: [{ label: "Splunk App/Add-on", to: "/splunk/docs" }],
+        overview: "/splunk/docs/",
+        docs: [{ label: "Splunk App/Add-on", to: "/splunk/docs/" }],
         apiDocs: [],
       },
     ],
@@ -431,11 +435,11 @@ export const MENU_GROUPS: MenuGroup[] = [
     products: [
       {
         label: "Service Status",
-        overview: "/cross-platform/docs/servicestatusapi",
+        overview: "/cross-platform/docs/servicestatusapi/",
         docs: [
           {
             label: "Service Status API",
-            to: "/cross-platform/docs/servicestatusapi",
+            to: "/cross-platform/docs/servicestatusapi/",
           },
         ],
         apiDocs: [],
