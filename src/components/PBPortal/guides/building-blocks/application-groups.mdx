@@ -1,0 +1,276 @@
+---
+title: 'Application groups'
+sidebar_label: 'Application groups'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 60
+  subgroup: Applications
+  summary: Named bundle of applications that rules reference
+
+---
+
+An **application group** is a named bundle of [applications](/prisma-browser/guide/applications). Attach the group to an [access and data rule](/prisma-browser/guide/access-and-data-rules) once, then edit its membership to change every rule that references it. Use a group when you would otherwise attach dozens of applications to a rule one by one.
+
+**On this page:** membership model, managed groups, limits, examples, endpoint reference, tips.
+
+---
+
+## Membership model
+
+A group's membership is a flat list of application IDs (any type: custom, private, non-web, catalog, or desktop). Members are referenced by ID; the group stores no per-member settings.
+
+| Field | Type | Notes |
+|---|---|---|
+| `name` | string | Required. Display name |
+| `description` | string | Optional |
+| `applications` | array | Member application IDs. 0 to 2000 entries |
+
+On update, membership can be edited two ways:
+
+- **Delta** (`add` / `remove`): change specific members and leave the rest intact. Preferred for automation because it does not clobber members another process added between your read and write. Same idea as [delta patch](/prisma-browser/guide/delta-patch) on rules.
+- **Replace**: send `applications` as a plain array to overwrite the whole list.
+
+---
+
+## Managed groups
+
+Prisma Browser ships two **system-managed application groups** out of the box, one for **Google Workspace** and one for **Microsoft Office 365**. These groups are pre-populated with the corresponding catalog applications for each suite and are maintained by Palo Alto Networks: as each suite adds or changes applications, the group membership is updated automatically.
+
+You can reference these groups in a rule exactly like any custom group. You cannot edit their membership.
+
+To discover the managed groups in your tenant, list all application groups and look for the Google Workspace and Office 365 entries:
+
+```
+GET /seb-api/v1/application-groups
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/application-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "limit=100"
+```
+
+Response (`200`). The system-managed suites appear alongside your custom groups:
+
+```json
+{
+  "data": [
+    {
+      "id": "0AG01GOOGLEWORKSPACEXXXXXXXXX",
+      "name": "Google Workspace",
+      "description": "Automatically controlled and kept up-to-date collection of Google productivity tools.",
+      "applications": [
+        { "id": "0AP01GMAILXXXXXXXXXXXXXXXXXXX", "name": "Gmail", "type": "catalog" },
+        { "id": "0AP01GDRIVEXXXXXXXXXXXXXXXXXX", "name": "Google Drive", "type": "catalog" }
+        // ... maintained by Palo Alto Networks
+      ]
+    }
+    // ... your custom groups
+  ],
+  "pageInfo": { "hasNextPage": true, "cursor": "gaFpvTBBRzAx...", "totalCount": 12 }
+}
+```
+
+The managed groups appear alongside your custom groups in the response. You can also find them in the console under the application groups section.
+
+:::note
+**Use managed groups to cover a whole suite without maintaining a URL list.** Instead of individually tracking every Google Workspace or Office 365 application, attach the managed group to a rule once. Policy automatically covers new apps added to the suite.
+:::
+
+---
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Member applications per group | 2000 |
+| Number of groups | No documented limit |
+
+---
+
+## Examples
+
+### Retrieve
+
+#### List and filter
+
+Supports `name` search, pagination (`limit` / `cursor`), and `sort` / `order`.
+
+```
+GET /seb-api/v1/application-groups
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/application-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "name=saas" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    {
+      "id": "0AG01APPROVEDSAASXXXXXXXXXXXX",
+      "name": "Approved SaaS",
+      "description": "Applications allowed for the whole company",
+      "applications": [
+        { "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX", "name": "Acme Wiki", "type": "custom" }
+        // ... more members
+      ]
+    }
+    // ... more groups
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 }
+}
+```
+
+#### Get one
+
+```
+GET /seb-api/v1/application-groups/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/application-groups/$GROUP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0AG01APPROVEDSAASXXXXXXXXXXXX",
+  "name": "Approved SaaS",
+  "description": "Applications allowed for the whole company",
+  "applications": [
+    { "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX", "name": "Acme Wiki", "type": "custom" },
+    { "id": "0AP01SLACKXXXXXXXXXXXXXXXXXXX", "name": "Slack", "type": "catalog" }
+    // ... more members
+  ]
+}
+```
+
+### Create
+
+```
+POST /seb-api/v1/application-groups
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/application-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Approved SaaS",
+        "description": "Applications allowed for the whole company",
+        "applications": [
+          "0AP01ACMEWIKIXXXXXXXXXXXXXXXX",
+          "0AP01SLACKXXXXXXXXXXXXXXXXXXX"
+        ]
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AG01APPROVEDSAASXXXXXXXXXXXX" }
+```
+
+Capture the ID for later snippets:
+
+```bash
+export GROUP_ID='0AG01APPROVEDSAASXXXXXXXXXXXX'
+```
+
+#### Key fields
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `name` | string | yes | Display name |
+| `description` | string | no | Free text |
+| `applications` | array | no | Member application IDs; 0 to 2000 entries |
+
+### Update
+
+`PATCH` the group. Use the delta form to add or remove specific applications without touching the rest:
+
+```
+PATCH /seb-api/v1/application-groups/{id}
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/application-groups/$GROUP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "applications": {
+          "add": [ "0AP01NEWTOOLXXXXXXXXXXXXXXXXX" ],
+          "remove": [ "0AP01OLDTOOLXXXXXXXXXXXXXXXXX" ]
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AG01APPROVEDSAASXXXXXXXXXXXX" }
+```
+
+To replace the entire membership instead, send `applications` as a plain array.
+
+Remember: this edits the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)). With [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) you can publish just this group, which is the basis of the [allow/block list](/prisma-browser/guide/manage-allow-block-list) automation pattern.
+
+### Delete
+
+```
+DELETE /seb-api/v1/application-groups/{id}
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/application-groups/$GROUP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Returns `204` with an empty body.
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/application-groups` | List application groups (filter, paginate) |
+| `GET` | `/application-groups/{id}` | Read one application group |
+| `POST` | `/application-groups` | Create one application group |
+| `PATCH` | `/application-groups/{id}` | Update one application group (delta or replace) |
+| `DELETE` | `/application-groups/{id}` | Delete one application group |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::caution
+**Attach the group once, edit it forever.** The point of a group is indirection: link it to a rule a single time, then make all ongoing changes on the group. The rule never has to be touched again, which keeps it stable and isolates membership churn.
+:::
+
+:::note
+**2000-member ceiling.** A group holds at most 2000 applications. If you model an allow/block list as "one application per URL", you hit this ceiling at 2000 entries; prefer one application holding many URLs instead (see the [allow/block list](/prisma-browser/guide/manage-allow-block-list) comparison).
+:::
+
+:::note
+**Delta vs replace.** Prefer add/remove for automation: it does not clobber members another process added between your read and write.
+:::
+
+---
+
+## Related
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Application catalog](/prisma-browser/guide/applications-catalog), [Custom applications](/prisma-browser/guide/applications-custom), [Rules](/prisma-browser/guide/rules)
+- Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), [Delta patch](/prisma-browser/guide/delta-patch)
+- Use cases: [Govern URLs with an allow/block list](/prisma-browser/guide/manage-allow-block-list)

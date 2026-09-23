@@ -1,0 +1,109 @@
+---
+title: "Change a rule's scope"
+sidebar_label: "Change a rule's scope"
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Policy management
+  subgroupOrder: 10
+  order: 20
+  summary: Change who a rule applies to
+
+---
+
+A rule's `scope` decides who it applies to: users, user groups, device groups, IPs, and locations. Scope changes use the same delta pattern as the rest of the API, so you can add or remove members without re-sending the whole list and without risking a race with a concurrent edit. This works the same way on every policy type.
+
+**Use this when:** you need to widen, narrow, or retarget who a rule covers (add a group, exclude a region, pin to specific devices).
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Have the rule's ID and its policy type (`sign-in`, `security`, `access-and-data`, or `customization`).
+
+```bash
+export RULE_ID='0RLEXAMPLERULEXXXXXXXXXXXXXX'
+export TYPE='security'
+```
+
+## Scope segments
+
+Each segment supports `isAny` (apply to all) plus add/remove deltas:
+
+| Segment | Add / remove |
+|---|---|
+| Users | `addUsers` / `removeUsers` |
+| User groups | `addUserGroups` / `removeUserGroups` |
+| Device groups | `addDeviceGroups` / `removeDeviceGroups` |
+| Public / private IPs | `addPublicIps` / `removePublicIps`, `addPrivateIps` / `removePrivateIps` |
+| Locations | `addLocations` / `removeLocations` |
+
+## Add and remove members in one call
+
+PATCH the rule with only the scope deltas. Adds and removes can be combined.
+
+```
+PATCH /seb-api/v1/policy/{type}/rules/{id}
+```
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/$TYPE/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "scope": {
+          "users": {
+            "addUserGroups": ["0UGEXAMPLECONTRACTORSXXXXXX"],
+            "removeUserGroups": ["0UGEXAMPLEINTERNSXXXXXXXXXX"]
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+## Apply to everyone, or narrow back down
+
+- To make a segment apply to all, set `isAny: true` for that segment (for example `"users": { "isAny": true }`).
+- To stop applying to everyone and target specific members, set `isAny: false` and add the members you want. A segment with `isAny: false` must contain at least one member.
+
+## Exclude by device group or location
+
+The same pattern narrows a rule. For example, stop a rule from applying in one region:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/$TYPE/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{ "scope": { "locations": { "removeLocations": ["DE"] } } }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+## Publish to make it live
+
+Scope edits land on the **draft**. Publish to enforce them:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{"description": "Retarget rule scope"}'
+```
+
+Returns `201` (a new active version is created). With an empty draft it returns `409`:
+
+```json
+{ "message": "No pending changes found in the current draft" }
+```
+
+:::note
+To roll a rule out to more people over time, see [Roll out a rule gradually](/prisma-browser/guide/gradual-rollout-with-user-group). To move users in and out via a managed list rather than directly on the rule, see [Add or remove users on a rule](/prisma-browser/guide/manage-users-on-a-rule).
+:::
+
+## Related
+
+- [Policy overview](/prisma-browser/guide/rules), [Delta patch](/prisma-browser/guide/delta-patch)
+- [Add or remove users on a rule](/prisma-browser/guide/manage-users-on-a-rule), [Roll out a rule gradually](/prisma-browser/guide/gradual-rollout-with-user-group)

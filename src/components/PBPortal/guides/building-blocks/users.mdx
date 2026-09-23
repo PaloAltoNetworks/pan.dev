@@ -1,0 +1,202 @@
+---
+title: 'Users'
+sidebar_label: 'Users'
+pb_guide:
+  group: Inventory
+  groupOrder: 20
+  order: 10
+  summary: List, filter, and read the users observed in your tenant
+
+---
+
+A **user** is an identity observed in your tenant: someone who has signed in to (or been synced into) the Prisma Browser. Unlike most building blocks, **you do not create or delete users through this API.** Users arrive from your identity provider (`saml`, `oidc`) or as `local` accounts, and the API lets you **list them, read one, filter them, and act on them** (suspend, resume, force re-authentication). Rules scope to users through [user groups](/prisma-browser/guide/user-groups), not by referencing a user directly.
+
+**On this page:** what you can and cannot do, list and filter, get one, key fields, lifecycle actions, endpoint reference, tips and gotchas.
+
+---
+
+## What you can and cannot do
+
+| Operation | Supported? | How |
+|---|---|---|
+| List / get | Yes | `GET /users`, `GET /users/{id}` |
+| Create / update / delete | No | Users are observed, not authored here |
+| Suspend / resume / force re-auth | Yes, immediately | [Direct actions](/prisma-browser/guide/direct-actions) (no draft, no publish) |
+
+:::note
+**Users are not part of the draft.** Listing and reading users returns live state, and the lifecycle actions below take effect at once. The [draft and publish](/prisma-browser/guide/draft-and-publish) model does not apply to users.
+:::
+
+---
+
+## List and filter
+
+```
+GET /seb-api/v1/users
+```
+
+```bash
+# Active users seen in the last day, newest activity first
+curl -sS -G "$PB_API_BASE/users" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "user.status=active" \
+  --data-urlencode "sort=user.last_seen" \
+  --data-urlencode "order=desc" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 },
+  "data": [
+    {
+      "id": "0UREXAMPLEUSERXXXXXXXXXXXXX",
+      "externalId": "3af33864-91db-bbb8-194f-b9aa5eb921c4",
+      "email": "alice@example.com",
+      "lastSeen": "2026-01-15T10:00:00Z",
+      "firstSeen": "2025-11-01T09:00:00Z",
+      "name": "Alice Example",
+      "profilePictureURL": "",
+      "deletedTime": "0001-01-01T00:00:00Z",
+      "status": "active",
+      "provider": "saml",
+      "deviceIds": [],
+      "userGroups": []
+    }
+    // ... more users
+  ]
+}
+```
+
+You get a paginated envelope: `pageInfo` plus a `data` array of `User` objects. Page through large tenants with the cursor (see [Pagination](/prisma-browser/guide/pagination)).
+
+### Query parameters
+
+| Parameter | Type | Notes |
+|---|---|---|
+| `user.name` | string | Filter by name. |
+| `user.email` | string | Filter by email. |
+| `user.status` | enum | `active` or `suspended`. |
+| `groupId` | string | Filter by user group. Comma-separated to match multiple groups (`groupId=id1,id2`). |
+| `user.first_seen_gte` | date-time | First seen at or after. |
+| `user.last_seen_lte` | date-time | Last seen at or before. |
+| `sort` | enum | `user.name`, `user.email`, `user.first_seen`, `user.last_seen`, `user.status`. |
+| `order` | enum | `asc` or `desc`. |
+| `cursor` | string | Opaque pagination cursor. |
+| `limit` | integer | Page size. |
+| `includeDeleted` | boolean | Include deleted users in the result. |
+
+---
+
+## Get one
+
+```
+GET /seb-api/v1/users/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/users/0UREXAMPLEUSERXXXXXXXXXXXXX" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0UREXAMPLEUSERXXXXXXXXXXXXX",
+  "externalId": "3af33864-91db-bbb8-194f-b9aa5eb921c4",
+  "email": "alice@example.com",
+  "lastSeen": "2026-01-15T10:00:00Z",
+  "firstSeen": "2025-11-01T09:00:00Z",
+  "name": "Alice Example",
+  "profilePictureURL": "",
+  "deletedTime": "0001-01-01T00:00:00Z",
+  "status": "active",
+  "provider": "saml",
+  "deviceIds": [ "0DE01EXAMPLEDEVICEXXXXXXXXXXX" ],
+  "userGroups": [ { "id": "0UG01PILOTXXXXXXXXXXXXXXXXXXX", "name": "Pilot - DevTools block" } ]
+}
+```
+
+A missing ID returns `404`.
+
+---
+
+## Key fields
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | string | Unique identifier (`0UR...`). |
+| `externalId` | string | Identifier from the source system. |
+| `email` | string | User email. |
+| `name` | string | Display name. |
+| `status` | enum | `active` or `suspended`. |
+| `provider` | enum | `saml`, `oidc`, or `local` (where the identity comes from). |
+| `deviceIds` | array | IDs of the user's known [devices](/prisma-browser/guide/devices). |
+| `userGroups` | array | Groups the user belongs to. |
+| `firstSeen` | date-time | First observed (read-only). |
+| `lastSeen` | date-time | Last observed (read-only). |
+| `profilePictureURL` | string | Avatar URL. |
+| `deletedTime` | date-time | Set when the user is deleted (read-only). |
+
+---
+
+## Lifecycle actions
+
+These are [direct actions](/prisma-browser/guide/direct-actions): they act on the live user immediately, with no draft or publish, and return `200`.
+
+| Goal | Endpoint | Effect |
+|---|---|---|
+| Suspend the user | `POST /seb-api/v1/users/suspend` | Revokes browser access across the user's known and future devices. |
+| Restore access | `POST /seb-api/v1/users/resume` | Reactivates a suspended user. |
+| Invalidate sessions | `POST /seb-api/v1/users/force-reauth` | Forces re-authentication on all active devices. |
+
+```bash
+curl -sS -X POST "$PB_API_BASE/users/suspend" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "userIds": ["0UREXAMPLEUSERXXXXXXXXXXXXX"] }'
+```
+
+Response (`200`):
+
+```json
+{ "message": "Users suspended successfully" }
+```
+
+For the full incident-response and offboarding walkthrough, see [Suspend a compromised user](/prisma-browser/guide/suspend-a-compromised-user).
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/users` | List users (filter, paginate) |
+| `GET` | `/users/{id}` | Read one user |
+| `POST` | `/users/suspend` | Suspend users (direct action) |
+| `POST` | `/users/resume` | Resume users (direct action) |
+| `POST` | `/users/force-reauth` | Force re-authentication (direct action) |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**To change who a rule covers, edit a group, not a user.** Rules do not reference users directly; they reference [user groups](/prisma-browser/guide/user-groups). Add a user to a `local` group and publish. See [Add or remove users on a rule](/prisma-browser/guide/manage-users-on-a-rule).
+:::
+
+:::note
+**Reverse with the pair, not a rollback.** Undo `suspend` with `resume`; there is no configuration version to revert because these actions bypass the draft.
+:::
+
+---
+
+## Related
+- Building blocks: [User groups](/prisma-browser/guide/user-groups), [Devices](/prisma-browser/guide/devices)
+- Concepts: [Direct actions](/prisma-browser/guide/direct-actions), [Pagination](/prisma-browser/guide/pagination)
+- Use cases: [Suspend a compromised user](/prisma-browser/guide/suspend-a-compromised-user), [Add or remove users on a rule](/prisma-browser/guide/manage-users-on-a-rule)

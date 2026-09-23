@@ -171,6 +171,7 @@ function DropdownNavbarItemDesktop({
                       setApiDocItems({
                         apiDocs: firstProduct.apiDocs,
                         docs: firstProduct.docs,
+                        docsFirst: firstProduct.docsFirst,
                       });
                       setExpandedProductGroups({
                         ...expandedProductGroups,
@@ -195,7 +196,7 @@ function DropdownNavbarItemDesktop({
                   }
                 >
                   {products.map((product, j) => {
-                    const { apiDocs, docs, label } = product;
+                    const { apiDocs, docs, docsFirst, label } = product;
                     return (
                       <li className="padding-left--sm" key={j}>
                         <NavbarNavLink
@@ -208,7 +209,7 @@ function DropdownNavbarItemDesktop({
                           label={product.label}
                           onClick={(e) => {
                             e.preventDefault();
-                            setApiDocItems({ apiDocs, docs });
+                            setApiDocItems({ apiDocs, docs, docsFirst });
                             setColorClass(colorclass);
                             setProductTitle(label);
                             setProductIdx(j);
@@ -229,6 +230,7 @@ function DropdownNavbarItemDesktop({
             docs={apiDocItems.docs}
             productTitle={productTitle}
             colorClass={colorClass}
+            docsFirst={apiDocItems.docsFirst}
           />
           {showViewAllDocs && (
             <Link

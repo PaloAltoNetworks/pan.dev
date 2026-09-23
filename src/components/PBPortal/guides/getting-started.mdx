@@ -1,0 +1,210 @@
+---
+title: 'Getting started'
+sidebar_label: 'Getting started'
+pb_guide:
+  group: Start here
+  groupOrder: 0
+  order: 20
+  summary: Authenticate, read access-and-data rules, create a test app, publish, and clean up
+
+---
+
+This page takes you through one full loop with the Prisma Browser Management API in under 10 minutes: **get a token, read your live policy, create a test application, and publish it.** For what the API is and who it is for, see the [Introduction](/prisma-browser/guide/guide-overview).
+
+We create a throwaway **custom application** rather than touching a rule, so you can see a real write and publish end to end without changing anything that is enforced on users. You delete it at the end.
+
+---
+
+## Prerequisites
+
+- You need a **service account** (client ID and secret) and your tenant's **TSG (Tenant Service Group) ID**. To create or publish resources, assign the **Super User** role to your service account. If you only need to read data, the **View-Only Administrator** role is sufficient. The Prisma Browser currently supports only these two roles.
+- To create a service account and obtain these credentials, follow the steps in the [Add a Service Account Through Common Services guide](https://docs.paloaltonetworks.com/common-services/identity-and-access-access-management/manage-identity-and-access/add-service-accounts).
+- You'll use the client ID, secret, and TSG ID to generate an OAuth 2.0 token for API access. See the detailed instructions at [PAN SASE API: Getting Started](https://pan.dev/sase/docs/getstarted/).
+
+### Set your credentials as environment variables
+
+The block below is not a programming language: these are **shell environment variables** (bash/zsh on macOS or Linux). You run them once in your terminal, and every example on this page reads them with `$PB_...` so you never paste a secret into a command.
+
+```bash
+export PB_CLIENT_ID='name@1234567890.iam.panserviceaccount.com'   # service account client ID
+export PB_CLIENT_SECRET='your-secret'                             # service account secret
+export PB_TSG='1234567890'                                        # your Tenant Service Group ID
+export PB_AUTH_URL='https://auth.apps.paloaltonetworks.com/oauth2/access_token'  # OAuth2 token endpoint
+export PB_API_BASE='https://api.sase.paloaltonetworks.com/seb-api/v1'            # API base URL
+```
+
+| Variable | What it is | Where it comes from |
+|---|---|---|
+| `PB_CLIENT_ID` | Service account client ID | [Service account](/sase/docs/service-accounts) creation |
+| `PB_CLIENT_SECRET` | Service account secret (shown once) | Service account creation |
+| `PB_TSG` | Your Tenant Service Group ID, used as the token scope | [Your TSG](/sase/docs/tenant-service-groups) |
+| `PB_AUTH_URL` | OAuth2 token endpoint | Fixed (prod value shown) |
+| `PB_API_BASE` | Prisma Browser API base URL | Fixed (prod value shown) |
+
+:::note
+On **Windows PowerShell**, set variables with `$env:PB_CLIENT_ID = '...'` and reference them as `$env:PB_CLIENT_ID`. The curl examples below otherwise work the same.
+:::
+
+---
+
+## 1. Get a token
+
+If you completed the [Authentication](/prisma-browser/guide/authentication) guide and already have `PB_TOKEN` set, skip to step 2.
+
+Exchange your service account for a short-lived Bearer token and capture it in `PB_TOKEN`:
+
+```bash
+export PB_TOKEN="$(curl -sS -u "$PB_CLIENT_ID:$PB_CLIENT_SECRET" \
+  -d 'grant_type=client_credentials' -d "scope=tsg_id:$PB_TSG" \
+  "$PB_AUTH_URL" | python3 -c 'import sys,json; print(json.load(sys.stdin)["access_token"])')"
+
+echo "${PB_TOKEN:0:12}..."   # sanity check: prints the first few chars
+```
+
+The token lasts about 15 minutes. See [Authentication](/prisma-browser/guide/authentication) for the full flow and a reusable refresh helper.
+
+---
+
+## 2. Read your live policy
+
+Start with a read so you can see real data. List your **Access and Data** rules (this is a read, so View-Only Administrator is enough):
+
+```bash
+curl -sS "$PB_API_BASE/policy/access-and-data?limit=5" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 2 },
+  "data": [
+    { "type": "Section", "id": "0SREXAMPLEDEFAULTXXXXXXXXXX", "position": 1, "name": "Default" },
+    { "type": "Rule", "id": "0RLEXAMPLEACCESSRULEXXXXXXX", "position": 2, "name": "Finance data protection", "mode": "active" }
+    // ... more rules and sections
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } }
+}
+```
+
+You get a paginated envelope: `pageInfo`, a `data` array of rule and section summaries, and `metadata` describing the configuration version you read.
+
+Two things to notice, both core concepts:
+
+- **You read the `draft`.** Reads default to the draft configuration. Pass `?configurationVersion=active` to read what is live. This draft model is central to writing safely: see [Draft and publish](/prisma-browser/guide/draft-and-publish).
+- **List items are summaries.** To get a rule's full configuration, call `GET /policy/access-and-data/rules/{id}`.
+
+---
+
+## 3. Create a test application
+
+Now make a write. Creating a **custom application** is the safest first write: it adds an object to the draft without changing any rule that is enforced. (See [Applications](/prisma-browser/guide/applications) for the full object.)
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "custom",
+        "name": "API quickstart test app",
+        "description": "Created from the getting-started guide. Safe to delete.",
+        "urls": [ { "url": "quickstart.example.com" } ]
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01QUICKSTARTXXXXXXXXXXXXXX" }
+```
+
+You get back `201 Created` with the new application's ID. Capture it for the next steps:
+
+```bash
+export APP_ID='0AP01QUICKSTARTXXXXXXXXXXXXXX'   # use the id from the response
+```
+
+This write landed in the **draft**. It is not live yet.
+
+---
+
+## 4. Publish
+
+One action promotes the entire draft to a new active version:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Add API quickstart test app"}'
+```
+
+A `201` means a new active version was created and your application is now live. Publish is **all-or-nothing** for the draft: everything currently staged goes live together. To publish only this one object, see [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish).
+
+---
+
+## 5. Verify, then clean up
+
+Read the application back on the **active** version to confirm it went live:
+
+```bash
+curl -sS "$PB_API_BASE/applications/type/custom/$APP_ID?configurationVersion=active" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "type": "custom",
+  "id": "0AP01QUICKSTARTXXXXXXXXXXXXXX",
+  "name": "API quickstart test app",
+  "description": "Created from the getting-started guide. Safe to delete.",
+  "urls": [ "*://quickstart.example.com/*" ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "active", "number": 1 } }
+  // ...
+}
+```
+
+Then remove the test application and publish again so you leave nothing behind:
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/applications/type/custom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Remove API quickstart test app"}'
+```
+
+The `DELETE` returns `204` with an empty body, and the publish returns `201` when the new active version is created.
+
+That is the whole loop: **authenticate, read, write to the draft, publish, verify.** Everything else in the API is a variation on it.
+
+---
+
+## What to read next
+
+| If you want to... | Go to |
+|---|---|
+| Understand the token, roles, and refresh | [Authentication](/prisma-browser/guide/authentication) |
+| Understand the draft/active model you used | [Draft and publish](/prisma-browser/guide/draft-and-publish) |
+| Publish only specific objects, not the whole draft | [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) |
+| Add/remove list items without races | [Delta patch](/prisma-browser/guide/delta-patch) |
+| Create the objects rules reference (applications, groups) | [Building blocks](/prisma-browser/guide/applications) |
+| List and act on users and devices | [Users](/prisma-browser/guide/users), [Devices](/prisma-browser/guide/devices) |
+| Create a rule end-to-end | [Create and publish a rule](/prisma-browser/guide/create-and-publish-a-security-rule) |
+| Understand the policy types and structure | [Policy overview](/prisma-browser/guide/rules) |
+| Page through large lists | [Pagination](/prisma-browser/guide/pagination) |
+| Handle failures | [Errors](/prisma-browser/guide/errors) |
+
+---
+
+## Troubleshooting
+
+- **409 on publish:** the draft has no changes (nothing to publish). Usually safe to ignore.
+- **404 with an empty body (header `via: 1.1 google`):** the path prefix is wrong. Confirm it starts under `/seb-api/v1`.
+
+For auth errors (401/403), see [Authentication - Errors](/prisma-browser/guide/authentication#errors-you-might-hit).

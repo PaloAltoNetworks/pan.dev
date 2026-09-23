@@ -1,0 +1,84 @@
+---
+title: 'Suspend a compromised user'
+sidebar_label: 'Suspend a compromised user'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Incident response
+  subgroupOrder: 30
+  order: 10
+  summary: Suspend a user immediately for incident response or offboarding
+
+---
+
+When an account is compromised or an employee is offboarded, you often need to revoke access to the Prisma Browser **right now**, not at the next policy publish. User actions do exactly that: they act on the live user immediately, with no draft to stage and no publish to run. See [Direct actions](/prisma-browser/guide/direct-actions) for why these bypass the draft model.
+
+**Use this when:** a SOC or IT workflow must lock a person out of the Prisma Browser immediately (incident response, offboarding).
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started).
+
+## Suspend the user
+
+Suspending a user revokes access to the Prisma Browser across all of their known and future devices. It takes effect at once and returns `200`.
+
+```
+POST /seb-api/v1/users/suspend
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/users/suspend" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "userIds": ["0UREXAMPLECOMPROMISEDXXXXXX"] }'
+```
+
+Response (`200`):
+
+```json
+{ "message": "Users suspended successfully" }
+```
+
+## Force re-authentication (a lighter option)
+
+If you only need to invalidate active sessions (for example, after rotating credentials) rather than lock the account, force the user to re-authenticate on all active devices instead of suspending:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/users/force-reauth" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "userIds": ["0UREXAMPLECOMPROMISEDXXXXXX"] }'
+```
+
+Response (`200`):
+
+```json
+{ "message": "Re-authentication forced successfully" }
+```
+
+## Reverse it when the incident is resolved
+
+There is no "undo via publish" for direct actions. Resume the user to restore access:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/users/resume" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "userIds": ["0UREXAMPLECOMPROMISEDXXXXXX"] }'
+```
+
+Response (`200`):
+
+```json
+{ "message": "Users resumed successfully" }
+```
+
+## Things to keep in mind
+
+- **Immediate, not staged.** These calls do not use draft and publish; `configurationVersion` does not apply.
+- **Reverse with the pair.** Use `resume` to undo `suspend`, not a configuration rollback.
+- **Handle failures with the standard envelope.** On failure these return the standard [error envelope](/prisma-browser/guide/errors); branch on `error.code`.
+
+## Related
+
+- [Quarantine a lost or compromised device](/prisma-browser/guide/quarantine-a-device)
+- Concepts: [Direct actions](/prisma-browser/guide/direct-actions), [Errors](/prisma-browser/guide/errors)

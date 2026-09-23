@@ -1,0 +1,335 @@
+---
+title: 'Applications'
+sidebar_label: 'Applications'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 10
+  subgroup: Applications
+  summary: What applications are, the types, and the operations shared across them
+
+---
+
+An **application** is a named object that represents something you want policy to recognize and govern: a SaaS site, a private (internal) application, a non-web remote connection, or a desktop application. You create applications once, then reference them, directly or via an [application group](/prisma-browser/guide/application-groups), from an [access and data rule](/prisma-browser/guide/access-and-data-rules).
+
+This page covers what is common to every application: the types, tags and classification, how to list and read applications, bulk operations, and shared limits. Each type has its own page for fields, the URL object, create, update, and worked examples.
+
+**On this page:** types, tags and classification, retrieve, bulk operations, limits, endpoint reference, tips.
+
+---
+
+## Types
+
+The `type` determines the shape of the object and which page documents it:
+
+| Type | What it is | Details |
+|---|---|---|
+| `custom` | A SaaS or web application you define by its URLs | [Custom applications](/prisma-browser/guide/applications-custom) |
+| `private` | A private (internal) application routed through Prisma Access | [Private applications](/prisma-browser/guide/applications-private) |
+| `non-web` | A remote connection over RDP or SSH | [Non-web applications](/prisma-browser/guide/applications-non-web) |
+| `localdesktopcustom` | A local desktop application you define by its executables | [Desktop applications](/prisma-browser/guide/applications-desktop) |
+| `localdesktopcatalog` | A read-only local desktop application curated by Palo Alto Networks | [Desktop applications](/prisma-browser/guide/applications-desktop) |
+| `catalog` | A read-only SaaS application from the Universal Application Directory (UAD) | [Application catalog](/prisma-browser/guide/applications-catalog) |
+
+Four types are yours to create and edit. Two, `catalog` and `localdesktopcatalog`, are curated by Palo Alto Networks and read-only: you list them, read them, and reference them from a rule, but you cannot create or edit them.
+
+Create a dedicated application (or a focused URL list) when it is important to **identify** that traffic in events with a recognizable name, or to **assign policy** to it specifically. If you only need broad coverage, a category or an "any" application segment is simpler.
+
+---
+
+## Tags and classification
+
+Every application, including the read-only catalog types, carries a **classification** and a list of **tags**. They are separate fields that serve different purposes: classification records how your organization treats the application, tags are free-form labels you define for your own grouping and reporting.
+
+Both are returned on every read, for every type. You set them through this API on the four types you create: `custom`, `private`, `non-web`, and `localdesktopcustom`. The `catalog` and `localdesktopcatalog` types have no create or update endpoint, so setting them through the API is planned for a future release. Until then, set them on the Applications page in the Prisma Browser admin console in Strata Cloud Manager.
+
+### Classification
+
+`classification` is a single value per application:
+
+| Value | Meaning |
+|---|---|
+| `Sanctioned` | Approved for use in your organization |
+| `Tolerated` | Allowed, but not formally approved |
+| `Unsanctioned` | Not approved for use |
+| `Unclassified` | No classification recorded (the default) |
+
+Send `classification` on create or on `PATCH`. `Unclassified` means no classification is recorded rather than a value stored against the application, so setting an application back to `Unclassified` clears it.
+
+### Tags
+
+Tags are returned on read as objects and written by ID:
+
+```json
+"tags": [
+  { "id": "0TG01FINANCEAPPROVEDXXXXXXXXX", "name": "Finance approved" },
+  { "id": "0TG01PCIINSCOPEXXXXXXXXXXXXXX", "name": "PCI in scope" }
+]
+```
+
+On create, send `tagIDs` as a plain array of tag IDs. A tag ID matches the pattern `0TG` followed by 26 characters, and an application holds up to 63 tags:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Acme Wiki",
+        "type": "custom",
+        "urls": [ { "url": "wiki.acme.example.com" } ],
+        "classification": "Sanctioned",
+        "tagIDs": [ "0TG01FINANCEAPPROVEDXXXXXXXXX" ]
+      }'
+```
+
+On `PATCH`, `tagIDs` accepts two forms, the same replace-or-delta pattern the `urls` field uses (see [Delta patch](/prisma-browser/guide/delta-patch)):
+
+- **Replace** the whole set: send a plain array. The new list fully replaces the old one.
+- **Delta** add and remove: send `tagIDs: { "add": [...], "remove": [...] }` to adjust the set without re-sending it, which avoids overwriting concurrent edits.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/custom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "type": "custom",
+        "classification": "Tolerated",
+        "tagIDs": {
+          "add": [ "0TG01PCIINSCOPEXXXXXXXXXXXXXX" ],
+          "remove": [ "0TG01FINANCEAPPROVEDXXXXXXXXX" ]
+        }
+      }'
+```
+
+:::note
+**Finding a tag ID.** This release does not expose endpoints for managing tags. Create and name tags on the Applications page in the Prisma Browser admin console in Strata Cloud Manager, then read an application that already carries the tag to get its ID from the `tags` array. Tag management endpoints (list, create, rename, delete) are coming soon, so treat this lookup as temporary.
+:::
+
+Classification and tags never overlap. Classification is stored separately and is never returned in the `tags` array, so you change it through `classification` and never by adding a tag named `Sanctioned`.
+
+---
+
+## Retrieve
+
+There are two ways to list applications and two ways to read a single one. The response shape depends on the application's `type`: read the `type` field first, then the type-specific fields.
+
+**List everything** returns applications of all types, so it is the right call to export or reconcile your whole inventory. It supports filtering by `type`, `name`, and `url`, pagination with `limit` and `cursor`, and `sort` / `order` (see [Pagination](/prisma-browser/guide/pagination)):
+
+```bash
+curl -sS -G "$PB_API_BASE/applications" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`). The `data` array mixes types, so read each item's `type` field first:
+
+```json
+{
+  "data": [
+    {
+      "type": "custom",
+      "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX",
+      "name": "Acme Wiki",
+      "category": "Uncategorized",
+      "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+      "urls": [ "*://wiki.acme.example.com/*" ]
+    },
+    {
+      "type": "catalog",
+      "id": "0AP01CATALOGSSLXXXXXXXXXXXXXX",
+      "name": "Ssl",
+      "category": "Encrypted Tunnel",
+      "metadata": { "createdTime": "2024-04-26T12:48:39Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+      "urls": [ "*://www.ssllabs.com/*" ],
+      "catalog_name": "ssl"
+    }
+    // ... more applications of any type
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": true, "cursor": "gaFpvTBBUDAx...", "totalCount": 72518 }
+}
+```
+
+**List one type** narrows to a single type with the same filters:
+
+```bash
+curl -sS -G "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "name=wiki"
+```
+
+Response (`200`). Every item is the requested `type`:
+
+```json
+{
+  "data": [
+    {
+      "type": "custom",
+      "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX",
+      "name": "Acme Wiki",
+      "description": "",
+      "category": "Uncategorized",
+      "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
+      "urls": [ "*://wiki.acme.example.com/*" ]
+    }
+    // ... more custom applications
+  ],
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } },
+  "pageInfo": { "hasNextPage": false, "cursor": "", "totalCount": 1 }
+}
+```
+
+**Read one** application by ID, either directly or scoped to its type:
+
+```bash
+curl -sS "$PB_API_BASE/applications/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`). The fields depend on `type` (this example is `custom`):
+
+```json
+{
+  "type": "custom",
+  "id": "0AP01ACMEWIKIXXXXXXXXXXXXXXXX",
+  "name": "Acme Wiki",
+  "category": "Uncategorized",
+  "metadata": {
+    "createdTime": "2026-01-15T10:00:00Z",
+    "lastUpdatedTime": "2026-01-15T10:00:00Z",
+    "createdBy": "api-service-account",
+    "lastUpdatedBy": "api-service-account",
+    "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 }
+  },
+  "urls": [ "*://wiki.acme.example.com/*" ]
+}
+```
+
+To discover the valid values for the optional `category` field:
+
+```bash
+curl -sS "$PB_API_BASE/applications/categories" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    "Analytics",
+    "Artificial Intelligence",
+    "Collaboration",
+    "Encrypted Tunnel",
+    "File Sharing",
+    "Instant Messaging"
+    // ... more categories
+  ]
+}
+```
+
+---
+
+## Bulk operations
+
+Two bulk endpoints span all creatable types. Both take the same per-type bodies as the single-object endpoints.
+
+**Bulk create** an array of applications of one type (1 to 1000 per call):
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/bulk-create/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '[
+        { "type": "custom", "name": "Allow - Figma", "urls": [ { "url": "figma.com" } ] },
+        { "type": "custom", "name": "Allow - Miro",  "urls": [ { "url": "miro.com" } ] }
+      ]'
+```
+
+Response (`201`) is an array of the created applications:
+
+```json
+[
+  { "id": "0AP01ALLOWFIGMAXXXXXXXXXXXXXX", "name": "Allow - Figma" },
+  { "id": "0AP01ALLOWMIROXXXXXXXXXXXXXXX", "name": "Allow - Miro" }
+]
+```
+
+**Bulk delete** by `appIds` array (1 to 2000 IDs). The operation is **atomic**: if any ID is invalid, nothing is deleted:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/bulk-delete" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "appIds": [
+          "0AP01ACMEWIKIXXXXXXXXXXXXXXXX",
+          "0AP01ACMEDOCSXXXXXXXXXXXXXXXX"
+        ]
+      }'
+```
+
+Returns `204` with an empty body. Because the operation is atomic, a single invalid ID returns `400` and deletes nothing.
+
+:::note
+**There is no bulk-update endpoint.** To change many applications at once, send one `PATCH` per application (each can add or remove URLs with the delta form). To change the applications attached to a *rule* in bulk, see [Bulk-sync a rule's applications](/prisma-browser/guide/bulk-update-rule-applications-with-delta).
+:::
+
+---
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| URLs per application | 100 by default, raised per tenant on request, up to 15,000 |
+| URLs per tenant (custom + private + non-web, combined) | 15,000 |
+| Tags per application | 63 |
+| Applications per bulk-create call | 1000 |
+| Application IDs per bulk-delete call | 2000 |
+| `description` length | 2500 characters |
+
+Two separate URL limits apply, and both return `400` when exceeded:
+
+- **Per application.** The default is 100 URLs. Your tenant can be raised beyond that, up to 15,000. The same ceiling applies to the `add` and `remove` lists on a delta `PATCH`.
+- **Per tenant.** Across all `custom`, `private`, and `non-web` applications combined there is a fixed budget of 15,000 URLs. Catalog applications do not count against it; private application CIDRs do.
+
+Prefer broader patterns over thousands of exact URLs. Remaining per-type limits (CIDRs, executables) are documented on each type's page.
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/applications` | List applications of all types (filter, paginate) |
+| `GET` | `/applications/type/{type}` | List applications of one type |
+| `GET` | `/applications/{id}` | Read one application |
+| `GET` | `/applications/type/{type}/{id}` | Read one application (scoped to type) |
+| `GET` | `/applications/categories` | List available category values |
+| `POST` | `/applications/type/{type}` | Create one application |
+| `POST` | `/applications/bulk-create/{type}` | Create up to 1000 applications |
+| `PATCH` | `/applications/type/{type}/{id}` | Update one application |
+| `DELETE` | `/applications/{id}` | Delete one application |
+| `DELETE` | `/applications/type/{type}/{id}` | Delete one application (scoped to type) |
+| `POST` | `/applications/bulk-delete` | Delete up to 2000 applications atomically |
+
+All paths are under the `/seb-api/v1` base.
+
+---
+
+## Tips and gotchas
+
+:::note
+**Two URL limits, not one.** A `400` on a URL write can mean either that the application passed its own limit (100 by default) or that the tenant passed its combined budget of 15,000 URLs across `custom`, `private`, and `non-web`. Read the error message to tell them apart. Prefer broader patterns over thousands of exact URLs.
+:::
+
+:::note
+**Check the catalog before you create.** If the application already exists in the catalog, reference the `catalog` application instead of recreating it as `custom`. The same applies to desktop applications: check `localdesktopcatalog` before defining a `localdesktopcustom` application, because a custom application that reuses a catalog executable name is rejected. See [Application catalog](/prisma-browser/guide/applications-catalog) and [Desktop applications](/prisma-browser/guide/applications-desktop).
+:::
+
+---
+
+## Related
+- Applications: [Application catalog](/prisma-browser/guide/applications-catalog), [Custom applications](/prisma-browser/guide/applications-custom), [Private applications](/prisma-browser/guide/applications-private), [Non-web applications](/prisma-browser/guide/applications-non-web), [Desktop applications](/prisma-browser/guide/applications-desktop), [Application groups](/prisma-browser/guide/application-groups)
+- Concepts: [Pagination](/prisma-browser/guide/pagination), [Delta patch](/prisma-browser/guide/delta-patch), [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish)
+- Use cases: [Govern URLs with an allow/block list](/prisma-browser/guide/manage-allow-block-list), [Bulk-sync a rule's applications](/prisma-browser/guide/bulk-update-rule-applications-with-delta)

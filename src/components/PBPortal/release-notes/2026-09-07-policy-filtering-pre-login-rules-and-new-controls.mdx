@@ -1,0 +1,71 @@
+---
+title: "New API release: policy rule filtering, pre-login rules, IDP Application Sync, and new login, sidebar and access controls"
+date: 2026-09-07
+slug: policy-filtering-pre-login-rules-and-new-controls
+summary: "Filter rules on every List policy endpoint, configure pre-login rules, read your IDP Application Sync providers, and manage new login, sidebar and access controls. Applications gain classification and tags, and several list limits are much higher."
+changes:
+  - type: new
+    text: "All four List policy endpoints now accept filters. Every policy type filters by <code>name</code>, <code>id</code>, <code>mode</code>, <code>user</code>, <code>userEmail</code>, <code>userGroup</code> and <code>deviceGroup</code>, and each adds its own, such as <code>control</code>, <code>application</code> and <code>logLevel</code>. Repeat a parameter to pass several values."
+    endpoint: "Get the Access and Data policy"
+    to: /prisma-browser/api/get-access-and-data-policy
+  - type: new
+    text: "Pre-login rules are now configurable through the API; the management console has always had them. Set <code>authenticationState</code> to <code>unauthenticated</code> and the rule applies to anonymous Extension users until they authenticate. It must be unscoped, allow or block, and target SaaS applications or groups."
+    endpoint: "Create an Access and Data rule"
+    to: /prisma-browser/api/create-access-and-data-rule
+  - type: new
+    text: "Two new Access and Data login controls. <code>socialLogin</code> blocks consumer social logins (Google, Microsoft, Facebook, GitHub, X, LinkedIn, Apple), with <code>googleAllowedDomains</code> and <code>mfaRequired</code>. <code>idpLogin</code> allows or blocks SSO and SAML logins, globally or per provider domain."
+  - type: new
+    text: "New Customization control <code>sidebar</code>: turn the browser sidebar on or off and publish up to 12 managed shortcuts, each with a name, URL, optional icon and side-view option."
+    endpoint: "Create a Customization rule"
+    to: /prisma-browser/api/create-customization-rule
+  - type: new
+    text: "The access control accepts a new <code>webpageFrame</code> object that draws a colored frame with optional text around the page, to mark a regulated environment. Include it to enable the frame, omit it to disable."
+  - type: new
+    text: "The <code>redirect</code> access action is now configurable through the API. Set <code>enforceRedirect.url</code>, add <code>autoRedirect</code> to send the user on without a click, and use <code>enforceRedirectDialogText</code> for the transition page."
+  - type: new
+    text: "Access and Data logging adds <code>dataSnippet</code> and <code>evidenceStorage</code> for content-scanning snippets and scan evidence. Both need <code>logLevel</code> of <code>on</code> or <code>enhanced</code> and a data profile in <code>dlpProfileId</code>."
+  - type: new
+    text: "Applications now carry a <code>classification</code>: <code>Sanctioned</code>, <code>Tolerated</code>, <code>Unsanctioned</code> or <code>Unclassified</code>, and reads return the custom <code>tags</code> that <code>tagIDs</code> sets. Assign tags in the management console for now: it does not surface the IDs these fields expect. Non-web applications also accept an <code>address</code>."
+    endpoint: "Create an application"
+    to: /prisma-browser/api/create-application
+  - type: new
+    text: "New application type <code>localdesktopcatalog</code> for catalog-based local desktop applications, alongside the admin-defined <code>localdesktopcustom</code>. Both report their <code>executables</code>, so handle the new value if you switch on <code>type</code>."
+    endpoint: "Get an application by ID"
+    to: /prisma-browser/api/get-application-by-id
+  - type: new
+    endpoint: "List all IDP Application Sync providers"
+    to: /prisma-browser/api/list-all-idp-application-sync-providers
+    text: "New read-only IDP Application Sync endpoints. List your providers or fetch one by ID for its <code>displayName</code>, <code>type</code> (currently <code>entraId</code>), live <code>status</code>, and for Entra its <code>tenantId</code> and <code>clientId</code>."
+  - type: new
+    text: "Pending changes can now be filtered by <code>entityTypes</code>, repeatable for several, and by <code>lastUpdatedBy</code> (admin email or service account). <code>lastUpdatedBy=me</code> resolves to the calling identity."
+    endpoint: "List pending changes"
+    to: /prisma-browser/api/list-pending-changes
+  - type: new
+    text: "Cloud storage now tells you why a call failed. Create returns <code>409</code> when a provider already exists, create and replace return <code>422</code> when the request cannot be applied, and delete returns <code>409</code> with <code>PROVIDER_IN_USE</code>."
+    endpoint: "Delete a cloud storage provider"
+    to: /prisma-browser/api/delete-a-cloud-storage-provider
+  - type: changed
+    text: "The <code>allowProtectedBetweenRuleApps</code> upload action on File Protection is now writable, not read-only. It lets users upload Prisma-protected files downloaded from the same rule's applications, and still requires <code>fileDownload.action</code> of <code>useInPrismaBrowserOnly</code>."
+    endpoint: "Create an Access and Data rule"
+    to: /prisma-browser/api/create-access-and-data-rule
+  - type: changed
+    text: "<code>durationMinutes</code> now applies beyond admin approvals. On the login controls (<code>formLogin</code>, <code>idpLogin</code>, <code>socialLogin</code>, <code>passkeyLogin</code>) it is accepted for every mode except <code>none</code> and also sets how long a user's own bypass lasts, from 10 minutes to 90 days."
+    endpoint: "Create an Access and Data rule"
+    to: /prisma-browser/api/create-access-and-data-rule
+  - type: changed
+    text: "Publishing a draft now tells you which <code>409</code> you hit through <code>error.code</code>: <code>CONFLICT</code> when the draft has no changes, or <code>PUBLISH_IN_PROGRESS</code> when another publish or reset holds the lock, in which case nothing was published."
+    endpoint: "Publish Draft"
+    to: /prisma-browser/api/publish-draft-configuration
+  - type: changed
+    text: "Much higher list limits. An application's URL list is no longer capped at 100: it is configurable per tenant up to 15,000 URLs, including the <code>add</code> and <code>remove</code> lists. AWS tenant restrictions take 35,000 account IDs and <code>managedShortcuts</code> 200 entries."
+  - type: changed
+    text: "Smaller input changes. <code>sessionRecording</code> is now optional in an Access and Data rule's <code>tracking</code> object and defaults to <code>false</code>, <code>protocolSchemes</code> accepts a bare scheme such as <code>zoom</code>, and <code>microsoftOutlook</code> joins Open Links in External Apps."
+  - type: changed
+    text: "Endpoint titles were rewritten to a consistent, action-first style, so <b>Retrieve the Security Policy</b> is now <b>Get the Security policy</b>. Paths, operations and payloads are unchanged, and the reference navigation is now 15 sections."
+---
+
+You can now filter rules on every List policy endpoint, configure pre-login
+rules for users who have not authenticated yet, read your IDP Application Sync
+providers, and manage new login, sidebar and access controls.
+
+{/* truncate */}

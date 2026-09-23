@@ -1,0 +1,122 @@
+---
+title: 'Require an IdP authentication factor'
+sidebar_label: 'Require an IdP authentication factor'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Content controls
+  subgroupOrder: 20
+  order: 60
+  summary: Enforce an identity provider authentication factor with a Cloud Identity Engine profile
+
+---
+
+A security rule can require an **authentication factor** to unlock the Prisma Browser or to perform step-up multi-factor authentication (MFA). The `identityProvider` factor authenticates the user against an identity provider (IdP) defined by a Cloud Identity Engine (CIE) authentication profile. The profile itself is managed in CIE, a separate service, so this is a two-part task: look up the profile ID in the CIE API, then reference it from `controls.authenticationFactor` on a security rule.
+
+**Use this when:** you want browser unlock or step-up MFA to run against a specific IdP configuration rather than the tenant's globally configured profile.
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Access to Cloud Identity Engine for the same tenant, with at least one authentication profile configured.
+
+## 1. Find available CIE authentication profiles
+
+Authentication profiles are managed by CIE and are not listed on pan.dev. Discover the valid profiles for the tenant through the CIE API proxy, which is served from the SASE host root (not under `/seb-api/v1`). The `profile_id` is the value you attach to the rule.
+
+```
+GET /cie/cas/v1/auth-profiles
+```
+
+```bash
+curl -sS "${PB_API_BASE%/seb-api/v1}/cie/cas/v1/auth-profiles" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+### Response (shape)
+
+```json
+[
+  {
+    "cas_tenant_id": "43743185388544200",
+    "display_name": "Example Tenant - CIE",
+    "profiles": [
+      {
+        "profile_id": "d7c3f6a2-9b41-4e58-a0c2-1f2e3d4c5b6a",
+        "display_name": "corp-idp-profile",
+        "mode": "single",
+        "mfa_enforceable": true,
+        "auth_types": ["saml"]
+      }
+    ]
+  }
+]
+```
+
+For the full per-profile IdP configuration, use `GET /cie/cas/v1/detailed-auth-profiles`. Capture the `profile_id` you want:
+
+```bash
+export AUTH_PROFILE_ID='d7c3f6a2-9b41-4e58-a0c2-1f2e3d4c5b6a'
+```
+
+:::note
+**CIE is a separate service.** The Prisma Browser does not manage authentication profiles; it only references them by ID. The token must be authorized for both services on the same tenant. To require MFA at the factor, choose a profile whose `mfa_enforceable` is `true`.
+:::
+
+## 2. Attach the factor to a security rule
+
+The factor lives on a security rule at `controls.authenticationFactor`. Select the factor with the `method` discriminator (`identityProvider`, `passkey`, or `pinCode`). For an IdP factor, set `identityProvider.profileSource` to `custom` and pass the CIE `profile_id` as `authProfileId`.
+
+```
+POST /seb-api/v1/policy/security/rules
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Require IdP authentication factor",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": {
+          "authenticationFactor": {
+            "method": "identityProvider",
+            "identityProvider": {
+              "profileSource": "custom",
+              "authProfileId": "'"$AUTH_PROFILE_ID"'",
+              "incognito": true,
+              "forceReauthentication": true
+            }
+          }
+        }
+      }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0RLEXAMPLESECURITYRULEXXXXX" }
+```
+
+`incognito` performs the IdP authentication in an isolated browser session, and `forceReauthentication` reauthenticates against the IdP rather than reusing an existing session; both default to `true`.
+
+## 3. Publish
+
+The rule is created on the draft. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)).
+
+```bash
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" -H "Content-Type: application/json" \
+  -d '{"description": "Require IdP authentication factor"}'
+```
+
+Returns `201` when a new active version is created.
+
+## Tips and gotchas
+
+- **Use the tenant default instead of a specific profile.** Set `profileSource` to `useConfiguredAuthProfile` (the default) and omit `authProfileId` to use the tenant's globally configured authentication profile.
+- **The profile ID is validated against CIE.** `authProfileId` must reference a profile that exists in CIE for the same tenant.
+- **Other factor methods.** Use `method: "passkey"` (internal or external authenticators) or `method: "pinCode"` (PIN length and lockout policy) when browser unlock should not depend on an IdP.
+
+## Related
+
+- Policy: [Security rules](/prisma-browser/guide/security-rules), [Policy overview](/prisma-browser/guide/rules)
+- Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Authentication](/prisma-browser/guide/authentication)

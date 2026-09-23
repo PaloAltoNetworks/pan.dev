@@ -1,0 +1,248 @@
+---
+title: 'Govern URLs with an allow/block list'
+sidebar_label: 'Govern URLs with an allow/block list'
+pb_guide:
+  group: Use cases
+  groupOrder: 70
+  subgroup: Content controls
+  subgroupOrder: 20
+  order: 10
+  summary: Govern URLs with an allow or block list
+
+---
+
+Keep a list of URLs that an [access and data rule](/prisma-browser/guide/access-and-data-rules) allows or blocks, and let automation add or remove entries as your source of truth changes. There are three ways to model this; the right one depends on how the list grows and how much you want to touch the rule.
+
+**Use this when:**
+
+- You maintain an allow list or block list of URLs that changes over time.
+- You want a script (CMDB, risk feed, ticket workflow) to own the membership.
+
+**Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Read [Applications](/prisma-browser/guide/applications), [Application groups](/prisma-browser/guide/application-groups), and [Delta patch](/prisma-browser/guide/delta-patch) first.
+
+---
+
+## Approaches
+
+| Approach | How it works | Best when | Tradeoffs |
+|---|---|---|---|
+| **A. One custom application holds all URLs** | Create one [custom application](/prisma-browser/guide/applications), link it to the rule once, then add/remove URLs on the application | The list is a flat set of URLs you manage as a whole | Up to 100 URLs per application; individual URLs are not separately named |
+| **B. One application per URL, grouped** | Create one custom application per URL (named), put them in an [application group](/prisma-browser/guide/application-groups), link the group to the rule once | You want each URL individually named/identifiable (reporting, audit) | More objects to manage; group caps at 2000 applications |
+| **C. URLs directly on the rule** | Add/remove URLs in the rule's application scope via delta patch | A small, rule-specific list you do not reuse elsewhere | The rule object churns; not reusable across rules |
+
+**Recommendation:** use **A** for a simple managed list, **B** when each URL must be individually named or reused across rules, and **C** only for small one-off lists. A and B share a key advantage: you link the object to the rule **once** and never touch the rule again, all churn happens on the application or group.
+
+---
+
+## Approach A: one custom application holds all URLs
+
+### 1. Create the application and link it to the rule (once)
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "type": "custom", "name": "Blocklist - marketing trackers", "urls": [ { "url": "tracker.example.com" } ] }'
+```
+
+```json
+{ "id": "0AP01BLOCKLISTXXXXXXXXXXXXXXX" }
+```
+
+```bash
+export APP_ID='0AP01BLOCKLISTXXXXXXXXXXXXXXX'
+export RULE_ID='0RLEXAMPLERULEXXXXXXXXXXXXXX'   # an access-and-data rule
+```
+
+Attach the application to the rule's SaaS scope once:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "applications": { "saas": { "accessMode": "specific", "specific": { "addApplicationIds": ["'"$APP_ID"'"] } } } }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+### 2. From now on, edit the URLs on the application
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/custom/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "type": "custom", "urls": { "add": [ { "url": "newtracker.example.com" } ], "remove": [ { "url": "tracker.example.com" } ] } }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AP01BLOCKLISTXXXXXXXXXXXXXXX" }
+```
+
+The rule never changes again. Publish (or [partial-publish](/prisma-browser/guide/draft-and-publish#partial-publish) only the application).
+
+:::note
+One application holds up to 100 URLs. If your list can exceed that, split across multiple applications or use approach B.
+:::
+
+---
+
+## Approach B: one application per URL, grouped
+
+### 1. Create one named application per URL
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "type": "custom", "name": "Allow - Figma", "urls": [ { "url": "figma.com" } ] }'
+```
+
+Response (`201`):
+
+```json
+{ "id": "0AP01FIGMAXXXXXXXXXXXXXXXXXXX" }
+```
+
+Each application gets its own ID and a human-readable name, so it shows up identifiably in reporting.
+
+### 2. Group them and link the group to the rule (once)
+
+```bash
+curl -sS -X POST "$PB_API_BASE/application-groups" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Approved design tools", "applications": [ "0AP01FIGMAXXXXXXXXXXXXXXXXXXX" ] }'
+```
+
+```json
+{ "id": "0AG01DESIGNXXXXXXXXXXXXXXXXXX" }
+```
+
+```bash
+export GROUP_ID='0AG01DESIGNXXXXXXXXXXXXXXXXXX'
+```
+
+Attach the group to the rule once:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "applications": { "applicationGroups": { "accessMode": "specific", "specific": { "addApplicationGroupIds": ["'"$GROUP_ID"'"] } } } }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+### 3. From now on, add/remove applications on the group
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/application-groups/$GROUP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "applications": { "add": [ "0AP01MIROXXXXXXXXXXXXXXXXXXXX" ], "remove": [ "0AP01FIGMAXXXXXXXXXXXXXXXXXXX" ] } }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0AG01DESIGNXXXXXXXXXXXXXXXXXX" }
+```
+
+:::note
+A group holds up to 2000 applications. Approach B is the most granular, but it creates the most objects.
+:::
+
+---
+
+## Approach C: URLs directly on the rule
+
+For a small list you do not reuse, skip the application entirely and patch URLs onto the rule's SaaS scope:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "applications": { "saas": { "accessMode": "specific", "specific": { "addUrls": [ { "url": "https://newtool.example.com" } ], "removeUrls": [ { "url": "https://oldtool.example.com" } ] } } } }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLERULEXXXXXXXXXXXXXX" }
+```
+
+This is the simplest to start but churns the rule object on every change and cannot be reused by another rule.
+
+---
+
+## Verify and publish
+
+```bash
+curl -sS "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" -H "Authorization: Bearer $PB_TOKEN"
+
+curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Update allow/block list"}'
+```
+
+The `GET` returns the full rule (confirm the applications), and the publish returns `201` when a new active version is created.
+
+---
+
+## Full script (Python, approach A)
+
+```python
+import os, requests
+
+base = os.environ["PB_API_BASE"]
+headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
+rule_id = os.environ["RULE_ID"]
+
+# 1. Create the list-holder app (once)
+app_id = requests.post(
+    f"{base}/applications/type/custom", headers=headers,
+    json={"type": "custom", "name": "Blocklist - marketing trackers", "urls": [{"url": "tracker.example.com"}]},
+    timeout=30,
+).json()["id"]
+
+# 2. Link it to the rule (once)
+requests.patch(
+    f"{base}/policy/access-and-data/rules/{rule_id}", headers=headers,
+    json={"applications": {"saas": {"accessMode": "specific", "specific": {"addApplicationIds": [app_id]}}}},
+    timeout=30,
+).raise_for_status()
+
+# 3. Ongoing: sync URLs on the app
+def sync_urls(to_add, to_remove):
+    urls = {}
+    if to_add:    urls["add"] = [{"url": u} for u in to_add]
+    if to_remove: urls["remove"] = [{"url": u} for u in to_remove]
+    if not urls:  return
+    requests.patch(f"{base}/applications/type/custom/{app_id}", headers=headers,
+                   json={"type": "custom", "urls": urls}, timeout=30).raise_for_status()
+
+sync_urls(["newtracker.example.com"], ["tracker.example.com"])
+
+# 4. Publish just the app
+requests.post(f"{base}/configuration-management/draft/partial-publish", headers=headers,
+              json={"entityIds": [app_id], "description": "Update blocklist"}, timeout=30)
+```
+
+---
+
+## Related
+- Building blocks: [Applications](/prisma-browser/guide/applications), [Application groups](/prisma-browser/guide/application-groups), [Rules](/prisma-browser/guide/rules)
+- Concepts: [Delta patch](/prisma-browser/guide/delta-patch), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish)
+- Related use cases: [Bulk-update rule applications with delta patch](/prisma-browser/guide/bulk-update-rule-applications-with-delta), [Manage users on a rule](/prisma-browser/guide/manage-users-on-a-rule)
+
