@@ -1,4 +1,8 @@
 module.exports = {
+  epm: [
+    "scm/api/config/epm/introduction",
+    ...require("./api/config/epm/sidebar"),
+  ],
   scm_docs: [
     {
       type: "doc",
@@ -499,11 +503,9 @@ module.exports = {
       ],
     },
   ],
-  scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
-  scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],
-  scmsubscription: [
-    "scm/api/subscription/subscription-api",
-    require("./api/subscription/sidebar"),
+  scmcdug: [
+    "scm/api/config/ciedss/cdug/cdug-introduction",
+    require("./api/config/ciedss/cdug/sidebar"),
   ],
   scmactivation: [
     "scm/api/activation/introduction",
@@ -514,9 +516,8 @@ module.exports = {
     "scm/api/config/ciedss/usecases",
     require("./api/config/ciedss/sidebar"),
   ],
-  scmcdug: [
-    "scm/api/config/ciedss/cdug/cdug-introduction",
-    require("./api/config/ciedss/cdug/sidebar"),
+  scmsubscription: [
+    "scm/api/subscription/subscription-api",
+    require("./api/subscription/sidebar"),
   ],
-  scmtenancy: ["scm/api/tenancy/tenancy-api", require("./api/tenancy/sidebar")],
 };

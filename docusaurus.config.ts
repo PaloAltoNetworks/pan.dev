@@ -610,6 +610,11 @@ const config = {
                       to: "cdl/api/log-forwarding",
                       icon: "api-doc",
                     },
+                    {
+                      to: "scm/api/config/epm/introduction",
+                      label: "Epm",
+                      icon: "api-doc",
+                    },
                   ],
                 },
                 {
@@ -1035,6 +1040,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          epm: {
+            specPath: "openapi-specs/scm/config/epm",
+            outputDir: "products/scm/api/config/epm",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
