@@ -179,13 +179,18 @@ async function checkReachable(links, base) {
   const worker = async () => {
     while (queue.length > 0) {
       const link = queue.shift();
-      const url = link.to.startsWith("/") ? base + link.to : link.to;
+      const internal = link.to.startsWith("/");
+      const url = internal ? base + link.to : link.to;
       try {
         const res = await fetch(url, {
-          redirect: "manual",
+          // Internal links are checked for the exact trailing-slash form, so a
+          // hop is a fault this repo can fix. External hosts canonicalize
+          // freely (e.g. the Terraform registry "latest" 301), so those are
+          // followed and judged only on where they land.
+          redirect: internal ? "manual" : "follow",
           headers: { "user-agent": "pan.dev-nav-audit" },
         });
-        if (res.status >= 300 && res.status < 400) {
+        if (internal && res.status >= 300 && res.status < 400) {
           // trailingSlash is on, so a hop here means the roster is off by one
           // character and every visitor pays for it.
           redirected.push({
