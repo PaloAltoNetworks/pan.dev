@@ -17,13 +17,114 @@ These release notes identify API changes made for the various Strata Cloud Manag
 
 ### Strata Cloud Manager — Compliance Frameworks (Updated)
 
-Additional endpoint and schema updates.
+Additional endpoint and schema updates for the Compliance Frameworks APIs.
 
 See [Compliance Frameworks APIs](/scm/api/config/posture-management/compliance-framework/compliance-center/) for full details.
 
+---
+
+### NGFW, SASE — Logical Routers API (Updated)
+
+Updated Logical Routers API for NGFW and SASE. Use these APIs to list, create, retrieve, update, and delete logical routers.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/logical-routers` | List logical routers |
+| POST | `/logical-routers` | Create a logical router |
+| GET | `/logical-routers/{id}` | Get a logical router |
+| PUT | `/logical-routers/{id}` | Update a logical router |
+| DELETE | `/logical-routers/{id}` | Delete a logical router |
+
+See [Logical Routers API](/scm/api/config/sase/network/logical-routers/) for full details.
+
+---
+
+### NGFW, SASE — Virtual Routers API (Updated)
+
+Updated Virtual Routers API for NGFW and SASE. Use these APIs to list, create, retrieve, update, and delete virtual routers.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/virtual-routers` | List virtual routers |
+| POST | `/virtual-routers` | Create a virtual router |
+| GET | `/virtual-routers/{id}` | Get a virtual router |
+| PUT | `/virtual-routers/{id}` | Update a virtual router |
+| DELETE | `/virtual-routers/{id}` | Delete a virtual router |
+
+See [Virtual Routers API](/scm/api/config/sase/network/virtual-routers/) for full details.
+
+---
+
+### NGFW, SASE — VR Routing Profiles API (Updated)
+
+Updated VR Routing Profiles API for NGFW and SASE. Manage BGP, OSPF, OSPFv3, BFD, and redistribution profiles for virtual routers.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/bgp-vr-auth-profiles` | List BGP VR auth profiles |
+| POST | `/bgp-vr-auth-profiles` | Create a BGP VR auth profile |
+| GET | `/ospf-vr-auth-profiles` | List OSPF VR auth profiles |
+| POST | `/ospf-vr-auth-profiles` | Create an OSPF VR auth profile |
+| GET | `/vr-bfd-profiles` | List VR BFD profiles |
+
+<details><summary>View all endpoints (30)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/bgp-vr-auth-profiles` | List BGP VR auth profiles |
+| POST | `/bgp-vr-auth-profiles` | Create a BGP VR auth profile |
+| GET | `/bgp-vr-auth-profiles/{id}` | Get a BGP VR auth profile |
+| PUT | `/bgp-vr-auth-profiles/{id}` | Update a BGP VR auth profile |
+| DELETE | `/bgp-vr-auth-profiles/{id}` | Delete a BGP VR auth profile |
+| GET | `/ospf-vr-auth-profiles` | List OSPF VR auth profiles |
+| POST | `/ospf-vr-auth-profiles` | Create an OSPF VR auth profile |
+| GET | `/ospf-vr-auth-profiles/{id}` | Get an OSPF VR auth profile |
+| PUT | `/ospf-vr-auth-profiles/{id}` | Update an OSPF VR auth profile |
+| DELETE | `/ospf-vr-auth-profiles/{id}` | Delete an OSPF VR auth profile |
+| GET | `/ospfv3-vr-auth-profiles` | List OSPFv3 VR auth profiles |
+| POST | `/ospfv3-vr-auth-profiles` | Create an OSPFv3 VR auth profile |
+| GET | `/ospfv3-vr-auth-profiles/{id}` | Get an OSPFv3 VR auth profile |
+| PUT | `/ospfv3-vr-auth-profiles/{id}` | Update an OSPFv3 VR auth profile |
+| DELETE | `/ospfv3-vr-auth-profiles/{id}` | Delete an OSPFv3 VR auth profile |
+| GET | `/vr-bfd-profiles` | List VR BFD profiles |
+| POST | `/vr-bfd-profiles` | Create a VR BFD profile |
+| GET | `/vr-bfd-profiles/{id}` | Get a VR BFD profile |
+| PUT | `/vr-bfd-profiles/{id}` | Update a VR BFD profile |
+| DELETE | `/vr-bfd-profiles/{id}` | Delete a VR BFD profile |
+| GET | `/vr-redistribution-profiles` | List VR redist profiles |
+| POST | `/vr-redistribution-profiles` | Create a VR redist profile |
+| GET | `/vr-redistribution-profiles/{id}` | Get a VR redist profile |
+| PUT | `/vr-redistribution-profiles/{id}` | Update a VR redist profile |
+| DELETE | `/vr-redistribution-profiles/{id}` | Delete a VR redist profile |
+| GET | `/vr-redistribution-profiles-ipv6` | List VR redist IPv6 profiles |
+| POST | `/vr-redistribution-profiles-ipv6` | Create a VR redist IPv6 profile |
+| GET | `/vr-redistribution-profiles-ipv6/{id}` | Get a VR redist IPv6 profile |
+| PUT | `/vr-redistribution-profiles-ipv6/{id}` | Update a VR redist IPv6 profile |
+| DELETE | `/vr-redistribution-profiles-ipv6/{id}` | Delete a VR redist IPv6 profile |
+
+</details>
+
+See [VR Routing Profiles API](/scm/api/config/sase/network/vr-routing-profiles/) for full details.
+
+---
+
+### Strata Cloud Manager — Activation Service and Asset Service APIs (New)
+
+Added [Activation Service APIs](/scm/api/activation/introduction) and Asset Service APIs to SCM. These APIs enable programmatic management of tenant activation, license allocation, and instance lifecycle operations.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | `/activation/api/v1/shared-instances` | Share a CIE instance with child TSGs |
+| POST | `/activation/api/v1/activate` | Activate or amend Prisma Access licenses |
+| GET | `/activation/api/v1/offboard/validation` | Validate offboard readiness |
+| POST | `/activation/api/v1/offboard` | Offboard a product instance |
+| GET | `/asset/api/v1/entitlement-groups` | Fetch entitlement group details |
+| GET | `/asset/api/v1/instances` | Get product instance status |
+
+---
+
 ## August 2026
 
-**Product:** Strata Cloud Manager — Activation Service
 ### NGFW, SASE — Routing APIs (New)
 
 New R3 routing APIs introduce Logical Routers, Virtual Routers, and VR Routing Profiles for both NGFW and SASE platforms, enabling programmatic management of routing topologies and routing policy profiles.
@@ -98,7 +199,7 @@ See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Networ
 
 ### NGFW — Device Settings API (New)
 
-Comprehensive R3 Device Settings API for NGFW providing full programmatic control over device-level configuration including interfaces, zones, service routes, high availability, DNS, NTP, and more (~6800 lines of spec coverage).
+Comprehensive R3 Device Settings API for NGFW providing full programmatic control over device-level configuration including interfaces, zones, service routes, high availability, DNS, NTP, and more.
 
 See [NGFW Device Settings APIs](/scm/api/config/ngfw/device/device-api/) for full details.
 
@@ -167,21 +268,6 @@ R3 release updates to Identity Services, Security Services, and Objects APIs acr
 See [Identity Services APIs](/scm/api/config/sase/identity/identity-api), [Security Services APIs](/scm/api/config/sase/security/security-api/), and [Objects APIs](/scm/api/config/sase/objects/objects-api/) for full details.
 
 ---
-
-### Posture Management — Policy Optimizer API (New)
-
-Added [Activation Service APIs](/scm/api/activation/introduction) and Asset Service APIs to SCM. These APIs enable programmatic management of tenant activation, license allocation, and instance lifecycle operations.
-
-New endpoints:
-
-| Endpoint | Description |
-|----------|-------------|
-| `POST /activation/api/v1/shared-instances` | Share a CIE instance with child TSGs |
-| `POST /activation/api/v1/activate` | Activate or amend Prisma Access licenses |
-| `GET /activation/api/v1/offboard/validation` | Validate offboard readiness |
-| `POST /activation/api/v1/offboard` | Offboard a product instance |
-| `GET /asset/api/v1/entitlement-groups` | Fetch entitlement group details |
-| `GET /asset/api/v1/instances` | Get product instance status |
 
 ## July 2026
 
