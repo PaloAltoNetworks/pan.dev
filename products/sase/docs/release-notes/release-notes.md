@@ -98,6 +98,40 @@ See [Prisma Browser for MSP APIs](/sase/api/pab-msp/pab-msp-api/) for full detai
 
 ---
 
+### 5G Monitoring — 5G Monitor Service APIs (New)
+
+Real-time visibility and telemetry for enterprise 5G infrastructure. Monitor subscriber registrations, regional trends, mapping data, proxy health, and interconnect throughput.
+
+<details><summary>View all endpoints (19)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/mt/monitor/5g/tenants` | List monitored 5G tenants |
+| GET | `/mt/monitor/5g/ueIp/registered` | Get registered UE IP addresses |
+| GET | `/mt/monitor/5g/ueIp/region` | Get UE IP addresses by region |
+| GET | `/mt/monitor/5g/ueIp/registered/trend` | Get registered UE IP trend data |
+| GET | `/mt/monitor/5g/ueIp/deregistered/trend` | Get deregistered UE IP trend data |
+| GET | `/mt/monitor/5g/ueIp/count` | Get UE IP address count |
+| GET | `/mt/monitor/5g/unknownIp/region` | Get unknown IP addresses by region |
+| GET | `/mt/monitor/5g/unknownIp/trend` | Get unknown IP trend data |
+| GET | `/mt/monitor/5g/mapping/activeUEs` | Get active UE mappings |
+| GET | `/mt/monitor/5g/mapping/configuredUEs` | Get configured UE mappings |
+| GET | `/mt/monitor/5g/mapping/unknownUEs` | Get unknown UE mappings |
+| GET | `/mt/monitor/5g/mapping/region` | Get UE mappings by region |
+| GET | `/mt/monitor/5g/mapping` | Get all UE mapping data |
+| GET | `/mt/monitor/5g/proxy` | Get proxy health status |
+| GET | `/mt/monitor/5g/incidents/count` | Get incident count |
+| GET | `/mt/monitor/5g/api/stats` | Get API usage statistics |
+| GET | `/mt/monitor/5g/interconnect/details` | Get interconnect details |
+| GET | `/mt/monitor/5g/interconnect/throughput` | Get interconnect throughput |
+| GET | `/mt/monitor/5g/users` | Get 5G user information |
+
+</details>
+
+See [SASE 5G Monitoring APIs](/sase/api/mt-monitor/) for full details.
+
+---
+
 ### Multitenant Interconnect — SP Interconnect Migration (Deprecated)
 
 Backbone and Connection APIs are deprecated and replaced by the Service Provider (SP) Interconnect APIs. Migrate existing integrations to the new SP Interconnect endpoints.
@@ -270,6 +304,79 @@ See [Subscription Service](/sase/api/subscription/) for full details.
 Mobile Agent (GlobalProtect) endpoints added to Prisma Access Configuration API.
 
 See [Mobile Agent APIs](/category/access/api/prisma-access-config/mobile-agent/) for full details.
+
+## September 2022
+
+### Authentication Service — OAuth 2.0 APIs (New)
+
+Obtain access tokens and retrieve OAuth 2.0 user claims for authenticating SASE API requests.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | `/auth/v1/oauth2/access_token` | Create an access token |
+| GET | `/auth/v1/oauth2/userinfo` | Retrieve OAuth 2.0 claims |
+| POST | `/auth/v1/oauth2/userinfo` | Retrieve OAuth 2.0 claims |
+
+See [Authentication Service APIs](/sase/api/auth/) for full details.
+
+---
+
+### Tenancy — Tenant Service Group APIs (New)
+
+Create and manage tenant service groups, including listing ancestors and children in the tenant hierarchy.
+
+<details><summary>View all endpoints (7)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/tenancy/v1/tenant_service_groups` | List all tenant service groups |
+| POST | `/tenancy/v1/tenant_service_groups` | Create a tenant service group |
+| GET | `/tenancy/v1/tenant_service_groups/{tsg_id}` | Get a tenant service group |
+| PUT | `/tenancy/v1/tenant_service_groups/{tsg_id}` | Update a tenant service group |
+| DELETE | `/tenancy/v1/tenant_service_groups/{tsg_id}` | Delete a tenant service group |
+| POST | `/tenancy/v1/tenant_service_groups/{tsg_id}/operations/list_ancestors` | List tenant service group ancestors |
+| POST | `/tenancy/v1/tenant_service_groups/{tsg_id}/operations/list_children` | List tenant service group children |
+
+</details>
+
+See [Tenancy APIs](/sase/api/tenancy/) for full details.
+
+---
+
+### Identity and Access Management — Core IAM APIs (New)
+
+Manage access policies, roles, service accounts, user accounts, and permissions for SASE tenant identities.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/iam/v1/access_policies` | List all access policies |
+| POST | `/iam/v1/access_policies` | Assign an access policy |
+| GET | `/iam/v1/roles` | List all roles |
+| GET | `/iam/v1/service_accounts` | List all service accounts |
+| POST | `/iam/v1/service_accounts` | Create a service account |
+
+<details><summary>View all endpoints (14)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/iam/v1/access_policies` | List all access policies |
+| POST | `/iam/v1/access_policies` | Assign an access policy |
+| GET | `/iam/v1/access_policies/{id}` | Get an access policy |
+| DELETE | `/iam/v1/access_policies/{id}` | Delete an access policy |
+| GET | `/iam/v1/roles` | List all roles |
+| GET | `/iam/v1/roles/{name}` | Get a role |
+| GET | `/iam/v1/service_accounts` | List all service accounts |
+| POST | `/iam/v1/service_accounts` | Create a service account |
+| GET | `/iam/v1/service_accounts/{id}` | Get a service account |
+| PUT | `/iam/v1/service_accounts/{id}` | Update a service account |
+| DELETE | `/iam/v1/service_accounts/{id}` | Delete a service account |
+| POST | `/iam/v1/service_accounts/{id}/operations/reset` | Reset a service account |
+| GET | `/iam/v1/sso_users` | Verify a user account |
+| POST | `/iam/v1/sso_users` | Create an SSO account |
+
+</details>
+
+See [Identity and Access Management APIs](/sase/api/iam/) for full details.
 
 ## Late August 2022
 
