@@ -1,0 +1,213 @@
+---
+title: 'Security rules'
+sidebar_label: 'Security rules'
+pb_guide:
+  group: Policy
+  groupOrder: 40
+  order: 40
+  summary: Harden the Prisma Browser with extension, cookie, and certificate controls
+
+---
+
+Security rules harden the Prisma Browser: they govern extensions, developer tools, cookies, network APIs, certificate trust, and dozens of other protections. A security rule carries a `controls` map, where each key is a named control and its value is that control's settings. See [Policy overview](/prisma-browser/guide/rules) for the concepts shared by all policy types.
+
+Base path: `/seb-api/v1/policy/security`.
+
+## Mandatory fields
+
+| Field | Required | Notes |
+|---|---|---|
+| `name` | Yes | 1 to 300 characters |
+| `mode` | Yes | `active` or `disabled` |
+| `controls` | Yes | A map of control name to settings. Add at least one control to enforce policy. |
+| `scope` | No (recommended) | Who the rule applies to. Omitting it applies the rule to everyone. |
+| `description` | No | Up to 300 characters |
+
+## How controls work
+
+Each control is addressed by name and **replaced as a whole**. Most controls take a single `action` (typically `allow`/`block` or `enable`/`disable`); some carry richer settings (for example the extensions control has a `mode` and an `extensions[]` list).
+
+```json
+{
+  "name": "Browser hardening - all users",
+  "mode": "active",
+  "scope": { "users": { "isAny": true } },
+  "controls": {
+    "developerToolsForExtensions": { "action": "block" },
+    "allowedOrBlockedExtensions": {
+      "mode": "blockByListOrRisk",
+      "riskLevel": "high"
+    }
+  }
+}
+```
+
+## Create a security rule
+
+```
+POST /seb-api/v1/policy/security/rules
+```
+
+<details>
+<summary>Show request and response</summary>
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Block developer tools on extensions",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": { "developerToolsForExtensions": { "action": "block" } }
+      }'
+```
+
+Response:
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+## Delete a security rule
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/policy/security/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN"
+```
+
+Returns `204` with an empty body.
+
+## Sections
+
+Security sections are created with `POST /seb-api/v1/policy/security/sections` (only `name` is required) and ordered with the [positions endpoints](/prisma-browser/guide/reorder-rules-and-sections).
+
+:::note
+Every write edits the **draft**. Publish to make it live (see [Draft and publish](/prisma-browser/guide/draft-and-publish)).
+:::
+
+## Examples
+
+Expand an example to see the request, response, and notes.
+
+<details>
+<summary>Baseline browser hardening for everyone</summary>
+
+A single rule that turns on a handful of common protections. Omitting `scope` (or using `isAny`) applies it to all users. Each control is a spec-defined key: `developerToolsForExtensions` and `basicAuthenticationOverHttp` take `allow`/`block`; `cookiesProtection` takes `enable`/`disable`.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Browser hardening - all users",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": {
+          "developerToolsForExtensions": { "action": "block" },
+          "cookiesProtection": { "action": "enable" },
+          "pagesWithSslErrors": { "action": "block" },
+          "basicAuthenticationOverHttp": { "action": "block" }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Allow only specific extensions (allow-list)</summary>
+
+Use the `allowedOrBlockedExtensions` control with `mode: "allowByList"` and one entry per Chrome extension ID. Each ID is 32 lowercase letters `a` through `p`.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Approved extensions only",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": {
+          "allowedOrBlockedExtensions": {
+            "mode": "allowByList",
+            "extensions": [
+              { "id": "cjpalhdlnbpafiamejdnhcphjbkeiagm" }
+            ]
+          }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+**Note:** to add or remove one extension later, GET the rule, edit the `extensions` array, and PATCH the whole `allowedOrBlockedExtensions` control back (controls have no per-item delta). See [Manage allowed browser extensions](/prisma-browser/guide/manage-allowed-extensions).
+
+</details>
+
+<details>
+<summary>Block risky extensions by risk score</summary>
+
+Block extensions at or above a risk threshold with `mode: "blockByListOrRisk"` and a `riskLevel` of `malicious`, `medium`, or `high`. The other valid modes are `allowAll` and `blockAll`.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Block high-risk extensions",
+        "mode": "active",
+        "controls": {
+          "allowedOrBlockedExtensions": {
+            "mode": "blockByListOrRisk",
+            "riskLevel": "high"
+          }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Switch a control on an existing rule (PATCH replaces the whole control)</summary>
+
+PATCH replaces the named control whole. Here the extensions control is switched to an allow-list; controls you do not mention are left untouched. Because there is no per-item delta, send the complete `extensions` array you want.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/security/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "controls": {
+          "allowedOrBlockedExtensions": {
+            "mode": "allowByList",
+            "extensions": [
+              { "id": "hdokiejnpimakedhajhdlcegeplioahd" },
+              { "id": "cjpalhdlnbpafiamejdnhcphjbkeiagm" }
+            ]
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLESECURITYRULEXXXXX" }
+```
+
+</details>
+
+## Related
+
+- [Policy overview](/prisma-browser/guide/rules), [Customization rules](/prisma-browser/guide/customization-rules)
+- [Create and publish a rule](/prisma-browser/guide/create-and-publish-a-security-rule), [Manage allowed browser extensions](/prisma-browser/guide/manage-allowed-extensions)

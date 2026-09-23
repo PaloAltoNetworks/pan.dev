@@ -2,7 +2,7 @@ import React from "react";
 import NavbarNavLink from "@theme/NavbarItem/NavbarNavLink";
 import "./NavbarDocItems.scss";
 
-function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
+function NavbarDocItems({ apiDocs, docs, colorClass, productTitle, docsFirst }) {
   if (!apiDocs && !docs) return null;
   const hasApiDocs = apiDocs?.length > 0;
   const hasDocs = docs?.length > 0;
@@ -46,8 +46,8 @@ function NavbarDocItems({ apiDocs, docs, colorClass, productTitle }) {
       <h2 className="navbar-doc-items__product-title">{productTitle}</h2>
       <div className={`navbar-doc-items__section-divider ${colorClass}`} />
       <ul className="navbar-doc-items__list-container">
-        {apiDocItems}
-        {docItems}
+        {docsFirst ? docItems : apiDocItems}
+        {docsFirst ? apiDocItems : docItems}
       </ul>
     </div>
   );
