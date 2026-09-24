@@ -1056,7 +1056,7 @@ __Returns__
 ### `FirewallProxy.get_dp_clock`
 
 ```python
-def get_dp_clock() -> dict
+def get_dp_clock() -> List[datetime]
 ```
 
 Get the clock information from data plane.
@@ -1066,7 +1066,9 @@ The actual API command is `show clock more`.
 __Returns__
 
 
-`datetime`: The clock information represented as a `datetime` object.
+`List[datetime]`: The clock information represented as a list of `datetime` object.
+    As devices can have multiple dataplanes, this function returns the time of each dataplane clock if they are
+    different.
 
 ### `FirewallProxy.get_certificates`
 
@@ -1833,5 +1835,82 @@ __Returns__
         'mtu': None,
     },
 }
+```
+
+### `FirewallProxy.get_mp_mem_utilization`
+
+```python
+def get_mp_mem_utilization()
+```
+
+Get management plane memory usage.
+
+The actual API command is `show running resource-monitor minute last {minutes}`.
+
+__Returns__
+
+
+`dict`: containing the total, used, free and cache memory details
+
+### `FirewallProxy.get_locks_by_type`
+
+```python
+def get_locks_by_type(lock_type: LockType)
+```
+
+Helper function to make it easy to get locks by a given type
+
+### `FirewallProxy.get_config_locks`
+
+```python
+def get_config_locks() -> List[dict]
+```
+
+Get configuration lock details from the device.
+
+__Returns__
+
+
+A list of config lock detail dictionaries
+
+```python showLineNumbers title="Sample output"
+[
+    {
+        '@name': 'admin',
+        'type': 'shared',
+        'name': 'shared',
+        'created': '2026/03/19 17:00:45',
+        'last-activity': '2026/03/19 17:00:45',
+        'loggedin': 'yes',
+        'comment': 'Testing config lock api'
+    }
+]
+```
+
+### `FirewallProxy.get_commit_locks`
+
+```python
+def get_commit_locks() -> List[dict]
+```
+
+Get commit lock details from the device
+
+__Returns__
+
+
+A list of config lock detail dictionaries
+
+```python showLineNumbers title="Sample output"
+[
+    {
+        '@name': 'admin',
+        'type': 'shared',
+        'name': 'shared',
+        'created': '2026/03/19 17:00:45',
+        'last-activity': '2026/03/19 17:00:45',
+        'loggedin': 'yes',
+        'comment': 'Testing config lock api'
+    }
+]
 ```
 
