@@ -1056,3 +1056,47 @@ __Returns__
 * [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) if the device is not affected,
 * [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) otherwise.
 
+### `CheckFirewall.check_mp_mem_utilization`
+
+```python
+def check_mp_mem_utilization(threshold: int = 90) -> CheckResult
+```
+
+Checks the current memory usage of the management plane is under the given threshold percentage.
+
+__Parameters__
+
+
+- __threshold__ (`int, optional`): (defaults to 90) Maximum acceptable memory utilization percentage.
+
+__Raises__
+
+
+- `WrongDataTypeException`: Raised when the threshold parameter is not an integer or is outside the allowed range.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when Memory utilization is below the threshold.
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when Memory utilization is equal to or above the threshold.
+* [`CheckStatus.ERROR`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) when the data cannot be retrieved.
+
+### `CheckFirewall.check_config_locks`
+
+```python
+def check_config_locks() -> CheckResult
+```
+
+Checks for the prescence of configuration locks on the system. A locked configuration implies an
+administrator is actively working on the device.
+
+__Returns__
+
+
+`CheckResult`: Object of [`CheckResult`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkresult) class taking             value of:
+
+* [`CheckStatus.SUCCESS`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) if the device is not affected,
+* [`CheckStatus.FAIL`](/panos/docs/panos-upgrade-assurance/api/utils#class-checkstatus) otherwise.
+
