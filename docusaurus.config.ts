@@ -486,6 +486,11 @@ const config = {
                       label: "Strata Cloud Manager API Best Practices",
                       icon: "doc",
                     },
+                    {
+                      to: "/mim",
+                      label: "Next-Gen Trust Security",
+                      icon: "doc",
+                    },
                   ],
                 },
               ],

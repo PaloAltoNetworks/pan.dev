@@ -1,0 +1,186 @@
+---
+id: firefly-api-reference-clients
+title: "API reference for clients"
+sidebar_label: "API reference for clients"
+keywords:
+  - Machine Identity Management
+  - Workload Identity Manager
+---
+
+## Introduction
+
+*Workload Identity Manager* (formerly known as *Firefly*)provides clients with the ability to request certificates using any of two popular standard APIs: [gRPC](https://grpc.io/) and [REST](https://restfulapi.net/). The general capabilities of each are the same so the choice of which to use is truly client preference for what best fits the use case.  gRPC tends to be the highest performing of the two but is also not as easy to use.  REST is typically the easiest to use but may not scale as well.   
+
+## Authentication & Authorization
+
+*Workload Identity Manager* authenticates and authorizes clients using [JSON Web Tokens (JWTs)](https://jwt.io/) which are a standard non-TLS machine identities issued by enterprise identity providers including Auth0, Azure Active Directory, Okta, OneLogin, and Ping Identity. 
+
+### Claims
+
+*Workload Identity Manager* defines three custom claims and expects an appropriate combination of them to appear in JWTs presented by its clients:
+
+| Name                              | Type         | Description                                  | Sample Values |
+|-----------------------------------|--------------|----------------------------------------------|---------------|
+| `venafi-firefly.configuration`    | String       | Name of the Certificate Manager - SaaS "Configuration" the client is authorized to use. For the Certificate Manager - Self-Hosted, this is the name (or GUID) of the Generic Credential object where *Workload Identity Manager* gets its configuration. (Note: not applicable when *Workload Identity Manager* is operating in **Developer Mode**) | `"My Config"` |
+| `venafi-firefly.allowAllPolicies` | Boolean      | if true, indicates that the client is authorized to obtain certificates using any of the policies for which *Workload Identity Manager* is allowed to use when issuing certificates. | `true` |
+| `venafi-firefly.allowedPolicies`  | String Array | Names of specific policies the client is authorized to obtain certificate from *Workload Identity Manager*. | `["My Policy 1", "My Policy 2"]` |
+
+<details>
+<summary>What if my IdP only supports strings?</summary>
+
+> Some identity providers, like Azure AD, only support string values for custom claims so *Workload Identity Manager* allows booleans to be expressed as strings (e.g., `"true"`) and string arrays to be expressed as comma-separated value strings (e.g., `"My Policy 1, My Policy 2"`) which means your policy names must not include commas.
+
+</details>
+
+## Request Variables
+
+| Name | Details | gRPC | REST |
+|------|---------|------|----------------|
+| CSR | PKCS#10 | `request` | `request` |
+| Public Key | Public Key of a supported <a href="#KeyType">Key Type</a> in PEM format | `public_key` ||
+| X.509 Subject Distinguished Name || `subject` | `subject` |
+| <div style={{marginLeft: "10px"}}>Common Name (CN)</div> | String | `common_name` | `commonName` |
+| <div style={{marginLeft: "10px"}}>Organizational Units (OU)</div> | String Array | `org_units` | `orgUnits` |
+| <div style={{marginLeft: "10px"}}>Organization (O)</div> | String | `organization` | `organization` |
+| <div style={{marginLeft: "10px"}}>City or Locality (L)</div> | String | `locality` | `locality` | 
+| <div style={{marginLeft: "10px"}}>State or Province (ST)</div> | String, typically spelled out, not abbreviated | `state` | `state` |
+| <div style={{marginLeft: "10px"}}>Country (C)</div> | 2-character ISO 3166 country code | `country` | `country` |
+| X.509 Subject Alternative Names || `alt_names` | `altNames` |
+| <div style={{marginLeft: "10px"}}>DNS Names</div> | Array of fully qualified domain names | `dns_names` | `dnsNames` |
+| <div style={{marginLeft: "10px"}}>IP Addresses</div> | Array of IPv4 or IPv6 addresses | `ip_addresses` | `ipAddresses` |
+| <div style={{marginLeft: "10px"}}>Email Addresses</div> | Array of RFC 822 names | `email_addresses` | `emailAddresses` |
+| <div style={{marginLeft: "10px"}}>Uniform Resource Identifiers</div> | Array of URIs | `uris` | `uris` |
+| <div id="KeyType">Key Type</div> | Key algorithm and size or elliptic curve for the certificate.  Valid values are: `RSA_2048`, `RSA_3072`, `RSA_4096`, `EC_P256`, `EC_P384`, `EC_P521`, and `EC_ED25519`.  Must be omitted if `public_key` is specified. | `key_type` | `keyType` |
+| Validity Period | Desired validity of the certificate expressed as an [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations) (e.g., "P90D" for 90 days or "PT36H" for 36 hours) | `validity_period` | `validityPeriod` |
+| Policy Name | Name of the policy for which the certificate is being requested.  Policy is defined by Certificate Manager - SaaS when *Workload Identity Manager* is running in **Control Plane Mode** and is defined in the `config.yaml` when running in **Developer Mode**. | `policy_name` | `policyName` |
+
+## Response Variables
+
+| Name | Details | gRPC | REST |
+|------|---------|------|----------------|
+| Certificate Chain | PEM formatted X.509 certificates starting with the end-entity and ending with the root (trust anchor) | `certificate_chain` | `certificateChain` |
+| Private Key | PKCS#8, non-encrypted | `private_key` | `privateKey` |
+
+## gRPC Methods
+
+*Workload Identity Manager*'s gRPC interface supports [Reflection](https://chromium.googlesource.com/external/github.com/grpc/grpc-go/+/refs/heads/v1.10.x/Documentation/server-reflection-tutorial.md) which is often the easiest way for a client to consume API methods.  Alternatively, it is common for clients to injest `.proto` files which are available to download [here](https://devhub-assets.venafi.cloud/firefly/firefly-grpc-proto.zip).
+- certificaterequest.proto
+- certificatesigningrequest.proto
+- keytype.proto
+- privatekey.proto
+- subject.proto
+
+*Workload Identity Manager* network interfaces are secured by TLS using a self-issued certificate signed by the CA certificate it generated or obtained when it started.  Clients should be configured to trust the *Workload Identity Manager* trust anchor but may also be configured to ignore TLS validation for testing.  Client also must pass a valid JWT as a "Bearer" token using the `Authorization` HTTP header (see [RFC 6750 Section 2.1](https://www.rfc-editor.org/rfc/rfc6750#section-2.1)).
+
+> 📘 Note
+>
+> If the application interacting with *Workload Identity Manager* is co-hosted alongside it and the `config.yaml` specifies a `socketPath`, the application can use _Unix Domain Sockets_ (UDS) instead of TCP to request certificates.  gRPC over UDS does **not** require authentication nor support TLS because clients must have access to *Workload Identity Manager*'s local filesystem to use it.
+
+- **CertificateRequestService/Create** - request a certificate and private key using variables
+  ```json Message
+  {
+      "request": {
+          "subject": {
+              "common_name": "grpc.example.com",
+              "org_units": [ "Platform Engineering" ],
+              "organization": "Venafi, Inc.",
+              "locality": "Salt Lake City",
+              "state": "Utah",
+              "country": "US"
+          },
+          "alt_names": {
+              "dns_names": [ "grpc.example.com" ],
+              "ip_addresses": [ "10.20.30.40" ],
+              "email_addresses": [ "john.doe@example.com" ],
+              "uris": [ "spiffe://grpc.example.com" ]
+          },
+          "key_type": "EC_P256",
+          "validity_period": "P7D",
+          "policy_name": "Sample Policy"
+      }
+  }
+  ```
+
+- **CertificateRequestService/Create** - request a certificate using a public key and variables
+  ```json Message
+  {
+      "request": {
+          "public_key": "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUZrd0V3WUhLb1pJemowQ0FRWUlLb1pJe...",
+          "subject": {
+              "common_name": "grpc.example.com",
+              "org_units": [ "Platform Engineering" ],
+              "organization": "Venafi, Inc.",
+              "locality": "Salt Lake City",
+              "state": "Utah",
+              "country": "US"
+          },
+          "alt_names": {
+              "dns_names": [ "grpc.example.com" ],
+              "ip_addresses": [ "10.20.30.40" ],
+              "email_addresses": [ "john.doe@example.com" ],
+              "uris": [ "spiffe://grpc.example.com" ]
+          },
+          "validity_period": "P7D",
+          "policy_name": "Sample Policy"
+      }
+  }
+  ```
+
+- **CertificateSigningRequestService/Create** - request a certificate using a PKCS#10 CSR
+  ```json Message
+  {
+    "request": {
+      "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQ2Z6Q0NBV2NDQVFBd0hqRWNN...",
+      "validity_period": "P7D",
+      "policy_name": "Sample Policy"
+    }
+  }
+  ```
+
+> 📘 Note
+>
+> When specifying a public key (`public_key`) or CSR (`request`), the value must be base64-encoded in the payload. This is due to a design choice to handle multi-line strings as byte arrays.  The same is true for the `certificate_chain` and `private_key` values in the response, they must be base64-decoded to access the actual PEM data.  Most likely none of this will matter to you unless you're testing the APIs with low-level tools like <a href="https://www.postman.com/">Postman</a> or <a href="https://github.com/fullstorydev/grpcurl#readme">grpcurl</a>.
+
+## REST Methods
+
+It is common for developers using REST APIs to start by consuming OpenAPI specifications.  The specification for *Workload Identity Manager* is available to download [here](https://devhub-assets.venafi.cloud/firefly/firefly-openapi-spec.yaml).
+
+*Workload Identity Manager* network interfaces are secured by TLS using a self-issued certificate signed by the CA certificate it generated or obtained when it started.  Clients should be configured to trust the *Workload Identity Manager* trust anchor but may also be configured to ignore TLS validation for testing.  Client also must pass a valid JWT as a "Bearer" token using the `Authorization` HTTP header (see [RFC 6750 Section 2.1](https://www.rfc-editor.org/rfc/rfc6750#section-2.1)).
+
+> 📘 Note
+>
+> If the application interacting with *Workload Identity Manager* will be responsible for authentication and authorization, and the `config.yaml` specifies a `socketPath`, the application can use _Unix Domain Sockets_ (UDS) instead of TCP to request certificates.  REST over UDS does **not** require authentication nor support TLS because clients must have access to *Workload Identity Manager*'s local filesystem to use it.
+
+REST requests and responses are JSON formatted so it is proper to set both `Accept` and `Content-Type` HTTP headers to "application/json".  When requests are successful *Workload Identity Manager* responds with `HTTP 200 OK` and a payload that includes the certificate chain and, if applicable, the private key.
+
+- **POST /v1/certificaterequest** - request a certificate and private key using variables
+  ```json Request Body
+  {
+      "subject": {
+          "commonName": "rest.example.com",
+          "organization": "Venafi, Inc.",
+          "orgUnits": [ "Platform Engineering" ],
+          "locality": "Salt Lake City",
+          "state": "Utah",
+          "country": "US"
+      },
+      "altNames": {
+          "dnsNames": [ "rest.example.com" ],
+          "ipAddresses": [ "10.20.30.40" ],
+          "emailAddresses": [ "john.doe@example.com" ],
+          "uris": [ "spiffe://rest.example.com" ]
+      },
+      "keyType": "EC_P256",
+      "validityPeriod": "P7D",
+      "policyName": "Sample Policy"
+  }
+  ```
+
+- **POST /v1/certificatesigningrequest** - request a certificate using a PKCS#10 CSR
+  ```json Request Body
+  {
+      "request": "-----BEGIN CERTIFICATE REQUEST-----\nMIIDAjCCAeoCAQA...",
+      "validityPeriod": "P7D",
+      "policyName": "Sample Policy"
+  }
+  ```
