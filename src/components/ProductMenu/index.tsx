@@ -183,7 +183,10 @@ function productForPath(pathname: string): string | null {
         if (!isInternal(to)) {
           continue;
         }
-        const base = trimSlash(to);
+        // Drop any query string or fragment so a link like
+        // "/prisma-browser/api/list-users?ref=nav" still prefix-matches the
+        // route, which never carries them.
+        const base = trimSlash(to.split(/[?#]/)[0]);
         if (base && (here === base || here.startsWith(`${base}/`))) {
           if (!best || base.length > best.length) {
             best = { label: product.label, length: base.length };
