@@ -61,7 +61,7 @@ As you can see:
 * the `prefix` key is just a placeholder that eventually is replaced with the value of `name_prefix`
 * the `__random__` string is replaced with a name of a [random pet](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) (in case you need to randomize some name, for testing purposes for example)
 * the `__default__` string is replaced with a resource abbreviation.
-  This abbreviations are defined with `var.abbreviations` variable. The module contains basic abbreviations following Microsoft suggestions, but they can be overridden with custom definitions.
+  This abbreviations are defined with `var.abbreviations` variable. The module contains basic abbreviations following Microsoft suggestions, but they can be overriden with custom definitions.
   The important part is that the `resource_type` has to match an entry in `abbreviations` variable, otherwise the abbreviation will be replaced with an empty string.
 
 To create the actual resource name the following code can be used:

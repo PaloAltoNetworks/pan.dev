@@ -54,6 +54,19 @@ probe would target the management interface which could lead to false-positives.
 probes, while the data plane remains unconfigured. An easy solution would to bo configure an interface swap, unfortunately this
 is not available in the Azure VM-Series image yet.
 
+## Orchestration modes
+
+This module allows you to deploy a Virtual Machine Scale Set (VMSS) with a configurable orchestration mode. The choice of mode is
+determined by the `orchestration_type` variable, which provides a single point of control over the VMSS deployment.
+
+Uniform Orchestration: if `orchestration_type` is set to `Uniform`, traditional uniform orchestration mode is used, where all
+VMs are managed as a single entity.
+
+Flexible Orchestration: if `orchestration_type` is set to `Flexible`, new flexible orchestration mode is used. For this mode to
+function correctly, the VMSS's identity type must be set to `UserAssigned` in order to manage individual VMs in the set.
+
+By default, the Uniform Orchestration is used by the module.
+
 ## Custom Metrics and Autoscaling
 
 Firewalls can publish custom metrics (for example `panSessionUtilization`) to Azure Application Insights to improve the
@@ -144,6 +157,8 @@ Name | Version | Source | Description
 
 - `linux_virtual_machine_scale_set` (managed)
 - `monitor_autoscale_setting` (managed)
+- `orchestrated_virtual_machine_scale_set` (managed)
+- `user_assigned_identity` (managed)
 - `public_ip_prefix` (data)
 
 ### Required Inputs
@@ -292,22 +307,26 @@ Following configuration options are available:
 
 - `name`                           - (`string`, required) the interface name.
 - `subnet_id`                      - (`string`, required) ID of an existing subnet to create the interface in.
-- `create_public_ip`               - (`bool`, optional, defaults to `false`) if `true`, create a public IP for the interface.
-- `pip_domain_name_label`          - (`string`, optional, defaults to `null`) the Prefix which should be used for the Domain
-                                     Name Label for each Virtual Machine Instance.
-- `pip_idle_timeout_in_minutes`    - (`number`, optional, defaults to Azure default) the Idle Timeout in minutes for the Public
-                                     IP Address, possible values are in the range from 4 to 32.
-- `pip_prefix_name`                - (`string`, optional) the name of an existing Public IP Address Prefix from where Public IP
-                                     Addresses should be allocated.
-- `pip_prefix_resource_group_name` - (`string`, optional, defaults to the VMSS's RG) name of a Resource Group hosting an 
-                                     existing Public IP Prefix resource.
-- `pip_prefix_id`                  - (`string`, optional) you can specify Public IP Prefix ID as an alternative to the
-                                     properties above (name and resource group), in case you want to avoid using a data source
-                                     block.
+- `ip_configurations`              - (`map`, required) A map that contains the IP configurations for the interface.
+  - `name`                           - (`string`, optional, defaults to `primary`) the name of the interface IP configuration.
+  - `primary`                        - (`bool`, optional, defaults to `true`) sets the current IP configuration as the primary
+                                       one.
+  - `create_public_ip`               - (`bool`, optional, defaults to `false`) if `true`, create a public IP for the interface.
+  - `pip_domain_name_label`          - (`string`, optional, defaults to `null`) the Prefix which should be used for the Domain
+                                       Name Label for each Virtual Machine Instance.
+  - `pip_idle_timeout_in_minutes`    - (`number`, optional, defaults to Azure default) the Idle Timeout in minutes for the 
+                                       Public IP Address, possible values are in the range from 4 to 32.
+  - `pip_prefix_name`                - (`string`, optional) the name of an existing Public IP Address Prefix from where Public
+                                       IP Addresses should be allocated.
+  - `pip_prefix_resource_group_name` - (`string`, optional, defaults to the VMSS's RG) name of a Resource Group hosting an 
+                                       existing Public IP Prefix resource.
+  - `pip_prefix_id`                  - (`string`, optional) you can specify Public IP Prefix ID as an alternative to the
+                                       properties above (name and resource group), in case you want to avoid using a data
+                                       source block.
 - `lb_backend_pool_ids`            - (`list`, optional, defaults to `[]`) a list of identifiers of existing Load Balancer
-                                     backend pools to associate the interface with.
+                                     backend pools to associate the interface with. Only applied to primary IP configuration.
 - `appgw_backend_pool_ids`         - (`list`, optional, defaults to `[]`) a list of identifier of Application Gateway's backend
-                                     pools to associate the interface with.
+                                     pools to associate the interface with. Only applied to primary IP configuration.
 
 Example:
 
@@ -316,16 +335,33 @@ Example:
   {
     name       = "management"
     subnet_id  = azurerm_subnet.my_mgmt_subnet.id
-    create_pip = true
+    ip_configurations = {
+        primary-ip = {
+          name             = "primary-ip"
+          primary          = true
+          create_public_ip = true
+    }
   },
   {
     name      = "private"
     subnet_id = azurerm_subnet.my_priv_subnet.id
+    ip_configurations = {
+        primary-ip = {
+          name             = "primary-ip"
+          primary          = true
+          create_public_ip = false
+    }
   },
   {
     name                = "public"
     subnet_id           = azurerm_subnet.my_pub_subnet.id
     lb_backend_pool_ids = [azurerm_lb_backend_address_pool.lb_backend.id]
+    ip_configurations = {
+        primary-ip = {
+          name             = "primary-ip"
+          primary          = true
+          create_public_ip = true
+    }
   }
 ]
 ```
@@ -335,16 +371,20 @@ Type:
 
 ```hcl
 list(object({
-    name                           = string
-    subnet_id                      = string
-    create_public_ip               = optional(bool, false)
-    pip_domain_name_label          = optional(string)
-    pip_idle_timeout_in_minutes    = optional(number)
-    pip_prefix_name                = optional(string)
-    pip_prefix_resource_group_name = optional(string)
-    pip_prefix_id                  = optional(string)
-    lb_backend_pool_ids            = optional(list(string), [])
-    appgw_backend_pool_ids         = optional(list(string), [])
+    name      = string
+    subnet_id = string
+    ip_configurations = map(object({
+      name                           = optional(string, "primary")
+      primary                        = optional(bool, true)
+      create_public_ip               = optional(bool, false)
+      pip_domain_name_label          = optional(string)
+      pip_idle_timeout_in_minutes    = optional(number)
+      pip_prefix_name                = optional(string)
+      pip_prefix_resource_group_name = optional(string)
+      pip_prefix_id                  = optional(string)
+    }))
+    lb_backend_pool_ids    = optional(list(string), [])
+    appgw_backend_pool_ids = optional(list(string), [])
   }))
 ```
 
@@ -372,14 +412,16 @@ Nevertheless they should be at least reviewed to meet deployment requirements.
 
 List of either required or important properties: 
 
-- `size`              - (`string`, optional, defaults to `Standard_D3_v2`) Azure VM size (type). Consult the *VM-Series
-                        Deployment Guide* as only few selected sizes are supported. The default one is a VM-300 equivalent.
-- `zones`             - (`list`, optional, defaults to `null`) a list of Availability Zones in which VMs from this Scale Set
-                        will be created.
-- `disk_type`         - (`string`, optional, defaults to `StandardSSD_LRS`) type of Managed Disk which should be created,
-                        possible values are `Standard_LRS`, `StandardSSD_LRS` or `Premium_LRS` (works only for selected `size`
-                        values).
-- `bootstrap_options` - (`string`, optional) bootstrap options to pass to VM-Series instance.
+- `orchestration_type` - (`string`, optional, defaults to `Uniform`) this variable is used to select between the Uniform or
+                         Flexible Scale Set orchestration modes. Possible values are `Uniform` and `Flexible`.
+- `size`               - (`string`, optional, defaults to `Standard_D3_v2`) Azure VM size (type). Consult the *VM-Series
+                         Deployment Guide* as only few selected sizes are supported. The default one is a VM-300 equivalent.
+- `zones`              - (`list`, optional, defaults to `null`) a list of Availability Zones in which VMs from this Scale Set
+                         will be created. Zone balance is available from at least 2 zones.
+- `disk_type`          - (`string`, optional, defaults to `StandardSSD_LRS`) type of Managed Disk which should be created,
+                         possible values are `Standard_LRS`, `StandardSSD_LRS` or `Premium_LRS` (works only for selected `size`
+                         values).
+- `bootstrap_options`  - (`string`, optional) bootstrap options to pass to VM-Series instance.
 
     Proper syntax is a string of semicolon separated properties, for example:
 
@@ -399,9 +441,11 @@ List of other, optional properties:
                                     used to encrypt this VM's disk.
 - `encryption_at_host_enabled`    - (`bool`, optional, defaults to Azure defaults) should all of disks be encrypted by enabling
                                     Encryption at Host.
-- `overprovision`                 - (`bool`, optional, defaults to `true`) See the [provider documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine_scale_set).
-- `platform_fault_domain_count`   - (`number`, optional, defaults to Azure defaults) specifies the number of fault domains that
-                                    are used by this Virtual Machine Scale Set.
+- `overprovision`                 - (`bool`, optional, defaults to `true`) controls whether Azure should over-provision Virtual
+                                    Machines in the Scale Set for improved deployment time and provisioning success rate.
+- `platform_fault_domain_count`   - (`number`, optional, defaults to `5`) specifies the number of fault domains that are used
+                                    by this Virtual Machine Scale Set. The Flexible orchestration mode requires this parameter
+                                    to be set.
 - `single_placement_group`        - (`bool`, optional, defaults to Azure defaults) when `true` this Virtual Machine Scale Set
                                     will be limited to a Single Placement Group, which means the number of instances will be
                                     capped at 100 Virtual Machines.
@@ -412,7 +456,8 @@ List of other, optional properties:
                                     files, when skipped a managed Storage Account will be used (preferred).
 - `identity_type`                 - (`string`, optional, defaults to `SystemAssigned`) type of Managed Service Identity that
                                     should be configured on this VM. Can be one of "SystemAssigned", "UserAssigned" or
-                                    "SystemAssigned, UserAssigned".
+                                    "SystemAssigned, UserAssigned". For the Flexible orchestration mode this parameter must be
+                                    configured to "UserAssigned".
 - `identity_ids`                  - (`list`, optional, defaults to `[]`) a list of User Assigned Managed Identity IDs to be 
                                     assigned to this VM. Required only if `identity_type` is not "SystemAssigned".
 
@@ -421,6 +466,7 @@ Type:
 
 ```hcl
 object({
+    orchestration_type            = optional(string, "Uniform")
     size                          = optional(string, "Standard_D3_v2")
     bootstrap_options             = optional(string)
     zones                         = optional(list(string))
@@ -429,7 +475,7 @@ object({
     allow_extension_operations    = optional(bool, false)
     encryption_at_host_enabled    = optional(bool)
     overprovision                 = optional(bool, true)
-    platform_fault_domain_count   = optional(number)
+    platform_fault_domain_count   = optional(number, 5)
     single_placement_group        = optional(bool)
     capacity_reservation_group_id = optional(string)
     disk_encryption_set_id        = optional(string)
