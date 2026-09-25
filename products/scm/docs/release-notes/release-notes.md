@@ -269,6 +269,12 @@ See [Identity Services APIs](/scm/api/config/sase/identity/identity-api), [Secur
 
 ---
 
+## August 2026
+
+**Product:** Strata Cloud Manager — Settings
+
+Updated [Settings APIs](/scm/api/config/ngfw/device/device-settings/) with 3 new endpoints.
+
 ## July 2026
 
 ### Posture Management — Compliance Framework APIs (New)

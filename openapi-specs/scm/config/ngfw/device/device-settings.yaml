@@ -39,6 +39,8 @@ tags:
     description: Login Banner Settings
   - name: Management Interface Settings
     description: Management Interface Settings
+  - name: Named Snapshots
+    description: Named snapshot management operations
   - name: Service Route Settings
     description: Service Route Settings
   - name: Service Settings
@@ -2774,6 +2776,127 @@ paths:
           $ref: '#/components/responses/conflict_errors'
         default:
           $ref: '#/components/responses/default_errors'
+  /named-snapshots:
+    get:
+      tags:
+        - Named Snapshots
+      summary: List named snapshots
+      description: |
+        Retrieve a list of available named snapshots.
+      operationId: ListNamedSnapshots
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/named-snapshot'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generic_error'
+              example:
+                _errors:
+                  - code: Invalid Token
+                    message: Invalid Token
+                    details: []
+                _request_id: 7b7238e2-b78c-4fc5-ba78-808c988c385d
+  '/named-snapshots:load':
+    post:
+      x-action: true
+      tags:
+        - Named Snapshots
+      summary: Load a named snapshot
+      description: |
+        Load a specific named snapshot into the candidate configuration.
+
+        When `async_mode` is `false` (default), the operation executes synchronously and returns upon completion.
+        When `async_mode` is `true`, the operation is queued and a `job_id` is returned for tracking progress.
+
+        To retrieve the status of an async job, use the [Get Job Status](https://pan.dev/scm/api/config/sase/operations/get-jobs-by-id/) endpoint.
+      operationId: LoadNamedSnapshot
+      requestBody:
+        description: Named snapshot load request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/load-snapshot-request'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/load-snapshot-response'
+              examples:
+                sync_success:
+                  summary: Synchronous success response
+                  value:
+                    status: success
+                    message: Config loaded from pre-migration-snapshot-990298813748542976_20260721060146
+                async_enqueued:
+                  summary: Asynchronous enqueued response
+                  value:
+                    status: enqueued
+                    job_id: '6808'
+                    message: Async request enqueued with jobid 6808
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generic_error'
+              example:
+                _errors:
+                  - code: Invalid Token
+                    message: Invalid Token
+                    details: []
+                _request_id: 7b7238e2-b78c-4fc5-ba78-808c988c385d
+  '/named-snapshots/{name}':
+    delete:
+      tags:
+        - Named Snapshots
+      summary: Delete a named snapshot
+      description: |
+        Delete a specific named snapshot.
+      operationId: DeleteNamedSnapshot
+      parameters:
+        - name: name
+          in: path
+          description: The name of the named snapshot to delete.
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 64
+            pattern: '^[a-zA-Z0-9_-]+$'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/delete-snapshot-response'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generic_error'
+              example:
+                _errors:
+                  - code: Invalid Token
+                    message: Invalid Token
+                    details: []
+                _request_id: 7b7238e2-b78c-4fc5-ba78-808c988c385d
 components:
   parameters:
     folder:
@@ -5815,8 +5938,84 @@ components:
             maxLength: 64
             description: The device in which the resource is defined
             example: My Device
-        required: 
+        required:
           -  device
+    named-snapshot:
+      type: object
+      description: A named snapshot
+      properties:
+        name:
+          type: string
+          description: The name of the named snapshot
+          minLength: 1
+          maxLength: 64
+          pattern: '^[a-zA-Z0-9_-]+$'
+          example: 'before-migration-test'
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when the snapshot was created
+          example: '2026-05-29T22:28:16Z'
+        savedby:
+          type: string
+          description: The user who saved the snapshot
+          example: 'user@paloaltonetworks.com'
+      required:
+        - name
+    load-snapshot-request:
+      type: object
+      description: Request body for loading a named snapshot
+      properties:
+        name:
+          type: string
+          description: The name of the named snapshot to load.
+          minLength: 1
+          maxLength: 64
+          pattern: '^[a-zA-Z0-9_-]+$'
+          example: 'backup-2025-01-15'
+        async_mode:
+          type: boolean
+          description: When true, executes asynchronously and returns a job_id.
+          default: false
+      required:
+        - name
+    load-snapshot-response:
+      type: object
+      description: Response from a load named snapshot operation
+      properties:
+        status:
+          type: string
+          description: The status of the load operation.
+          enum:
+            - success
+            - enqueued
+          example: 'success'
+        message:
+          type: string
+          description: A message describing the result of the load operation.
+          example: 'Config loaded from pre-migration-snapshot-990298813748542976_20260721060146'
+        job_id:
+          type: string
+          description: The job ID for async operations (only present when async_mode is true).
+          example: '6808'
+      required:
+        - status
+        - message
+    delete-snapshot-response:
+      type: object
+      description: Response from a delete named snapshot operation
+      properties:
+        status:
+          type: string
+          description: The status of the delete operation.
+          example: 'success'
+        message:
+          type: string
+          description: A message describing the result of the delete operation.
+          example: 'Successfully deleted snapshot {name}'
+      required:
+        - status
+        - message
     generic_error:
       type: object
       properties:
