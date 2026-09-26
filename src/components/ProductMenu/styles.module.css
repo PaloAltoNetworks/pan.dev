@@ -1,0 +1,438 @@
+/* Navigation type scale, shared by the drawer and by the mobile sidebar rows.
+   The site sizes navigation text in px (.theme-doc-sidebar-menu, .navbar-sidebar)
+   rather than rem, because --ifm-font-size-base is 95% and would rescale it.
+   1.25 is the .menu__link line height; the uppercase label size and tracking
+   come from .navbar-section-title and the mega menu section labels. */
+.drawer,
+.mobileSearch,
+.mobileGroupTitle,
+.mobileSectionTitle {
+  --pan-menu-font-size: 14px;
+  --pan-menu-line-height: 1.25;
+  --pan-menu-label-font-size: 0.75rem;
+  --pan-menu-label-letter-spacing: 1.25px;
+}
+
+/* Navbar left items render after .navbar__brand, so order pulls the trigger
+   ahead of the logo. */
+.root {
+  order: -1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  margin-right: 0.75rem;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--ifm-global-radius);
+  background: none;
+  color: var(--ifm-navbar-link-color);
+  cursor: pointer;
+}
+
+.trigger:hover {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-navbar-link-hover-color);
+}
+
+.triggerOpen {
+  border-color: var(--ifm-toc-border-color);
+  background: var(--ifm-color-emphasis-200);
+}
+
+.triggerIcon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 16px;
+  height: 11px;
+}
+
+.triggerIcon span {
+  display: block;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+/* The navbar uses a transform for hideOnScroll, which would trap a fixed-
+   position child, so the drawer is portalled to document.body. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--ifm-z-index-fixed) + 100);
+  background: rgba(0, 0, 0, 0.32);
+  animation: overlayIn 160ms ease-out;
+}
+
+.drawer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: stretch;
+  width: 300px;
+  max-width: 100vw;
+  border-right: 1px solid var(--ifm-toc-border-color);
+  /* This site sets --ifm-background-color to transparent in light mode, which
+     would let the page show through the drawer. */
+  background: var(--ifm-background-surface-color);
+  box-shadow: 0 0 24px rgb(0 0 0 / 18%);
+  animation: drawerIn 180ms ease-out;
+}
+
+/* Widened to hold the submenu, which is positioned against the drawer rather
+   than nested in the scroller so that scrolling cannot clip it. */
+.drawerWide {
+  width: 590px;
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes drawerIn {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .drawer {
+    animation: none;
+  }
+}
+
+/* Fixed width so the search field does not resize when a submenu opens.
+   Positioned so the bottom fade can sit over the scroller without scrolling
+   away with it. The submenu resolves against this box rather than .drawer,
+   which lands in the same place because the pane is full height. */
+.listPane {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 300px;
+  min-height: 0;
+}
+
+.drawerHeader {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--ifm-toc-border-color);
+}
+
+.search {
+  flex: 1;
+  min-width: 0;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  font-size: var(--pan-menu-font-size);
+  line-height: var(--pan-menu-line-height);
+}
+
+.search::placeholder {
+  color: var(--ifm-color-emphasis-600);
+}
+
+.search:focus {
+  border-color: var(--ifm-color-primary);
+  outline: none;
+}
+
+.closeButton {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ifm-global-radius);
+  background: none;
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* The list overflows on any viewport under roughly 1080px tall. The thin bar
+   is persistent on Windows and Linux, and scrollbar-gutter stops the rows
+   shifting when it appears. macOS uses overlay scrollbars, where the gutter is
+   a no-op and the bar fades out, so .scrollFade is what signals the overflow
+   there. */
+.scroller {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.75rem 0;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ifm-color-emphasis-400) transparent;
+}
+
+.scrollFade {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2.5rem;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    var(--ifm-background-surface-color),
+    transparent
+  );
+}
+
+.searchAll {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid var(--ifm-toc-border-color);
+  font-size: var(--pan-menu-font-size);
+  line-height: var(--pan-menu-line-height);
+  color: var(--ifm-link-color);
+}
+
+.searchAll:hover {
+  background: var(--ifm-color-emphasis-200);
+  text-decoration: none;
+}
+
+.noResults {
+  margin: 0;
+  padding: 1rem 1rem 0;
+  font-size: var(--pan-menu-font-size);
+  line-height: var(--pan-menu-line-height);
+  color: var(--ifm-color-emphasis-700);
+}
+
+.group + .group {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ifm-toc-border-color);
+}
+
+.groupTitle {
+  margin: 0 0 0.25rem;
+  padding: 0 1rem;
+  font-family: var(--ifm-font-family-base);
+  font-size: var(--pan-menu-label-font-size);
+  font-weight: var(--ifm-font-weight-bold);
+  letter-spacing: var(--pan-menu-label-letter-spacing);
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.productList,
+.linkList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Deliberately not positioned: the submenu inside it resolves against .drawer
+   so the scroller cannot clip it. */
+.productItem {
+  position: static;
+}
+
+.productItemCurrent .product {
+  box-shadow: inset 3px 0 0 var(--ifm-color-primary);
+  font-weight: var(--ifm-font-weight-bold);
+}
+
+.product {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.3125rem 1rem;
+  border: 0;
+  background: none;
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  font-size: var(--pan-menu-font-size);
+  line-height: var(--pan-menu-line-height);
+  text-align: left;
+  cursor: pointer;
+}
+
+.product:hover,
+.productItemActive .product {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-primary);
+}
+
+.caret {
+  flex: none;
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 5px solid currentColor;
+  opacity: 0.6;
+}
+
+.submenu {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 300px;
+  width: 290px;
+  overflow-y: auto;
+  padding: 0.75rem 0;
+  border-left: 1px solid var(--ifm-toc-border-color);
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* The pane heading is the product name, so it takes the heading face the old
+   mega menu used for it rather than the uppercase label treatment. */
+.submenuTitle {
+  margin: 0 0 0.375rem;
+  padding: 0 1rem;
+  font-family: var(--ifm-heading-font-family);
+  font-size: var(--pan-menu-font-size);
+  font-weight: var(--ifm-heading-font-weight);
+  line-height: var(--pan-menu-line-height);
+  color: var(--ifm-color-emphasis-600);
+}
+
+.sectionTitle {
+  margin: 0.625rem 0 0.25rem;
+  padding: 0 1rem;
+  font-size: var(--pan-menu-label-font-size);
+  font-weight: var(--ifm-font-weight-bold);
+  letter-spacing: var(--pan-menu-label-letter-spacing);
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Search mode: the product name heads its inline matched links. */
+.searchProduct {
+  margin: 0.375rem 0 0.125rem;
+  padding: 0 1rem;
+  font-size: var(--pan-menu-font-size);
+  font-weight: var(--ifm-font-weight-bold);
+  line-height: var(--pan-menu-line-height);
+  color: var(--ifm-font-color-base);
+}
+
+.mark {
+  padding: 0 0.1em;
+  border-radius: 2px;
+  background: var(--ifm-color-warning-contrast-background, #fff3cd);
+  color: inherit;
+}
+
+.link {
+  display: block;
+  padding: 0.25rem 1rem 0.25rem 1.5rem;
+  font-size: var(--pan-menu-font-size);
+  line-height: var(--pan-menu-line-height);
+  color: var(--ifm-link-color);
+}
+
+.link:hover {
+  background: var(--ifm-color-emphasis-200);
+  text-decoration: none;
+}
+
+/* Inside the submenu the pane is already emphasis-200, so a row there has to
+   step past it to read as hovered at all. */
+.submenu .link:hover {
+  background: var(--ifm-color-emphasis-300);
+}
+
+/* @theme/Icon/ExternalLink defaults to 13.5px and keeps its own left margin,
+   so only the box is scaled here, against the row text rather than the root
+   font size. */
+.externalIcon svg {
+  width: 0.875em;
+  height: 0.875em;
+  vertical-align: -0.125em;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Below the navbar breakpoint the products live in the mobile sidebar, which
+   renders ProductMenuMobile instead. */
+@media (max-width: 996px) {
+  .root {
+    display: none;
+  }
+}
+
+.mobileSearch {
+  width: 100%;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font: inherit;
+  font-size: var(--pan-menu-font-size);
+  line-height: var(--pan-menu-line-height);
+}
+
+.mobileGroupTitle {
+  margin: 0.75rem 0 0.125rem;
+  padding: 0 0.75rem;
+  font-family: var(--ifm-font-family-base);
+  font-size: var(--pan-menu-label-font-size);
+  font-weight: var(--ifm-font-weight-bold);
+  letter-spacing: var(--pan-menu-label-letter-spacing);
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.mobileProduct {
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobileSectionTitle {
+  margin: 0.5rem 0 0.125rem;
+  padding: 0 0.75rem 0 1.5rem;
+  font-size: var(--pan-menu-label-font-size);
+  font-weight: var(--ifm-font-weight-bold);
+  letter-spacing: var(--pan-menu-label-letter-spacing);
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+}
