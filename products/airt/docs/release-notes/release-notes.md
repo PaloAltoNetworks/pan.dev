@@ -13,6 +13,39 @@ keywords:
 
 Everything we ship for the AIRT API, newest first. Pick a date to see exactly what changed, including breaking changes, what you need to do, and links to the affected endpoints.
 
+## September 2026
+
+### Airt — Airt (Updated)
+
+10 new endpoints. Updated from v0.7 to v0.87.
+
+<details><summary>View endpoints (10)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | `/v1/custom-attacks/job/{job_id}/attack/{attack_id}/override` | Override custom attack verdicts |
+| GET | `/v1/error-log/job/{job_id}/download` | Download error logs for a scan |
+| GET | `/v1/report/dynamic/{job_id}/asr` | Get dynamic scan ASR breakdown |
+| POST | `/v1/report/dynamic/{job_id}/stream/{stream_id}/override` | Override stream iteration verdicts |
+| GET | `/v1/report/static/{job_id}/asr` | Get static scan ASR breakdown |
+| POST | `/v1/report/static/{job_id}/attack-multi-turn/{attack_id}/override` | Override multi-turn attack verdicts |
+| POST | `/v1/report/static/{job_id}/attack/{attack_id}/override` | Override attack output verdicts |
+| POST | `/v1/report/{job_id}/regenerate` | Regenerate a job report |
+| GET | `/v1/report/{job_id}/status` | Get report freshness status |
+| PUT | `/v1/scan/{job_id}/runtime-profile` | Set scan runtime profile |
+
+</details>
+
+See [Airt APIs](/prisma-airs-redteam/api/airt/dp-openapi/) for full details.
+
+---
+
+### Airt — Airt (Updated)
+
+Additional endpoint and schema updates. Updated from v0.7 to v0.86.
+
+See [Airt APIs](/prisma-airs-redteam/api/airt/mp-openapi/) for full details.
+
 ## July 2026
 
 ### Prisma AIRS — AI Red Teaming Management API — Adapters (New)

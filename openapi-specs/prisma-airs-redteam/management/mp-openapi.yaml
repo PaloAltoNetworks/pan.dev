@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Prisma AIRS Red Teaming Management API
   description: 'Red Teaming Management API - Configure and manage security groups and rules for AI/ML model scanning. © 2025 Palo Alto Networks, Inc'
-  version: 0.7.67
+  version: 0.86.4
   termsOfService: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
   license:
     name: MIT
@@ -364,9 +364,20 @@ paths:
           anyOf:
           - $ref: '#/components/schemas/TargetStatusFilter'
           - type: 'null'
-          description: Filter by target status or profiling status
+          description: Filter by target status
           title: Status
-        description: Filter by target status or profiling status
+        description: Filter by target status
+      -
+        name: profiling_status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ProfilingStatusFilter'
+          - type: 'null'
+          description: Filter by profiling status
+          title: Profiling Status
+        description: Filter by profiling status
       -
         name: search
         in: query
@@ -1694,6 +1705,22 @@ components:
       - NETWORK_BROKER
       title: ApiEndpointType
       description: API endpoint accessibility type.
+    AudioFormat:
+      type: string
+      enum:
+      - WAV
+      - MP3
+      - PCM16
+      title: AudioFormat
+      description: |
+        Wire format for audio we SEND to a REST audio-chat target.
+
+        Customer-declared on the connection config (which format the target accepts
+        on the wire). ``Attack.audio_format`` reuses this same enum to record the format
+        of the stored corpus audio bytes. WAV/MP3 are the REST audio-chat wire formats;
+        PCM16 is the realtime S2S wire form (headerless PCM16 at the provider's rate) —
+        stored in the corpus now but NOT selectable on REST targets until the realtime
+        path lands (MR9). See ``REST_AUDIO_FORMATS``.
     BaseResponseSchema:
       properties:
         message:
@@ -1716,6 +1743,20 @@ components:
           $ref: '#/components/schemas/BasicAuthLocation'
           description: 'Where credentials are sent: HEADER or PAYLOAD'
           default: HEADER
+        basic_username:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Basic Username
+          description: 'Basic Auth username. Send with `basic_password` instead of encoding `basic_auth_header` yourself.'
+          examples:
+          - svc-redteam
+        basic_password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Basic Password
+          description: Basic Auth password. Masked on read — echo the masked value back unchanged to keep the stored credential.
         basic_auth_header:
           anyOf:
           -
@@ -1724,18 +1765,39 @@ components:
             type: object
           - type: 'null'
           title: Basic Auth Header
-          description: 'Auth header as {name: value} dict (required when location=HEADER)'
+          description: 'Auth header as {name: value} dict. Derived automatically from basic_username/basic_password when those are supplied; send directly only if you are encoding the credentials yourself.'
           examples:
           - Authorization: Basic dXNlcjpwYXNz
       type: object
       title: BasicAuthAuthConfig
-      description: Basic Auth credentials — header or payload location.
+      description: |
+        Basic Auth credentials — header or payload location.
+
+        Credentials may be supplied either as ``basic_username``/``basic_password``
+        (preferred: it is what a UI collects, and it lets the edit form show the account
+        while masking only the secret) or as a pre-encoded ``basic_auth_header``. When
+        the pair is supplied the header is derived from it, so auth handlers keep reading
+        only ``basic_auth_header`` and need no change.
     BasicAuthAuthConfigRedact:
       properties:
         basic_auth_location:
           $ref: '#/components/schemas/BasicAuthLocation'
           description: 'Where credentials are sent: HEADER or PAYLOAD'
           default: HEADER
+        basic_username:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Basic Username
+          description: 'Basic Auth username. Send with `basic_password` instead of encoding `basic_auth_header` yourself.'
+          examples:
+          - svc-redteam
+        basic_password:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Basic Password
+          description: Basic Auth password. Masked on read — echo the masked value back unchanged to keep the stored credential.
         basic_auth_header:
           anyOf:
           -
@@ -1744,7 +1806,7 @@ components:
             type: object
           - type: 'null'
           title: Basic Auth Header
-          description: 'Auth header as {name: value} dict (required when location=HEADER)'
+          description: 'Auth header as {name: value} dict. Derived automatically from basic_username/basic_password when those are supplied; send directly only if you are encoding the credentials yourself.'
           examples:
           - Authorization: Basic dXNlcjpwYXNz
       type: object
@@ -1831,7 +1893,7 @@ components:
       properties:
         file:
           type: string
-          format: binary
+          contentMediaType: application/octet-stream
           title: File
       type: object
       required:
@@ -2954,6 +3016,25 @@ components:
       - model_name
       title: HuggingfaceConnectionRedactParams
       description: Connection parameters specific to huggingface targets
+    LanguageDropdownOptionSchema:
+      properties:
+        code:
+          type: string
+          title: Code
+        name:
+          type: string
+          title: Name
+        country_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Country Code
+      type: object
+      required:
+      - code
+      - name
+      title: LanguageDropdownOptionSchema
+      description: 'Language option for the dropdown, with a country code for the flag icon.'
     LanguageOptionSchema:
       properties:
         code:
@@ -3173,6 +3254,32 @@ components:
       - token_json_uuid
       title: MSCopilotStudioTokenResponseSchema
       description: Response after successful token exchange (POST/PUT /token).
+    MultiTurnClientSessionConfig:
+      properties:
+        type:
+          type: string
+          const: client_session
+          title: Type
+          default: client_session
+      type: object
+      title: MultiTurnClientSessionConfig
+      description: |
+        Configuration for targets where the *client* issues the session id.
+
+        A third protocol, distinct from both of the above. The target keeps the
+        conversation server-side (like stateful) but never returns an id to chain
+        (unlike stateful) -- instead it expects the caller to mint one, send it with
+        every turn, and key its memory on it. n8n's Chat Trigger works exactly this way.
+
+        Such a target fits neither existing mode: ``stateful`` needs a
+        ``response_id_field`` to read back, which is unfillable when nothing is ever
+        returned; ``stateless`` resends the whole transcript, which double-counts
+        against the target's own memory. So we send only the current turn and let the
+        id do the correlating.
+
+        There is deliberately no configuration beyond the discriminator: the id is
+        injected through the ``{SESSION_ID}`` placeholder in ``request_json``, so the
+        body itself already says where it goes.
     MultiTurnStatefulConfig:
       properties:
         type:
@@ -3231,7 +3338,7 @@ components:
 
         Stateless targets require the client to maintain and send conversation history.
         The assistant_role specifies the role name used for assistant messages in the history.
-    NativeConnectionParamsBase-Input:
+    NativeConnectionParamsBase:
       properties:
         target_connection_config:
           anyOf:
@@ -3240,6 +3347,7 @@ components:
           - $ref: '#/components/schemas/DatabricksConnectionParams'
           - $ref: '#/components/schemas/BedrockAccessConnectionParams'
           - $ref: '#/components/schemas/MSCopilotStudioConnectionParams'
+          - $ref: '#/components/schemas/VertexAIConnectionParams'
           - type: 'null'
           title: Target Connection Config
           description: Provider-specific connection config
@@ -3249,51 +3357,11 @@ components:
             oneOf:
             - $ref: '#/components/schemas/MultiTurnStatefulConfig'
             - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            - $ref: '#/components/schemas/MultiTurnClientSessionConfig'
             discriminator:
               propertyName: type
               mapping:
-                stateful: '#/components/schemas/MultiTurnStatefulConfig'
-                stateless: '#/components/schemas/MultiTurnStatelessConfig'
-          - type: 'null'
-          title: Multi Turn Config
-          description: Multi-turn config for stateful or stateless target
-        multi_turn_supported:
-          type: boolean
-          title: Multi Turn Supported
-          description: 'Whether a native target that drives multi-turn internally supports it. Currently consumed only by custom target adapters, which have no multi_turn_config to infer it from; gates the multi-turn validation probe.'
-          default: false
-      type: object
-      title: NativeConnectionParamsBase
-      description: |
-        Base connection parameters for native/SDK-based targets (no HTTP endpoint).
-
-        Used for no-code agent platforms like Microsoft Copilot Studio where
-        interaction is via a provider's client library, not HTTP REST/streaming.
-
-        # TODO: Consider refactoring RestConnectionParamsBase and StreamingConnectionParamsBase
-        # to share a common base with this class (e.g., extract target_connection_config and
-        # multi_turn_config into a shared parent).
-    NativeConnectionParamsBase-Output:
-      properties:
-        target_connection_config:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAIConnectionParams'
-          - $ref: '#/components/schemas/HuggingfaceConnectionParams'
-          - $ref: '#/components/schemas/DatabricksConnectionParams'
-          - $ref: '#/components/schemas/BedrockAccessConnectionParams'
-          - $ref: '#/components/schemas/MSCopilotStudioConnectionParams'
-          - type: 'null'
-          title: Target Connection Config
-          description: Provider-specific connection config
-        multi_turn_config:
-          anyOf:
-          -
-            oneOf:
-            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
-            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
-            discriminator:
-              propertyName: type
-              mapping:
+                client_session: '#/components/schemas/MultiTurnClientSessionConfig'
                 stateful: '#/components/schemas/MultiTurnStatefulConfig'
                 stateless: '#/components/schemas/MultiTurnStatelessConfig'
           - type: 'null'
@@ -3324,6 +3392,7 @@ components:
           - $ref: '#/components/schemas/DatabricksConnectionRedactParams'
           - $ref: '#/components/schemas/BedrockAccessConnectionRedactParams'
           - $ref: '#/components/schemas/MSCopilotStudioConnectionRedactParams'
+          - $ref: '#/components/schemas/VertexAIConnectionRedactParams'
           - type: 'null'
           title: Target Connection Config
           description: Provider-specific connection config (redacted)
@@ -3333,9 +3402,11 @@ components:
             oneOf:
             - $ref: '#/components/schemas/MultiTurnStatefulConfig'
             - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            - $ref: '#/components/schemas/MultiTurnClientSessionConfig'
             discriminator:
               propertyName: type
               mapping:
+                client_session: '#/components/schemas/MultiTurnClientSessionConfig'
                 stateful: '#/components/schemas/MultiTurnStatefulConfig'
                 stateless: '#/components/schemas/MultiTurnStatelessConfig'
           - type: 'null'
@@ -3559,14 +3630,25 @@ components:
     ProfilingStatus:
       type: string
       enum:
-      - INIT
-      - QUEUED
+      - NOT_STARTED
       - IN_PROGRESS
       - COMPLETED
       - FAILED
       - PARTIALLY_COMPLETE
       title: ProfilingStatus
       description: Status of target profiling workflow.
+    ProfilingStatusFilter:
+      type: string
+      enum:
+      - NOT_STARTED
+      - IN_PROGRESS
+      - COMPLETED
+      - FAILED
+      title: ProfilingStatusFilter
+      description: |
+        Profiling values accepted by the list-targets ``profiling_status`` filter.
+
+        Matches the ``target.profiling_status`` column only.
     PromptSetStatsSchema:
       properties:
         total_prompts:
@@ -3710,9 +3792,10 @@ components:
       - STREAMING
       - WEBSOCKET
       - WEBSOCKET_STREAMING
+      - REALTIME
       title: ResponseMode
       description: Response mode for target interactions.
-    RestConnectionParamsBase-Input:
+    RestConnectionParamsBase:
       properties:
         api_endpoint:
           anyOf:
@@ -3770,6 +3853,7 @@ components:
           - $ref: '#/components/schemas/DatabricksConnectionParams'
           - $ref: '#/components/schemas/BedrockAccessConnectionParams'
           - $ref: '#/components/schemas/MSCopilotStudioConnectionParams'
+          - $ref: '#/components/schemas/VertexAIConnectionParams'
           - type: 'null'
           title: Target Connection Config
           description: Target Connection config of type openai/huggingface ..
@@ -3781,15 +3865,25 @@ components:
           description: Generated cURL command ready to use (redacted for security)
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        audio_curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Curl
+          description: 'Generated cURL command for the audio request body, ready to use (redacted for security). Absent when the target has no audio body.'
+          examples:
+          - 'curl "https://api.openai.com/v1/responses" -H "Content-Type: application/json" -H "Authorization: Bearer ***" --data ''{"model":"gpt-4o-audio-preview","input":[{"role":"user","content":[{"type":"input_audio","audio":"{AUDIO}"}]}]}'''
         multi_turn_config:
           anyOf:
           -
             oneOf:
             - $ref: '#/components/schemas/MultiTurnStatefulConfig'
             - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            - $ref: '#/components/schemas/MultiTurnClientSessionConfig'
             discriminator:
               propertyName: type
               mapping:
+                client_session: '#/components/schemas/MultiTurnClientSessionConfig'
                 stateful: '#/components/schemas/MultiTurnStatefulConfig'
                 stateless: '#/components/schemas/MultiTurnStatelessConfig'
           - type: 'null'
@@ -3797,94 +3891,24 @@ components:
           description: Multi turn config for stateful or stateless target
           examples:
           - 'assistant_role: assistant'
-      type: object
-      title: RestConnectionParamsBase
-      description: Base connection parameters without generated fields.
-    RestConnectionParamsBase-Output:
-      properties:
-        api_endpoint:
+        audio_request_json:
           anyOf:
-          - type: string
-          - type: 'null'
-          title: Api Endpoint
-          description: API endpoint URL
-          examples:
-          - https://api.openai.com/v1/responses
-        request_headers:
-          additionalProperties: true
-          type: object
-          title: Request Headers
-          description: Request headers
-          default: {}
-          examples:
           -
-            Authorization: Bearer sk-xxx
-            Content-Type: application/json
-        request_json:
-          additionalProperties: true
-          type: object
-          title: Request Json
-          description: Request JSON
-          default: {}
+            additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audio Request Json
+          description: 'Request JSON for audio attacks. Carries {AUDIO} and deliberately NO {INPUT}: an audio clip REPLACES the prompt, it does not accompany one.'
           examples:
           -
             input:
             -
               content:
               -
-                text: '{INPUT}'
-                type: input_text
+                audio: '{AUDIO}'
+                type: input_audio
               role: user
-            model: gpt-4.1-nano
-        response_json:
-          additionalProperties: true
-          type: object
-          title: Response Json
-          description: Response JSON
-          default: {}
-          examples:
-          - content: '{RESPONSE}'
-        response_key:
-          type: string
-          title: Response Key
-          description: Response key
-          default:
-          examples:
-          - content
-        target_connection_config:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAIConnectionParams'
-          - $ref: '#/components/schemas/HuggingfaceConnectionParams'
-          - $ref: '#/components/schemas/DatabricksConnectionParams'
-          - $ref: '#/components/schemas/BedrockAccessConnectionParams'
-          - $ref: '#/components/schemas/MSCopilotStudioConnectionParams'
-          - type: 'null'
-          title: Target Connection Config
-          description: Target Connection config of type openai/huggingface ..
-        curl:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Curl
-          description: Generated cURL command ready to use (redacted for security)
-          examples:
-          - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
-        multi_turn_config:
-          anyOf:
-          -
-            oneOf:
-            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
-            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
-            discriminator:
-              propertyName: type
-              mapping:
-                stateful: '#/components/schemas/MultiTurnStatefulConfig'
-                stateless: '#/components/schemas/MultiTurnStatelessConfig'
-          - type: 'null'
-          title: Multi Turn Config
-          description: Multi turn config for stateful or stateless target
-          examples:
-          - 'assistant_role: assistant'
+            model: gpt-4o-audio-preview
       type: object
       title: RestConnectionParamsBase
       description: Base connection parameters without generated fields.
@@ -3946,6 +3970,7 @@ components:
           - $ref: '#/components/schemas/DatabricksConnectionRedactParams'
           - $ref: '#/components/schemas/BedrockAccessConnectionRedactParams'
           - $ref: '#/components/schemas/MSCopilotStudioConnectionRedactParams'
+          - $ref: '#/components/schemas/VertexAIConnectionRedactParams'
           - type: 'null'
           title: Target Connection Config
           description: Target Connection config of type openai/huggingface ..
@@ -3957,15 +3982,25 @@ components:
           description: Generated cURL command ready to use (redacted for security)
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        audio_curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Curl
+          description: 'Generated cURL command for the audio request body, ready to use (redacted for security). Absent when the target has no audio body.'
+          examples:
+          - 'curl "https://api.openai.com/v1/responses" -H "Content-Type: application/json" -H "Authorization: Bearer ***" --data ''{"model":"gpt-4o-audio-preview","input":[{"role":"user","content":[{"type":"input_audio","audio":"{AUDIO}"}]}]}'''
         multi_turn_config:
           anyOf:
           -
             oneOf:
             - $ref: '#/components/schemas/MultiTurnStatefulConfig'
             - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            - $ref: '#/components/schemas/MultiTurnClientSessionConfig'
             discriminator:
               propertyName: type
               mapping:
+                client_session: '#/components/schemas/MultiTurnClientSessionConfig'
                 stateful: '#/components/schemas/MultiTurnStatefulConfig'
                 stateless: '#/components/schemas/MultiTurnStatelessConfig'
           - type: 'null'
@@ -3973,6 +4008,24 @@ components:
           description: Multi turn config for stateful or stateless target
           examples:
           - 'assistant_role: assistant'
+        audio_request_json:
+          anyOf:
+          -
+            additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audio Request Json
+          description: 'Request JSON for audio attacks. Carries {AUDIO} and deliberately NO {INPUT}: an audio clip REPLACES the prompt, it does not accompany one.'
+          examples:
+          -
+            input:
+            -
+              content:
+              -
+                audio: '{AUDIO}'
+                type: input_audio
+              role: user
+            model: gpt-4o-audio-preview
       type: object
       title: RestConnectionParamsRedactBase
     StartProfilingResponseSchema:
@@ -3986,7 +4039,7 @@ components:
       - message
       title: StartProfilingResponseSchema
       description: Response schema for start profiling action.
-    StreamingConnectionParamsBase-Input:
+    StreamingConnectionParamsBase:
       properties:
         api_endpoint:
           anyOf:
@@ -4044,6 +4097,7 @@ components:
           - $ref: '#/components/schemas/DatabricksConnectionParams'
           - $ref: '#/components/schemas/BedrockAccessConnectionParams'
           - $ref: '#/components/schemas/MSCopilotStudioConnectionParams'
+          - $ref: '#/components/schemas/VertexAIConnectionParams'
           - type: 'null'
           title: Target Connection Config
           description: Target Connection config of type openai/huggingface ..
@@ -4055,15 +4109,25 @@ components:
           description: Generated cURL command ready to use (redacted for security)
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        audio_curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Curl
+          description: 'Generated cURL command for the audio request body, ready to use (redacted for security). Absent when the target has no audio body.'
+          examples:
+          - 'curl "https://api.openai.com/v1/responses" -H "Content-Type: application/json" -H "Authorization: Bearer ***" --data ''{"model":"gpt-4o-audio-preview","input":[{"role":"user","content":[{"type":"input_audio","audio":"{AUDIO}"}]}]}'''
         multi_turn_config:
           anyOf:
           -
             oneOf:
             - $ref: '#/components/schemas/MultiTurnStatefulConfig'
             - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            - $ref: '#/components/schemas/MultiTurnClientSessionConfig'
             discriminator:
               propertyName: type
               mapping:
+                client_session: '#/components/schemas/MultiTurnClientSessionConfig'
                 stateful: '#/components/schemas/MultiTurnStatefulConfig'
                 stateless: '#/components/schemas/MultiTurnStatelessConfig'
           - type: 'null'
@@ -4071,103 +4135,24 @@ components:
           description: Multi turn config for stateful or stateless target
           examples:
           - 'assistant_role: assistant'
-        response_stop_key:
-          type: string
-          title: Response Stop Key
-        response_stop_value:
-          type: string
-          title: Response Stop Value
-      type: object
-      required:
-      - response_stop_key
-      - response_stop_value
-      title: StreamingConnectionParamsBase
-      description: Base streaming connection parameters without generated fields.
-    StreamingConnectionParamsBase-Output:
-      properties:
-        api_endpoint:
+        audio_request_json:
           anyOf:
-          - type: string
-          - type: 'null'
-          title: Api Endpoint
-          description: API endpoint URL
-          examples:
-          - https://api.openai.com/v1/responses
-        request_headers:
-          additionalProperties: true
-          type: object
-          title: Request Headers
-          description: Request headers
-          default: {}
-          examples:
           -
-            Authorization: Bearer sk-xxx
-            Content-Type: application/json
-        request_json:
-          additionalProperties: true
-          type: object
-          title: Request Json
-          description: Request JSON
-          default: {}
+            additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audio Request Json
+          description: 'Request JSON for audio attacks. Carries {AUDIO} and deliberately NO {INPUT}: an audio clip REPLACES the prompt, it does not accompany one.'
           examples:
           -
             input:
             -
               content:
               -
-                text: '{INPUT}'
-                type: input_text
+                audio: '{AUDIO}'
+                type: input_audio
               role: user
-            model: gpt-4.1-nano
-        response_json:
-          additionalProperties: true
-          type: object
-          title: Response Json
-          description: Response JSON
-          default: {}
-          examples:
-          - content: '{RESPONSE}'
-        response_key:
-          type: string
-          title: Response Key
-          description: Response key
-          default:
-          examples:
-          - content
-        target_connection_config:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAIConnectionParams'
-          - $ref: '#/components/schemas/HuggingfaceConnectionParams'
-          - $ref: '#/components/schemas/DatabricksConnectionParams'
-          - $ref: '#/components/schemas/BedrockAccessConnectionParams'
-          - $ref: '#/components/schemas/MSCopilotStudioConnectionParams'
-          - type: 'null'
-          title: Target Connection Config
-          description: Target Connection config of type openai/huggingface ..
-        curl:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Curl
-          description: Generated cURL command ready to use (redacted for security)
-          examples:
-          - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
-        multi_turn_config:
-          anyOf:
-          -
-            oneOf:
-            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
-            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
-            discriminator:
-              propertyName: type
-              mapping:
-                stateful: '#/components/schemas/MultiTurnStatefulConfig'
-                stateless: '#/components/schemas/MultiTurnStatelessConfig'
-          - type: 'null'
-          title: Multi Turn Config
-          description: Multi turn config for stateful or stateless target
-          examples:
-          - 'assistant_role: assistant'
+            model: gpt-4o-audio-preview
         response_stop_key:
           type: string
           title: Response Stop Key
@@ -4238,6 +4223,7 @@ components:
           - $ref: '#/components/schemas/DatabricksConnectionRedactParams'
           - $ref: '#/components/schemas/BedrockAccessConnectionRedactParams'
           - $ref: '#/components/schemas/MSCopilotStudioConnectionRedactParams'
+          - $ref: '#/components/schemas/VertexAIConnectionRedactParams'
           - type: 'null'
           title: Target Connection Config
           description: Target Connection config of type openai/huggingface ..
@@ -4249,15 +4235,25 @@ components:
           description: Generated cURL command ready to use (redacted for security)
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        audio_curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Curl
+          description: 'Generated cURL command for the audio request body, ready to use (redacted for security). Absent when the target has no audio body.'
+          examples:
+          - 'curl "https://api.openai.com/v1/responses" -H "Content-Type: application/json" -H "Authorization: Bearer ***" --data ''{"model":"gpt-4o-audio-preview","input":[{"role":"user","content":[{"type":"input_audio","audio":"{AUDIO}"}]}]}'''
         multi_turn_config:
           anyOf:
           -
             oneOf:
             - $ref: '#/components/schemas/MultiTurnStatefulConfig'
             - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            - $ref: '#/components/schemas/MultiTurnClientSessionConfig'
             discriminator:
               propertyName: type
               mapping:
+                client_session: '#/components/schemas/MultiTurnClientSessionConfig'
                 stateful: '#/components/schemas/MultiTurnStatefulConfig'
                 stateless: '#/components/schemas/MultiTurnStatelessConfig'
           - type: 'null'
@@ -4265,6 +4261,24 @@ components:
           description: Multi turn config for stateful or stateless target
           examples:
           - 'assistant_role: assistant'
+        audio_request_json:
+          anyOf:
+          -
+            additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audio Request Json
+          description: 'Request JSON for audio attacks. Carries {AUDIO} and deliberately NO {INPUT}: an audio clip REPLACES the prompt, it does not accompany one.'
+          examples:
+          -
+            input:
+            -
+              content:
+              -
+                audio: '{AUDIO}'
+                type: input_audio
+              role: user
+            model: gpt-4o-audio-preview
         response_stop_key:
           type: string
           title: Response Stop Key
@@ -4468,7 +4482,9 @@ components:
       - WEBSOCKET
       - WEBSOCKET_STREAMING
       - MS_COPILOT_STUDIO
+      - VERTEX_AI
       - CUSTOM_TARGET_ADAPTER
+      - N8N
       title: TargetConnectionType
       description: Connection type/provider for the target.
     TargetContextUpdateSchema:
@@ -4495,10 +4511,10 @@ components:
         connection_params:
           anyOf:
           - oneOf:
-              - $ref: '#/components/schemas/NativeConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/WebSocketConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
+              - $ref: '#/components/schemas/NativeConnectionParamsBase'
+              - $ref: '#/components/schemas/WebSocketConnectionParamsBase'
+              - $ref: '#/components/schemas/StreamingConnectionParamsBase'
+              - $ref: '#/components/schemas/RestConnectionParamsBase'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
@@ -4796,7 +4812,7 @@ components:
           anyOf:
           - $ref: '#/components/schemas/ProfilingStatus'
           - type: 'null'
-          description: Status of the profiling workflow
+          description: Profiling status
         canonical_id:
           anyOf:
           - type: string
@@ -4859,6 +4875,36 @@ components:
           examples:
           - 'HTTP 400: target rejected file payload'
           - File delivery not configured
+        audio_probe_passed:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Audio Probe Passed
+          description: 'Whether the target accepted a sample audio clip at validation time (Probe 1 of the audio lane). None means the probe did not run or could not reach a verdict — read it together with audio_probe_error, which is set on every such path; distinct from False, which means the target rejected the clip.'
+        audio_probe_error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Probe Error
+          description: Concise error message if the audio probe failed or was skipped
+          examples:
+          - 'HTTP 400: target rejected audio payload'
+          - 'Target has no {AUDIO} placeholder in its request template'
+          - Probe audio clip unavailable
+        audio_multi_turn:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Audio Multi Turn
+          description: 'Whether the target held an AUDIO conversation across turns (Probe 2 of the audio lane). None means it was not probed — Probe 1 reached no verdict, no multi-turn config was supplied, or the transport implements no audio multi-turn.'
+        audio_multi_turn_error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Multi Turn Error Message
+          description: Concise error message if the audio multi-turn probe failed
+          examples:
+          - 'HTTP 400: target rejected audio conversation history'
         rate_limit:
           anyOf:
           - type: integer
@@ -4947,26 +4993,41 @@ components:
           default: 110
           examples:
           - 110
+        supports_audio:
+          type: boolean
+          title: Supports Audio
+          description: 'Whether the target accepts audio attacks (customer-declared on the connection config). When False, scans against this target skip audio attacks and run text/file-only.'
+          default: false
+        audio_format:
+          anyOf:
+          - $ref: '#/components/schemas/AudioFormat'
+          - type: 'null'
+          description: Wire format (WAV/MP3/PCM16) the target accepts; selects which per-format corpus variant mint attaches. None when supports_audio is False.
+        supports_text:
+          type: boolean
+          title: Supports Text
+          description: 'Whether the target accepts text attacks. Defaults True (text is the baseline modality). When False, scans skip text/{INPUT} attacks and run file/audio-only — enabling audio-only or file-only targets.'
+          default: true
       type: object
       title: TargetMetadata
       description: |
         Metadata stored in the database for targets (user-provided + computed fields).
-
-        Inherits the multimodal-capability fields from ``MultiModalResult`` and the
-        multi-turn fields from ``MultiTurnResult``. The base order
-        ``(MultiModalResult, MultiTurnResult)`` keeps the serialized field order
-        ``multi_turn, multi_turn_error_message, supports_multimodal_files,
-        supports_multimodal_files_error_message, rate_limit, …`` identical to before this
-        refactor — which preserves the Restate journal bytes for pre-V4 in-flight scans.
+        
+        One base per probe lane — ``MultiTurnResult``, ``MultiModalResult``,
+        ``AudioProbeResult`` — so no lane's verdict fields are re-declared here. The audio
+        base is exactly what ``probe_audio_support`` returns, so the copy from lane verdict
+        to stored metadata cannot drift. Base order fixes the serialized field order, which
+        the Restate journal is sensitive to; ``AudioProbeResult`` records why inheriting it
+        is safe for journals predating audio.
     TargetProbeRequest:
       properties:
         connection_params:
           anyOf:
           - oneOf:
-              - $ref: '#/components/schemas/NativeConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/WebSocketConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
+              - $ref: '#/components/schemas/NativeConnectionParamsBase'
+              - $ref: '#/components/schemas/WebSocketConnectionParamsBase'
+              - $ref: '#/components/schemas/StreamingConnectionParamsBase'
+              - $ref: '#/components/schemas/RestConnectionParamsBase'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
@@ -5381,7 +5442,7 @@ components:
           anyOf:
           - $ref: '#/components/schemas/ProfilingStatus'
           - type: 'null'
-          description: Status of the profiling workflow
+          description: Profiling status; null unless the target is ACTIVE
         canonical_id:
           anyOf:
           - type: string
@@ -5576,7 +5637,7 @@ components:
           anyOf:
           - $ref: '#/components/schemas/ProfilingStatus'
           - type: 'null'
-          description: Status of the profiling workflow
+          description: Profiling status; null unless the target is ACTIVE
         canonical_id:
           anyOf:
           - type: string
@@ -5624,10 +5685,10 @@ components:
         connection_params:
           anyOf:
           - oneOf:
-              - $ref: '#/components/schemas/NativeConnectionParamsBase-Output'
-              - $ref: '#/components/schemas/WebSocketConnectionParamsBase-Output'
-              - $ref: '#/components/schemas/StreamingConnectionParamsBase-Output'
-              - $ref: '#/components/schemas/RestConnectionParamsBase-Output'
+              - $ref: '#/components/schemas/NativeConnectionParamsBase'
+              - $ref: '#/components/schemas/WebSocketConnectionParamsBase'
+              - $ref: '#/components/schemas/StreamingConnectionParamsBase'
+              - $ref: '#/components/schemas/RestConnectionParamsBase'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
@@ -5807,7 +5868,7 @@ components:
           anyOf:
           - $ref: '#/components/schemas/ProfilingStatus'
           - type: 'null'
-          description: Status of the profiling workflow
+          description: Profiling status; null unless the target is ACTIVE
         canonical_id:
           anyOf:
           - type: string
@@ -5864,7 +5925,7 @@ components:
 
         Inherits from TargetDetailSchema which includes:
         - target_background: industry, use_case, competitors
-        - profiling_status: INIT, QUEUED, IN_PROGRESS, COMPLETED, FAILED
+        - profiling_status: NOT_STARTED, IN_PROGRESS, COMPLETED, FAILED
         - additional_context: merged user + profiler values with source tracking
     TargetStatus:
       type: string
@@ -5883,21 +5944,13 @@ components:
       enum:
       - DRAFT
       - ACTIVE
-      - FAILED
-      - QUEUED
-      - IN_PROGRESS
-      - COMPLETED
-      - PARTIALLY_COMPLETE
       title: TargetStatusFilter
       description: |
-        Status values accepted by the list-targets ``status`` filter.
+        Lifecycle values accepted by the list-targets ``status`` filter.
 
-        Unions the target status and profiling status values so a single ``status``
-        filter can match on either. A supplied value matches a target whose target
-        status or profiling status equals it.
-
-        Note (internal): keep members in sync with :class:`TargetStatus` and
-        :class:`ProfilingStatus`. ``FAILED`` is shared by both and defined once.
+        Matches the ``target.status`` column only. Members expand to column values
+        via ``TARGET_STATUS_FILTER_VALUES``; ``DRAFT`` covers ``VALIDATED`` too,
+        since a validated-but-unconfigured target reads as a draft to the user.
     TargetType:
       type: string
       enum:
@@ -5911,10 +5964,10 @@ components:
         connection_params:
           anyOf:
           - oneOf:
-              - $ref: '#/components/schemas/NativeConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/WebSocketConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/StreamingConnectionParamsBase-Input'
-              - $ref: '#/components/schemas/RestConnectionParamsBase-Input'
+              - $ref: '#/components/schemas/NativeConnectionParamsBase'
+              - $ref: '#/components/schemas/WebSocketConnectionParamsBase'
+              - $ref: '#/components/schemas/StreamingConnectionParamsBase'
+              - $ref: '#/components/schemas/RestConnectionParamsBase'
           - type: 'null'
           title: Connection Params
           description: API connection parameters (sensitive data masked for security)
@@ -6082,7 +6135,7 @@ components:
           title: Supported Job Types
         languages:
           items:
-            $ref: '#/components/schemas/LanguageOptionSchema'
+            $ref: '#/components/schemas/LanguageDropdownOptionSchema'
           type: array
           title: Languages
       type: object
@@ -6107,109 +6160,78 @@ components:
         type:
           type: string
           title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
       - loc
       - msg
       - type
       title: ValidationError
-    WebSocketConnectionParamsBase-Input:
+    VertexAIConnectionParams:
       properties:
-        api_endpoint:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Api Endpoint
-          description: API endpoint URL
-          examples:
-          - https://api.openai.com/v1/responses
-        request_headers:
-          additionalProperties: true
-          type: object
-          title: Request Headers
-          description: Request headers
-          default: {}
-          examples:
-          -
-            Authorization: Bearer sk-xxx
-            Content-Type: application/json
-        request_json:
-          additionalProperties: true
-          type: object
-          title: Request Json
-          description: Request JSON
-          default: {}
-          examples:
-          -
-            input:
-            -
-              content:
-              -
-                text: '{INPUT}'
-                type: input_text
-              role: user
-            model: gpt-4.1-nano
-        response_json:
-          additionalProperties: true
-          type: object
-          title: Response Json
-          description: Response JSON
-          default: {}
-          examples:
-          - content: '{RESPONSE}'
-        response_key:
+        project_id:
           type: string
-          title: Response Key
-          description: Response key
-          default:
-          examples:
-          - content
-        target_connection_config:
-          anyOf:
-          - $ref: '#/components/schemas/OpenAIConnectionParams'
-          - $ref: '#/components/schemas/HuggingfaceConnectionParams'
-          - $ref: '#/components/schemas/DatabricksConnectionParams'
-          - $ref: '#/components/schemas/BedrockAccessConnectionParams'
-          - $ref: '#/components/schemas/MSCopilotStudioConnectionParams'
-          - type: 'null'
-          title: Target Connection Config
-          description: Target Connection config of type openai/huggingface ..
-        curl:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Curl
-          description: Generated cURL command ready to use (redacted for security)
-          examples:
-          - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
-        multi_turn_config:
-          anyOf:
-          -
-            oneOf:
-            - $ref: '#/components/schemas/MultiTurnStatefulConfig'
-            - $ref: '#/components/schemas/MultiTurnStatelessConfig'
-            discriminator:
-              propertyName: type
-              mapping:
-                stateful: '#/components/schemas/MultiTurnStatefulConfig'
-                stateless: '#/components/schemas/MultiTurnStatelessConfig'
-          - type: 'null'
-          title: Multi Turn Config
-          description: Multi turn config for stateful or stateless target
-          examples:
-          - 'assistant_role: assistant'
-        ws_response_timeout:
-          type: number
-          title: Ws Response Timeout
-          description: Timeout in seconds for waiting for a WebSocket response message
-          default: 110.0
-          examples:
-          - 60.0
-          - 110.0
+          pattern: '^[a-z0-9][a-z0-9-]{0,62}$'
+          title: Project Id
+          description: Customer's GCP project ID or project number
+        location:
+          type: string
+          pattern: '^[a-z0-9-]+$'
+          title: Location
+          description: GCP region (e.g. us-central1) or 'global'
+        engine_id:
+          type: string
+          pattern: '^[0-9]+$'
+          title: Engine Id
+          description: Reasoning Engine / Agent Engine ID
+        customer_sa_email:
+          type: string
+          title: Customer Sa Email
+          description: Customer's service account email for impersonation
       type: object
-      title: WebSocketConnectionParamsBase
-      description: Connection parameters for WebSocket targets.
-    WebSocketConnectionParamsBase-Output:
+      required:
+      - project_id
+      - location
+      - engine_id
+      - customer_sa_email
+      title: VertexAIConnectionParams
+      description: Google Vertex AI Agent Engine connection parameters.
+    VertexAIConnectionRedactParams:
+      properties:
+        project_id:
+          type: string
+          pattern: '^[a-z0-9][a-z0-9-]{0,62}$'
+          title: Project Id
+          description: Customer's GCP project ID or project number
+        location:
+          type: string
+          pattern: '^[a-z0-9-]+$'
+          title: Location
+          description: GCP region (e.g. us-central1) or 'global'
+        engine_id:
+          type: string
+          pattern: '^[0-9]+$'
+          title: Engine Id
+          description: Reasoning Engine / Agent Engine ID
+        customer_sa_email:
+          type: string
+          format: password
+          title: Customer Sa Email
+          description: Customer's service account email (masked)
+          writeOnly: true
+      type: object
+      required:
+      - project_id
+      - location
+      - engine_id
+      - customer_sa_email
+      title: VertexAIConnectionRedactParams
+      description: Redacted version — SA email masked on GET/edit.
+    WebSocketConnectionParamsBase:
       properties:
         api_endpoint:
           anyOf:
@@ -6267,6 +6289,7 @@ components:
           - $ref: '#/components/schemas/DatabricksConnectionParams'
           - $ref: '#/components/schemas/BedrockAccessConnectionParams'
           - $ref: '#/components/schemas/MSCopilotStudioConnectionParams'
+          - $ref: '#/components/schemas/VertexAIConnectionParams'
           - type: 'null'
           title: Target Connection Config
           description: Target Connection config of type openai/huggingface ..
@@ -6278,15 +6301,25 @@ components:
           description: Generated cURL command ready to use (redacted for security)
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        audio_curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Curl
+          description: 'Generated cURL command for the audio request body, ready to use (redacted for security). Absent when the target has no audio body.'
+          examples:
+          - 'curl "https://api.openai.com/v1/responses" -H "Content-Type: application/json" -H "Authorization: Bearer ***" --data ''{"model":"gpt-4o-audio-preview","input":[{"role":"user","content":[{"type":"input_audio","audio":"{AUDIO}"}]}]}'''
         multi_turn_config:
           anyOf:
           -
             oneOf:
             - $ref: '#/components/schemas/MultiTurnStatefulConfig'
             - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            - $ref: '#/components/schemas/MultiTurnClientSessionConfig'
             discriminator:
               propertyName: type
               mapping:
+                client_session: '#/components/schemas/MultiTurnClientSessionConfig'
                 stateful: '#/components/schemas/MultiTurnStatefulConfig'
                 stateless: '#/components/schemas/MultiTurnStatelessConfig'
           - type: 'null'
@@ -6294,6 +6327,24 @@ components:
           description: Multi turn config for stateful or stateless target
           examples:
           - 'assistant_role: assistant'
+        audio_request_json:
+          anyOf:
+          -
+            additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audio Request Json
+          description: 'Request JSON for audio attacks. Carries {AUDIO} and deliberately NO {INPUT}: an audio clip REPLACES the prompt, it does not accompany one.'
+          examples:
+          -
+            input:
+            -
+              content:
+              -
+                audio: '{AUDIO}'
+                type: input_audio
+              role: user
+            model: gpt-4o-audio-preview
         ws_response_timeout:
           type: number
           title: Ws Response Timeout
@@ -6363,6 +6414,7 @@ components:
           - $ref: '#/components/schemas/DatabricksConnectionRedactParams'
           - $ref: '#/components/schemas/BedrockAccessConnectionRedactParams'
           - $ref: '#/components/schemas/MSCopilotStudioConnectionRedactParams'
+          - $ref: '#/components/schemas/VertexAIConnectionRedactParams'
           - type: 'null'
           title: Target Connection Config
           description: Target Connection config of type openai/huggingface ..
@@ -6374,15 +6426,25 @@ components:
           description: Generated cURL command ready to use (redacted for security)
           examples:
           - 'curl "https://api.openai.com/v1/chat/completions" -H "Content-Type: application/json" -H "Authorization: Bearer ***" -d ''{"model":"gpt-4","messages":[{"role":"user","content":"{INPUT}"}]}'''
+        audio_curl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Curl
+          description: 'Generated cURL command for the audio request body, ready to use (redacted for security). Absent when the target has no audio body.'
+          examples:
+          - 'curl "https://api.openai.com/v1/responses" -H "Content-Type: application/json" -H "Authorization: Bearer ***" --data ''{"model":"gpt-4o-audio-preview","input":[{"role":"user","content":[{"type":"input_audio","audio":"{AUDIO}"}]}]}'''
         multi_turn_config:
           anyOf:
           -
             oneOf:
             - $ref: '#/components/schemas/MultiTurnStatefulConfig'
             - $ref: '#/components/schemas/MultiTurnStatelessConfig'
+            - $ref: '#/components/schemas/MultiTurnClientSessionConfig'
             discriminator:
               propertyName: type
               mapping:
+                client_session: '#/components/schemas/MultiTurnClientSessionConfig'
                 stateful: '#/components/schemas/MultiTurnStatefulConfig'
                 stateless: '#/components/schemas/MultiTurnStatelessConfig'
           - type: 'null'
@@ -6390,6 +6452,24 @@ components:
           description: Multi turn config for stateful or stateless target
           examples:
           - 'assistant_role: assistant'
+        audio_request_json:
+          anyOf:
+          -
+            additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Audio Request Json
+          description: 'Request JSON for audio attacks. Carries {AUDIO} and deliberately NO {INPUT}: an audio clip REPLACES the prompt, it does not accompany one.'
+          examples:
+          -
+            input:
+            -
+              content:
+              -
+                audio: '{AUDIO}'
+                type: input_audio
+              role: user
+            model: gpt-4o-audio-preview
         ws_response_timeout:
           type: number
           title: Ws Response Timeout

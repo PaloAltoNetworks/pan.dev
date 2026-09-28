@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Prisma AIRS Red Teaming Dataplane API
   description: 'Red Teaming Data Plane API - Data processing and scanning services for AI/ML model security. © 2025 Palo Alto Networks, Inc'
-  version: 0.7.75
+  version: 0.87.0
   termsOfService: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
   license:
     name: MIT
@@ -216,6 +216,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /v1/scan/{job_id}/runtime-profile:
+    put:
+      tags:
+      - Scan
+      summary: Set scan runtime profile
+      description: |
+        Record the AIRS runtime profile created from this scan's findings.
+
+        Naturally idempotent: the write sets a field to a value, so a retry lands
+        the same state and no retry hint is needed — same rationale as the
+        job-scoped override routes on ReportRouter.
+
+        Read back via GET /v1/scan/{job_id}; there is deliberately no dedicated
+        GET, because the id lives in job_metadata which that endpoint returns.
+      operationId: set_runtime_profile_v1_scan__job_id__runtime_profile_put
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuntimeProfileUpdateRequestSchema'
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /v1/categories:
     get:
       tags:
@@ -396,7 +439,7 @@ paths:
         required: false
         schema:
           anyOf:
-          - $ref: '#/components/schemas/AttackModality'
+          - $ref: '#/components/schemas/Modality'
           - type: 'null'
           description: 'Filter by attack modality: FILE (document attacks) or TEXT (text-only)'
           title: Attack Modality
@@ -509,6 +552,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /v1/report/static/{job_id}/asr:
+    get:
+      tags:
+      - Report
+      summary: Get static scan ASR breakdown
+      description: |
+        Category and subcategory ASR for a static scan.
+
+        Same response schema as the dynamic variant, so the runtime-profile
+        creation UI renders one component for both scan kinds.
+
+        Gated by the same partial-report lock as every other static report route:
+        an unpaid partial report must not leak its numbers through a side door.
+      operationId: get_static_asr_breakdown_v1_report_static__job_id__asr_get
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsrResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /v1/report/static/{job_id}/remediation:
     get:
       tags:
@@ -596,6 +675,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /v1/report/dynamic/{job_id}/asr:
+    get:
+      tags:
+      - Report
+      summary: Get dynamic scan ASR breakdown
+      description: |
+        Goal-category ASR for a dynamic scan.
+
+        Same response schema as the static variant. No partial-report gate here,
+        matching the sibling dynamic routes, which do not carry one.
+      operationId: get_dynamic_asr_breakdown_v1_report_dynamic__job_id__asr_get
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsrResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /v1/report/dynamic/{job_id}/remediation:
     get:
       tags:
@@ -618,7 +730,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RemediationResponseSchema'
+                $ref: '#/components/schemas/DynamicRemediationResponseSchema'
         422:
           description: Validation Error
           content:
@@ -802,7 +914,7 @@ paths:
       tags:
       - Report
       summary: Download report
-      description: Download report files for a job.
+      description: 'Returns a short-lived signed URL for a job''s report archive. Navigate to `download_url` to fetch the file directly from storage; the response body is JSON, not the archive itself.'
       operationId: download_report_v1_report__job_id__download_get
       parameters:
       -
@@ -826,7 +938,8 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/ReportDownloadSchema'
         422:
           description: Validation Error
           content:
@@ -855,6 +968,69 @@ paths:
           content:
             application/json:
               schema: {}
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/report/{job_id}/regenerate:
+    post:
+      tags:
+      - Report
+      summary: Regenerate a job report
+      description: |
+        Enqueue a report regeneration for a finished scan.
+
+        Returns 202 with the enqueued background job. Naturally idempotent via the
+        service's in-flight dedup: a second call while one is running returns 409
+        rather than spawning a duplicate workflow, so no retry hint is needed.
+      operationId: regenerate_report_v1_report__job_id__regenerate_post
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      responses:
+        202:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegenerateResponse'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/report/{job_id}/status:
+    get:
+      tags:
+      - Report
+      summary: Get report freshness status
+      description: Report freshness for the edit/regenerate UI (ACTIVE/STALE/GENERATING/FAILED).
+      operationId: get_report_status_v1_report__job_id__status_get
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportStatusResponse'
         422:
           description: Validation Error
           content:
@@ -892,6 +1068,145 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AttackMultiTurnDetailResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/report/static/{job_id}/attack/{attack_id}/override:
+    post:
+      tags:
+      - Report
+      summary: Override attack output verdicts
+      description: |
+        Set human verdict overrides on a static attack's outputs, then re-roll
+        the attack-level verdict. Naturally idempotent: the write sets each leaf to
+        a value, so a retry lands the same state.
+      operationId: threat_override_static_attack_v1_report_static__job_id__attack__attack_id__override_post
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      -
+        name: attack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Attack Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThreatOverrideRequest'
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatOverrideResponse'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/report/static/{job_id}/attack-multi-turn/{attack_id}/override:
+    post:
+      tags:
+      - Report
+      summary: Override multi-turn attack verdicts
+      description: |
+        Set human verdict overrides on a multi-turn attack's turn rows, then
+        re-roll the attack-level verdict.
+      operationId: threat_override_static_multi_turn_v1_report_static__job_id__attack_multi_turn__attack_id__override_post
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      -
+        name: attack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Attack Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThreatOverrideRequest'
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatOverrideResponse'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/report/dynamic/{job_id}/stream/{stream_id}/override:
+    post:
+      tags:
+      - Report
+      summary: Override stream iteration verdicts
+      description: |
+        Set human verdict overrides on a stream's iterations, then re-roll the
+        stream-level and goal-level verdicts. job_id is in the path for parity with the
+        static/custom override routes, and it binds the write: the ownership check
+        requires every iteration to belong to both this stream and this job, so a
+        mismatched pair is rejected rather than silently editing another job.
+      operationId: threat_override_dynamic_stream_v1_report_dynamic__job_id__stream__stream_id__override_post
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      -
+        name: stream_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Stream Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThreatOverrideRequest'
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatOverrideResponse'
         422:
           description: Validation Error
           content:
@@ -1301,6 +1616,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /v1/custom-attacks/job/{job_id}/attack/{attack_id}/override:
+    post:
+      tags:
+      - CustomAttack
+      summary: Override custom attack verdicts
+      description: |
+        Set human verdict overrides on a custom attack's outputs, then re-roll
+        the attack-level verdict. Naturally idempotent: the write sets each leaf to
+        a value, so a retry lands the same state.
+      operationId: threat_override_custom_attack_v1_custom_attacks_job__job_id__attack__attack_id__override_post
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      -
+        name: attack_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Attack Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThreatOverrideRequest'
+      responses:
+        200:
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatOverrideResponse'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /v1/error-log/job/{job_id}:
     get:
       tags:
@@ -1325,10 +1686,10 @@ paths:
           type: integer
           maximum: 100
           minimum: 1
-          description: Number of attacks to return (1-100)
-          default: 5
+          description: Number of error logs to return (1-100)
+          default: 100
           title: Limit
-        description: Number of attacks to return (1-100)
+        description: Number of error logs to return (1-100)
       -
         name: skip
         in: query
@@ -1336,10 +1697,10 @@ paths:
         schema:
           type: integer
           minimum: 0
-          description: Number of attacks to skip for pagination
+          description: Number of error logs to skip for pagination
           default: 0
           title: Skip
-        description: Number of attacks to skip for pagination
+        description: Number of error logs to skip for pagination
       responses:
         200:
           description: Successful Response
@@ -1347,6 +1708,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorLogListResponseSchema'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/error-log/job/{job_id}/download:
+    get:
+      tags:
+      - ErrorLogs
+      summary: Download error logs for a scan
+      description: Download all error logs for a specific job as a CSV file.
+      operationId: download_error_logs_for_job_v1_error_log_job__job_id__download_get
+      parameters:
+      -
+        name: job_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Job Id
+      responses:
+        200:
+          description: Successful Response
         422:
           description: Validation Error
           content:
@@ -1589,6 +1975,95 @@ components:
         scheme: bearer
         bearerFormat: JWT
   schemas:
+    AgenticProgressSchema:
+      properties:
+        kind:
+          type: string
+          const: agentic
+          title: Kind
+          description: Discriminator — always 'agentic' for this variant.
+          default: agentic
+        stages:
+          items:
+            $ref: '#/components/schemas/AgenticStageSchema'
+          type: array
+          title: Stages
+          description: 'The 3 stages in order: target_profiling → goal_generation → attack_execution.'
+      type: object
+      title: AgenticProgressSchema
+      description: 3-stage Agentic Target Scan timeline (DYNAMIC scans).
+    AgenticStageName:
+      type: string
+      enum:
+      - target_profiling
+      - goal_generation
+      - attack_execution
+      title: AgenticStageName
+      description: The three named stages of the DYNAMIC agentic panel.
+    AgenticStageSchema:
+      properties:
+        stage:
+          $ref: '#/components/schemas/AgenticStageName'
+          description: Which of the 3 named stages this represents.
+        status:
+          $ref: '#/components/schemas/AgenticStatus'
+          description: 'Overall stage status. In-flight: pending / in_progress / complete. Terminal: not_started (never ran) / partially_complete (cut short).'
+        sub_steps:
+          items:
+            $ref: '#/components/schemas/AgenticSubStepSchema'
+          type: array
+          title: Sub Steps
+          description: Sub-steps under this stage; content varies per stage.
+      type: object
+      required:
+      - stage
+      - status
+      title: AgenticStageSchema
+      description: One stage in the Agentic Target Scan panel (dynamic scans only).
+    AgenticStatus:
+      type: string
+      enum:
+      - pending
+      - in_progress
+      - complete
+      - partially_complete
+      - not_started
+      - skipped
+      title: AgenticStatus
+      description: |
+        Status of an agentic stage or sub-step. `skipped` is sub-step-only
+        (a planned unit that ran to no result); stages never emit it.
+    AgenticSubStepSchema:
+      properties:
+        label:
+          type: string
+          title: Label
+          description: Human-readable sub-step label.
+        completed:
+          anyOf:
+          -
+            type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Completed
+          description: Countable sub-step progress; None for text-only sub-steps.
+        total:
+          anyOf:
+          -
+            type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Total
+          description: Countable sub-step total; None for text-only sub-steps.
+        status:
+          $ref: '#/components/schemas/AgenticStatus'
+          description: 'Sub-step status. In-flight: pending / in_progress / complete. Terminal: not_started / partially_complete / complete. skipped: planned but produced no result (e.g. a goal category that yielded zero goals) — distinct from not_started (never attempted).'
+      type: object
+      required:
+      - label
+      - status
+      title: AgenticSubStepSchema
+      description: One sub-step under an AgenticStage.
     ApiEndpointType:
       type: string
       enum:
@@ -1597,6 +2072,162 @@ components:
       - NETWORK_BROKER
       title: ApiEndpointType
       description: API endpoint accessibility type.
+    AsrCategorySchema:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: 'Enum value, e.g. SECURITY, JAILBREAK, TOOL_MISUSE'
+        display_name:
+          type: string
+          title: Display Name
+          description: Human-readable label
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+          description: Adversarial exchanges attempted
+        successful:
+          type: integer
+          minimum: 0.0
+          title: Successful
+          description: Exchanges where the effective verdict is a threat
+        failed:
+          type: integer
+          minimum: 0.0
+          title: Failed
+          description: total - successful
+        asr:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+          title: Asr
+          description: 'successful / total * 100; 0.0 when total is 0'
+        sub_categories:
+          items:
+            $ref: '#/components/schemas/AsrStatsSchema'
+          type: array
+          title: Sub Categories
+          description: Subcategory breakdown. Always empty for dynamic scans.
+      type: object
+      required:
+      - id
+      - display_name
+      - total
+      - successful
+      - failed
+      - asr
+      title: AsrCategorySchema
+      description: 'A top-level category, optionally broken down one level further.'
+    AsrResponseSchema:
+      properties:
+        job_id:
+          type: string
+          format: uuid
+          title: Job Id
+          description: Scan this breakdown belongs to
+        job_type:
+          $ref: '#/components/schemas/JobType'
+          description: STATIC or DYNAMIC
+        asr:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+          title: Asr
+          description: Scan-level ASR (job.asr)
+        categories:
+          items:
+            $ref: '#/components/schemas/AsrCategorySchema'
+          type: array
+          title: Categories
+          description: 'Per-category breakdown, most-breached first'
+      type: object
+      required:
+      - job_id
+      - job_type
+      - asr
+      title: AsrResponseSchema
+      description: |
+        Response for both /report/static/{job_id}/asr and /report/dynamic/{job_id}/asr.
+
+        One schema for both endpoints on purpose, so the profile-creation UI renders a
+        single component and never branches on job_type.
+    AsrStatsSchema:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: 'Enum value, e.g. SECURITY, JAILBREAK, TOOL_MISUSE'
+        display_name:
+          type: string
+          title: Display Name
+          description: Human-readable label
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+          description: Adversarial exchanges attempted
+        successful:
+          type: integer
+          minimum: 0.0
+          title: Successful
+          description: Exchanges where the effective verdict is a threat
+        failed:
+          type: integer
+          minimum: 0.0
+          title: Failed
+          description: total - successful
+        asr:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+          title: Asr
+          description: 'successful / total * 100; 0.0 when total is 0'
+      type: object
+      required:
+      - id
+      - display_name
+      - total
+      - successful
+      - failed
+      - asr
+      title: AsrStatsSchema
+      description: |
+        One row of an ASR breakdown. Used for both categories and subcategories.
+
+        Field names are deliberately neutral rather than static- or dynamic-specific:
+        the ASR formula is the same at both grains -- successful adversarial exchanges
+        over total -- and only the definition of an exchange differs (one target call
+        for static, one attacker turn for dynamic). That is what lets a single client
+        component render either scan kind. See the per-scan-type semantics table in
+        docs/features/redteam-runtime-profile-creation/design.md section 5.
+    AttackAudioSchema:
+      properties:
+        audio_name:
+          type: string
+          title: Audio Name
+          description: Audio filename (basename of the GCS object key)
+        signed_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Signed Url
+          description: Short-lived signed GCS download URL; null if the object could not be signed (e.g. missing signBlob permission).
+        audio_format:
+          anyOf:
+          - $ref: '#/components/schemas/AudioFormat'
+          - type: 'null'
+          description: 'Audio wire format (WAV/MP3), the strict AudioFormat enum; null if the stored format is unknown. Carries the ACTUAL format of these bytes — for attack input that''s the corpus format, for a target''s response audio it''s the target''s format (which may be MP3), so it is never assumed.'
+      type: object
+      required:
+      - audio_name
+      title: AttackAudioSchema
+      description: |
+        Structured audio reference for a multimodal (audio) attack in the report.
+
+        Mirrors ``AttackFileSchema``. Exposed only on the attack **detail** response; the
+        list response conveys type via ``attack_modality`` (AUDIO/FILE/TEXT) and carries no
+        audio object.
     AttackDetailResponseSchema:
       properties:
         uuid:
@@ -1695,6 +2326,9 @@ components:
         severity:
           type: string
           description: Attack severity level
+        threat_details:
+          $ref: '#/components/schemas/ThreatDetails'
+          description: 'Verdict provenance: raw AI verdict + any human override'
         category_display_name:
           type: string
           title: Category Display Name
@@ -1718,7 +2352,7 @@ components:
           - type: 'null'
           title: Goal
         attack_modality:
-          $ref: '#/components/schemas/AttackModality'
+          $ref: '#/components/schemas/Modality'
           description: 'FILE if the attack carries a document, else TEXT'
           default: TEXT
         file:
@@ -1726,6 +2360,18 @@ components:
           - $ref: '#/components/schemas/AttackFileSchema'
           - type: 'null'
           description: File-attack document (name + signed download URL + short type); null for text attacks
+        audio:
+          anyOf:
+          - $ref: '#/components/schemas/AttackAudioSchema'
+          - type: 'null'
+          description: Audio-attack clip (name + signed download URL + short format); null for non-audio attacks
+        audio_technique:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Technique
+          description: 'Acoustic perturbation of the attack audio (e.g. pitch_up, stego_lsb).'
+          readOnly: true
       type: object
       required:
       - uuid
@@ -1741,6 +2387,7 @@ components:
       - sub_category_display_name
       - compliance_frameworks
       - goal
+      - audio_technique
       title: AttackDetailResponseSchema
     AttackFileSchema:
       properties:
@@ -1889,7 +2536,7 @@ components:
           type: string
           title: Sub Category Display Name
         attack_modality:
-          $ref: '#/components/schemas/AttackModality'
+          $ref: '#/components/schemas/Modality'
           description: 'FILE if the attack carries a document, else TEXT'
           default: TEXT
       type: object
@@ -1906,17 +2553,6 @@ components:
       - category_display_name
       - sub_category_display_name
       title: AttackListSchema
-    AttackModality:
-      type: string
-      enum:
-      - TEXT
-      - FILE
-      title: AttackModality
-      description: |
-        Per-attack delivery modality for report display + filtering.
-
-        FILE = the attack carries a document (file_url set); TEXT = text-only. This is
-        a per-row value (distinct from the scan-level include_file_attacks toggle).
     AttackMultiTurnDetailResponseSchema:
       properties:
         uuid:
@@ -2015,6 +2651,9 @@ components:
         severity:
           type: string
           description: Attack severity level
+        threat_details:
+          $ref: '#/components/schemas/ThreatDetails'
+          description: 'Verdict provenance: raw AI verdict + any human override'
         category_display_name:
           type: string
           title: Category Display Name
@@ -2040,7 +2679,7 @@ components:
           - type: 'null'
           title: Goal
         attack_modality:
-          $ref: '#/components/schemas/AttackModality'
+          $ref: '#/components/schemas/Modality'
           description: 'FILE if the attack carries a document, else TEXT'
           default: TEXT
         file:
@@ -2048,6 +2687,18 @@ components:
           - $ref: '#/components/schemas/AttackFileSchema'
           - type: 'null'
           description: File-attack document (name + signed download URL + short type); null for text attacks
+        audio:
+          anyOf:
+          - $ref: '#/components/schemas/AttackAudioSchema'
+          - type: 'null'
+          description: Audio-attack clip (name + signed download URL + short format); null for non-audio attacks
+        audio_technique:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Technique
+          description: 'Acoustic perturbation of the attack audio (e.g. pitch_up, stego_lsb).'
+          readOnly: true
       type: object
       required:
       - uuid
@@ -2063,6 +2714,7 @@ components:
       - sub_category_display_name
       - compliance_frameworks
       - goal
+      - audio_technique
       title: AttackMultiTurnDetailResponseSchema
     AttackMultiTurnOutputResponseSchema:
       properties:
@@ -2104,6 +2756,22 @@ components:
           - type: 'null'
           title: Marked Safe
           description: Manual safety marking
+        response_audio:
+          anyOf:
+          - $ref: '#/components/schemas/AttackAudioSchema'
+          - type: 'null'
+          description: Structured audio reference for the target's response (name + signed URL + short format); null until the audio pipeline lands
+        transcript:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Transcript
+          description: Transcript of the response audio; null until the audio pipeline lands
+        transcript_source:
+          anyOf:
+          - $ref: '#/components/schemas/TranscriptSource'
+          - type: 'null'
+          description: Whether the transcript was provided by the target (TARGET) or derived by us via speech-to-text (STT); null until the audio pipeline lands
         prompt:
           type: string
           title: Prompt
@@ -2122,6 +2790,9 @@ components:
           title: Multi Turn
           description: Multi-turn conversation flag
           default: true
+        threat_details:
+          $ref: '#/components/schemas/ThreatDetails'
+          description: 'Verdict provenance: raw AI verdict + any human override'
         error:
           anyOf:
           - type: boolean
@@ -2134,6 +2805,11 @@ components:
           - type: 'null'
           title: Error Message
           description: 'Error message in format ''errType: description'''
+        judge_reasoning:
+          type: string
+          title: Judge Reasoning
+          description: Judge reasoning for this turn; "" when the judge produced none.
+          readOnly: true
       type: object
       required:
       - uuid
@@ -2144,8 +2820,13 @@ components:
       - output
       - prompt
       - turn
+      - judge_reasoning
       title: AttackMultiTurnOutputResponseSchema
-      description: API response schema — excludes internal/debug fields from client responses.
+      description: |
+        API response schema — excludes internal/debug fields from client responses.
+
+        Leaf turn row (attack_multi_turn_output). `threat` is the effective verdict and
+        `threat_details` carries provenance; both set by apply_threat_override at the read site.
     AttackOutputResponseSchema:
       properties:
         uuid:
@@ -2186,6 +2867,25 @@ components:
           - type: 'null'
           title: Marked Safe
           description: Manual safety marking
+        response_audio:
+          anyOf:
+          - $ref: '#/components/schemas/AttackAudioSchema'
+          - type: 'null'
+          description: Structured audio reference for the target's response (name + signed URL + short format); null until the audio pipeline lands
+        transcript:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Transcript
+          description: Transcript of the response audio; null until the audio pipeline lands
+        transcript_source:
+          anyOf:
+          - $ref: '#/components/schemas/TranscriptSource'
+          - type: 'null'
+          description: Whether the transcript was provided by the target (TARGET) or derived by us via speech-to-text (STT); null until the audio pipeline lands
+        threat_details:
+          $ref: '#/components/schemas/ThreatDetails'
+          description: 'Verdict provenance: raw AI verdict + any human override'
         error:
           anyOf:
           - type: boolean
@@ -2198,6 +2898,11 @@ components:
           - type: 'null'
           title: Error Message
           description: 'Error message in format ''errType: description'''
+        judge_reasoning:
+          type: string
+          title: Judge Reasoning
+          description: Judge reasoning for this output; "" when the judge produced none.
+          readOnly: true
       type: object
       required:
       - uuid
@@ -2206,8 +2911,14 @@ components:
       - job_id
       - target_id
       - output
+      - judge_reasoning
       title: AttackOutputResponseSchema
-      description: API response schema — excludes internal/debug fields from client responses.
+      description: |
+        API response schema — excludes internal/debug fields from client responses.
+
+        Leaf grain (attack_output). `threat` is the effective verdict (override if set,
+        else AI) and `threat_details` carries provenance; both are set by
+        apply_threat_override at the read site.
     AttackStatus:
       type: string
       enum:
@@ -2224,6 +2935,29 @@ components:
       - NORMAL
       - CUSTOM
       title: AttackType
+    AttemptsUnit:
+      type: string
+      enum:
+      - attacks
+      - streams
+      title: AttemptsUnit
+      description: 'What the attempts counts represent, per scan type.'
+    AudioFormat:
+      type: string
+      enum:
+      - WAV
+      - MP3
+      - PCM16
+      title: AudioFormat
+      description: |
+        Wire format for audio we SEND to a REST audio-chat target.
+
+        Customer-declared on the connection config (which format the target accepts
+        on the wire). ``Attack.audio_format`` reuses this same enum to record the format
+        of the stored corpus audio bytes. WAV/MP3 are the REST audio-chat wire formats;
+        PCM16 is the realtime S2S wire form (headerless PCM16 at the provider's rate) —
+        stored in the corpus now but NOT selectable on REST targets until the realtime
+        path lands (MR9). See ``REST_AUDIO_FORMATS``.
     AuthType:
       type: string
       enum:
@@ -2233,6 +2967,39 @@ components:
       - CUSTOM_TARGET_ADAPTER
       title: AuthType
       description: Authentication method for target API access.
+    BackgroundJobStatus:
+      type: string
+      enum:
+      - INIT
+      - QUEUED
+      - RUNNING
+      - COMPLETED
+      - PARTIALLY_COMPLETE
+      - FAILED
+      - ABORTED
+      title: BackgroundJobStatus
+      description: Complete background job status enum.
+    BaseSubtype:
+      type: string
+      enum:
+      - REMOTE_CODE_EXECUTION
+      - SYSTEM_PROMPT_LEAK
+      - TOOL_LEAK
+      - MALWARE_GENERATION
+      - BIAS
+      - CBRN
+      - CYBERCRIME
+      - DRUGS
+      - HATE_TOXIC_ABUSE
+      - NON_VIOLENT_CRIMES
+      - POLITICAL
+      - SELF_HARM
+      - SEXUAL
+      - VIOLENT_CRIMES_WEAPONS
+      - SENSITIVE_DATA_LEAKAGE
+      - COMPETITOR_ENDORSEMENTS
+      - BRAND_TARNISHING_SELF_CRITICISM
+      title: BaseSubtype
     BrandSubCategory:
       type: string
       enum:
@@ -2607,6 +3374,13 @@ components:
           - type: 'null'
           title: Error Message
           description: 'Error message in format ''errType: description'''
+        judge_reasoning:
+          type: string
+          title: Judge Reasoning
+          description: Judge reasoning for this output
+        threat_details:
+          $ref: '#/components/schemas/ThreatDetails'
+          description: 'Verdict provenance: raw AI verdict + any human override'
       type: object
       required:
       - uuid
@@ -2616,7 +3390,11 @@ components:
       - target_id
       - output
       title: CustomAttackOutputResponseSchema
-      description: API response schema — excludes English translation fields.
+      description: |
+        API response schema — excludes English translation fields.
+
+        Leaf grain (custom_attack_output); `threat` carries the effective verdict and
+        `threat_details` the provenance, both set by apply_threat_override at the read site.
     CustomAttackReportResponse:
       properties:
         total_prompts:
@@ -2751,6 +3529,14 @@ components:
           - $ref: '#/components/schemas/LanguageOptionSchema'
           - type: 'null'
           description: Language for this scan. None = English.
+        runtime_profile_id:
+          anyOf:
+          -
+            type: string
+            maxLength: 256
+          - type: 'null'
+          title: Runtime Profile Id
+          description: Identifier of the AIRS runtime security profile created from this scan. Null until a profile is recorded.
         custom_prompt_sets:
           items:
             type: string
@@ -2848,6 +3634,14 @@ components:
           - $ref: '#/components/schemas/LanguageOptionSchema'
           - type: 'null'
           description: Language for this scan. None = English.
+        runtime_profile_id:
+          anyOf:
+          -
+            type: string
+            maxLength: 256
+          - type: 'null'
+          title: Runtime Profile Id
+          description: Identifier of the AIRS runtime security profile created from this scan. Null until a profile is recorded.
         stream_breadth:
           type: integer
           maximum: 20.0
@@ -2908,7 +3702,13 @@ components:
             type: array
           - type: 'null'
           title: Goal Categories
-          description: 'Selected goal categories for this scan. Valid values: GOAL_MANIPULATION, PRIVILEGE_MISUSE, TOOL_MISUSE, TOOL_CHAINING, TOXIC_CONTENT_GENERATION. Only used when goal_categories feature flag is enabled.'
+          description: 'Selected goal categories for this scan. Valid values: GOAL_MANIPULATION, PRIVILEGE_MISUSE, TOOL_MISUSE, TOOL_CHAINING, TOXIC_CONTENT_GENERATION, MEMORY_POISONING. Only used when goal_categories feature flag is enabled.'
+        multi_turn_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Multi Turn Enabled
+          description: 'Whether this scan holds multi-turn conversations with the target. Multi-turn is opt-in: only an explicit True runs conversational streams, and it is rejected with a 400 unless the target''s validation recorded multi_turn support. False and an omitted field both run every stream single-turn.'
       type: object
       title: DynamicJobMetadata
       description: Enhanced metadata for dynamic attack jobs with proper constraints.
@@ -2995,6 +3795,53 @@ components:
           description: LLM-generated executive summary for the dynamic job
       type: object
       title: DynamicJobReportStats
+    DynamicRemediationDetailSchema:
+      properties:
+        remediation:
+          type: string
+          title: Remediation
+          description: Remediation recommendation title
+        description:
+          type: string
+          title: Description
+          description: Detailed description of the remediation
+        resource_links:
+          items:
+            type: string
+          type: array
+          title: Resource Links
+          description: URLs for additional resources and documentation
+        priority_level:
+          type: string
+          description: Priority level for this remediation
+        ease_of_implementation_level:
+          type: string
+          description: Ease of implementation level for this remediation
+        effectiveness_level:
+          type: string
+          description: Effectiveness rating for this remediation
+        categories:
+          items:
+            $ref: '#/components/schemas/GoalCategoryDetail'
+          type: array
+          title: Categories
+          description: Goal categories with display names and descriptions
+      type: object
+      required:
+      - remediation
+      - description
+      title: DynamicRemediationDetailSchema
+      description: Dynamic job remediation with rich category objects.
+    DynamicRemediationResponseSchema:
+      properties:
+        remediations:
+          items:
+            $ref: '#/components/schemas/DynamicRemediationDetailSchema'
+          type: array
+          title: Remediations
+          description: List of applicable remediation recommendations for dynamic jobs
+      type: object
+      title: DynamicRemediationResponseSchema
     ErrorLogListResponseSchema:
       properties:
         pagination:
@@ -3119,6 +3966,13 @@ components:
       - UNKNOWN
       title: ErrorType
       description: Classification of error types.
+    EtaState:
+      type: string
+      enum:
+      - calculating
+      - ready
+      title: EtaState
+      description: 'Whether `eta_seconds` is a usable estimate yet.'
     FileFormat:
       type: string
       enum:
@@ -3135,8 +3989,30 @@ components:
       - TOOL_MISUSE
       - TOOL_CHAINING
       - TOXIC_CONTENT_GENERATION
+      - MEMORY_POISONING
       - CUSTOM
       title: GoalCategory
+    GoalCategoryDetail:
+      properties:
+        category:
+          type: string
+          title: Category
+          description: Goal category enum value
+        display_name:
+          type: string
+          title: Display Name
+          description: Human-readable category name
+        description:
+          type: string
+          title: Description
+          description: What this category tests
+      type: object
+      required:
+      - category
+      - display_name
+      - description
+      title: GoalCategoryDetail
+      description: Goal category with display name and description for frontend rendering. Goal type in case of dynamic jobs
     GoalCategoryListResponseSchema:
       properties:
         target_type:
@@ -3190,6 +4066,15 @@ components:
       - data
       title: GoalListResponseSchema
       description: Response schema for listing attacks following common pagination pattern.
+    GoalManipulationSubtype:
+      type: string
+      enum:
+      - SCOPE_GROUNDED
+      - SCOPE_UNRELATED
+      - POLICY
+      - COMMITMENT
+      - OBJECTIVE
+      title: GoalManipulationSubtype
     GoalResponseSchema:
       properties:
         goal:
@@ -3224,6 +4109,17 @@ components:
           - $ref: '#/components/schemas/GoalCategory'
           - type: 'null'
           description: Goal category for customizable allocation and filtering
+        goal_subtype:
+          anyOf:
+          - $ref: '#/components/schemas/ToolMisuseSubtype'
+          - $ref: '#/components/schemas/GoalManipulationSubtype'
+          - $ref: '#/components/schemas/PrivilegeMisuseSubtype'
+          - $ref: '#/components/schemas/ToolChainingSubtype'
+          - $ref: '#/components/schemas/MemoryPoisoningSubtype'
+          - $ref: '#/components/schemas/BaseSubtype'
+          - type: 'null'
+          title: Goal Subtype
+          description: Finer-grained vulnerability subtype for remediation mapping
         uuid:
           type: string
           format: uuid
@@ -3317,6 +4213,17 @@ components:
           - $ref: '#/components/schemas/GoalCategory'
           - type: 'null'
           description: Goal category for customizable allocation and filtering
+        goal_subtype:
+          anyOf:
+          - $ref: '#/components/schemas/ToolMisuseSubtype'
+          - $ref: '#/components/schemas/GoalManipulationSubtype'
+          - $ref: '#/components/schemas/PrivilegeMisuseSubtype'
+          - $ref: '#/components/schemas/ToolChainingSubtype'
+          - $ref: '#/components/schemas/MemoryPoisoningSubtype'
+          - $ref: '#/components/schemas/BaseSubtype'
+          - type: 'null'
+          title: Goal Subtype
+          description: Finer-grained vulnerability subtype for remediation mapping
         uuid:
           type: string
           format: uuid
@@ -3377,6 +4284,7 @@ components:
       - GOAL_MANIPULATION
       - PRIVILEGE_MISUSE
       - TOOL_CHAINING
+      - MEMORY_POISONING
       title: GoalType
     GoalTypeQueryParam:
       type: string
@@ -3623,6 +4531,25 @@ components:
           - type: 'null'
           title: Invocation Id
           description: Restate invocationId of this job
+        runtime_metrics:
+          anyOf:
+          - $ref: '#/components/schemas/JobRuntimeMetricsSchema'
+          - type: 'null'
+          description: Live scan metrics for the top Scan Summary bar. Populated only for in-flight jobs (INIT/QUEUED/RUNNING); None otherwise.
+        progress:
+          anyOf:
+          -
+            oneOf:
+            - $ref: '#/components/schemas/StandardProgressSchema'
+            - $ref: '#/components/schemas/AgenticProgressSchema'
+            discriminator:
+              propertyName: kind
+              mapping:
+                agentic: '#/components/schemas/AgenticProgressSchema'
+                standard: '#/components/schemas/StandardProgressSchema'
+          - type: 'null'
+          title: Progress
+          description: In-flight progress surface for the summary panel. kind='standard' with per-category / per-prompt-set rows for STATIC and CUSTOM; kind='agentic' with the 3-stage timeline (Target Profiling → Goal Generation → Attack Execution) for DYNAMIC. None for terminal jobs.
       type: object
       required:
       - uuid
@@ -3635,6 +4562,63 @@ components:
       - target_type
       title: JobResponseSchema
       description: Job response schema. ONLY to be used in API response.
+    JobRuntimeMetricsSchema:
+      properties:
+        error_count:
+          type: integer
+          minimum: 0.0
+          title: Error Count
+          description: Total ErrorLog rows for this job.
+        error_percentage:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+          title: Error Percentage
+          description: 'errors / (completed + errors), rounded to 1 decimal.'
+        eta_seconds:
+          anyOf:
+          -
+            type: integer
+            minimum: 0.0
+          - type: 'null'
+          title: Eta Seconds
+          description: Remaining seconds until scan completes. None while calculating.
+        eta_state:
+          $ref: '#/components/schemas/EtaState'
+          description: Whether eta_seconds is a usable estimate yet.
+        attempts_completed:
+          type: integer
+          minimum: 0.0
+          title: Attempts Completed
+          description: Attempts completed so far (unit given by attempts_unit).
+        attempts_total:
+          type: integer
+          minimum: 0.0
+          title: Attempts Total
+          description: 'Total attempts planned for the scan (unit: attempts_unit).'
+        attempts_unit:
+          $ref: '#/components/schemas/AttemptsUnit'
+          description: 'What the attempts counts represent: attacks (STATIC/CUSTOM) or streams (DYNAMIC).'
+        currently_attacking:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Currently Attacking
+          description: 'The category / prompt-set currently being attacked (e.g. ''Category > Subcategory''), or null when nothing is in flight.'
+      type: object
+      required:
+      - error_count
+      - error_percentage
+      - eta_state
+      - attempts_completed
+      - attempts_total
+      - attempts_unit
+      title: JobRuntimeMetricsSchema
+      description: |
+        In-flight scan metrics powering the top Scan Summary bar.
+
+        Populated only for jobs that are still running (INIT/QUEUED/RUNNING).
+        Terminal jobs report None — the completed report has richer data.
     JobStatus:
       type: string
       enum:
@@ -3704,6 +4688,25 @@ components:
       - CLARA
       title: JobType
       description: Type of job execution.
+    LanguageDropdownOptionSchema:
+      properties:
+        code:
+          type: string
+          title: Code
+        name:
+          type: string
+          title: Name
+        country_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Country Code
+      type: object
+      required:
+      - code
+      - name
+      title: LanguageDropdownOptionSchema
+      description: 'Language option for the dropdown, with a country code for the flag icon.'
     LanguageOptionSchema:
       properties:
         code:
@@ -3736,6 +4739,25 @@ components:
       type: object
       title: MaliciousURLDetectionSchema
       description: Guardrail configuration for malicious URL detection.
+    MemoryPoisoningSubtype:
+      type: string
+      enum:
+      - MEMORY_POISONING
+      title: MemoryPoisoningSubtype
+    Modality:
+      type: string
+      enum:
+      - TEXT
+      - FILE
+      - AUDIO
+      title: Modality
+      description: |
+        Content modality of an attack — the single, canonical modality enum.
+
+        Lives in shared so both the handler layer (``ModalityHandlerFactory`` keys on it)
+        and the data plane use ONE enum. ``data_plane.domain.attack.schemas`` imports it as
+        its attack modality (it was a separate ``AttackModality`` before the consolidation)
+        and it surfaces in the report API as the ``Modality`` OpenAPI schema.
     PaginationSchema:
       properties:
         total_items:
@@ -3777,11 +4799,18 @@ components:
       - description
       title: PrerequisiteModel
       description: Pydantic model for prerequisite data
+    PrivilegeMisuseSubtype:
+      type: string
+      enum:
+      - ROLE_MISUSE
+      - CROSS_USER_DATA_MISUSE
+      - BROAD_DATA_MISUSE
+      - SELF_PRIVILEGE_ESCALATION
+      title: PrivilegeMisuseSubtype
     ProfilingStatus:
       type: string
       enum:
-      - INIT
-      - QUEUED
+      - NOT_STARTED
       - IN_PROGRESS
       - COMPLETED
       - FAILED
@@ -3829,7 +4858,10 @@ components:
           - type: boolean
           - type: 'null'
           title: Threat
-          description: Whether threat was detected
+          description: 'Effective verdict (override if set, else AI); see threat_details'
+        threat_details:
+          $ref: '#/components/schemas/ThreatDetails'
+          description: 'Verdict provenance: raw AI verdict + any human override'
         attack_outputs:
           items:
             type: string
@@ -3907,6 +4939,16 @@ components:
           type: integer
           title: Failed Attacks
           description: Number of failed attacks (no threats detected)
+        errored_attacks:
+          type: integer
+          title: Errored Attacks
+          description: Attacks that produced no output (target auth/WAF/network error)
+          default: 0
+        has_errors:
+          type: boolean
+          title: Has Errors
+          description: True if any attack in this set errored (produced no output)
+          default: false
         threat_rate:
           type: number
           title: Threat Rate
@@ -4056,6 +5098,22 @@ components:
       - custom
       title: QuotaSummarySchema
       description: Schema for quota summary response organized by scan type.
+    RegenerateResponse:
+      properties:
+        background_job_id:
+          type: string
+          format: uuid
+          title: Background Job Id
+          description: UUID of the enqueued report-regeneration job
+        status:
+          $ref: '#/components/schemas/BackgroundJobStatus'
+          description: Status of the enqueued job (INIT on success)
+      type: object
+      required:
+      - background_job_id
+      - status
+      title: RegenerateResponse
+      description: 'Response for POST /report/{job_id}/regenerate.'
     RemediationDetailSchema:
       properties:
         remediation:
@@ -4096,6 +5154,48 @@ components:
           description: List of applicable remediation recommendations for static and dynamic jobs
       type: object
       title: RemediationResponseSchema
+    ReportDownloadSchema:
+      properties:
+        filename:
+          type: string
+          title: Filename
+          description: Suggested filename for the report archive.
+        download_url:
+          type: string
+          title: Download Url
+          description: Short-lived URL for downloading the report archive. Navigate to it rather than fetching it.
+      type: object
+      required:
+      - filename
+      - download_url
+      title: ReportDownloadSchema
+      description: Location of a job's downloadable report archive.
+    ReportState:
+      type: string
+      enum:
+      - ACTIVE
+      - STALE
+      - GENERATING
+      - FAILED
+      title: ReportState
+      description: |
+        Freshness of a scan's risk report relative to human verdict edits.
+
+        Persisted as a plain string under ``job.report_stats["report_state"]`` for the
+        durable states only (ACTIVE / STALE / FAILED). GENERATING is never stored — the
+        /status endpoint derives it from a live REPORT_REGENERATION background job so it
+        stays correct across the INIT -> QUEUED handoff and the report handlers' own
+        report_stats rewrite mid-regeneration.
+    ReportStatusResponse:
+      properties:
+        report_state:
+          $ref: '#/components/schemas/ReportState'
+          description: Current report freshness state
+      type: object
+      required:
+      - report_state
+      title: ReportStatusResponse
+      description: 'Response for GET /report/{job_id}/status.'
     ResponseMode:
       type: string
       enum:
@@ -4103,6 +5203,7 @@ components:
       - STREAMING
       - WEBSOCKET
       - WEBSOCKET_STREAMING
+      - REALTIME
       title: ResponseMode
       description: Response mode for target interactions.
     RiskLevelSchema:
@@ -4136,6 +5237,20 @@ components:
       - LOW
       title: RiskRating
       description: Risk rating levels with score ranges.
+    RuntimeProfileUpdateRequestSchema:
+      properties:
+        runtime_profile_id:
+          type: string
+          maxLength: 256
+          minLength: 1
+          title: Runtime Profile Id
+          description: Identifier of the AIRS runtime security profile the customer created from this scan's findings.
+      additionalProperties: false
+      type: object
+      required:
+      - runtime_profile_id
+      title: RuntimeProfileUpdateRequestSchema
+      description: 'Request schema for PUT /v1/scan/{job_id}/runtime-profile.'
     RuntimeSecurityPolicySchema:
       properties:
         policy_id:
@@ -4189,6 +5304,51 @@ components:
       - SEXUAL
       - VIOLENT_CRIMES_WEAPONS
       title: SafetySubCategory
+    ScanProgressBreakdownSchema:
+      properties:
+        label:
+          type: string
+          title: Label
+          description: 'Row label — category name (STATIC) or prompt-set UUID (CUSTOM). For CUSTOM, the human-readable name resolution is TBD (needs GCS lookup or write-time denormalization).'
+        sub_categories:
+          items:
+            type: string
+          type: array
+          title: Sub Categories
+          description: Subcategories under this category. Populated for STATIC only; empty for CUSTOM.
+        completed:
+          type: integer
+          minimum: 0.0
+          title: Completed
+          description: Attempts completed for this row.
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+          description: Attempts planned for this row.
+        status:
+          $ref: '#/components/schemas/ScanRowStatus'
+          description: 'Row status. In-flight: queued / attack_in_progress / complete. Terminal: not_started (never ran) / partially_complete (cut short) / complete.'
+      type: object
+      required:
+      - label
+      - completed
+      - total
+      - status
+      title: ScanProgressBreakdownSchema
+      description: |
+        One row in the per-category (STATIC) or per-prompt-set (CUSTOM)
+        progress table.
+    ScanRowStatus:
+      type: string
+      enum:
+      - queued
+      - attack_in_progress
+      - partially_complete
+      - complete
+      - not_started
+      title: ScanRowStatus
+      description: Status of one STATIC/CUSTOM progress-table row.
     ScanStatisticsResponseSchema:
       properties:
         total_scans:
@@ -4237,6 +5397,12 @@ components:
           type: array
           title: Labels
           description: 'Date labels (e.g., ''Jan 1'', ''Jan 2'')'
+        iso_labels:
+          items:
+            type: string
+          type: array
+          title: Iso Labels
+          description: 'ISO 8601 date labels (e.g., ''2026-01-01''), aligned 1:1 with `labels`. Carry the year, so the client can parse and group by week/month/year unambiguously even when the range crosses a year boundary.'
         series:
           items:
             $ref: '#/components/schemas/ScoreTrendSeriesSchema'
@@ -4411,6 +5577,23 @@ components:
       - severity
       title: SeverityStatsSchema
       description: Breakdown for a single severity level.
+    StandardProgressSchema:
+      properties:
+        kind:
+          type: string
+          const: standard
+          title: Kind
+          description: Discriminator — always 'standard' for this variant.
+          default: standard
+        rows:
+          items:
+            $ref: '#/components/schemas/ScanProgressBreakdownSchema'
+          type: array
+          title: Rows
+          description: One row per category / prompt-set for the summary table.
+      type: object
+      title: StandardProgressSchema
+      description: Per-category (STATIC) / per-prompt-set (CUSTOM) progress table.
     StaticJobMetadata:
       properties:
         rate_limit_enabled:
@@ -4471,6 +5654,14 @@ components:
           - $ref: '#/components/schemas/LanguageOptionSchema'
           - type: 'null'
           description: Language for this scan. None = English.
+        runtime_profile_id:
+          anyOf:
+          -
+            type: string
+            maxLength: 256
+          - type: 'null'
+          title: Runtime Profile Id
+          description: Identifier of the AIRS runtime security profile created from this scan. Null until a profile is recorded.
         categories:
           additionalProperties:
             items:
@@ -4499,6 +5690,16 @@ components:
           title: Include File Attacks
           description: 'Start-scan toggle: when true, include multimodal file (document) attacks alongside text for the selected categories — but only for targets whose validation probe found them file-capable. When false (default), the scan is text-only.'
           default: false
+        include_audio_attacks:
+          type: boolean
+          title: Include Audio Attacks
+          description: 'Start-scan toggle: when true, include audio attacks alongside text for the selected categories — but only for targets flagged audio-capable (target_metadata.supports_audio, with a WAV/MP3 audio_format). When false (default), the scan sends no audio. Mirrors include_file_attacks; the only difference is that audio capability is customer-declared on the connection config (copied onto target_metadata at validation) rather than a probe result.'
+          default: false
+        include_text_attacks:
+          type: boolean
+          title: Include Text Attacks
+          description: 'Start-scan toggle: when true (default), include text/{INPUT} attacks for the selected categories. When false, the scan sends no text attacks (file/audio-only). Mirrors include_file_attacks/include_audio_attacks, but defaults True because text is the baseline modality — those default False as opt-in add-ons.'
+          default: true
       type: object
       required:
       - categories
@@ -4785,6 +5986,9 @@ components:
           - type: 'null'
           title: Error Message
           description: Error message details
+        threat_details:
+          $ref: '#/components/schemas/ThreatDetails'
+          description: 'Verdict provenance: raw AI verdict + any human override'
         iterations:
           items:
             $ref: '#/components/schemas/StreamIterationDataResponseSchema'
@@ -4929,6 +6133,9 @@ components:
           - type: 'null'
           title: Error Message
           description: Error message for this iteration
+        threat_details:
+          $ref: '#/components/schemas/ThreatDetails'
+          description: 'Verdict provenance: raw AI verdict + any human override'
       type: object
       required:
       - uuid
@@ -4943,7 +6150,11 @@ components:
       - prompts_objective
       - summary
       title: StreamIterationDataResponseSchema
-      description: API response schema for Stream Iteration Data.
+      description: |
+        API response schema for Stream Iteration Data.
+
+        Leaf grain (stream_iteration_data); `threat` carries the effective verdict and
+        `threat_details` the provenance, both set by apply_threat_override at the read site.
     StreamIterationDataSchema:
       properties:
         uuid:
@@ -5028,6 +6239,12 @@ components:
           - type: 'null'
           title: Judge Reasoning
           description: Judge reasoning for best output
+        judge_explanation:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Judge Explanation
+          description: Short customer-facing explanation of the score
         threat:
           type: boolean
           title: Threat
@@ -5254,6 +6471,11 @@ components:
           title: File Supported
           description: Whether this subcategory has multimodal file (document) attacks in the library — drives the file-upload icon in the scan wizard
           default: false
+        audio_supported:
+          type: boolean
+          title: Audio Supported
+          description: Whether this subcategory has audio attacks in the library — drives the audio option in the scan wizard
+          default: false
       type: object
       required:
       - id
@@ -5298,6 +6520,11 @@ components:
           type: boolean
           title: File Supported
           description: Whether this subcategory has multimodal file (document) attacks in the library — drives the file-upload icon in the scan wizard
+          default: false
+        audio_supported:
+          type: boolean
+          title: Audio Supported
+          description: Whether this subcategory has audio attacks in the library — drives the audio option in the scan wizard
           default: false
         successful:
           type: integer
@@ -5427,7 +6654,9 @@ components:
       - WEBSOCKET
       - WEBSOCKET_STREAMING
       - MS_COPILOT_STUDIO
+      - VERTEX_AI
       - CUSTOM_TARGET_ADAPTER
+      - N8N
       title: TargetConnectionType
       description: Connection type/provider for the target.
     TargetJobRequest:
@@ -5478,6 +6707,36 @@ components:
           examples:
           - 'HTTP 400: target rejected file payload'
           - File delivery not configured
+        audio_probe_passed:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Audio Probe Passed
+          description: 'Whether the target accepted a sample audio clip at validation time (Probe 1 of the audio lane). None means the probe did not run or could not reach a verdict — read it together with audio_probe_error, which is set on every such path; distinct from False, which means the target rejected the clip.'
+        audio_probe_error:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Probe Error
+          description: Concise error message if the audio probe failed or was skipped
+          examples:
+          - 'HTTP 400: target rejected audio payload'
+          - 'Target has no {AUDIO} placeholder in its request template'
+          - Probe audio clip unavailable
+        audio_multi_turn:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Audio Multi Turn
+          description: 'Whether the target held an AUDIO conversation across turns (Probe 2 of the audio lane). None means it was not probed — Probe 1 reached no verdict, no multi-turn config was supplied, or the transport implements no audio multi-turn.'
+        audio_multi_turn_error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Audio Multi Turn Error Message
+          description: Concise error message if the audio multi-turn probe failed
+          examples:
+          - 'HTTP 400: target rejected audio conversation history'
         rate_limit:
           anyOf:
           - type: integer
@@ -5566,17 +6825,32 @@ components:
           default: 110
           examples:
           - 110
+        supports_audio:
+          type: boolean
+          title: Supports Audio
+          description: 'Whether the target accepts audio attacks (customer-declared on the connection config). When False, scans against this target skip audio attacks and run text/file-only.'
+          default: false
+        audio_format:
+          anyOf:
+          - $ref: '#/components/schemas/AudioFormat'
+          - type: 'null'
+          description: Wire format (WAV/MP3/PCM16) the target accepts; selects which per-format corpus variant mint attaches. None when supports_audio is False.
+        supports_text:
+          type: boolean
+          title: Supports Text
+          description: 'Whether the target accepts text attacks. Defaults True (text is the baseline modality). When False, scans skip text/{INPUT} attacks and run file/audio-only — enabling audio-only or file-only targets.'
+          default: true
       type: object
       title: TargetMetadata
       description: |
         Metadata stored in the database for targets (user-provided + computed fields).
 
-        Inherits the multimodal-capability fields from ``MultiModalResult`` and the
-        multi-turn fields from ``MultiTurnResult``. The base order
-        ``(MultiModalResult, MultiTurnResult)`` keeps the serialized field order
-        ``multi_turn, multi_turn_error_message, supports_multimodal_files,
-        supports_multimodal_files_error_message, rate_limit, …`` identical to before this
-        refactor — which preserves the Restate journal bytes for pre-V4 in-flight scans.
+        One base per probe lane — ``MultiTurnResult``, ``MultiModalResult``,
+        ``AudioProbeResult`` — so no lane's verdict fields are re-declared here. The audio
+        base is exactly what ``probe_audio_support`` returns, so the copy from lane verdict
+        to stored metadata cannot drift. Base order fixes the serialized field order, which
+        the Restate journal is sensitive to; ``AudioProbeResult`` records why inheriting it
+        is safe for journals predating audio.
     TargetReferenceSchema:
       properties:
         uuid:
@@ -5719,7 +6993,7 @@ components:
           anyOf:
           - $ref: '#/components/schemas/ProfilingStatus'
           - type: 'null'
-          description: Status of the profiling workflow
+          description: Profiling status; null unless the target is ACTIVE
         canonical_id:
           anyOf:
           - type: string
@@ -5835,7 +7109,7 @@ components:
           title: Supported Job Types
         languages:
           items:
-            $ref: '#/components/schemas/LanguageOptionSchema'
+            $ref: '#/components/schemas/LanguageDropdownOptionSchema'
           type: array
           title: Languages
       type: object
@@ -5845,6 +7119,127 @@ components:
       - languages
       title: TenantLanguagesResponseSchema
       description: Response for GET /v1/languages — tenant-facing language dropdown.
+    ThreatDetails:
+      properties:
+        raw_threat:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Raw Threat
+          description: 'Original AI verdict, never mutated by an override'
+        threat_override:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Threat Override
+          description: Human override; null = no override in effect
+        overridden_by:
+          anyOf:
+          -
+            type: string
+            format: uuid
+          - type: 'null'
+          title: Overridden By
+          description: User who set the override (leaf grain only)
+        overridden_at:
+          anyOf:
+          -
+            type: string
+            format: date-time
+          - type: 'null'
+          title: Overridden At
+          description: When the override was last set
+      type: object
+      title: ThreatDetails
+      description: |
+        Verdict provenance: the raw AI verdict plus any human override + who/when.
+
+        Nested under `threat_details` on every read response so a client can show
+        "AI said X, human changed to Y" without deriving anything itself.
+    ThreatOverrideItem:
+      properties:
+        output_id:
+          type: string
+          format: uuid
+          title: Output Id
+          description: 'Leaf row uuid: attack_output / attack_multi_turn_output / custom_attack_output / stream_iteration_data'
+        threat_override:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Threat Override
+          description: Human verdict; None = revert (clear the override)
+      additionalProperties: false
+      type: object
+      required:
+      - output_id
+      - threat_override
+      title: ThreatOverrideItem
+      description: One leaf verdict edit. threat_override=None means 'revert to AI verdict'.
+    ThreatOverrideRequest:
+      properties:
+        overrides:
+          items:
+            $ref: '#/components/schemas/ThreatOverrideItem'
+          type: array
+          maxItems: 100
+          minItems: 1
+          title: Overrides
+          description: Leaf overrides (mixed true/false/None allowed) under one parent
+      additionalProperties: false
+      type: object
+      required:
+      - overrides
+      title: ThreatOverrideRequest
+      description: Batch of leaf edits applied in one transaction under a single parent.
+    ThreatOverrideResponse:
+      properties:
+        parent_id:
+          type: string
+          format: uuid
+          title: Parent Id
+        parent_effective_threat:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Parent Effective Threat
+          description: bool_or(effective) across the parent's leaves; None = none overridden
+        updated_count:
+          type: integer
+          title: Updated Count
+      type: object
+      required:
+      - parent_id
+      - parent_effective_threat
+      - updated_count
+      title: ThreatOverrideResponse
+      description: 'Result of an override write: the recomputed parent rollup + count applied.'
+    ToolChainingSubtype:
+      type: string
+      enum:
+      - CREDENTIAL_THEFT
+      - UNAUTHORIZED_TRANSACTION
+      - CODE_EXECUTION
+      - DATA_EXFILTRATION
+      - DATA_DESTRUCTION
+      - PRIVILEGE_ESCALATION
+      - KNOWLEDGE_POISONING
+      - DATA_MODIFICATION
+      title: ToolChainingSubtype
+    ToolMisuseSubtype:
+      type: string
+      enum:
+      - MASS_DATA_LEAKAGE
+      - UNAUTHORIZED_DATA_ACCESS
+      - PROCESS_FLOODING
+      - DATA_MODIFICATION
+      - DATA_INJECTION
+      - DATA_DELETION
+      - ROLE_IDENTITY_MODIFICATION
+      - UNAUTHORIZED_SIDE_EFFECT_EXECUTION
+      - FRAUDULENT_TRANSACTION_EXECUTION
+      - RESOURCE_EXHAUSTION
+      title: ToolMisuseSubtype
     ToxicContentGuardrailSchema:
       properties:
         moderate:
@@ -5858,6 +7253,16 @@ components:
       type: object
       title: ToxicContentGuardrailSchema
       description: Guardrail configuration for toxic content with severity levels.
+    TranscriptSource:
+      type: string
+      enum:
+      - TARGET
+      - STT
+      title: TranscriptSource
+      description: |
+        Where a response transcript came from: provided by the target itself, or derived
+        by us via speech-to-text on the response audio. Contract field for the audio
+        pipeline (MR6-7); null until then.
     ValidationError:
       properties:
         loc:
@@ -5873,6 +7278,11 @@ components:
         type:
           type: string
           title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
       - loc

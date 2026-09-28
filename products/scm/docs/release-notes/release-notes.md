@@ -293,28 +293,6 @@ See [Advanced DNS Security Resolver APIs](/scm/api/config/adnsr/introduction-adn
 
 ---
 
-### Prisma AIRS AI Red Teaming — Adapter Endpoints (New)
-
-Manage custom adapters for AI Red Teaming targets including create, list, get, update, delete, validate, and retrieve configuration defaults.
-
-<details><summary>View endpoints (7)</summary>
-
-| Method | Endpoint | Description |
-| ------ | -------- | ----------- |
-| POST | `/airs/redteam/v1/adapters` | Create a custom adapter |
-| GET | `/airs/redteam/v1/adapters` | List all adapters |
-| GET | `/airs/redteam/v1/adapters/{id}` | Get adapter by ID |
-| PUT | `/airs/redteam/v1/adapters/{id}` | Update an adapter |
-| DELETE | `/airs/redteam/v1/adapters/{id}` | Delete an adapter |
-| POST | `/airs/redteam/v1/adapters:validate` | Validate adapter configuration |
-| GET | `/airs/redteam/v1/adapters/defaults` | Retrieve configuration defaults |
-
-</details>
-
-See [Prisma AIRS AI Red Teaming APIs](/prisma-airs-redteam/api/ai-integration/introduction) for full details.
-
----
-
 ### Network Configuration — Generate PPK Key (New)
 
 Generate a cryptographically strong Post-Quantum Pre-Shared Key (RFC 8784) for use in IKE gateway PPK configuration.
