@@ -108,23 +108,6 @@ See [VR Routing Profiles API](/scm/api/config/sase/network/vr-routing-profiles/)
 
 ---
 
-### Strata Cloud Manager — Activation Service and Asset Service APIs (New)
-
-Added [Activation Service APIs](/scm/api/activation/introduction) and Asset Service APIs to SCM. These APIs enable programmatic management of tenant activation, license allocation, and instance lifecycle operations.
-
-| Method | Endpoint | Description |
-| ------ | -------- | ----------- |
-| POST | `/activation/api/v1/shared-instances` | Share a CIE instance with child TSGs |
-| POST | `/activation/api/v1/activate` | Activate or amend Prisma Access licenses |
-| GET | `/activation/api/v1/offboard/validation` | Validate offboard readiness |
-| POST | `/activation/api/v1/offboard` | Offboard a product instance |
-| GET | `/asset/api/v1/entitlement-groups` | Fetch entitlement group details |
-| GET | `/asset/api/v1/instances` | Get product instance status |
-
----
-
----
-
 ### Scm — Checks (Updated)
 
 4 removed endpoints.
