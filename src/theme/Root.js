@@ -6,12 +6,14 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 
 import CookieConsent from "@site/src/components/CookieConsent";
+import { stripBaseUrl } from "@site/src/components/PBPortal/pbRoute";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 // Everything in this file that is Prisma Browser specific is gated on this
 // prefix, so no other product on pan.dev is affected by it.
 const PB_BASE = "/prisma-browser";
 
-const isPBRoute = (pathname) => String(pathname || "").startsWith(PB_BASE);
+const isPBRoute = (sitePath) => String(sitePath || "").startsWith(PB_BASE);
 
 // Fire a GA4 custom event. window.gtag is installed by docusaurus-plugin-gtm
 // and gated by the cookie-consent banner, so events queue behind the visitor's
@@ -256,7 +258,10 @@ export default function Root({ children }) {
     siteConfig: { customFields },
   } = useDocusaurusContext();
   const errorReporterApiKey = customFields.errorReporterApiKey;
-  const { pathname, search } = useLocation();
+  const { pathname: routePath, search } = useLocation();
+  // PB gating compares the site path (baseUrl removed) so it also holds in
+  // subpath builds such as internal previews.
+  const pathname = stripBaseUrl(routePath, useBaseUrl("/"));
 
   // Keep ?ref=nav single on every route change (and initial load), on Prisma
   // Browser routes only.
