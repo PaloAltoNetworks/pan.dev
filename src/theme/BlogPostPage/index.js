@@ -9,14 +9,21 @@ import BlogPostPageOriginal from "@theme-original/BlogPostPage";
 import PBPortal from "@site/src/components/PBPortal";
 import { RELEASE_NOTES_CONTENT } from "@site/src/components/PBPortal/portalConfig";
 import { ReleaseBox } from "@site/src/components/PBPortal/ReleaseNotes/ReleaseBox";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { stripBaseUrl } from "@site/src/components/PBPortal/pbRoute";
 
 const PB_RELEASE_NOTES_BASE = "/prisma-browser/release-notes";
 
 export default function BlogPostPage(props) {
   const BlogPostContent = props.content;
   const meta = BlogPostContent.metadata || {};
+  const { siteConfig } = useDocusaurusContext();
 
-  if (!String(meta.permalink || "").startsWith(PB_RELEASE_NOTES_BASE)) {
+  if (
+    !stripBaseUrl(meta.permalink, siteConfig.baseUrl).startsWith(
+      PB_RELEASE_NOTES_BASE
+    )
+  ) {
     return <BlogPostPageOriginal {...props} />;
   }
 

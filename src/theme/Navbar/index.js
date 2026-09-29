@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Navbar from "@theme-original/Navbar";
-import { useLocation } from "@docusaurus/router";
+import { usePBSitePath } from "@site/src/components/PBPortal/pbRoute";
 import Switcher from "@site/src/components/PBPortal/Switcher";
 import "@site/src/components/PBPortal/pb-portal.scss";
 
@@ -25,8 +25,7 @@ function surfaceForPath(pathname) {
 // container so they scroll as one unit (the switcher can no longer slide behind
 // the navbar). Keeps the PB surface tokens in sync with pan.dev's theme toggle.
 export default function NavbarWrapper(props) {
-  const { pathname } = useLocation();
-  const surface = surfaceForPath(pathname);
+  const surface = surfaceForPath(usePBSitePath());
 
   useEffect(() => {
     if (!surface) return undefined;
