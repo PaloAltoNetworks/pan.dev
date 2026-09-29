@@ -108,6 +108,12 @@ See [VR Routing Profiles API](/scm/api/config/sase/network/vr-routing-profiles/)
 
 ---
 
+### Scm — Checks (Updated)
+
+4 removed endpoints.
+
+See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for full details.
+
 ## August 2026
 
 ### NGFW, SASE — Routing APIs (New)
