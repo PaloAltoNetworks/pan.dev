@@ -153,6 +153,25 @@ See [VR Routing Profiles API](/scm/api/config/sase/network/vr-routing-profiles/)
 
 See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for full details.
 
+---
+
+### Strata Cloud Manager — Checks (Updated)
+
+4 new endpoints.
+
+<details><summary>View endpoints (4)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/report` | Get Posture Check Reports |
+| GET | `/report/object-types` | List Object Types in Report |
+| GET | `/report/objects/{uuid}` | Get Posture Check Reports for Single Object |
+| GET | `/report/{object-type}` | Get Posture Check Reports by Object Type |
+
+</details>
+
+See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for full details.
+
 ## August 2026
 
 ### NGFW, SASE — Routing APIs (New)
