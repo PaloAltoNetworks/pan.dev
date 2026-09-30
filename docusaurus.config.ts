@@ -383,6 +383,7 @@ const config = {
           secure_agentless_access: {
             specPath: "openapi-specs/scm/config/secure_agentless_access",
             outputDir: "products/scm/api/config/secure_agentless_access",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           auth: {

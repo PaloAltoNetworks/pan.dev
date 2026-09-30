@@ -510,7 +510,6 @@ module.exports = {
         require("./api/config/secure_agentless_access/sidebar"),
       ],
     },
-
   ],
   scmauth: ["scm/api/auth/auth-api", require("./api/auth/sidebar")],
   scmiam: ["scm/api/iam/iam-api", require("./api/iam/sidebar")],

@@ -220,7 +220,7 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
         ],
-                "Other Configuration": [
+        "Other Configuration": [
           {
             to: "scm/api/config/secure_agentless_access/introduction",
             label: "Secure Agentless Access (SAA) Configuration",
