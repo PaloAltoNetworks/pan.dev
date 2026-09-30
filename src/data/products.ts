@@ -247,7 +247,9 @@ export const MENU_GROUPS: MenuGroup[] = [
             to: "/scm/docs/api-best-practices/",
           },
         ],
-        apiDocs: [],
+        apiDocs: [
+          { label: "Secure Agentless Access (SAA) Configuration", to: "/scm/api/config/secure_agentless_access/" },
+        ],
       },
     ],
   },

@@ -380,6 +380,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          secure_agentless_access: {
+            specPath: "openapi-specs/scm/config/secure_agentless_access",
+            outputDir: "products/scm/api/config/secure_agentless_access",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",

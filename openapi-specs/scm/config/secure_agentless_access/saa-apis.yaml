@@ -1,0 +1,2540 @@
+openapi: 3.0.3
+info:
+    contact:
+        email: support@paloaltonetworks.com
+        name: Palo Alto Networks Technical Support
+        url: https://support.paloaltonetworks.com
+    description: |-
+        Configuration API for Secure Agentless Access (SAA).
+
+        © 2026 Palo Alto Networks, Inc
+    license:
+        name: MIT
+        url: https://opensource.org/license/mit
+    termsOfService: https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf
+    title: Secure Agentless Access (SAA) Configuration
+    version: 1.0.0
+servers:
+    - description: Prod
+      url: https://api.strata.paloaltonetworks.com
+security:
+    - scmToken: []
+tags:
+    - description: Manage secure agentless access application groups.
+      name: Application Groups
+    - description: Manage secure agentless access app policies.
+      name: Application Policies
+    - description: Manage secure agentless access app profiles.
+      name: Application Profiles
+    - description: Manage secure agentless access applications.
+      name: Applications
+    - description: Manage secure agentless access active sessions.
+      name: Sessions
+paths:
+    /secure-agentless-access/v1/active-sessions:
+        get:
+            operationId: ListActiveSessions
+            parameters:
+                - description: Optional filter by user_id
+                  in: query
+                  name: user_id
+                  schema:
+                    type: string
+                - description: Optional filter by app_id
+                  in: query
+                  name: app_id
+                  schema:
+                    type: string
+                - description: Optional filter by session type
+                  in: query
+                  name: session_type
+                  schema:
+                    enum:
+                        - browser
+                        - app
+                    type: string
+                - description: Number of items per page
+                  in: query
+                  name: limit
+                  schema:
+                    default: 20
+                    maximum: 1000
+                    type: integer
+                - description: The offset into the list of results returned
+                  in: query
+                  name: offset
+                  schema:
+                    default: 0
+                    type: integer
+                - description: 'Sort by a field (ascending by default): ''sort=name'', ''sort[asc]=name'' or ''sort[desc]=name''.'
+                  in: query
+                  name: sort
+                  schema:
+                    enum:
+                        - start_time
+                        - last_heartbeat
+                    type: string
+                - description: If this is set, return the meta data only, not the entire listing.
+                  in: query
+                  name: meta_only
+                  schema:
+                    type: boolean
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/active-sessions'
+                    description: OK
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Bad Request
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Not Found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal Server Error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: List all active sessions
+            tags:
+                - Sessions
+    /secure-agentless-access/v1/active-sessions:disconnect:
+        post:
+            operationId: DisconnectActiveSessions
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/active-sessions-disconnect-request'
+                description: List of sessionIDs
+                required: true
+            responses:
+                "207":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/active-sessions-disconnect-response'
+                    description: 'Per-session outcome: 202 for sessions disconnected by this request, 404 for sessions not found or already disconnected'
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Bad Request
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: None of the provided sessions were active/disconnectable
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal Server Error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Disconnect a given list of active sessions
+            tags:
+                - Sessions
+    /secure-agentless-access/v1/active-sessions:disconnect-all:
+        post:
+            operationId: DisconnectAllActiveSessions
+            responses:
+                "202":
+                    description: Accepted - the tenant's active sessions are being disconnected asynchronously
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal Server Error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Disconnect all active sessions
+            tags:
+                - Sessions
+    /secure-agentless-access/v1/application-groups:
+        get:
+            operationId: ListApplicationGroups
+            parameters:
+                - description: Filter by group name
+                  in: query
+                  name: name
+                  schema:
+                    type: string
+                - description: Get further information on a resource.
+                  in: query
+                  name: expand
+                  schema:
+                    enum:
+                        - apps
+                    type: string
+                - description: If this is set, return the meta data only, not the entire listing.
+                  in: query
+                  name: meta_only
+                  schema:
+                    type: boolean
+                - description: The offset into the list of results returned
+                  in: query
+                  name: offset
+                  schema:
+                    default: 0
+                    type: integer
+                - description: The maximum number of results per page
+                  in: query
+                  name: limit
+                  schema:
+                    default: 20
+                    maximum: 1000
+                    type: integer
+                - description: 'Sort by a field (ascending by default): ''sort=name'', ''sort[asc]=name'' or ''sort[desc]=name''.'
+                  in: query
+                  name: sort
+                  schema:
+                    enum:
+                        - group_id
+                        - name
+                        - created_at
+                        - updated_at
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-groups'
+                    description: OK
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Bad Request
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal Server Error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: List application groups
+            tags:
+                - Application Groups
+        post:
+            operationId: CreateApplicationGroup
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/application-group-request'
+                description: Application group creation request
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-group'
+                    description: OK
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Bad Request
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant not found
+                "409":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Duplicate application group
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal Server Error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Create application group
+            tags:
+                - Application Groups
+    /secure-agentless-access/v1/application-groups/{group-id}:
+        delete:
+            operationId: DeleteApplicationGroupByID
+            parameters:
+                - description: Application Group ID
+                  in: path
+                  name: group-id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "204":
+                    description: No Content
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Not Found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal Server Error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Delete application group by ID
+            tags:
+                - Application Groups
+        get:
+            description: Retrieves an application group for the specified tenant service group and app group ID
+            operationId: GetApplicationGroupByID
+            parameters:
+                - description: Application Group ID
+                  in: path
+                  name: group-id
+                  required: true
+                  schema:
+                    type: string
+                - description: 'Get further information on a resource. Supported expandable attributes : apps'
+                  in: query
+                  name: expand
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-group'
+                    description: OK
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Not Found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal Server Error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Get application group by ID
+            tags:
+                - Application Groups
+        put:
+            operationId: UpdateApplicationGroupByID
+            parameters:
+                - description: Application Group ID
+                  in: path
+                  name: group-id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/application-group-request'
+                description: Application group update request
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-group'
+                    description: OK
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Bad Request
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Not Found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal Server Error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Update application group by ID
+            tags:
+                - Application Groups
+    /secure-agentless-access/v1/application-policies:
+        get:
+            operationId: ListApplicationPolicies
+            parameters:
+                - description: Filter by app id
+                  in: query
+                  name: app_id
+                  schema:
+                    type: string
+                - description: Filter by app group id
+                  in: query
+                  name: app_group_id
+                  schema:
+                    type: string
+                - description: Filter by profile id
+                  in: query
+                  name: profile_id
+                  schema:
+                    type: string
+                - description: Filter by policy name
+                  in: query
+                  name: name
+                  schema:
+                    type: string
+                - description: If set, return the metadata only, not the entire listing
+                  in: query
+                  name: meta_only
+                  schema:
+                    type: boolean
+                - description: The offset into the list of results returned
+                  in: query
+                  name: offset
+                  schema:
+                    default: 0
+                    type: integer
+                - description: The maximum number of results per page
+                  in: query
+                  name: limit
+                  schema:
+                    default: 20
+                    maximum: 1000
+                    type: integer
+                - description: 'Sort by a field (ascending by default): ''sort=name'', ''sort[asc]=name'' or ''sort[desc]=name''.'
+                  in: query
+                  name: sort
+                  schema:
+                    enum:
+                        - name
+                        - created_at
+                        - updated_at
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-policies'
+                    description: Successfully fetched policies
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: List application policies
+            tags:
+                - Application Policies
+        post:
+            operationId: CreateApplicationPolicy
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/application-policy-request'
+                description: Policy creation request
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-policy'
+                    description: Successfully created policy
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Create application policy
+            tags:
+                - Application Policies
+    /secure-agentless-access/v1/application-policies/{policy-id}:
+        delete:
+            operationId: DeleteApplicationPolicyByID
+            parameters:
+                - description: Policy ID
+                  in: path
+                  name: policy-id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "204":
+                    description: No Content
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Policy not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Delete application policy by ID
+            tags:
+                - Application Policies
+        get:
+            operationId: GetApplicationPolicyByID
+            parameters:
+                - description: Policy ID
+                  in: path
+                  name: policy-id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-policy'
+                    description: Successfully retrieved policy
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Policy not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Get application policy by ID
+            tags:
+                - Application Policies
+        put:
+            operationId: UpdateApplicationPolicyByID
+            parameters:
+                - description: Policy ID
+                  in: path
+                  name: policy-id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/application-policy-request'
+                description: Policy update request
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-policy'
+                    description: Successfully updated policy
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Policy not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Update application policy by ID
+            tags:
+                - Application Policies
+    /secure-agentless-access/v1/application-profiles:
+        get:
+            operationId: ListApplicationProfiles
+            parameters:
+                - description: Filter by policy id
+                  in: query
+                  name: policy_id
+                  schema:
+                    type: string
+                - description: Filter by profile name
+                  in: query
+                  name: name
+                  schema:
+                    type: string
+                - description: If set, return the metadata only, not the entire listing
+                  in: query
+                  name: meta_only
+                  schema:
+                    type: boolean
+                - description: The offset into the list of results returned
+                  in: query
+                  name: offset
+                  schema:
+                    default: 0
+                    type: integer
+                - description: The maximum number of results per page
+                  in: query
+                  name: limit
+                  schema:
+                    default: 20
+                    maximum: 1000
+                    type: integer
+                - description: 'Sort by a field (ascending by default): ''sort=name'', ''sort[asc]=name'' or ''sort[desc]=name''.'
+                  in: query
+                  name: sort
+                  schema:
+                    enum:
+                        - name
+                        - created_at
+                        - updated_at
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-profiles'
+                    description: Successfully fetched profiles
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: List application profiles
+            tags:
+                - Application Profiles
+        post:
+            operationId: CreateApplicationProfile
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/application-profile-request'
+                description: Profile creation request
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-profile'
+                    description: Successfully created profile
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Create application profile
+            tags:
+                - Application Profiles
+    /secure-agentless-access/v1/application-profiles/{profile-id}:
+        delete:
+            operationId: DeleteApplicationProfileByID
+            parameters:
+                - description: Profile ID
+                  in: path
+                  name: profile-id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "204":
+                    description: No Content
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Profile not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Delete application profile by ID
+            tags:
+                - Application Profiles
+        get:
+            operationId: GetApplicationProfileByID
+            parameters:
+                - description: Profile ID
+                  in: path
+                  name: profile-id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-profile'
+                    description: Successfully retrieved profile
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Profile not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Get application profile by ID
+            tags:
+                - Application Profiles
+        put:
+            operationId: UpdateApplicationProfileByID
+            parameters:
+                - description: Profile ID
+                  in: path
+                  name: profile-id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/application-profile-request'
+                description: Profile update request
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application-profile'
+                    description: Successfully updated profile
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Profile not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Update application profile by ID
+            tags:
+                - Application Profiles
+    /secure-agentless-access/v1/applications:
+        get:
+            operationId: ListApplications
+            parameters:
+                - description: Filter by app type
+                  in: query
+                  name: app_type
+                  schema:
+                    enum:
+                        - rdp
+                        - ssh
+                        - vnc
+                        - private_webapp
+                        - public_webapp
+                    type: string
+                - description: Filter by app name
+                  in: query
+                  name: app_name
+                  schema:
+                    type: string
+                - description: Filter by app group id
+                  in: query
+                  name: app_group_id
+                  schema:
+                    type: string
+                - description: 'Get further information on a resource. Supported expandable attributes : app_groups'
+                  in: query
+                  name: expand
+                  schema:
+                    type: string
+                - description: If set, return the metadata only, not the entire listing
+                  in: query
+                  name: meta_only
+                  schema:
+                    type: boolean
+                - description: The offset into the list of results returned
+                  in: query
+                  name: offset
+                  schema:
+                    default: 0
+                    type: integer
+                - description: The maximum number of results per page
+                  in: query
+                  name: limit
+                  schema:
+                    default: 20
+                    maximum: 1000
+                    type: integer
+                - description: 'Sort by a field (ascending by default): ''sort=name'', ''sort[asc]=name'' or ''sort[desc]=name''.'
+                  in: query
+                  name: sort
+                  schema:
+                    enum:
+                        - name
+                        - created_at
+                        - updated_at
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/applications'
+                    description: Successfully fetched applications
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: List applications
+            tags:
+                - Applications
+        post:
+            operationId: CreateApplication
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/application-request'
+                description: Application creation request
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application'
+                    description: Successfully created application
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant not found
+                "409":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Duplicate application
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Create application
+            tags:
+                - Applications
+    /secure-agentless-access/v1/applications/{app-id}:
+        delete:
+            operationId: DeleteApplicationByID
+            parameters:
+                - description: Application ID
+                  in: path
+                  name: app-id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "204":
+                    description: No Content
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Application not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Delete application by ID
+            tags:
+                - Applications
+        get:
+            operationId: GetApplicationByID
+            parameters:
+                - description: Application ID
+                  in: path
+                  name: app-id
+                  required: true
+                  schema:
+                    type: string
+                - description: 'Get further information on a resource. Supported expandable attributes : app_groups'
+                  in: query
+                  name: expand
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application'
+                    description: Successfully retrieved application
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Application not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Get application by ID
+            tags:
+                - Applications
+        put:
+            operationId: UpdateApplicationByID
+            parameters:
+                - description: Application ID
+                  in: path
+                  name: app-id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/application-request'
+                description: Application update request
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/application'
+                    description: Successfully updated application
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Tenant or application not found
+                "409":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Duplicate application
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Update application by ID
+            tags:
+                - Applications
+    /secure-agentless-access/v1/applications:delete:
+        post:
+            operationId: DeleteApplications
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/applications-delete-request'
+                description: Application ids list
+                required: true
+            responses:
+                "207":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/applications-delete-response'
+                    description: List of app ids deleted successfully if at least one from the request is deleted
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Invalid input or validation error
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unauthorized
+                "403":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Forbidden - Not authorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Application not found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Internal server error
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error-response'
+                    description: Unexpected error
+            summary: Delete multiple applications
+            tags:
+                - Applications
+components:
+    schemas:
+        access-domain-request:
+            properties:
+                custom_domain:
+                    description: Required only when the parent AccessMode is 'custom'.
+                    example: dailyplanet.com
+                    type: string
+                custom_domain_cert_name:
+                    description: Required only when the parent AccessMode is 'custom'.
+                    example: authCert
+                    type: string
+                fqdn_id:
+                    description: Readonly fqdn id for the destination for which access is being enabled
+                    example: fqdn-123
+                    readOnly: true
+                    type: string
+                subdomain:
+                    description: This is only applicable when the parent AccessMode is 'subdomain'.
+                    example: dailyplanet
+                    type: string
+            type: object
+        access-domain-response:
+            properties:
+                assigned_subdomain:
+                    description: assigned subdomain if access_mode is subdomain
+                    readOnly: true
+                    type: string
+                custom_domain:
+                    description: custom domain, if access_mode is custom.
+                    type: string
+                custom_domain_cert_name:
+                    description: custom domain cert, if access_mode is custom.
+                    type: string
+                fqdn_id:
+                    example: fqdn-123
+                    type: string
+                generated_cname:
+                    description: would be the primary domain name for this tenant for each of the access domain.
+                    type: string
+            required:
+                - fqdn_id
+            type: object
+        active-session:
+            description: User session details
+            properties:
+                app_id:
+                    description: ID of the app, this session is associated with
+                    example: app-50a3d652541b7b67
+                    type: string
+                app_type:
+                    description: app type
+                    enum:
+                        - rdp
+                        - ssh
+                        - vnc
+                        - browser
+                    type: string
+                device:
+                    description: device info like type and OS
+                    type: string
+                last_heartbeat:
+                    description: last heartbeat time
+                    format: date-time
+                    readOnly: true
+                    type: string
+                session_id:
+                    description: session uuid
+                    example: 31de0869-3551-4b47-8462-2f09dbeda41a
+                    readOnly: true
+                    type: string
+                session_type:
+                    description: type of session (browser or app)
+                    enum:
+                        - browser
+                        - app
+                    type: string
+                source_ip:
+                    description: source ip
+                    type: string
+                start_time:
+                    description: session start time
+                    format: date-time
+                    readOnly: true
+                    type: string
+                status:
+                    description: session status
+                    readOnly: true
+                    type: string
+                user_agent:
+                    description: user agent information like name and version
+                    type: string
+                user_id:
+                    description: Email ID
+                    example: jdoe@example.com
+                    type: string
+            required:
+                - app_id
+                - app_type
+                - device
+                - session_type
+                - source_ip
+                - user_id
+            type: object
+        active-sessions:
+            description: Response for the listing active sessions for a tenant
+            properties:
+                data:
+                    description: Session object
+                    items:
+                        $ref: '#/components/schemas/active-session'
+                    type: array
+                limit:
+                    type: integer
+                offset:
+                    type: integer
+                total:
+                    type: integer
+            type: object
+        active-sessions-disconnect-request:
+            description: Request for deleting multiple sessions.
+            properties:
+                session_ids:
+                    items:
+                        type: string
+                    maxItems: 1000
+                    minItems: 1
+                    type: array
+            required:
+                - session_ids
+            type: object
+        active-sessions-disconnect-response:
+            properties:
+                data:
+                    items:
+                        $ref: '#/components/schemas/disconnect-session-result'
+                    type: array
+            type: object
+        app-policy-action:
+            properties:
+                action:
+                    enum:
+                        - allow
+                    type: string
+                user_groups:
+                    description: The user group in `netbios\\groupName` format (e.g. "example\\AdminUserGroup"), where netbios is the domain "netbios" from result.data.domains[] and groupName is the group's "name" from result.data.domains[].objects[] in the CIE Directory Sync public endpoint [CIE Directory Sync Service documentation](https://pan.dev/scm/api/config/ciedss/fetch-group-information-from-the-cie-directory-sync-service-across-multiple-scenarios/)
+                    example:
+                        - example\AdminUserGroup
+                    items:
+                        type: string
+                    type: array
+                users:
+                    description: CIEUser is fetched from CIE Directory Sync public endpoint [CIE Directory Sync Service documentation](https://pan.dev/scm/api/config/ciedss/fetch-user-information-from-the-cie-directory-sync-service-across-multiple-scenarios/)
+                    items:
+                        $ref: '#/components/schemas/cie-user'
+                    type: array
+            required:
+                - action
+            type: object
+        app-policy-rules:
+            properties:
+                actions:
+                    items:
+                        $ref: '#/components/schemas/app-policy-action'
+                    type: array
+            type: object
+        app-profile-rdp-settings:
+            properties:
+                allow_audio:
+                    type: boolean
+                allow_copy:
+                    type: boolean
+                allow_file_download:
+                    type: boolean
+                allow_file_upload:
+                    type: boolean
+                allow_paste:
+                    type: boolean
+            type: object
+        app-profile-ssh-settings:
+            properties:
+                allow_copy:
+                    type: boolean
+                allow_file_download:
+                    type: boolean
+                allow_file_upload:
+                    type: boolean
+                allow_paste:
+                    type: boolean
+            type: object
+        app-profile-vnc-settings:
+            properties:
+                allow_copy:
+                    type: boolean
+                allow_file_download:
+                    type: boolean
+                allow_file_upload:
+                    type: boolean
+                allow_paste:
+                    type: boolean
+                read_only:
+                    type: boolean
+            type: object
+        app-tuple:
+            properties:
+                app_id:
+                    example: app-abc123def456a1b2c3
+                    type: string
+                app_name:
+                    example: application name
+                    type: string
+            type: object
+        application:
+            properties:
+                app_group_ids:
+                    example:
+                        - group-abc123def456a1b2c3
+                    items:
+                        type: string
+                    type: array
+                app_groups:
+                    description: only returned on expand=app_groups
+                    items:
+                        $ref: '#/components/schemas/pair'
+                    readOnly: true
+                    type: array
+                app_id:
+                    readOnly: true
+                    type: string
+                created_at:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                description:
+                    example: application description
+                    maxLength: 4096
+                    type: string
+                destinations:
+                    items:
+                        $ref: '#/components/schemas/fqdn'
+                    type: array
+                launch_url:
+                    readOnly: true
+                    type: string
+                name:
+                    example: application name
+                    maxLength: 256
+                    type: string
+                rdp_settings:
+                    $ref: '#/components/schemas/rdp-app-resp-settings'
+                ssh_settings:
+                    $ref: '#/components/schemas/ssh-app-resp-settings'
+                type:
+                    enum:
+                        - ssh
+                        - rdp
+                        - vnc
+                        - private_webapp
+                        - public_webapp
+                    example: ssh
+                    type: string
+                updated_at:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                vnc_settings:
+                    $ref: '#/components/schemas/vnc-app-resp-settings'
+                webapp_settings:
+                    $ref: '#/components/schemas/web-app-access-response'
+            required:
+                - app_id
+                - name
+                - type
+            type: object
+        application-group:
+            properties:
+                app_ids:
+                    example:
+                        - app-abc123def456a1b2c3
+                    items:
+                        type: string
+                    type: array
+                apps:
+                    description: only returned on expand=apps
+                    items:
+                        $ref: '#/components/schemas/app-tuple'
+                    type: array
+                created_at:
+                    example: "2025-09-16T17:31:54Z"
+                    readOnly: true
+                    type: string
+                description:
+                    example: application group description
+                    maxLength: 4096
+                    type: string
+                group_id:
+                    example: group-abc123def456a1b2c3
+                    readOnly: true
+                    type: string
+                name:
+                    example: admin apps group
+                    maxLength: 256
+                    type: string
+                updated_at:
+                    example: "2025-09-16T17:31:54Z"
+                    readOnly: true
+                    type: string
+            required:
+                - name
+            type: object
+        application-group-request:
+            properties:
+                app_ids:
+                    example:
+                        - app-abc123def456a1b2c3
+                    items:
+                        type: string
+                    type: array
+                description:
+                    example: application group description
+                    maxLength: 4096
+                    type: string
+                name:
+                    example: admin apps group
+                    maxLength: 256
+                    type: string
+            required:
+                - name
+            type: object
+        application-groups:
+            properties:
+                data:
+                    items:
+                        $ref: '#/components/schemas/application-group'
+                    type: array
+                limit:
+                    type: integer
+                offset:
+                    type: integer
+                total:
+                    type: integer
+            type: object
+        application-policies:
+            properties:
+                data:
+                    items:
+                        $ref: '#/components/schemas/application-policy'
+                    type: array
+                limit:
+                    type: integer
+                offset:
+                    type: integer
+                total:
+                    type: integer
+            type: object
+        application-policy:
+            properties:
+                app_group_ids:
+                    example:
+                        - group-123abc
+                    items:
+                        type: string
+                    type: array
+                app_ids:
+                    example:
+                        - app-123abc
+                    items:
+                        type: string
+                    type: array
+                description:
+                    example: policy description
+                    maxLength: 4096
+                    type: string
+                enabled:
+                    type: boolean
+                name:
+                    example: access policy
+                    maxLength: 256
+                    type: string
+                policy_id:
+                    readOnly: true
+                    type: string
+                profile_id:
+                    example: profile-1234abcd
+                    type: string
+                rules:
+                    $ref: '#/components/schemas/app-policy-rules'
+            required:
+                - name
+                - profile_id
+                - rules
+            type: object
+        application-policy-request:
+            properties:
+                app_group_ids:
+                    example:
+                        - group-123abc
+                    items:
+                        type: string
+                    type: array
+                app_ids:
+                    example:
+                        - app-123abc
+                    items:
+                        type: string
+                    type: array
+                description:
+                    example: policy description
+                    maxLength: 4096
+                    type: string
+                enabled:
+                    type: boolean
+                name:
+                    example: access policy
+                    maxLength: 256
+                    type: string
+                profile_id:
+                    example: profile-1234abcd
+                    type: string
+                rules:
+                    $ref: '#/components/schemas/app-policy-rules'
+            required:
+                - name
+                - profile_id
+                - rules
+            type: object
+        application-profile:
+            properties:
+                description:
+                    example: profile description
+                    maxLength: 4096
+                    type: string
+                is_read_only:
+                    description: this flag indicates to the UI whether this is the read-only, system-defined app profile
+                    type: boolean
+                name:
+                    example: AllowAll
+                    maxLength: 256
+                    type: string
+                profile_id:
+                    readOnly: true
+                    type: string
+                rdp:
+                    $ref: '#/components/schemas/app-profile-rdp-settings'
+                ssh:
+                    $ref: '#/components/schemas/app-profile-ssh-settings'
+                vnc:
+                    $ref: '#/components/schemas/app-profile-vnc-settings'
+            required:
+                - name
+                - rdp
+                - ssh
+                - vnc
+            type: object
+        application-profile-request:
+            properties:
+                description:
+                    example: profile description
+                    maxLength: 4096
+                    type: string
+                name:
+                    example: AllowAll
+                    maxLength: 256
+                    type: string
+                rdp:
+                    $ref: '#/components/schemas/app-profile-rdp-settings'
+                ssh:
+                    $ref: '#/components/schemas/app-profile-ssh-settings'
+                vnc:
+                    $ref: '#/components/schemas/app-profile-vnc-settings'
+            required:
+                - name
+                - rdp
+                - ssh
+                - vnc
+            type: object
+        application-profiles:
+            properties:
+                data:
+                    items:
+                        $ref: '#/components/schemas/application-profile'
+                    type: array
+                limit:
+                    type: integer
+                offset:
+                    type: integer
+                total:
+                    type: integer
+            type: object
+        application-request:
+            properties:
+                app_group_ids:
+                    example:
+                        - group-abc123def456a1b2c3
+                    items:
+                        type: string
+                    type: array
+                description:
+                    example: application description
+                    maxLength: 4096
+                    type: string
+                destinations:
+                    items:
+                        $ref: '#/components/schemas/fqdn'
+                    type: array
+                name:
+                    example: application name
+                    maxLength: 256
+                    type: string
+                rdp_settings:
+                    $ref: '#/components/schemas/rdp-app-req-settings'
+                ssh_settings:
+                    $ref: '#/components/schemas/ssh-app-req-settings'
+                type:
+                    enum:
+                        - ssh
+                        - rdp
+                        - vnc
+                        - private_webapp
+                        - public_webapp
+                    example: ssh
+                    type: string
+                vnc_settings:
+                    $ref: '#/components/schemas/vnc-app-req-settings'
+                webapp_settings:
+                    $ref: '#/components/schemas/web-app-access-request'
+            required:
+                - name
+                - type
+            type: object
+        applications:
+            properties:
+                data:
+                    items:
+                        $ref: '#/components/schemas/application'
+                    type: array
+                limit:
+                    type: integer
+                offset:
+                    type: integer
+                total:
+                    type: integer
+            type: object
+        applications-delete-request:
+            properties:
+                app_ids:
+                    items:
+                        type: string
+                    maxItems: 1000
+                    minItems: 1
+                    type: array
+            required:
+                - app_ids
+            type: object
+        applications-delete-response:
+            properties:
+                data:
+                    items:
+                        $ref: '#/components/schemas/delete-app-response'
+                    type: array
+            type: object
+        cie-user:
+            properties:
+                cie_mail:
+                    description: The user's "User Principal Name" from result.data.domains[].objects[] in the CIE Directory Sync public endpoint
+                    example: jdoe@example.com
+                    type: string
+                cie_netbios:
+                    description: The domain "netbios" from result.data.domains[] in the CIE Directory Sync public endpoint
+                    example: CORP
+                    type: string
+                cie_sAMAccountName:
+                    description: The user's "SAM Account Name" from result.data.domains[].objects[] in the CIE Directory Sync public endpoint
+                    example: jdoe
+                    type: string
+            required:
+                - cie_mail
+                - cie_netbios
+            type: object
+        credentials:
+            properties:
+                password:
+                    type: string
+                    writeOnly: true
+                username:
+                    type: string
+            type: object
+        delete-app-response:
+            properties:
+                app_id:
+                    type: string
+                status_code:
+                    type: integer
+            type: object
+        disconnect-session-result:
+            properties:
+                session_id:
+                    type: string
+                status:
+                    description: 'per-session HTTP status: 202 disconnected, 404 not found/already deleted'
+                    type: integer
+            type: object
+        error-item:
+            properties:
+                code:
+                    description: Error code identifying the failure.
+                    oneOf:
+                        - enum:
+                            - SAA_12001
+                          title: SAA_12001 - Forbidden
+                          type: string
+                        - enum:
+                            - SAA_12002
+                          title: SAA_12002 - InvalidInput
+                          type: string
+                        - enum:
+                            - SAA_12003
+                          title: SAA_12003 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_12005
+                          title: SAA_12005 - InternalServerError
+                          type: string
+                        - enum:
+                            - SAA_12006
+                          title: SAA_12006 - PreconditionFailed
+                          type: string
+                        - enum:
+                            - SAA_12007
+                          title: SAA_12007 - MethodNotAllowed
+                          type: string
+                        - enum:
+                            - SAA_12008
+                          title: SAA_12008 - NotFound
+                          type: string
+                        - enum:
+                            - SAA_12009
+                          title: SAA_12009 - ServiceUnavailable
+                          type: string
+                        - enum:
+                            - SAA_12010
+                          title: SAA_12010 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_12011
+                          title: SAA_12011 - DuplicateResource
+                          type: string
+                        - enum:
+                            - SAA_12012
+                          title: SAA_12012 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_12013
+                          title: SAA_12013 - ResourceDeleted
+                          type: string
+                        - enum:
+                            - SAA_12014
+                          title: SAA_12014 - AppTypeNotEnabled
+                          type: string
+                        - enum:
+                            - SAA_12015
+                          title: SAA_12015 - TooManyResources
+                          type: string
+                        - enum:
+                            - SAA_12017
+                          title: SAA_12017 - InvalidDestination
+                          type: string
+                        - enum:
+                            - SAA_12018
+                          title: SAA_12018 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_12019
+                          title: SAA_12019 - DomainInUse
+                          type: string
+                        - enum:
+                            - SAA_12020
+                          title: SAA_12020 - ProfileInUse
+                          type: string
+                        - enum:
+                            - SAA_12021
+                          title: SAA_12021 - Unauthorized
+                          type: string
+                        - enum:
+                            - SAA_22001
+                          title: SAA_22001 - Forbidden
+                          type: string
+                        - enum:
+                            - SAA_22002
+                          title: SAA_22002 - InvalidInput
+                          type: string
+                        - enum:
+                            - SAA_22003
+                          title: SAA_22003 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_22005
+                          title: SAA_22005 - InternalServerError
+                          type: string
+                        - enum:
+                            - SAA_22006
+                          title: SAA_22006 - PreconditionFailed
+                          type: string
+                        - enum:
+                            - SAA_22007
+                          title: SAA_22007 - MethodNotAllowed
+                          type: string
+                        - enum:
+                            - SAA_22008
+                          title: SAA_22008 - NotFound
+                          type: string
+                        - enum:
+                            - SAA_22009
+                          title: SAA_22009 - ServiceUnavailable
+                          type: string
+                        - enum:
+                            - SAA_22010
+                          title: SAA_22010 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_22011
+                          title: SAA_22011 - DuplicateResource
+                          type: string
+                        - enum:
+                            - SAA_22012
+                          title: SAA_22012 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_32001
+                          title: SAA_32001 - Forbidden
+                          type: string
+                        - enum:
+                            - SAA_32002
+                          title: SAA_32002 - InvalidInput
+                          type: string
+                        - enum:
+                            - SAA_32003
+                          title: SAA_32003 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_32004
+                          title: SAA_32004 - InternalError
+                          type: string
+                        - enum:
+                            - SAA_32005
+                          title: SAA_32005 - InternalServerError
+                          type: string
+                        - enum:
+                            - SAA_32006
+                          title: SAA_32006 - PreconditionFailed
+                          type: string
+                        - enum:
+                            - SAA_32007
+                          title: SAA_32007 - MethodNotAllowed
+                          type: string
+                        - enum:
+                            - SAA_32008
+                          title: SAA_32008 - NotFound
+                          type: string
+                        - enum:
+                            - SAA_32009
+                          title: SAA_32009 - ServiceUnavailable
+                          type: string
+                        - enum:
+                            - SAA_32010
+                          title: SAA_32010 - NotUpdated
+                          type: string
+                details:
+                    items:
+                        type: string
+                    type: array
+                message:
+                    type: string
+            type: object
+        error-response:
+            properties:
+                _errors:
+                    items:
+                        $ref: '#/components/schemas/error-item'
+                    type: array
+                _request_id:
+                    type: string
+            type: object
+        fqdn:
+            properties:
+                host:
+                    example: foo.bar.com
+                    type: string
+                id:
+                    description: FQDN unique identifier
+                    example: fqdn-123
+                    readOnly: true
+                    type: string
+                is_primary:
+                    example: true
+                    type: boolean
+                port:
+                    example: 443
+                    maximum: 65535
+                    minimum: 1
+                    type: integer
+                protocol:
+                    description: protocol for webapps
+                    example: https
+                    type: string
+            required:
+                - port
+            type: object
+        has-credentials:
+            properties:
+                has_passphrase:
+                    type: boolean
+                has_password:
+                    type: boolean
+                has_private_key:
+                    type: boolean
+                has_sftp_passphrase:
+                    type: boolean
+                has_sftp_password:
+                    type: boolean
+                has_sftp_private_key:
+                    type: boolean
+            type: object
+        pair:
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+            type: object
+        rdp-app-req-settings:
+            properties:
+                credentials:
+                    $ref: '#/components/schemas/credentials'
+                domain:
+                    maxLength: 255
+                    type: string
+                security_mode:
+                    enum:
+                        - nla
+                        - tls
+                    type: string
+                server_keyboard_layout:
+                    enum:
+                        - pt-br-qwerty
+                        - en-gb-qwerty
+                        - en-us-qwerty
+                        - fr-fr-azerty
+                        - fr-be-azerty
+                        - fr-ch-qwertz
+                        - de-de-qwertz
+                        - de-ch-qwertz
+                        - hu-hu-qwertz
+                        - it-it-qwerty
+                        - ja-jp-qwerty
+                        - no-no-qwerty
+                        - es-es-qwerty
+                        - es-latam-qwerty
+                        - sv-se-qwerty
+                        - tr-tr-qwerty
+                    type: string
+                win7_compatible_mode:
+                    type: boolean
+            type: object
+        rdp-app-resp-settings:
+            properties:
+                credentials:
+                    $ref: '#/components/schemas/credentials'
+                domain:
+                    maxLength: 255
+                    type: string
+                has_credentials:
+                    $ref: '#/components/schemas/has-credentials'
+                security_mode:
+                    enum:
+                        - nla
+                        - tls
+                    type: string
+                server_keyboard_layout:
+                    enum:
+                        - pt-br-qwerty
+                        - en-gb-qwerty
+                        - en-us-qwerty
+                        - fr-fr-azerty
+                        - fr-be-azerty
+                        - fr-ch-qwertz
+                        - de-de-qwertz
+                        - de-ch-qwertz
+                        - hu-hu-qwertz
+                        - it-it-qwerty
+                        - ja-jp-qwerty
+                        - no-no-qwerty
+                        - es-es-qwerty
+                        - es-latam-qwerty
+                        - sv-se-qwerty
+                        - tr-tr-qwerty
+                    type: string
+                win7_compatible_mode:
+                    type: boolean
+            type: object
+        ssh-app-req-settings:
+            properties:
+                credentials:
+                    $ref: '#/components/schemas/credentials'
+                host_key:
+                    type: string
+                passphrase:
+                    type: string
+                    writeOnly: true
+                private_key:
+                    type: string
+                    writeOnly: true
+            type: object
+        ssh-app-resp-settings:
+            properties:
+                credentials:
+                    $ref: '#/components/schemas/credentials'
+                has_credentials:
+                    $ref: '#/components/schemas/has-credentials'
+                host_key:
+                    type: string
+                passphrase:
+                    type: string
+                    writeOnly: true
+                private_key:
+                    type: string
+                    writeOnly: true
+            type: object
+        vnc-app-req-settings:
+            properties:
+                credentials:
+                    $ref: '#/components/schemas/credentials'
+                sftp_host_key:
+                    type: string
+                sftp_hostname:
+                    type: string
+                sftp_passphrase:
+                    description: SftpPassphrase is used if SftpPrivateKey is encrypted
+                    type: string
+                    writeOnly: true
+                sftp_password:
+                    description: SftpPassword is required if SftpPrivateKey is not provided and SftpUsername is provided
+                    type: string
+                    writeOnly: true
+                sftp_port:
+                    maximum: 65535
+                    minimum: 0
+                    type: integer
+                sftp_private_key:
+                    description: SftpPrivateKey is required if SftpPassword is not provided and SftpUsername is provided
+                    type: string
+                    writeOnly: true
+                sftp_username:
+                    type: string
+            type: object
+        vnc-app-resp-settings:
+            properties:
+                credentials:
+                    $ref: '#/components/schemas/credentials'
+                has_credentials:
+                    $ref: '#/components/schemas/has-credentials'
+                sftp_host_key:
+                    type: string
+                sftp_hostname:
+                    type: string
+                sftp_passphrase:
+                    description: SftpPassphrase is used if SftpPrivateKey is encrypted
+                    type: string
+                    writeOnly: true
+                sftp_password:
+                    description: SftpPassword is required if SftpPrivateKey is not provided and SftpUsername is provided
+                    type: string
+                    writeOnly: true
+                sftp_port:
+                    maximum: 65535
+                    minimum: 0
+                    type: integer
+                sftp_private_key:
+                    description: SftpPrivateKey is required if SftpPassword is not provided and SftpUsername is provided
+                    type: string
+                    writeOnly: true
+                sftp_username:
+                    type: string
+            type: object
+        web-app-access-request:
+            properties:
+                access_domains:
+                    description: A list of backend FQDNs to enable access for. The count for this should match the destinations in the request.
+                    items:
+                        $ref: '#/components/schemas/access-domain-request'
+                    type: array
+                access_mode:
+                    enum:
+                        - subdomain
+                        - custom
+                    type: string
+            required:
+                - access_mode
+            type: object
+        web-app-access-response:
+            properties:
+                access_domains:
+                    items:
+                        $ref: '#/components/schemas/access-domain-response'
+                    type: array
+                access_mode:
+                    type: string
+            type: object
+    securitySchemes:
+        scmToken:
+            bearerFormat: JWT
+            description: 'Secure Agentless Access (SAA) APIs authenticate client requests using the OAuth 2.0 Client Credentials flow. Please use the `client_id`, `client_secret` values associated with an IAM service account along with a scope value of `tsg_id:XXXXXXXXXX`, where `XXXXXXXXXX` is the Tenant Service Group (TSG) ID. The resulting JWT access token should be attached to all API calls as a `Bearer` token in the `Authorization` header (ex. `Authorization: Bearer tokenstring`). See the [Prisma SASE API authentication guide](https://pan.dev/sase/docs/getstarted/) for how to create a service account and acquire a token.'
+            scheme: bearer
+            type: http
