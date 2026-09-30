@@ -1,26 +1,28 @@
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import NavbarNavLink from "@theme/NavbarItem/NavbarNavLink";
 import clsx from "clsx";
 import React from "react";
+import { MENU_GROUPS } from "@site/src/data/products";
 import "./Featured.scss";
 
 function FeaturedCard({ colorclass, description, label, products }) {
   function ProductContent({ product }) {
     const { apiDocs, docs, label } = product;
-    const allDocs =
-      apiDocs?.length > 0 && docs?.length > 0
-        ? [...docs, ...apiDocs]
-        : apiDocs?.length > 0
-        ? apiDocs
-        : docs;
+    // The icon follows the list a link came from, so the roster does not have
+    // to carry a field that only the homepage reads.
+    const allDocs = [
+      ...(docs ?? []).map((link) => ({ ...link, iconClass: "doc-icon" })),
+      ...(apiDocs ?? []).map((link) => ({
+        ...link,
+        iconClass: "api-doc-icon",
+      })),
+    ];
 
     return (
       <div className="featured-card__product-container">
         <h3 className="featured-card__product-group-label">{label}</h3>
         <ul className="featured-card__product-list">
           {allDocs.map((docs, i) => {
-            const { label, to, icon } = docs;
-            const iconClass = icon === "doc" ? "doc-icon" : "api-doc-icon";
+            const { label, to, iconClass } = docs;
 
             return (
               <li
@@ -74,13 +76,7 @@ function FeaturedCard({ colorclass, description, label, products }) {
 }
 
 function FeaturedCardIndex() {
-  const {
-    siteConfig: { themeConfig },
-  } = useDocusaurusContext();
-  const {
-    navbar: { items },
-  } = themeConfig;
-  const featuredCards = items[0].items;
+  const featuredCards = MENU_GROUPS;
 
   return (
     <div
