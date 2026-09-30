@@ -444,6 +444,7 @@ const config = {
           "config-sase-security": {
             specPath: "openapi-specs/scm/config/sase/security",
             outputDir: "products/scm/api/config/sase/security",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-sase-network configurations": {
@@ -524,6 +525,7 @@ const config = {
           "config-ngfw-security": {
             specPath: "openapi-specs/scm/config/ngfw/security",
             outputDir: "products/scm/api/config/ngfw/security",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-cloudngfw-operations": {
@@ -554,6 +556,7 @@ const config = {
           "config-cloudngfw-security": {
             specPath: "openapi-specs/scm/config/cloudngfw/security",
             outputDir: "products/scm/api/config/cloudngfw/security",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-incidents": {
@@ -564,21 +567,25 @@ const config = {
           "compliance-framework-posture": {
             specPath: "openapi-specs/scm/config/posture-management/compliance-framework",
             outputDir: "products/scm/api/config/posture-management/compliance-framework",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "policy-optimizer-posture": {
             specPath: "openapi-specs/scm/config/posture-management/policy-optimizer",
             outputDir: "products/scm/api/config/posture-management/policy-optimizer",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "posture-checks": {
             specPath: "openapi-specs/scm/config/posture-management/checks",
             outputDir: "products/scm/api/config/posture-management/checks",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-cleanup-posture": {
             specPath: "openapi-specs/scm/config/posture-management/config-cleanup",
             outputDir: "products/scm/api/config/posture-management/config-cleanup",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-adnsr": {
@@ -695,12 +702,6 @@ const config = {
           scmsub: {
             specPath: "openapi-specs/scm/subscription",
             outputDir: "products/scm/api/subscription",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
-          scmactivation: {
-            specPath: "openapi-specs/scm/activation",
-            outputDir: "products/scm/api/activation",
-            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           tenancy: {
