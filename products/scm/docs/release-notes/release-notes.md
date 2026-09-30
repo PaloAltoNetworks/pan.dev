@@ -133,6 +133,43 @@ See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for
 
 See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for full details.
 
+### Strata Cloud Manager — Secure Agentless Access (New)
+
+These APIs enable configuration API for Secure Agentless Access (SAA).
+
+<details><summary>View endpoints (24)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/secure-agentless-access/v1/active-sessions` | List all active sessions |
+| POST | `/secure-agentless-access/v1/active-sessions:disconnect` | Disconnect a given list of active sessions |
+| POST | `/secure-agentless-access/v1/active-sessions:disconnect-all` | Disconnect all active sessions |
+| GET | `/secure-agentless-access/v1/application-groups` | List application groups |
+| POST | `/secure-agentless-access/v1/application-groups` | Create application group |
+| GET | `/secure-agentless-access/v1/application-groups/{group-id}` | Get application group by ID |
+| PUT | `/secure-agentless-access/v1/application-groups/{group-id}` | Update application group by ID |
+| DELETE | `/secure-agentless-access/v1/application-groups/{group-id}` | Delete application group by ID |
+| GET | `/secure-agentless-access/v1/application-policies` | List application policies |
+| POST | `/secure-agentless-access/v1/application-policies` | Create application policy |
+| GET | `/secure-agentless-access/v1/application-policies/{policy-id}` | Get application policy by ID |
+| PUT | `/secure-agentless-access/v1/application-policies/{policy-id}` | Update application policy by ID |
+| DELETE | `/secure-agentless-access/v1/application-policies/{policy-id}` | Delete application policy by ID |
+| GET | `/secure-agentless-access/v1/application-profiles` | List application profiles |
+| POST | `/secure-agentless-access/v1/application-profiles` | Create application profile |
+| GET | `/secure-agentless-access/v1/application-profiles/{profile-id}` | Get application profile by ID |
+| PUT | `/secure-agentless-access/v1/application-profiles/{profile-id}` | Update application profile by ID |
+| DELETE | `/secure-agentless-access/v1/application-profiles/{profile-id}` | Delete application profile by ID |
+| GET | `/secure-agentless-access/v1/applications` | List applications |
+| POST | `/secure-agentless-access/v1/applications` | Create application |
+| GET | `/secure-agentless-access/v1/applications/{app-id}` | Get application by ID |
+| PUT | `/secure-agentless-access/v1/applications/{app-id}` | Update application by ID |
+| DELETE | `/secure-agentless-access/v1/applications/{app-id}` | Delete application by ID |
+| POST | `/secure-agentless-access/v1/applications:delete` | Delete multiple applications |
+
+</details>
+
+See [Secure Agentless Access APIs](/scm/api/config/secure-agentless-access/saa-apis/) for full details.
+
 ## August 2026
 
 ### NGFW, SASE — Routing APIs (New)
