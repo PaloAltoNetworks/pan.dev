@@ -370,7 +370,8 @@ module.exports = {
           label: "Posture Check APIs",
           collapsed: true,
           items: [
-            ...require("./api/config/posture-management/checks/sidebar"),
+            "scm/api/config/posture-management/checks/posture-check-apis-introduction",
+            ...require("./api/config/posture-management/checks/sidebar").slice(1),
           ],
         },
         {
@@ -378,7 +379,7 @@ module.exports = {
           label: "Compliance Center API",
           collapsed: true,
           items: [
-            ...require("./api/config/posture-management/compliance-framework/sidebar"),
+            ...require("./api/config/posture-management/compliance-framework/sidebar").slice(1),
           ],
         },
         {
@@ -386,7 +387,7 @@ module.exports = {
           label: "Policy Optimizer API",
           collapsed: true,
           items: [
-            ...require("./api/config/posture-management/policy-optimizer/sidebar"),
+            ...require("./api/config/posture-management/policy-optimizer/sidebar").slice(1),
           ],
         },
         {
