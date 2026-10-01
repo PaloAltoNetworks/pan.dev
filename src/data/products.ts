@@ -314,6 +314,11 @@ export const MENU_GROUPS: MenuGroup[] = [
           },
           { label: "Autonomous DEM", to: "/access/api/adem/introduction/" },
           { label: "Log Forwarding", to: "/cdl/api/log-forwarding/" },
+          {
+            label: "MSP PayGo",
+            to: "/sase/api/msp-paygo/introduction",
+            aliases: ["paygo", "msp"],
+          },
         ],
       },
       {

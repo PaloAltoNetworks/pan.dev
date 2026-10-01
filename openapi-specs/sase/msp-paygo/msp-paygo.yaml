@@ -1,0 +1,1971 @@
+openapi: 3.1.0
+info:
+  title: MSP PayGo Service API
+  description: >-
+    MSP PayGo lifecycle management APIs for child tenant provisioning,
+    SCM onboarding, CIE configuration, and edge location lookup.
+    Supports package types: SASE_CORE (SASE SWG Package), SASE_PRO (SASE ENT), and PAB (Secure Browser).
+    © 2025 Palo Alto Networks, Inc
+  version: 1.0.0
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    name: Palo Alto Networks Technical Support
+    email: support@paloaltonetworks.com
+    url: 'https://support.paloaltonetworks.com'
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: https://api.apps.paloaltonetworks.com
+    description: Production
+tags:
+  - name: CIE
+    description: Cloud Identity Engine configuration and validation.
+  - name: Locations
+    description: Edge location lookup and nearest-location queries.
+  - name: Packages
+    description: Product package catalog.
+  - name: Tenant
+    description: Root and child tenant lifecycle management.
+  - name: Usage
+    description: Usage metrics, trends, and activity log.
+  - name: User
+    description: Service account provisioning for child tenants (pa-bulk-config-service).
+paths:
+  /mt/paygo/v1/packages:
+    get:
+      tags:
+        - Packages
+      summary: List product packages
+      description: 'Returns the product package catalog available for child tenant activation.
+
+        Proxies to the upstream licensing service (Loki).
+
+        '
+      operationId: listPackages
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of packages to return.
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+          example: 20
+        - name: offset
+          in: query
+          required: false
+          description: Zero-based pagination offset.
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          example: 0
+        - name: hidden
+          in: query
+          required: false
+          description: Include hidden/inactive packages when true.
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Package list returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageListResponse'
+              example:
+                data:
+                  - id: pkg-uuid-sase-core-001
+                    name: SASE SWG Package
+                    packageType: SASE_CORE
+                    version: 1.0.0
+                    status: active
+                  - id: pkg-uuid-sase-pro-001
+                    name: SASE ENT
+                    packageType: SASE_PRO
+                    version: 1.0.0
+                    status: active
+                  - id: pkg-uuid-pab-001
+                    name: PAB
+                    packageType: PAB
+                    version: 1.0.0
+                    status: active
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/packages/{id}/manifest:
+    get:
+      tags:
+        - Packages
+      summary: Get package manifest
+      description: Returns the full SKU manifest (allocatable line items) for a given package.
+      operationId: getPackageManifest
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Package ID.
+          schema:
+            type: string
+          example: pkg-uuid-sase-core-001
+      responses:
+        '200':
+          description: Package manifest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageManifestResponse'
+              example:
+                id: pkg-uuid-sase-core-001
+                name: SASE SWG Package
+                skus:
+                  - sku: PA-MU-SASE-CORE
+                    displayName: Mobile Users
+                    isBase: true
+                    min: 100
+                    max: 50000
+                  - sku: PA-SITE-SASE-CORE-25M
+                    displayName: Remote Networks 25M
+                    isBase: false
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/packages/{packageId}/regions:
+    get:
+      tags:
+        - Packages
+      summary: Get supported regions for a package
+      description: Returns the list of edge regions available for a specific package.
+      operationId: getPackageRegions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: packageId
+          in: path
+          required: true
+          description: Package ID.
+          schema:
+            type: string
+          example: pkg-uuid-sase-core-001
+      responses:
+        '200':
+          description: Supported regions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionResponse'
+              example:
+                regions:
+                  - value: americas
+                    display_name: United States
+                  - value: europe
+                    display_name: Europe
+                  - value: sg
+                    display_name: Singapore
+                locked: false
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/cie/details:
+    get:
+      tags:
+        - CIE
+      summary: Get CIE SP entity details
+      description: 'Returns the SAML Service Provider entity ID and Assertion Consumer Service (ACS)
+
+        URL for the given region. Used during CIE / IdP configuration.
+
+        '
+      operationId: getCieDetails
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: region
+          in: query
+          required: false
+          description: Region identifier (e.g. `americas`, `europe`, `sg`) value field from /regions api.
+          schema:
+            type: string
+          example: americas
+      responses:
+        '200':
+          description: CIE SP details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CieDetailsResponse'
+              example:
+                entityId: https://cloud-auth.us.apps.paloaltonetworks.com/sp
+                acsUrl: https://cloud-auth.us.apps.paloaltonetworks.com/sp/acs
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/cie/validate-url:
+    post:
+      tags:
+        - CIE
+      summary: Validate SAML metadata URL
+      description: 'Fetches the IdP metadata from the provided URL, validates its structure,
+
+        and extracts relevant SAML attributes. Use before configuring CIE.
+
+        '
+      operationId: validateCieUrl
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateUrlRequest'
+            example:
+              url: https://idp.example.com/saml/metadata
+      responses:
+        '200':
+          description: SAML metadata parsed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SamlMetadataResult'
+              example:
+                authTypeName: example-saml-auth-type
+                entityID: https://idp.example.com
+                sso: https://idp.example.com/sso
+                ssoBinding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+                signCert:
+                  - cn: IDP Signing Cert
+                    expiration: 1893456000000
+                    sn: 1234567890ABCDEF
+                    crl: []
+                vendor: okta
+                mfaEnabled: false
+                forceAuthn: false
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/tenant/{rootTsgId}:
+    get:
+      tags:
+        - Tenant
+      summary: List child tenants under a root
+      description: 'Returns a paginated list of child tenants provisioned under the specified
+
+        root tenant. Includes lifecycle state, licensing status, allocations, and
+
+        permitted actions for each child.
+
+        '
+      operationId: listChildTenants
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: rootTsgId
+          in: path
+          required: true
+          description: TSG ID of the root tenant.
+          schema:
+            type: string
+          example: '1234567890'
+        - name: pageNum
+          in: query
+          required: false
+          description: Zero-based page number.
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          example: 0
+        - name: pageSize
+          in: query
+          required: false
+          description: Number of results per page.
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          example: 10
+      responses:
+        '200':
+          description: Paginated child tenant list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedChildTenants'
+              example:
+                items:
+                  - tsgId: '9876543210'
+                    name: Acme Corp
+                    state: SCM_COMMIT_SUCCESS
+                    status: SUCCESS
+                    vertical: enterprise
+                    license: SASE_PRO
+                    cdlRegion: americas
+                    packageType: SASE_PRO
+                    packageId: pkg-uuid-sase-pro-001
+                    domain: acme.example.com
+                    createTime: 1700000000000
+                    licensingStatus: ACTIVE
+                    permittedActions:
+                      - AMEND
+                      - DEPROVISION
+                    allocations:
+                      - sku: PA-MU-SASE-PRO
+                        quantity: 500
+                        isBase: true
+                totalCount: 1
+                pageNum: 0
+                pageSize: 10
+        '403':
+          $ref: '#/components/responses/TsgIdMismatch'
+        '404':
+          $ref: '#/components/responses/RootNotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/tenant/{rootTsgId}/activate-child:
+    post:
+      tags:
+        - Tenant
+      summary: Activate a child tenant
+      description: >-
+        Activates a child tenant under the root, provisioning the requested package
+        and SKU allocations through the upstream licensing service.
+        Package types: SASE_CORE requires saseCore block, SASE_PRO requires sasePro block, PAB requires pab block.
+        IDP types: MSP_IDP uses the shared Cloud Identity Engine instance, TENANT_IDP provisions a dedicated CIE.
+      operationId: activateChildTenant
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: rootTsgId
+          in: path
+          required: true
+          description: TSG ID of the root tenant.
+          schema:
+            type: string
+          example: '1234567890'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateChildTenantRequest'
+            examples:
+              sase_core:
+                summary: Activate SASE SWG Package (SASE_CORE)
+                value:
+                  tsgId: '9876543210'
+                  packageType: SASE_CORE
+                  packageId: pkg-uuid-sase-core-001
+                  region: americas
+                  domain: acme.example.com
+                  allocations:
+                    - sku: PA-MU-SASE-CORE
+                      quantity: 200
+                      isBase: true
+                  idp:
+                    type: MSP_IDP
+                    provider: okta
+                    url: https://idp.acme.com/saml/metadata
+                    user_groups:
+                      - sase-users
+                  saseCore:
+                    muDetails:
+                      count: 200
+                      gpPortalFqdn: acme.gpcloudservice.com
+                      region:
+                        - americas-us
+                      pushConfig: true
+                    siteDetails:
+                      site_25M: 2
+                      site_50M: 0
+                      site_250M: 0
+                      site_1000M: 0
+                      site_2500M: 0
+              sase_pro:
+                summary: Activate SASE ENT (SASE_PRO)
+                value:
+                  tsgId: '9876543211'
+                  packageType: SASE_PRO
+                  packageId: pkg-uuid-sase-pro-001
+                  region: europe
+                  domain: corp.example.com
+                  allocations:
+                    - sku: PA-MU-SASE-PRO
+                      quantity: 500
+                      isBase: true
+                  idp:
+                    type: TENANT_IDP
+                    provider: aad
+                    url: https://login.microsoftonline.com/tenant-id/federationmetadata/2007-06/federationmetadata.xml
+                    user_groups: []
+                  sasePro:
+                    muDetails:
+                      count: 500
+                      gpPortalFqdn: corp.gpcloudservice.com
+                      region:
+                        - europe-west
+                      pushConfig: true
+              pab:
+                summary: Activate PAB
+                value:
+                  tsgId: '9876543212'
+                  packageType: PAB
+                  packageId: pkg-uuid-pab-001
+                  region: apac
+                  domain: ''
+                  allocations:
+                    - sku: PA-USER-PAB
+                      quantity: 100
+                      isBase: true
+                  idp:
+                    type: MSP_IDP
+                    provider: okta
+                    url: https://idp.company.com/saml/metadata
+                    user_groups: []
+                  pab:
+                    user_count: 100
+                    region: apac-sg
+                    directory_name: company-directory
+                    addon: []
+      responses:
+        '200':
+          description: Child tenant activation initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChildActivatedResponse'
+              example:
+                id: tenant-uuid-child-001
+                tsgId: '9876543210'
+                packageId: pkg-uuid-sase-core-001
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/TsgIdMismatch'
+        '404':
+          $ref: '#/components/responses/RootNotFound'
+        '409':
+          $ref: '#/components/responses/TenantAlreadyExists'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/tenant/{rootTsgId}/child/{childTsgId}:
+    put:
+      tags:
+        - Tenant
+      summary: Amend child tenant SKU allocations
+      description: 'Modifies the quantity of SKU allocations for an active child tenant.
+
+        The tenant must be in `ACTIVE` status and not already have an amendment in progress.
+
+        '
+      operationId: amendChildTenant
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: rootTsgId
+          in: path
+          required: true
+          description: TSG ID of the root tenant.
+          schema:
+            type: string
+          example: '1234567890'
+        - name: childTsgId
+          in: path
+          required: true
+          description: TSG ID of the child tenant to amend.
+          schema:
+            type: string
+          example: '9876543210'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmendChildTenantRequest'
+            example:
+              allocations:
+                - sku: PA-MU-SASE-CORE
+                  quantity: 350
+                  isBase: true
+                - sku: PA-SITE-SASE-CORE-25M
+                  quantity: 4
+                  isBase: false
+      responses:
+        '200':
+          description: Amendment initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmendChildTenantResponse'
+              example:
+                tenantId: tenant-uuid-child-001
+                tsgId: '9876543210'
+                packageId: pkg-uuid-sase-core-001
+                amendmentId: amend-uuid-001
+                status: IN_PROGRESS
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/TsgIdMismatch'
+        '404':
+          $ref: '#/components/responses/ChildNotFound'
+        '409':
+          $ref: '#/components/responses/AmendmentInProgress'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    delete:
+      tags:
+        - Tenant
+      summary: Deprovision a child tenant
+      description: 'Initiates deprovisioning of a child tenant. The tenant must be `ACTIVE`
+
+        and have no amendment in progress. This operation is irreversible.
+
+        '
+      operationId: deprovisionChildTenant
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: rootTsgId
+          in: path
+          required: true
+          description: TSG ID of the root tenant.
+          schema:
+            type: string
+          example: '1234567890'
+        - name: childTsgId
+          in: path
+          required: true
+          description: TSG ID of the child tenant to deprovision.
+          schema:
+            type: string
+          example: '9876543210'
+      responses:
+        '200':
+          description: Deprovision initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeprovisionResponse'
+              example:
+                tenantId: tenant-uuid-child-001
+                tsgId: '9876543210'
+                correlationId: corr-uuid-deprov-001
+                status: DEPROVISIONING
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '403':
+          $ref: '#/components/responses/TsgIdMismatch'
+        '404':
+          $ref: '#/components/responses/ChildNotFound'
+        '409':
+          $ref: '#/components/responses/DeprovisionInProgress'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/locations:
+    get:
+      tags:
+        - Locations
+      summary: Get edge locations by theater
+      description: 'Returns all 70+ edge locations grouped hierarchically:
+
+        `theater -> country -> city -> locations`.
+
+        Theaters are `apac`, `europe`, and `americas`.
+
+        '
+      operationId: getAllLocations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Locations grouped by theater
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupedLocationsResponse'
+              example:
+                data:
+                  americas:
+                    - country: United States
+                      countryCode: US
+                      cities:
+                        - city: Los Angeles
+                          locations:
+                            - edgeLocationRegionId: 101
+                              edgeLocationRegionName: us-west-los-angeles
+                              gpaasDisplayName: US West - Los Angeles
+                              city: Los Angeles
+                              country: United States
+                              countryCode: US
+                              theaterName: americas
+                              cloudProvider: gcp
+                              coordinates:
+                                latitude: 34.05
+                                longitude: -118.24
+                  europe:
+                    - country: Netherlands
+                      countryCode: NL
+                      cities:
+                        - city: Amsterdam
+                          locations:
+                            - edgeLocationRegionId: 201
+                              edgeLocationRegionName: eu-west-amsterdam
+                              gpaasDisplayName: EU West - Amsterdam
+                              city: Amsterdam
+                              country: Netherlands
+                              countryCode: NL
+                              theaterName: europe
+                              cloudProvider: gcp
+                              coordinates:
+                                latitude: 52.37
+                                longitude: 4.9
+                  apac:
+                    - country: Singapore
+                      countryCode: SG
+                      cities:
+                        - city: Singapore
+                          locations:
+                            - edgeLocationRegionId: 301
+                              edgeLocationRegionName: apac-sg-singapore
+                              gpaasDisplayName: APAC - Singapore
+                              city: Singapore
+                              country: Singapore
+                              countryCode: SG
+                              theaterName: apac
+                              cloudProvider: gcp
+                              coordinates:
+                                latitude: 1.35
+                                longitude: 103.82
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/locations/nearest:
+    get:
+      tags:
+        - Locations
+      summary: Find nearest edge locations
+      description: 'Returns the N nearest edge locations to the specified geographic coordinates,
+
+        sorted ascending by haversine distance.
+
+        '
+      operationId: getNearestLocations
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          description: Latitude in decimal degrees (-90 to 90).
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+          example: 37.77
+        - name: lon
+          in: query
+          required: true
+          description: Longitude in decimal degrees (-180 to 180).
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+          example: -122.41
+        - name: nearest
+          in: query
+          required: false
+          description: Number of nearest locations to return.
+          schema:
+            type: integer
+            default: 5
+            minimum: 1
+            maximum: 20
+          example: 5
+      responses:
+        '200':
+          description: Nearest locations sorted by distance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearestLocationsResponse'
+              example:
+                data:
+                  - distanceKm: 14.2
+                    location:
+                      edgeLocationRegionId: 102
+                      edgeLocationRegionName: us-west-san-jose
+                      gpaasDisplayName: US West - San Jose
+                      city: San Jose
+                      country: United States
+                      countryCode: US
+                      theaterName: americas
+                      cloudProvider: gcp
+                      coordinates:
+                        latitude: 37.34
+                        longitude: -121.89
+                  - distanceKm: 22.8
+                    location:
+                      edgeLocationRegionId: 101
+                      edgeLocationRegionName: us-west-los-angeles
+                      gpaasDisplayName: US West - Los Angeles
+                      city: Los Angeles
+                      country: United States
+                      countryCode: US
+                      theaterName: americas
+                      cloudProvider: gcp
+                      coordinates:
+                        latitude: 34.05
+                        longitude: -118.24
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/usage/summary/child/{childTsgId}:
+    get:
+      tags:
+        - Usage
+      summary: Usage summary for a child tenant
+      description: Returns the provisioned/utilized user and site counts for a child tenant.
+      operationId: getChildUsageSummary
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: childTsgId
+          in: path
+          required: true
+          description: TSG ID of the child tenant.
+          schema:
+            type: string
+          example: '9876543210'
+        - name: month
+          in: query
+          required: false
+          description: Month (1-12). Defaults to current month.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+          example: 9
+        - name: year
+          in: query
+          required: false
+          description: Year (4-digit). Defaults to current year.
+          schema:
+            type: integer
+          example: 2025
+      responses:
+        '200':
+          description: Usage summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageSummaryResponse'
+              example:
+                activePackageDetails:
+                  packageType: SASE_CORE
+                  gateways: cloud_managed
+                  capabilities:
+                    - mobile_users
+                    - remote_networks
+                  addOns: []
+                  activatedTimestamp: 1700000000000
+                provisioned:
+                  users: 200
+                  rnSites: 2
+                utilized:
+                  users: 145
+                  rnSites: 2
+        '404':
+          $ref: '#/components/responses/ChildNotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/usage/totals:
+    get:
+      tags:
+        - Usage
+      summary: Get aggregated usage totals
+      description: 'Returns aggregated provisioned and utilized totals across all child tenants
+
+        of the root identified by `x-tsg-id`.
+
+        '
+      operationId: getUsageTotals
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: month
+          in: query
+          required: false
+          description: Month (1-12). Defaults to current month.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+          example: 9
+        - name: year
+          in: query
+          required: false
+          description: Year (4-digit). Defaults to current year.
+          schema:
+            type: integer
+          example: 2025
+      responses:
+        '200':
+          description: Aggregated totals
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+              example:
+                totalUsersProvisioned: 1500
+                totalUsersUtilized: 1123
+                totalSitesProvisioned: 12
+                totalSitesUtilized: 10
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/usage/trend/mobile-users:
+    get:
+      tags:
+        - Usage
+      summary: 6-month mobile user trend
+      description: Returns monthly mobile user count trend for the last 6 months for the root tenant.
+      operationId: getMobileUserTrend
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Monthly mobile user counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MobileUserTrendResponse'
+              example:
+                data:
+                  - timestamp: 1693526400000
+                    groupKey: 2023-09
+                    userCount: 980
+                  - timestamp: 1696118400000
+                    groupKey: 2023-10
+                    userCount: 1045
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/usage/trend/sites:
+    get:
+      tags:
+        - Usage
+      summary: 6-month remote network site trend
+      description: Returns monthly remote network site count trend for the last 6 months.
+      operationId: getSiteTrend
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Monthly site counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteTrendResponse'
+              example:
+                data:
+                  - timestamp: 1693526400000
+                    groupKey: 2023-09
+                    rnSiteCount: 9
+                  - timestamp: 1696118400000
+                    groupKey: 2023-10
+                    rnSiteCount: 11
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/paygo/v1/usage/activity-log/child/{childTsgId}:
+    get:
+      tags:
+        - Usage
+      summary: Activity log for a child tenant
+      description: Returns the activation, amendment, and deprovision activity log for a child tenant.
+      operationId: getActivityLog
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: childTsgId
+          in: path
+          required: true
+          description: TSG ID of the child tenant.
+          schema:
+            type: string
+          example: '9876543210'
+        - name: month
+          in: query
+          required: false
+          description: Month (1-12). Defaults to current month.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+          example: 9
+        - name: year
+          in: query
+          required: false
+          description: Year (4-digit). Defaults to current year.
+          schema:
+            type: integer
+          example: 2025
+      responses:
+        '200':
+          description: Activity log groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityLogResponse'
+              example:
+                data:
+                  - type: ACTIVATE
+                    name: SASE SWG Package
+                    eventTime: 1700000000000
+                    displayActivityLog: true
+                    details:
+                      - sku: PA-MU-SASE-CORE
+                        isBase: true
+                        from_qty: null
+                        to_qty: 200
+                        isUser: true
+                        isRnSite: false
+                  - type: AMEND
+                    name: SASE SWG Package
+                    eventTime: 1702000000000
+                    displayActivityLog: true
+                    details:
+                      - sku: PA-MU-SASE-CORE
+                        isBase: true
+                        from_qty: 200
+                        to_qty: 350
+                        isUser: true
+                        isRnSite: false
+        '404':
+          $ref: '#/components/responses/ChildNotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /mt/config/v1/user:
+    post:
+      tags:
+        - User
+      summary: Create child tenant service account
+      description: 'Provisions an IAM service account for the authenticated child tenant and
+
+        assigns the `msp_superuser` role. The call is idempotent - if a service
+
+        account already exists for this tenant, it returns the existing record.
+
+
+        The caller''s TSG ID is resolved from the Bearer token; no request body
+
+        or query parameters are required.
+
+        '
+      operationId: createConfigUser
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Service account created or already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MspResponse'
+              example:
+                requestId: req-uuid-abc123
+                data:
+                  tsgId: '9876543210'
+                  enabled: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          description: Internal error (service account list / create / role-assign failed)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkConfigErrorResponse'
+              examples:
+                listFailed:
+                  summary: Listing existing service accounts failed
+                  value:
+                    httpStatus: 500
+                    errorCode: 0
+                    errorType: INTERNAL_ERROR
+                    msg: listServiceAccounts failed
+                    details: Connection refused
+                createFailed:
+                  summary: Service account creation failed
+                  value:
+                    httpStatus: 500
+                    errorCode: 0
+                    errorType: INTERNAL_ERROR
+                    msg: user config failed
+                    details: IAM returned 409
+                assignFailed:
+                  summary: Role assignment failed
+                  value:
+                    httpStatus: 500
+                    errorCode: 0
+                    errorType: INTERNAL_ERROR
+                    msg: user assign failed
+                    details: Permission denied
+components:
+  schemas:
+    PackageListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageSummary'
+    PackageSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Package UUID
+        name:
+          type: string
+          description: Display name of the package
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        version:
+          type: string
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - hidden
+    PackageManifestResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        skus:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkuItem'
+    SkuItem:
+      type: object
+      properties:
+        sku:
+          type: string
+          description: SKU identifier
+        displayName:
+          type: string
+        isBase:
+          type: boolean
+          description: Whether this SKU is the base allocation for the package
+        min:
+          type: integer
+        max:
+          type: integer
+    RegionResponse:
+      type: object
+      properties:
+        regions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Region'
+        locked:
+          type: boolean
+          description: Whether region selection is locked for this package
+    Region:
+      type: object
+      properties:
+        value:
+          type: string
+          description: Region identifier token (used in API requests)
+          examples:
+            - americas-us
+        display_name:
+          type: string
+          description: Human-readable region name
+          examples:
+            - Americas - US
+    CieDetailsResponse:
+      type: object
+      properties:
+        entityId:
+          type: string
+          description: SAML Service Provider entity ID
+          examples:
+            - https://auth.apps.paloaltonetworks.com/sp/saml/americas
+        acsUrl:
+          type: string
+          description: SAML Assertion Consumer Service URL
+          examples:
+            - https://auth.apps.paloaltonetworks.com/sp/saml/americas/acs
+    ValidateUrlRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: SAML IdP metadata URL to validate and parse
+          examples:
+            - https://idp.example.com/saml/metadata
+    SamlMetadataResult:
+      type: object
+      properties:
+        authTypeName:
+          type: string
+          description: Suggested auth type name derived from the IdP metadata
+        entityID:
+          type: string
+          description: SAML IdP entity ID from metadata
+        sso:
+          type: string
+          description: SSO redirect URL
+        ssoBinding:
+          type: string
+          description: SAML binding type (e.g. HTTP-POST, HTTP-Redirect)
+        signCert:
+          type: array
+          items:
+            $ref: '#/components/schemas/CertDetails'
+        vendor:
+          type: string
+          description: Detected IdP vendor (e.g. okta, aad, ping, others)
+        mfaEnabled:
+          type: boolean
+        forceAuthn:
+          type: boolean
+        userName:
+          type: string
+        userGroup:
+          type: string
+        accessDomain:
+          type: string
+        userDomain:
+          type: string
+        adminRole:
+          type: string
+        maxClockSkew:
+          type: integer
+          description: Maximum allowed clock skew in seconds
+        spEntityType:
+          type: string
+    CertDetails:
+      type: object
+      properties:
+        cn:
+          type: string
+          description: Certificate common name
+        expiration:
+          type: integer
+          format: int64
+          description: Certificate expiration epoch milliseconds
+        sn:
+          type: string
+          description: Certificate serial number
+        crl:
+          type: array
+          items:
+            type: string
+          description: Certificate Revocation List URLs
+    PaginatedChildTenants:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChildTenantSummary'
+        totalCount:
+          type: integer
+          description: Total number of child tenants
+        pageNum:
+          type: integer
+          description: Current page number (zero-based)
+        pageSize:
+          type: integer
+          description: Page size used for this response
+    ChildTenantSummary:
+      type: object
+      properties:
+        tsgId:
+          type: string
+          description: TSG ID of the child tenant.
+        name:
+          type: string
+          description: Tenant display name
+        state:
+          type: string
+          description: Internal workflow state (e.g. `SCM_COMMIT_SUCCESS`, `LICENSE_ACTIVATION_IN_PROGRESS`)
+        status:
+          type: string
+          enum:
+            - NOT_STARTED
+            - IN_PROGRESS
+            - SUCCESS
+            - FAILED
+            - NA
+            - DEPROVISIONING
+            - DEPROVISIONED
+          description: Overall provisioning status
+        vertical:
+          type: string
+          description: Tenant vertical/industry
+        license:
+          type: string
+          description: License type
+        cdlRegion:
+          type: string
+          description: CDL region
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        packageId:
+          type: string
+          description: Package UUID from the licensing service
+        domain:
+          type: string
+          description: GlobalProtect portal FQDN domain
+        createTime:
+          type: integer
+          format: int64
+          description: Tenant creation epoch milliseconds
+        licensingStatus:
+          $ref: '#/components/schemas/LokiStatus'
+        permittedActions:
+          type: array
+          items:
+            type: string
+            enum:
+              - AMEND
+              - DEPROVISION
+              - CONFIG_PUSH
+          description: Actions the caller is allowed to perform on this tenant
+        allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Allocation'
+    Allocation:
+      type: object
+      properties:
+        sku:
+          type: string
+          description: SKU identifier
+          examples:
+            - PA-MU-SASE-CORE
+        quantity:
+          type: integer
+          description: Number of units allocated
+          examples:
+            - 200
+        isBase:
+          type: boolean
+          description: Whether this is the base SKU for the package
+    ActivateChildTenantRequest:
+      type: object
+      required:
+        - tsgId
+        - packageType
+        - packageId
+        - allocations
+        - idp
+      properties:
+        tsgId:
+          type: string
+          description: TSG ID of the child tenant to activate
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        packageId:
+          type: string
+          description: Package UUID from `/packages`
+        region:
+          type: string
+          description: Deployment region token (from `/packages/{packageId}/regions`)
+          examples:
+            - americas
+        domain:
+          type: string
+          description: GlobalProtect portal FQDN (e.g. `acme.gpcloudservice.com`). Required for SASE_CORE / SASE_PRO.
+          examples:
+            - acme.gpcloudservice.com
+        allocations:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Allocation'
+        idp:
+          $ref: '#/components/schemas/IdpDetails'
+        pab:
+          description: Required when `packageType` is `PAB`
+          allOf:
+            - $ref: '#/components/schemas/PabDetails'
+        saseCore:
+          description: Required when `packageType` is `SASE_CORE`
+          allOf:
+            - $ref: '#/components/schemas/SaseDetails'
+        sasePro:
+          description: Required when `packageType` is `SASE_PRO`
+          allOf:
+            - $ref: '#/components/schemas/SaseDetails'
+    IdpDetails:
+      type: object
+      required:
+        - type
+        - provider
+        - url
+      properties:
+        type:
+          type: string
+          enum:
+            - MSP_IDP
+            - TENANT_IDP
+          description: '`MSP_IDP` - share the MSP''s existing Cloud Identity Engine instance.
+
+            `TENANT_IDP` - provision a dedicated CIE for this child tenant.
+
+            '
+        provider:
+          type: string
+          description: IdP vendor (e.g. `okta`, `aad`, `ping`, `others`)
+          examples:
+            - okta
+        url:
+          type: string
+          format: uri
+          description: SAML metadata URL of the IdP
+          examples:
+            - https://idp.acme.com/saml/metadata
+        user_groups:
+          type: array
+          items:
+            type: string
+          description: IdP user groups to include in the CIE configuration
+    PabDetails:
+      type: object
+      required:
+        - user_count
+        - region
+      properties:
+        user_count:
+          type: integer
+          minimum: 1
+          description: Number of PAB users to provision
+          examples:
+            - 100
+        region:
+          type: string
+          description: PAB deployment region
+          examples:
+            - apac-sg
+        directory_name:
+          type: string
+          description: Directory name for the PAB tenant
+          examples:
+            - company-directory
+        addon:
+          type: array
+          items:
+            type: string
+          description: Optional PAB add-on SKUs
+    SaseDetails:
+      type: object
+      required:
+        - muDetails
+      properties:
+        muDetails:
+          $ref: '#/components/schemas/MuDetails'
+        siteDetails:
+          $ref: '#/components/schemas/SiteDetails'
+        addon:
+          type: array
+          items:
+            type: string
+          description: Optional SASE add-on SKUs
+    MuDetails:
+      type: object
+      required:
+        - count
+        - gpPortalFqdn
+        - region
+      properties:
+        count:
+          type: integer
+          minimum: 1
+          description: Number of mobile users to provision
+          examples:
+            - 200
+        gpPortalFqdn:
+          type: string
+          description: GlobalProtect portal FQDN (trimmed, lowercase)
+          examples:
+            - acme.gpcloudservice.com
+        region:
+          type: array
+          minItems: 1
+          items:
+            type: string
+          description: One or more edge region tokens for mobile user deployment
+          examples:
+            - [americas-us]
+        pushConfig:
+          type: boolean
+          description: Whether to push SCM config after provisioning; defaults to environment setting
+    SiteDetails:
+      type: object
+      description: Remote network site counts by bandwidth tier
+      properties:
+        site_25M:
+          type: integer
+          default: 0
+          description: Number of 25 Mbps remote network sites
+        site_50M:
+          type: integer
+          default: 0
+          description: Number of 50 Mbps remote network sites
+        site_250M:
+          type: integer
+          default: 0
+          description: Number of 250 Mbps remote network sites
+        site_1000M:
+          type: integer
+          default: 0
+          description: Number of 1000 Mbps (1 Gbps) remote network sites
+        site_2500M:
+          type: integer
+          default: 0
+          description: Number of 2500 Mbps (2.5 Gbps) remote network sites
+    ChildActivatedResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Internal PayGo tenant UUID
+        tsgId:
+          type: string
+          description: TSG ID of the activated child tenant
+        packageId:
+          type: string
+          description: Package UUID from the licensing service
+    AmendChildTenantRequest:
+      type: object
+      required:
+        - allocations
+      properties:
+        allocations:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Allocation'
+    AmendChildTenantResponse:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          description: Internal PayGo tenant UUID
+        tsgId:
+          type: string
+          description: TSG ID of the amended child tenant
+        packageId:
+          type: string
+          description: Package UUID
+        amendmentId:
+          type: string
+          description: Amendment tracking UUID
+        status:
+          type: string
+          description: Amendment status (e.g. `IN_PROGRESS`)
+    DeprovisionResponse:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          description: Internal PayGo tenant UUID
+        tsgId:
+          type: string
+          description: TSG ID of the deprovisioned child tenant
+        correlationId:
+          type: string
+          description: Correlation ID for tracking the deprovision operation
+        status:
+          type: string
+          description: Deprovision status (e.g. `DEPROVISIONING`)
+    GroupedLocationsResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          description: Map of theater name to list of country groups
+          additionalProperties:
+            type: array
+            items:
+              $ref: '#/components/schemas/CountryGroup'
+    CountryGroup:
+      type: object
+      properties:
+        country:
+          type: string
+          examples:
+            - United States
+        countryCode:
+          type: string
+          examples:
+            - US
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CityGroup'
+    CityGroup:
+      type: object
+      properties:
+        city:
+          type: string
+          examples:
+            - Los Angeles
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationRecord'
+    NearestLocationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/NearestLocation'
+    NearestLocation:
+      type: object
+      properties:
+        distanceKm:
+          type: number
+          format: double
+          description: Haversine distance from query coordinates in kilometres
+          examples:
+            - 14.2
+        location:
+          $ref: '#/components/schemas/LocationRecord'
+    LocationRecord:
+      type: object
+      properties:
+        edgeLocationRegionId:
+          type: integer
+          format: int64
+          description: Unique numeric region ID
+        edgeLocationRegionName:
+          type: string
+          description: Region token used in API requests (e.g. `us-west-san-jose`)
+        computeRegionId:
+          type: string
+        nativeComputeRegionName:
+          type: string
+        computeLocationName:
+          type: string
+        computeRegionName:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        countryCode:
+          type: string
+        cloudProvider:
+          type: string
+          description: Cloud provider hosting this location (e.g. `gcp`, `aws`)
+          examples:
+            - gcp
+        gpaasDisplayName:
+          type: string
+          description: Human-readable display name for the location
+          examples:
+            - US West - San Jose
+        supportedBandwidth:
+          type: string
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        theaterName:
+          type: string
+          enum:
+            - americas
+            - europe
+            - apac
+    Coordinates:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          examples:
+            - 37.34
+        longitude:
+          type: number
+          format: double
+          examples:
+            - -121.89
+    UsageSummaryResponse:
+      type: object
+      properties:
+        activePackageDetails:
+          $ref: '#/components/schemas/ActivePackageDetails'
+        provisioned:
+          $ref: '#/components/schemas/ProvisionedUtilized'
+        utilized:
+          $ref: '#/components/schemas/ProvisionedUtilized'
+    ActivePackageDetails:
+      type: object
+      properties:
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        gateways:
+          type: string
+          description: Gateway management mode (e.g. `cloud_managed`)
+        capabilities:
+          type: array
+          items:
+            type: string
+        addOns:
+          type: array
+          items:
+            type: string
+        activatedTimestamp:
+          type: integer
+          format: int64
+          description: Epoch milliseconds when the package was activated
+    ProvisionedUtilized:
+      type: object
+      properties:
+        users:
+          type: integer
+          description: Mobile user count
+        rnSites:
+          type: integer
+          description: Remote network site count
+    MobileUserTrendResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MobileUserTrendPoint'
+    MobileUserTrendPoint:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: Epoch milliseconds for the data point (start of month)
+        groupKey:
+          type: string
+          description: Month label (e.g. `2023-09`)
+        userCount:
+          type: integer
+          format: int64
+          description: Mobile user count for this month
+    SiteTrendResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SiteTrendPoint'
+    SiteTrendPoint:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+        groupKey:
+          type: string
+        rnSiteCount:
+          type: integer
+          format: int64
+          description: Remote network site count for this month
+    ActivityLogResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityLogGroup'
+    ActivityLogGroup:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - ACTIVATE
+            - AMEND
+            - DEPROVISION
+          description: Activity type
+        name:
+          type: string
+          description: Package display name
+        eventTime:
+          type: integer
+          format: int64
+          description: Event epoch milliseconds
+        displayActivityLog:
+          type: boolean
+          description: Whether this entry should be surfaced in the UI
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityLogDetail'
+    ActivityLogDetail:
+      type: object
+      properties:
+        sku:
+          type: string
+        isBase:
+          type: boolean
+        from_qty:
+          type:
+            - integer
+            - 'null'
+          description: Previous allocation quantity (null for initial activation)
+        to_qty:
+          type:
+            - integer
+            - 'null'
+          description: New allocation quantity
+        isUser:
+          type: boolean
+          description: Whether this SKU represents mobile users
+        isRnSite:
+          type: boolean
+          description: Whether this SKU represents remote network sites
+    PackageType:
+      type: string
+      enum:
+        - SASE_CORE
+        - SASE_PRO
+        - PAB
+      description: 'Package type:
+
+        - `SASE_CORE` - **SASE SWG Package**: Secure Internet and SaaS access with Prisma SASE
+
+        - `SASE_PRO` - **SASE ENT**: Secure Internet, SaaS and Private App access with Prisma SASE. Includes Prisma Browser
+        Pro
+
+        - `PAB` - **PAB**: Secure Browser foundation
+
+        '
+    LokiStatus:
+      type: string
+      enum:
+        - NOT_STARTED
+        - PROVISIONING
+        - ACTIVE
+        - AMENDING
+        - DEPROVISIONING
+        - DEPROVISIONED
+        - ERROR
+        - TIMEOUT
+      description: Upstream licensing service status for the tenant's package instance
+    MspResponse:
+      type: object
+      description: Standard success wrapper returned by pa-bulk-config-service
+      properties:
+        requestId:
+          type: string
+          description: Correlation ID for the request
+          examples:
+            - req-uuid-abc123
+        data:
+          description: Response payload
+          allOf:
+            - $ref: '#/components/schemas/CreateConfigUserResponse'
+    CreateConfigUserResponse:
+      type: object
+      description: Service account creation result
+      properties:
+        tsgId:
+          type: string
+          description: TSG ID of the child tenant the service account was created for
+          examples:
+            - '9876543210'
+        enabled:
+          type: boolean
+          description: Always true when the service account is active
+          examples:
+            - true
+    BulkConfigErrorResponse:
+      type: object
+      description: 'Error response from pa-bulk-config-service. Note: this is returned as a bare
+
+        entity (not wrapped in MspResponse) on 500 errors from the /user endpoint.
+
+        '
+      properties:
+        httpStatus:
+          type: integer
+          examples:
+            - 500
+        errorCode:
+          type: integer
+          examples:
+            - 0
+        errorType:
+          type: string
+          enum:
+            - VALIDATION_ERROR
+            - INTERNAL_ERROR
+            - NOT_FOUND
+          examples:
+            - INTERNAL_ERROR
+        msg:
+          type: string
+          description: High-level failure description
+          examples:
+            - user config failed
+        details:
+          type: string
+          description: Underlying exception message
+          examples:
+            - IAM returned 409
+    ErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          description: PayGo-specific error code
+          examples:
+            - 20003
+        errorType:
+          type: string
+          enum:
+            - VALIDATION_ERROR
+            - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error description
+        detail:
+          type: string
+          description: Additional context
+  responses:
+    InvalidRequest:
+      description: Invalid request payload or parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20003
+            errorType: VALIDATION_ERROR
+            message: Invalid request payload
+    TenantAlreadyExists:
+      description: Tenant already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20001
+            errorType: VALIDATION_ERROR
+            message: Tenant already exists
+    RootNotFound:
+      description: Root tenant not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20002
+            errorType: VALIDATION_ERROR
+            message: Root tenant not found
+    ChildNotFound:
+      description: Child tenant not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20010
+            errorType: VALIDATION_ERROR
+            message: Child tenant not found
+    TsgIdMismatch:
+      description: Caller TSG ID does not match the root tenant
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20008
+            errorType: VALIDATION_ERROR
+            message: Not allowed to add tenants under this root tenant
+    AmendmentInProgress:
+      description: Amendment already in progress for this tenant
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20011
+            errorType: VALIDATION_ERROR
+            message: Amendment already in progress
+    DeprovisionInProgress:
+      description: Deprovision already in progress
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20015
+            errorType: VALIDATION_ERROR
+            message: Deprovision already in progress
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20002
+            errorType: VALIDATION_ERROR
+            message: Resource not found
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20004
+            errorType: INTERNAL_ERROR
+            message: Internal server error
+    Unauthorized:
+      description: Authentication credentials are missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            errorCode: 20005
+            errorType: VALIDATION_ERROR
+            message: Unauthorized
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
