@@ -8,7 +8,7 @@
 import React, { useCallback, useMemo } from "react";
 
 import { translate } from "@docusaurus/Translate";
-import { useLocation } from "@docusaurus/router";
+import { usePBSitePath } from "@site/src/components/PBPortal/pbRoute";
 import { setSchemaSelection } from "@theme/ApiExplorer/SchemaSelection/slice";
 import { useTypedDispatch } from "@theme/ApiItem/hooks";
 import { ClosingArrayBracket, OpeningArrayBracket } from "@theme/ArrayBrackets";
@@ -51,8 +51,7 @@ const PB_BASE = "/prisma-browser";
 // Apart from this hook and its two call sites below, the file is an unmodified
 // eject of docusaurus-theme-openapi-docs 5.2.0. See UPSTREAM-SYNC.md.
 function useQualifierMessage(): (schema?: SchemaObject) => string | undefined {
-  const { pathname } = useLocation();
-  return pathname.startsWith(PB_BASE)
+  return usePBSitePath().startsWith(PB_BASE)
     ? getPBQualifierMessage
     : getQualifierMessage;
 }
