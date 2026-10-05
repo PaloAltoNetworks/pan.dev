@@ -1349,7 +1349,7 @@ map(object({
     host       = optional(string)
     port       = optional(number)
     protocol   = optional(string, "Http")
-    interval   = optional(number, 5)
+    interval   = optional(number, 30)
     timeout    = optional(number, 30)
     threshold  = optional(number, 2)
     match_code = optional(list(number))
