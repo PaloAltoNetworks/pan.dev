@@ -152,6 +152,22 @@ These APIs enable configuration API for Secure Agentless Access (SAA).
 </details>
 
 See [Secure Agentless Access APIs](/scm/api/config/secure-agentless-access/saa-apis/) for full details.
+### Strata Cloud Manager — Checks (Updated)
+
+4 new endpoints.
+
+<details><summary>View endpoints (4)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/report` | Get Posture Check Reports |
+| GET | `/report/object-types` | List Object Types in Report |
+| GET | `/report/objects/{uuid}` | Get Posture Check Reports for Single Object |
+| GET | `/report/{object-type}` | Get Posture Check Reports by Object Type |
+
+</details>
+
+See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for full details.
 
 ## August 2026
 
