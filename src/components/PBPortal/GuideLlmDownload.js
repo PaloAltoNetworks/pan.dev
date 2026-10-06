@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import {
   LLMS_FULL_URL,
   LLMS_DOWNLOAD_NAME,
@@ -22,6 +23,10 @@ export function GuideAiMenu({ pathname }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const ref = useRef(null);
+  // The generated files are static assets, so prefix the site baseUrl for
+  // subpath builds. Hooks stay above the early return below.
+  const pageUrl = useBaseUrl(`${LLMS_PAGE_MD_BASE}/${slug}.md`);
+  const fullUrl = useBaseUrl(LLMS_FULL_URL);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -40,11 +45,11 @@ export function GuideAiMenu({ pathname }) {
   }, [open]);
 
   if (!slug) return null;
-  const pageUrl = `${LLMS_PAGE_MD_BASE}/${slug}.md`;
 
   const copyPage = async () => {
     try {
       const res = await fetch(pageUrl);
+      if (!res.ok) throw new Error(`${res.status} fetching ${pageUrl}`);
       const text = await res.text();
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -95,7 +100,7 @@ export function GuideAiMenu({ pathname }) {
           <a
             role="menuitem"
             className="pb-ai-item"
-            href={LLMS_FULL_URL}
+            href={fullUrl}
             download={LLMS_DOWNLOAD_NAME}
             onClick={() => setOpen(false)}
           >

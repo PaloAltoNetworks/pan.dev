@@ -1,6 +1,10 @@
 import React, { useEffect } from "react";
 import Navbar from "@theme-original/Navbar";
-import { usePBSitePath } from "@site/src/components/PBPortal/pbRoute";
+import {
+  PB_BASE,
+  isPBPath,
+  usePBSitePath,
+} from "@site/src/components/PBPortal/pbRoute";
 import Switcher from "@site/src/components/PBPortal/Switcher";
 import "@site/src/components/PBPortal/pb-portal.scss";
 
@@ -8,17 +12,12 @@ import "@site/src/components/PBPortal/pb-portal.scss";
 // highlight the active tab. Returns null on every non-PB page (the switcher is
 // not rendered there and the original navbar is returned untouched).
 function surfaceForPath(pathname) {
-  if (pathname.startsWith("/prisma-browser/api")) return "api";
-  if (pathname.startsWith("/prisma-browser/guide")) return "guide";
-  if (pathname.startsWith("/prisma-browser/release-notes"))
-    return "release-notes";
-  if (
-    pathname === "/prisma-browser" ||
-    pathname.startsWith("/prisma-browser/")
-  ) {
-    return "overview";
-  }
-  return null;
+  if (!isPBPath(pathname)) return null;
+  const section = pathname.slice(PB_BASE.length).split("/")[1];
+  if (section === "api") return "api";
+  if (section === "guide") return "guide";
+  if (section === "release-notes") return "release-notes";
+  return "overview";
 }
 
 // Wrap the pan.dev navbar and the Prisma Browser switcher in a single sticky

@@ -32,14 +32,24 @@ const basePath = "/prisma-browser/guide/";
 // mirroring how static/spec/*.yaml is served at /spec/*.yaml.
 const staticOut = path.join(repoRoot, "static/prisma-browser");
 // Absolute base for rewriting site-relative links so an LLM sees real URLs.
-// The env vars carry a pages URL on GitLab CI and a per-PR Firebase channel on
-// preview builds, so a preview bundle links itself rather than production. The
-// fallback is the production host, which is what live builds and local runs
-// emit. Keep this in sync with `url` in docusaurus.config.ts.
+// The env vars override the host so a non-production bundle links itself
+// rather than production. The fallback is the production host, which is what
+// live builds and local runs emit. Keep this in sync with `url` and `baseUrl`
+// in docusaurus.config.ts. A site served under a subpath carries that baseUrl
+// in every absolute link.
+function resolveBaseUrl() {
+  if (process.env.CI_MERGE_REQUEST_IID) {
+    if (process.env.CI_PROJECT_DIR == "dev") return "/";
+    return (
+      process.env.GL_PAGES_BASE_URL ??
+      `/-/${process.env.CI_PROJECT_NAME}/-/jobs/${process.env.CI_JOB_ID}/artifacts/public/`
+    );
+  }
+  return process.env.GL_PAGES_BASE_URL ?? "/";
+}
 const SITE_URL = (
-  process.env.GL_PAGES_URL ||
-  process.env.CI_PAGES_URL ||
-  "https://pan.dev"
+  (process.env.GL_PAGES_URL || process.env.CI_PAGES_URL || "https://pan.dev") +
+  resolveBaseUrl()
 ).replace(/\/+$/, "");
 // Served copy of the OpenAPI spec (see sync-spec.mjs). The LLM bundles link it
 // so a model fed the guides can still resolve fields the guides do not list.
@@ -121,7 +131,11 @@ function convertAdmonitions(text) {
     .replace(
       /^:::(note|tip|info|warning|caution|danger)(?:\[([^\]]*)\]|[ \t]+([^\n]*))?[ \t]*$/gm,
       (_m, type, bracketTitle, inlineTitle) => {
-        const label = (bracketTitle || inlineTitle || ADMONITION_LABELS[type]).trim();
+        const label = (
+          bracketTitle ||
+          inlineTitle ||
+          ADMONITION_LABELS[type]
+        ).trim();
         return `**${label}**\n`;
       }
     )
@@ -332,7 +346,10 @@ fs.writeFileSync(outFile, file);
 // wiped and rebuilt on every run so removed guides never leave stale routes.
 fs.rmSync(pagesRoot, { recursive: true, force: true });
 for (const page of pages) {
-  const wrapperFile = path.join(pagesRoot, path.basename(page.rel, ".mdx") + ".js");
+  const wrapperFile = path.join(
+    pagesRoot,
+    path.basename(page.rel, ".mdx") + ".js"
+  );
   const stagedMdx = path.join(mdxStageRoot, page.rel);
   fs.mkdirSync(path.dirname(stagedMdx), { recursive: true });
   fs.writeFileSync(
