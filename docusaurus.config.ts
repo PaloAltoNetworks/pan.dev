@@ -829,6 +829,7 @@ const config = {
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
             outputDir: "products/iot/api",
+            proxy: "https://cors.pan.dev",
           },
           "threat-vault": {
             specPath: "openapi-specs/threat-vault/",
