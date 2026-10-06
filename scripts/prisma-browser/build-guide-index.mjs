@@ -44,6 +44,51 @@ const SITE_URL = (
 // Served copy of the OpenAPI spec (see sync-spec.mjs). The LLM bundles link it
 // so a model fed the guides can still resolve fields the guides do not list.
 const SPEC_PATH = "/spec/prisma-browser-management.yaml";
+// Preview endpoints found in the spec, written by sync-spec.mjs. gen-pb runs
+// sync-spec first so this is current on every build. A model handed the
+// bundles gets the list here rather than having to parse the YAML.
+const PREVIEW_MANIFEST = path.join(staticOut, "preview-manifest.json");
+// The opt-in request header a caller sends to reach a preview endpoint.
+const PREVIEW_HEADER = "x-prisma-browser-preview";
+
+function readPreviewEndpoints() {
+  if (!fs.existsSync(PREVIEW_MANIFEST)) return [];
+  try {
+    const parsed = JSON.parse(fs.readFileSync(PREVIEW_MANIFEST, "utf8"));
+    return Array.isArray(parsed?.endpoints) ? parsed.endpoints : [];
+  } catch {
+    // A malformed manifest must not fail the build: the bundles still carry
+    // the general preview instructions, which is the part that prevents an
+    // agent from silently omitting the header.
+    console.warn(
+      `build-guide-index: could not read ${path.relative(repoRoot, PREVIEW_MANIFEST)}, omitting the preview endpoint list`
+    );
+    return [];
+  }
+}
+
+// The Preview features guide may not be published yet, so link to it only once
+// it exists here.
+const previewGuidePublished = fs.existsSync(
+  path.join(guideRoot, "basics/preview-features.mdx")
+);
+
+// Written to both bundles as an instruction to the agent reading them, not as
+// prose for a human: an agent that generates a call to a preview endpoint
+// without the header produces code that fails with a 400 the user cannot
+// diagnose from the response alone.
+const previewInstructions =
+  `> Preview endpoints. Some endpoints are published ahead of general availability.\n` +
+  `> A preview endpoint carries \`x-prisma-browser-preview.featureName\` in the\n` +
+  `> OpenAPI specification, and calling it without the request header\n` +
+  `> \`${PREVIEW_HEADER}: <featureName>\` returns 400 with \`error.code\` set to\n` +
+  `> \`VALIDATION_ERROR\`. When you generate code or a request for a preview endpoint,\n` +
+  `> add that header, and tell the user the endpoint is in preview and that its\n` +
+  `> request and response shape can still change before it reaches GA. Do not add\n` +
+  `> the header to a generally available endpoint.` +
+  (previewGuidePublished
+    ? ` Details:\n> ${SITE_URL}${basePath}preview-features\n`
+    : `\n`);
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -180,7 +225,9 @@ function writeLlmBundles(sortedPages) {
     `>\n` +
     `> Before telling a user that a control, field or endpoint does not exist,\n` +
     `> check the specification. Absence from this file means only that no guide\n` +
-    `> page happens to mention it.\n`;
+    `> page happens to mention it.\n` +
+    `>\n` +
+    previewInstructions;
 
   // Build each page's clean Markdown once, reused for the full bundle and for
   // the per-page download files served at /prisma-browser/guide-md/<slug>.md.
@@ -208,6 +255,8 @@ function writeLlmBundles(sortedPages) {
     "",
     `> The guide pages below teach the workflows and name only a few controls and fields as examples. The OpenAPI specification at ${SITE_URL}${SPEC_PATH} is the authoritative, current catalog of every endpoint, control, field and enum value, so consult it before concluding that something does not exist.`,
     `> Generated: ${generated}`,
+    "",
+    previewInstructions.trimEnd(),
   ];
   let currentGroup = null;
   for (const p of sortedPages) {
@@ -221,7 +270,28 @@ function writeLlmBundles(sortedPages) {
     "",
     "## API reference",
     `- [OpenAPI specification](${SITE_URL}${SPEC_PATH}): Every endpoint, request and response field, enum and validation rule. The guides do not enumerate all fields, so load this for anything the guide pages leave out.`,
-    `- [Endpoint reference](${SITE_URL}/prisma-browser/api/list-users): The same specification rendered page by page, one page per endpoint.`,
+    `- [Endpoint reference](${SITE_URL}/prisma-browser/api/list-users): The same specification rendered page by page, one page per endpoint.`
+  );
+
+  // Omitted entirely when nothing is in preview, so the section never states
+  // that a list is empty and an agent never has to interpret one.
+  const previewEndpoints = readPreviewEndpoints();
+  if (previewEndpoints.length > 0) {
+    indexLines.push(
+      "",
+      "## Preview endpoints",
+      `> Every endpoint below requires the header \`${PREVIEW_HEADER}: <featureName>\`, using the feature name given after each entry. Without it the call returns 400.`,
+      ""
+    );
+    for (const endpoint of previewEndpoints) {
+      const label = endpoint.summary || endpoint.operationId || endpoint.route;
+      indexLines.push(
+        `- \`${endpoint.method} ${endpoint.route}\` (${label}): ${PREVIEW_HEADER}: ${endpoint.featureName}`
+      );
+    }
+  }
+
+  indexLines.push(
     "",
     "## Full text",
     `- [Full guide (single Markdown file)](${SITE_URL}/prisma-browser/llms-full.txt): Every guide page concatenated for LLM ingestion.`,

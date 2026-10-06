@@ -1377,64 +1377,97 @@ code {
   display: grid !important;
 }
 
-/* SCHEMA AVAILABILITY BADGES (spec-driven via x-badges) */
-.openapi-schema__badge {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 1px 8px;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  line-height: 1.5;
-  letter-spacing: 0.02em;
+/* PREVIEW ENDPOINTS IN THE API REFERENCE NAV (spec-driven).
+   The class is attached per operation by createPrismaBrowserDocItem in
+   docusaurus.config.ts when the operation carries the published
+   x-prisma-browser-preview marker. The pill uses ::before because .api-method already owns
+   ::after for the HTTP method badge, which is right-aligned with margin-left:
+   auto; leading the row also keeps those method badges in a straight column
+   instead of pushing each one left by the pill's width.
+   Colors are Core UI purple tokens (design-system/coreui-tokens.scss, defined on
+   :root): purple is the one hue the reference does not already use for HTTP
+   methods, links, or the active nav item, so Preview reads as its own signal.
+   No dark override: Core UI flips each scale under data-pab-theme="dark"
+   (01 lightest, 08 darkest), so the same tokens serve both themes. */
+:root {
+  --pb-preview-accent: var(--pab-color-purple-03);
+  --pb-preview-bg: color-mix(
+    in srgb,
+    var(--pab-color-purple-08) 55%,
+    var(--ifm-background-color)
+  );
+  --pb-preview-border: var(--pab-color-purple-07);
+  --pb-preview-text: var(--pab-color-secondary-01);
+  --pb-preview-tag-bg: var(--pab-color-purple-03);
+  --pb-preview-tag-text: var(--pab-color-white);
+  --pb-preview-soft-bg: var(--pab-color-purple-08);
+  --pb-preview-soft-text: var(--pab-color-purple-01);
+  --pb-preview-code-bg: var(--pab-color-purple-07);
+}
+
+.menu__list-item.pb-preview > .menu__link::before {
+  content: "Preview";
+  flex-shrink: 0;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background-color: var(--pb-preview-soft-bg);
+  color: var(--pb-preview-soft-text);
+  font-size: 0.6rem;
+  font-weight: 600;
+  line-height: 1.3rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  vertical-align: middle;
   white-space: nowrap;
-  /* Neutral fallback for unrecognized badge names */
-  background-color: var(--ifm-color-emphasis-200);
-  color: var(--ifm-color-emphasis-800);
 }
 
-.openapi-schema__badge--early-access {
-  background-color: #fff3cd;
-  color: #7a5900;
+/* Banner on the endpoint page itself, rendered by the ApiItem wrapper above the
+   reference row. It sits in the doc container, so it spans the reference and
+   the explorer rather than only the left column. */
+.pb-preview-banner {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 1rem;
+  padding: 12px 16px;
+  border: 1px solid var(--pb-preview-border);
+  border-left: 3px solid var(--pb-preview-accent);
+  border-radius: 6px;
+  background-color: var(--pb-preview-bg);
+  color: var(--pb-preview-text);
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
-.openapi-schema__badge--beta {
-  background-color: #e2ecff;
-  color: #0b4fd4;
+.pb-preview-banner__tag {
+  flex-shrink: 0;
+  padding: 1px 8px;
+  border-radius: 4px;
+  background-color: var(--pb-preview-tag-bg);
+  color: var(--pb-preview-tag-text);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.openapi-schema__badge--limited-availability {
-  background-color: #fde2e1;
-  color: #a11a12;
+.pb-preview-banner__body {
+  margin: 0;
 }
 
-.openapi-schema__badge--general-availability {
-  background-color: #e3f6e6;
-  color: #1a7a33;
+.pb-preview-banner code {
+  background-color: var(--pb-preview-code-bg);
+  border-color: transparent;
+  color: inherit;
+  white-space: nowrap;
 }
 
-[data-theme="dark"] .openapi-schema__badge--early-access {
-  background-color: #4a3a00;
-  color: #ffe08a;
+.pb-preview-banner a {
+  color: var(--pb-preview-accent);
+  font-weight: 600;
 }
-
-[data-theme="dark"] .openapi-schema__badge--beta {
-  background-color: #12315f;
-  color: #a9c7ff;
-}
-
-[data-theme="dark"] .openapi-schema__badge--limited-availability {
-  background-color: #5a1512;
-  color: #ffb3ae;
-}
-
-[data-theme="dark"] .openapi-schema__badge--general-availability {
-  background-color: #143d1f;
-  color: #9fe4ad;
-}
-/* END SCHEMA AVAILABILITY BADGES */
+/* END PREVIEW ENDPOINTS IN THE API REFERENCE NAV */
 
 /* ── DocSearch visibility above the PB combined header ──────────────────────
    The PB header is a sticky wrapper (.pb-headergroup, z-index: 300) that

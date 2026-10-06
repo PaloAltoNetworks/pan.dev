@@ -5,13 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  * ========================================================================== */
 
-// Swizzled (ejected) from docusaurus-theme-openapi-docs to add support for
-// spec-driven availability badges (`x-badges`) on schema objects, e.g. marking
-// an object as Early Access / Beta / Limited Availability. The only additions
-// over the upstream component are the `renderBadges` block and its placement in
-// the property-name row; everything else mirrors the original so future upstream
-// changes are easy to diff. Shared helpers are imported from the package so the
-// patched getQualifierMessage() constraint labels flow through here too.
+// Swizzled (ejected) from docusaurus-theme-openapi-docs so Prisma Browser pages
+// use the corrected constraint labels in ./pbQualifierMessage. Everything else
+// mirrors the original so future upstream changes are easy to diff. Preview
+// status is endpoint-level only (x-prisma-browser-preview on a path or an
+// operation), so schema fields carry no availability badges.
 //
 // Ejected from 5.2.0, which inlines its translation ids instead of exporting
 // the OPENAPI_SCHEMA_ITEM map. Re-diff against the package source on every
@@ -28,7 +26,6 @@ import clsx from "clsx";
 import { getQualifierMessage } from "docusaurus-theme-openapi-docs/lib/markdown/schema";
 import { guard } from "docusaurus-theme-openapi-docs/lib/markdown/utils";
 
-import { renderSchemaBadges } from "./badges";
 import { getPBQualifierMessage } from "./pbQualifierMessage";
 
 const PB_BASE = "/prisma-browser";
@@ -139,8 +136,6 @@ export default function SchemaItem(props: Props) {
     </span>
   ));
 
-  const renderBadges = renderSchemaBadges(schema);
-
   const renderEnumDescriptions = guard(
     getEnumDescriptionMarkdown(enumDescriptions),
     (value) => {
@@ -243,8 +238,6 @@ export default function SchemaItem(props: Props) {
     return undefined;
   }
 
-  const hasBadges = renderBadges.length > 0;
-
   const schemaContent = (
     <div>
       <span className="openapi-schema__container">
@@ -258,10 +251,9 @@ export default function SchemaItem(props: Props) {
         <span className="openapi-schema__name">
           {Array.isArray(schemaName) ? schemaName.join(" | ") : schemaName}
         </span>
-        {(nullable || required || deprecated || hasBadges) && (
+        {(nullable || required || deprecated) && (
           <span className="openapi-schema__divider"></span>
         )}
-        {renderBadges}
         {renderNullable}
         {renderRequired}
         {renderDeprecated}

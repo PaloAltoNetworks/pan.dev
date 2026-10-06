@@ -40,7 +40,6 @@ import {
 } from "docusaurus-theme-openapi-docs/lib/markdown/schema";
 import type { SchemaObject } from "docusaurus-theme-openapi-docs/lib/types";
 
-import { renderSchemaBadges } from "../SchemaItem/badges";
 import { getPBQualifierMessage } from "../SchemaItem/pbQualifierMessage";
 
 const PB_BASE = "/prisma-browser";
@@ -92,10 +91,6 @@ const Summary: React.FC<SummaryProps> = ({
     ? required.includes(name)
     : required === true;
 
-  // Expandable object and array rows render the same spec-declared `x-badges`
-  // that SchemaItem renders on leaf rows. Additive: inert unless a spec sets it.
-  const renderBadges = renderSchemaBadges(schema);
-
   return (
     <summary>
       <span className="openapi-schema__container">
@@ -107,10 +102,9 @@ const Summary: React.FC<SummaryProps> = ({
           {name}
         </strong>
         <span className="openapi-schema__name"> {schemaName}</span>
-        {(isRequired || deprecated || nullable || renderBadges.length > 0) && (
+        {(isRequired || deprecated || nullable) && (
           <span className="openapi-schema__divider" />
         )}
-        {renderBadges}
         {nullable && (
           <span className="openapi-schema__nullable">
             {translate({
