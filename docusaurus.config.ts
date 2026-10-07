@@ -391,6 +391,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          msppaygo: {
+            specPath: "openapi-specs/sase/msp-paygo",
+            outputDir: "products/sase/api/msp-paygo",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
@@ -829,6 +834,7 @@ const config = {
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
             outputDir: "products/iot/api",
+            proxy: "https://cors.pan.dev",
           },
           "threat-vault": {
             specPath: "openapi-specs/threat-vault/",

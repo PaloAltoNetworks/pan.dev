@@ -366,4 +366,8 @@ module.exports = {
     require("./api/pab-msp/sidebar"),
   ],
   
+  msppaygo: [
+    "sase/api/msp-paygo/introduction",
+    ...require("./api/msp-paygo/sidebar"),
+  ],
 };
