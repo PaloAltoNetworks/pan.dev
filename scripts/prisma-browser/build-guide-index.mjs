@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { PREVIEW_MARKER as PREVIEW_HEADER, findPreviewGuide } from "./preview.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "../..");
@@ -48,8 +49,6 @@ const SPEC_PATH = "/spec/prisma-browser-management.yaml";
 // sync-spec first so this is current on every build. A model handed the
 // bundles gets the list here rather than having to parse the YAML.
 const PREVIEW_MANIFEST = path.join(staticOut, "preview-manifest.json");
-// The opt-in request header a caller sends to reach a preview endpoint.
-const PREVIEW_HEADER = "x-prisma-browser-preview";
 
 function readPreviewEndpoints() {
   if (!fs.existsSync(PREVIEW_MANIFEST)) return [];
@@ -68,10 +67,8 @@ function readPreviewEndpoints() {
 }
 
 // The Preview features guide may not be published yet, so link to it only once
-// it exists here.
-const previewGuidePublished = fs.existsSync(
-  path.join(guideRoot, "basics/preview-features.mdx")
-);
+// it exists here, in whichever guide folder it lives.
+const previewGuidePublished = findPreviewGuide(guideRoot) !== undefined;
 
 // Written to both bundles as an instruction to the agent reading them, not as
 // prose for a human: an agent that generates a call to a preview endpoint
@@ -89,6 +86,24 @@ const previewInstructions =
   (previewGuidePublished
     ? ` Details:\n> ${SITE_URL}${basePath}preview-features\n`
     : `\n`);
+
+// The preview endpoint list, written into both bundles so a model handed
+// either one knows which endpoints need the header and which value to send.
+// Omitted entirely when nothing is in preview, so the section never states
+// that a list is empty and an agent never has to interpret one.
+function previewEndpointLines() {
+  const endpoints = readPreviewEndpoints();
+  if (endpoints.length === 0) return [];
+  return [
+    "## Preview endpoints",
+    `> Every endpoint below requires the header \`${PREVIEW_HEADER}: <featureName>\`, using the feature name given after each entry. Without it the call returns 400.`,
+    "",
+    ...endpoints.map((endpoint) => {
+      const label = endpoint.summary || endpoint.operationId || endpoint.route;
+      return `- \`${endpoint.method} ${endpoint.route}\` (${label}): ${PREVIEW_HEADER}: ${endpoint.featureName}`;
+    }),
+  ];
+}
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -245,7 +260,11 @@ function writeLlmBundles(sortedPages) {
     return section;
   });
 
-  const fullText = `${fullHeader}\n---\n\n${sections.join("\n\n---\n\n")}\n`;
+  const fullPreview = previewEndpointLines();
+  const fullText =
+    `${fullHeader}\n` +
+    (fullPreview.length > 0 ? `${fullPreview.join("\n")}\n\n` : "") +
+    `---\n\n${sections.join("\n\n---\n\n")}\n`;
 
   // llms.txt: an index of links + summaries, per the llmstxt.org convention.
   const indexLines = [
@@ -273,23 +292,8 @@ function writeLlmBundles(sortedPages) {
     `- [Endpoint reference](${SITE_URL}/prisma-browser/api/list-users): The same specification rendered page by page, one page per endpoint.`
   );
 
-  // Omitted entirely when nothing is in preview, so the section never states
-  // that a list is empty and an agent never has to interpret one.
-  const previewEndpoints = readPreviewEndpoints();
-  if (previewEndpoints.length > 0) {
-    indexLines.push(
-      "",
-      "## Preview endpoints",
-      `> Every endpoint below requires the header \`${PREVIEW_HEADER}: <featureName>\`, using the feature name given after each entry. Without it the call returns 400.`,
-      ""
-    );
-    for (const endpoint of previewEndpoints) {
-      const label = endpoint.summary || endpoint.operationId || endpoint.route;
-      indexLines.push(
-        `- \`${endpoint.method} ${endpoint.route}\` (${label}): ${PREVIEW_HEADER}: ${endpoint.featureName}`
-      );
-    }
-  }
+  const previewLines = previewEndpointLines();
+  if (previewLines.length > 0) indexLines.push("", ...previewLines);
 
   indexLines.push(
     "",

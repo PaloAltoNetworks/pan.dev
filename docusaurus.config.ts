@@ -1,4 +1,8 @@
 import tailwindPlugin from "./plugins/tailwind-config.cjs";
+import {
+  createPrismaBrowserApiPageMD,
+  createPrismaBrowserDocItem,
+} from "./scripts/prisma-browser/reference-generators.mjs";
 
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
@@ -88,53 +92,6 @@ const browserMgmtOperationRedirects = [
 const includePrismaBrowserApi =
   !process.env.PRODUCTS_INCLUDE ||
   process.env.PRODUCTS_INCLUDE.split(",").includes("prisma-browser");
-
-// Sidebar item builder for the Prisma Browser reference. It reproduces the
-// plugin's own createDocItem (which is not exported) and tags an endpoint
-// carrying the preview marker, so the nav flags a preview endpoint the way the
-// theme already flags a deprecated one. sync-spec.mjs renames the marker to its
-// published name and pushes a path-level one down onto each operation first,
-// because the plugin's loader never surfaces path-level extensions.
-//
-// The tag rides on customProps, not className. Docusaurus resolves a sidebar
-// item as `className: frontMatter.sidebar_class_name ?? item.className`, and
-// the plugin writes sidebar_class_name into every generated operation page, so
-// a className set here never reaches the DOM. customProps has no frontmatter
-// counterpart on those pages, so it survives; src/theme/DocSidebarItem/Link
-// turns it back into a class. `sidebar.ts` is only written when absent, so run
-// `yarn re-gen` after changing this, not `yarn gen-all`.
-function createPrismaBrowserDocItem(item, { sidebarOptions, basePath }) {
-  const id = item.type === "schema" ? `schemas/${item.id}` : item.id;
-  const method = item.type === "api" ? item.api?.method : undefined;
-  const deprecated =
-    item.type === "api" ? item.api?.deprecated : item.schema?.deprecated;
-  const previewFeature =
-    item.type === "api"
-      ? item.api?.["x-prisma-browser-preview"]?.featureName
-      : undefined;
-
-  const classes = [];
-  if (deprecated) classes.push("menu__list-item--deprecated");
-  if (item.type === "api") {
-    if (method) classes.push("api-method", method);
-  } else {
-    classes.push("schema");
-  }
-
-  const customProps =
-    typeof previewFeature === "string" && previewFeature.length > 0
-      ? { ...sidebarOptions?.customProps, pbPreviewFeature: previewFeature }
-      : sidebarOptions?.customProps;
-
-  return {
-    type: "doc",
-    id:
-      basePath === "" || basePath === undefined ? `${id}` : `${basePath}/${id}`,
-    label: item.frontMatter?.sidebar_label ?? item.title ?? id,
-    customProps,
-    className: classes.length > 0 ? classes.join(" ") : undefined,
-  };
-}
 
 const config = {
   future: {
@@ -749,6 +706,8 @@ const config = {
               groupPathsBy: "tagGroup",
               sidebarGenerators: { createDocItem: createPrismaBrowserDocItem },
             },
+            // Preview endpoints: "Preview" sidebar label and page banner.
+            markdownGenerators: { createApiPageMD: createPrismaBrowserApiPageMD },
           },
           ztna: {
             specPath: "openapi-specs/access/ztna",

@@ -3,6 +3,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 
+import {
+  HTTP_METHODS as METHODS,
+  PREVIEW_MARKER,
+  isPreviewHeader,
+  previewHeaderParameter,
+  previewOperations,
+} from "./preview.mjs";
+
 const require = createRequire(import.meta.url);
 const yaml = require("js-yaml");
 
@@ -21,55 +29,6 @@ const repoRoot = path.resolve(__dirname, "../..");
 // authoritative source spec.
 function refName(ref) {
   return typeof ref === "string" ? ref.split("/").pop() : undefined;
-}
-
-const METHODS = new Set([
-  "get",
-  "put",
-  "post",
-  "delete",
-  "patch",
-  "head",
-  "options",
-  "trace",
-]);
-
-// Preview features carry `x-prisma-browser-preview: { featureName: <slug> }`,
-// set in the upstream spec on a path or on a single operation. The API rejects
-// a call to such an endpoint without the opt-in header. The marker is published
-// as is: it names the request header a caller has to send, and `featureName` is
-// the value to send.
-// Everything downstream of this script (the reference sidebar, the endpoint
-// banner, the LLM bundles, and the Preview features guide) reads it.
-const PREVIEW_MARKER = "x-prisma-browser-preview";
-
-function previewFeatureName(node) {
-  const name = node?.[PREVIEW_MARKER]?.featureName;
-  return typeof name === "string" && name.length > 0 ? name : undefined;
-}
-
-// The reference code samples and the "Send API request" panel are built from the
-// operation's declared parameters, and they ignore `x-` extensions. Without a
-// declared header, every sample for a preview endpoint omits the opt-in header
-// and returns 400 when copied. Declare it as a required header parameter,
-// prefilled with the feature name, so samples, the request panel, and clients
-// generated from the downloaded spec all send it.
-function addPreviewHeaderParameter(operation, featureName) {
-  const parameters = Array.isArray(operation.parameters) ? operation.parameters : [];
-  const declared = parameters.some(
-    (p) => p?.in === "header" && p?.name?.toLowerCase() === PREVIEW_MARKER
-  );
-  if (declared) return;
-  operation.parameters = [
-    ...parameters,
-    {
-      name: PREVIEW_MARKER,
-      in: "header",
-      required: true,
-      description: `Opts in to the \`${featureName}\` preview feature. Send \`${featureName}\`, a comma-separated list that includes it, or \`true\` for every preview feature. Without it the request returns \`400\`.`,
-      schema: { type: "string", default: featureName, example: featureName },
-    },
-  ];
 }
 
 function stripAdditionalPropsInAllOf(node, allOfRefTargets) {
@@ -140,7 +99,8 @@ for (const name of allOfRefTargets) {
   }
 }
 
-// Index the preview markers for the reference UI and the LLM bundles.
+// Index the preview markers for the reference UI and the LLM bundles, and
+// normalize the preview header so the published spec is always consistent.
 //
 // A marker sits on a path or on a single operation. The openapi plugin's loader
 // destructures the path item and iterates only HTTP methods, so a path-level
@@ -148,44 +108,97 @@ for (const name of allOfRefTargets) {
 // endpoints would render as generally available. Push the path-level marker
 // down onto each operation under it as well, letting an operation that declares
 // its own marker keep it, so both authoring shapes reach the reference UI.
+//
+// The reference code samples and the "Send API request" panel are built from
+// declared parameters and ignore `x-` extensions, so every preview operation
+// gets exactly one inline, required header parameter defaulting to its feature
+// name. Any declaration the upstream spec already has (inline or `$ref`, on the
+// operation or its path) is replaced by that one, and a declaration left on an
+// operation that is not in preview is removed. Upstream drift is fixed here
+// with a warning rather than failing the build, because gen-pb runs in every
+// pan.dev build, not only Prisma Browser ones.
 const previewEndpoints = [];
-let propagatedPreviews = 0;
+const notes = { propagated: 0, replaced: 0, removed: 0, invalid: [] };
+
+function withoutPreviewHeader(parameters) {
+  if (!Array.isArray(parameters)) return { kept: parameters, dropped: 0 };
+  const kept = parameters.filter((p) => !isPreviewHeader(spec, p));
+  return { kept, dropped: parameters.length - kept.length };
+}
+
+for (const op of previewOperations(spec)) {
+  const { route, method, operation, ownMarker, pathMarker, featureName } = op;
+  const where = `${method.toUpperCase()} ${route}`;
+  if (ownMarker?.invalid !== undefined) {
+    notes.invalid.push(`${where}: ${JSON.stringify(ownMarker.invalid)}`);
+    if (!featureName) delete operation[PREVIEW_MARKER];
+  }
+
+  const { kept, dropped } = withoutPreviewHeader(operation.parameters);
+  if (dropped > 0) operation.parameters = kept;
+
+  if (!featureName) {
+    notes.removed += dropped;
+    continue;
+  }
+  if (!ownMarker?.featureName) notes.propagated += 1;
+  notes.replaced += dropped;
+
+  // Keep any other fields upstream puts on the marker.
+  operation[PREVIEW_MARKER] = {
+    ...(pathMarker?.featureName ? op.pathItem[PREVIEW_MARKER] : {}),
+    ...(ownMarker?.featureName ? operation[PREVIEW_MARKER] : {}),
+    featureName,
+  };
+  operation.parameters = [
+    ...(operation.parameters ?? []),
+    previewHeaderParameter(featureName),
+  ];
+  previewEndpoints.push({
+    method: method.toUpperCase(),
+    route,
+    operationId: operation.operationId,
+    summary: operation.summary,
+    featureName,
+  });
+}
 
 for (const [route, pathItem] of Object.entries(spec.paths ?? {})) {
   if (!pathItem || typeof pathItem !== "object") continue;
-  const pathFeature = previewFeatureName(pathItem);
-
-  for (const [method, operation] of Object.entries(pathItem)) {
-    if (!METHODS.has(method) || !operation || typeof operation !== "object") {
-      continue;
-    }
-    const ownFeature = previewFeatureName(operation);
-    const featureName = ownFeature ?? pathFeature;
-    if (!featureName) continue;
-    if (!ownFeature) propagatedPreviews += 1;
-
-    operation[PREVIEW_MARKER] = { featureName };
-    addPreviewHeaderParameter(operation, featureName);
-    previewEndpoints.push({
-      method: method.toUpperCase(),
-      route,
-      operationId: operation.operationId,
-      summary: operation.summary,
-      featureName,
-    });
+  // A path-level header declaration would apply to every operation under the
+  // path, including ones not in preview. Each preview operation now declares
+  // its own, so drop it here.
+  const { kept, dropped } = withoutPreviewHeader(pathItem.parameters);
+  if (dropped > 0) {
+    if (kept.length > 0) pathItem.parameters = kept;
+    else delete pathItem.parameters;
+    notes.replaced += dropped;
   }
-
-  // Re-add a path-level marker ahead of the operations, so the published spec
-  // reads the way the guide documents it. A plain assignment would append the
-  // new key after every method instead.
-  if (pathFeature) {
-    spec.paths[route] = { [PREVIEW_MARKER]: { featureName: pathFeature }, ...pathItem };
+  const marker = pathItem[PREVIEW_MARKER];
+  if (marker === undefined) continue;
+  if (typeof marker?.featureName !== "string" || !marker.featureName.trim()) {
+    notes.invalid.push(`${route}: ${JSON.stringify(marker)}`);
+    delete pathItem[PREVIEW_MARKER];
+    continue;
   }
+  // Keep the path-level marker ahead of the operations, so the published spec
+  // reads the way the guide documents it.
+  spec.paths[route] = { [PREVIEW_MARKER]: marker, ...pathItem };
 }
 
-if (propagatedPreviews > 0) {
+if (notes.propagated > 0) {
   console.warn(
-    `sync-spec: propagated a path-level preview marker onto ${propagatedPreviews} operation(s)`
+    `sync-spec: propagated a path-level preview marker onto ${notes.propagated} operation(s)`
+  );
+}
+if (notes.replaced > 0 || notes.removed > 0) {
+  console.warn(
+    `sync-spec: normalized the ${PREVIEW_MARKER} header (${notes.replaced} upstream declaration(s) replaced, ${notes.removed} removed from operations not in preview)`
+  );
+}
+for (const entry of notes.invalid) {
+  console.warn(
+    `sync-spec: ignored a ${PREVIEW_MARKER} marker whose featureName is not a non-empty string: ${entry}`
   );
 }
 

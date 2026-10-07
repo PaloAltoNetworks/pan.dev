@@ -32,6 +32,13 @@ const EJECTS = [
   "src/theme/SchemaItem/index.tsx",
 ];
 
+// Plugin functions copied (not exported upstream, so they cannot be wrapped).
+// They freeze the same way the ejects do, so they are re-diffed on a bump too.
+const COPIES = [
+  "scripts/prisma-browser/reference-generators.mjs (createPrismaBrowserDocItem, " +
+    "copied from the plugin's createDocItem in lib/sidebars/index.js)",
+];
+
 const repoRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../.."
@@ -62,7 +69,7 @@ for (const name of PACKAGES) {
       `${name} is pinned to ${pinned}, but the ejected components in ` +
         `src/theme/ were taken from ${EJECTED_FROM}.\n` +
         `  Re-diff these against ${name}@${pinned} and carry over any upstream ` +
-        `change:\n${EJECTS.map((f) => `    ${f}`).join("\n")}\n` +
+        `change:\n${[...EJECTS, ...COPIES].map((f) => `    ${f}`).join("\n")}\n` +
         `  Then set EJECTED_FROM = "${pinned}" in ` +
         `scripts/prisma-browser/check-theme-pin.mjs.`
     );

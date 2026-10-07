@@ -1377,32 +1377,42 @@ code {
   display: grid !important;
 }
 
-/* PREVIEW ENDPOINTS IN THE API REFERENCE NAV (spec-driven).
-   The class is attached per operation by createPrismaBrowserDocItem in
-   docusaurus.config.ts when the operation carries the published
-   x-prisma-browser-preview marker. The pill uses ::before because .api-method already owns
-   ::after for the HTTP method badge, which is right-aligned with margin-left:
-   auto; leading the row also keeps those method badges in a straight column
-   instead of pushing each one left by the pill's width.
-   Colors are Core UI purple tokens (design-system/coreui-tokens.scss, defined on
-   :root): purple is the one hue the reference does not already use for HTTP
-   methods, links, or the active nav item, so Preview reads as its own signal.
-   No dark override: Core UI flips each scale under data-pab-theme="dark"
-   (01 lightest, 08 darkest), so the same tokens serve both themes. */
+/* PREVIEW ENDPOINTS IN THE PRISMA BROWSER API REFERENCE (spec-driven).
+   Sidebar label: src/theme/DocSidebarItem/Link adds .pb-preview to the nav item
+   of an operation carrying the x-prisma-browser-preview marker. Page banner:
+   .pb-preview-banner, written into the generated page by
+   scripts/prisma-browser/reference-generators.mjs. Neither class appears
+   outside /prisma-browser.
+   The label uses ::before because .api-method already owns ::after for the
+   HTTP method badge; leading the row also keeps those badges in a column.
+   Colors are Core UI purple values, written out rather than read from the
+   --pab-color-* tokens: those flip to dark only after hydration, while
+   data-theme is set before first paint. Every text pair meets WCAG AA (4.5:1)
+   in both themes. */
 :root {
-  --pb-preview-accent: var(--pab-color-purple-03);
-  --pb-preview-bg: color-mix(
-    in srgb,
-    var(--pab-color-purple-08) 55%,
-    var(--ifm-background-color)
-  );
-  --pb-preview-border: var(--pab-color-purple-07);
-  --pb-preview-text: var(--pab-color-secondary-01);
-  --pb-preview-tag-bg: var(--pab-color-purple-03);
-  --pb-preview-tag-text: var(--pab-color-white);
-  --pb-preview-soft-bg: var(--pab-color-purple-08);
-  --pb-preview-soft-text: var(--pab-color-purple-01);
-  --pb-preview-code-bg: var(--pab-color-purple-07);
+  --pb-preview-accent: #8c3fd2; /* purple-03 */
+  --pb-preview-bg: #f5edfe; /* purple-08 */
+  --pb-preview-border: #e4ccfb; /* purple-07 */
+  --pb-preview-text: #1c213f; /* secondary-01 */
+  --pb-preview-link: #8c3fd2; /* 4.9:1 on bg */
+  --pb-preview-tag-bg: #8c3fd2;
+  --pb-preview-tag-text: #ffffff; /* 5.6:1 */
+  --pb-preview-soft-bg: #f5edfe;
+  --pb-preview-soft-text: #69319d; /* purple-01, 7.3:1 */
+  --pb-preview-code-bg: #e4ccfb;
+}
+
+html[data-theme="dark"] {
+  --pb-preview-accent: #9d60d8; /* dark purple-03 */
+  --pb-preview-bg: #211b2e;
+  --pb-preview-border: #45325c; /* dark purple-07 */
+  --pb-preview-text: #f4f5f5; /* dark secondary-01 */
+  --pb-preview-link: #bb7bf8; /* dark purple-01, 5.8:1 on bg */
+  --pb-preview-tag-bg: #8755b9; /* dark purple-04 */
+  --pb-preview-tag-text: #ffffff; /* 5.2:1 */
+  --pb-preview-soft-bg: #362a47; /* dark purple-08 */
+  --pb-preview-soft-text: #bb7bf8; /* 4.6:1 */
+  --pb-preview-code-bg: #45325c;
 }
 
 .menu__list-item.pb-preview > .menu__link::before {
@@ -1421,9 +1431,6 @@ code {
   white-space: nowrap;
 }
 
-/* Banner on the endpoint page itself, rendered by the ApiItem wrapper above the
-   reference row. It sits in the doc container, so it spans the reference and
-   the explorer rather than only the left column. */
 .pb-preview-banner {
   display: flex;
   align-items: baseline;
@@ -1456,18 +1463,20 @@ code {
   margin: 0;
 }
 
-.pb-preview-banner code {
-  background-color: var(--pb-preview-code-bg);
+/* Outranks `html[data-theme="dark"] .markdown :not(pre) > code`; !important
+   matches the site-wide `code` background rule above. */
+html[data-theme] .markdown .pb-preview-banner code {
+  background-color: var(--pb-preview-code-bg) !important;
   border-color: transparent;
   color: inherit;
   white-space: nowrap;
 }
 
 .pb-preview-banner a {
-  color: var(--pb-preview-accent);
+  color: var(--pb-preview-link);
   font-weight: 600;
 }
-/* END PREVIEW ENDPOINTS IN THE API REFERENCE NAV */
+/* END PREVIEW ENDPOINTS IN THE PRISMA BROWSER API REFERENCE */
 
 /* ── DocSearch visibility above the PB combined header ──────────────────────
    The PB header is a sticky wrapper (.pb-headergroup, z-index: 300) that
