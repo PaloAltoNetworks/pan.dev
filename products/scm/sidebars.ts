@@ -507,7 +507,7 @@ module.exports = {
           type: "doc",
           id: "scm/api/config/secure_agentless_access/introduction",
         },
-        require("./api/config/secure_agentless_access/sidebar"),
+        require("./api/config/secure_agentless_access/sidebar").slice(1),
       ],
     },
   ],
