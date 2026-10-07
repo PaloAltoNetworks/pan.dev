@@ -30,6 +30,8 @@ const EJECTS = [
   "src/theme/Schema/index.tsx",
   "src/theme/Schema/normalize.ts",
   "src/theme/SchemaItem/index.tsx",
+  // Copy of the plugin's default API page template (lib/index.js).
+  "scripts/prisma-browser/api-page.mustache",
 ];
 
 const repoRoot = path.resolve(
@@ -59,8 +61,8 @@ for (const name of PACKAGES) {
   }
   if (pinned !== EJECTED_FROM) {
     problems.push(
-      `${name} is pinned to ${pinned}, but the ejected components in ` +
-        `src/theme/ were taken from ${EJECTED_FROM}.\n` +
+      `${name} is pinned to ${pinned}, but the ejected components and ` +
+        `copied plugin files were taken from ${EJECTED_FROM}.\n` +
         `  Re-diff these against ${name}@${pinned} and carry over any upstream ` +
         `change:\n${EJECTS.map((f) => `    ${f}`).join("\n")}\n` +
         `  Then set EJECTED_FROM = "${pinned}" in ` +
@@ -72,15 +74,18 @@ for (const name of PACKAGES) {
 for (const file of EJECTS) {
   if (!fs.existsSync(path.join(repoRoot, file))) {
     problems.push(
-      `${file} is missing. If the ejects were replaced by wrappers, remove ` +
-        `this guard and its "check-theme-pin" script entry.`
+      `${file} is missing. If it was removed on purpose, remove it from ` +
+        `EJECTS (and remove anything that still points to it, such as a ` +
+        `"template" option in docusaurus.config.ts). If every eject was ` +
+        `replaced by a wrapper, remove this guard and its "check-theme-pin" ` +
+        `script entry.`
     );
   }
 }
 
 if (problems.length > 0) {
   console.error(
-    `[check-theme-pin] The ejected OpenAPI theme components are out of sync ` +
+    `[check-theme-pin] The ejected OpenAPI components are out of sync ` +
       `with the pinned plugin version:\n\n${problems
         .map((p) => `- ${p}`)
         .join("\n")}\n`
@@ -90,5 +95,5 @@ if (problems.length > 0) {
 
 console.log(
   `[check-theme-pin] OK: ${PACKAGES.join(", ")} pinned to ${EJECTED_FROM}, ` +
-    `matching the ${EJECTS.length} ejected components in src/theme/.`
+    `matching the ${EJECTS.length} ejected components and copied plugin files.`
 );

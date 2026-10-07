@@ -704,6 +704,9 @@ const config = {
             // off because tagGroup mode repeats it inside every group.
             showInfoPage: false,
             sidebarOptions: { groupPathsBy: "tagGroup" },
+            // Adds the "Preview" sidebar label and page banner for operations
+            // marked with x-prisma-browser-preview.
+            template: "scripts/prisma-browser/api-page.mustache",
           },
           ztna: {
             specPath: "openapi-specs/access/ztna",
