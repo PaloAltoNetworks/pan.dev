@@ -153,6 +153,52 @@ if (ungrouped.length > 0) {
   );
 }
 
+// The page template reads `x-prisma-browser-preview` from the operation, but the
+// plugin's loader drops path item extensions, so a marker on a path item never
+// reaches its operations. Copy a valid path marker onto every operation under it
+// that has no valid marker of its own (an operation's own marker wins). A marker
+// without a non-empty string featureName is ignored with a warning, never fatal,
+// since this script runs in every site build.
+const PREVIEW = "x-prisma-browser-preview";
+const isValidPreview = (marker) =>
+  typeof marker?.featureName === "string" && marker.featureName.trim() !== "";
+
+let propagated = 0;
+for (const [route, pathItem] of Object.entries(spec.paths ?? {})) {
+  if (!pathItem || typeof pathItem !== "object") continue;
+  let pathMarker;
+  if (PREVIEW in pathItem) {
+    if (isValidPreview(pathItem[PREVIEW])) {
+      pathMarker = pathItem[PREVIEW];
+    } else {
+      console.warn(`sync-spec: ignoring invalid ${PREVIEW} on path ${route}`);
+    }
+  }
+  for (const [method, operation] of Object.entries(pathItem)) {
+    if (!METHODS.has(method) || !operation || typeof operation !== "object") {
+      continue;
+    }
+    if (isValidPreview(operation[PREVIEW])) continue;
+    if (PREVIEW in operation) {
+      // Drop it so the template does not render a banner for it.
+      console.warn(
+        `sync-spec: ignoring invalid ${PREVIEW} on ${method.toUpperCase()} ${route}`
+      );
+      delete operation[PREVIEW];
+    }
+    if (pathMarker) {
+      operation[PREVIEW] = { ...pathMarker };
+      propagated++;
+    }
+  }
+}
+
+if (propagated > 0) {
+  console.log(
+    `sync-spec: copied path-level ${PREVIEW} onto ${propagated} operation(s)`
+  );
+}
+
 fs.writeFileSync(staticSpec, yaml.dump(spec, { lineWidth: -1, noRefs: true }));
 
 console.log(
