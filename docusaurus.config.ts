@@ -395,6 +395,9 @@ const config = {
             specPath: "openapi-specs/scm/config/secure_agentless_access",
             outputDir: "products/scm/api/config/secure_agentless_access",
             proxy: "https://cors.pan.dev",
+          msppaygo: {
+            specPath: "openapi-specs/sase/msp-paygo",
+            outputDir: "products/sase/api/msp-paygo",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           auth: {
@@ -835,6 +838,7 @@ const config = {
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
             outputDir: "products/iot/api",
+            proxy: "https://cors.pan.dev",
           },
           "threat-vault": {
             specPath: "openapi-specs/threat-vault/",
