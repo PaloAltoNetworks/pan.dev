@@ -82,6 +82,13 @@ const browserMgmtOperationRedirects = [
   to: `/prisma-browser/api/${to}`,
 }));
 
+// The /prisma-browser/api/* pages only exist when the docs plugin includes
+// prisma-browser. PRODUCTS_INCLUDE builds that omit it would otherwise fail
+// redirect validation on every target above.
+const includePrismaBrowserApi =
+  !process.env.PRODUCTS_INCLUDE ||
+  process.env.PRODUCTS_INCLUDE.split(",").includes("prisma-browser");
+
 const config = {
   future: {
     faster: (process.env.DOCUSAURUS_FASTER ?? "true") === "true",
@@ -232,18 +239,22 @@ const config = {
             from: "/access/api/browser-mgmt/browser-mgmt-api",
             to: "/prisma-browser",
           },
-          {
-            from: "/access/api/browser-mgmt/list-users",
-            to: "/prisma-browser/api/list-users",
-          },
-          ...browserMgmtOperationRedirects,
-          // The OpenAPI plugin auto-generates an "Introduction" page from the
-          // spec's info block at this long slug. Redirect to the canonical API
-          // entry point used by the surface switcher.
-          {
-            from: "/access/api/browser-mgmt/prisma-browser-management-console-public-api",
-            to: "/prisma-browser/api/list-users",
-          },
+          ...(includePrismaBrowserApi
+            ? [
+                {
+                  from: "/access/api/browser-mgmt/list-users",
+                  to: "/prisma-browser/api/list-users",
+                },
+                ...browserMgmtOperationRedirects,
+                // The OpenAPI plugin auto-generates an "Introduction" page from
+                // the spec's info block at this long slug. Redirect to the
+                // canonical API entry point used by the surface switcher.
+                {
+                  from: "/access/api/browser-mgmt/prisma-browser-management-console-public-api",
+                  to: "/prisma-browser/api/list-users",
+                },
+              ]
+            : []),
         ],
       },
     ],
@@ -380,6 +391,11 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          msppaygo: {
+            specPath: "openapi-specs/sase/msp-paygo",
+            outputDir: "products/sase/api/msp-paygo",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
@@ -818,6 +834,7 @@ const config = {
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
             outputDir: "products/iot/api",
+            proxy: "https://cors.pan.dev",
           },
           "threat-vault": {
             specPath: "openapi-specs/threat-vault/",
