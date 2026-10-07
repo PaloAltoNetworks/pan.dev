@@ -157,11 +157,16 @@ if (ungrouped.length > 0) {
 // plugin's loader drops path item extensions, so a marker on a path item never
 // reaches its operations. Copy a valid path marker onto every operation under it
 // that has no valid marker of its own (an operation's own marker wins). A marker
-// without a non-empty string featureName is ignored with a warning, never fatal,
-// since this script runs in every site build.
+// with an invalid featureName is removed with a warning, never fatal, since this
+// script runs in every site build.
+//
+// The page template writes featureName into MDX, where `{` or `}` would break
+// the page and with it the whole build, so only a plain token is valid.
 const PREVIEW = "x-prisma-browser-preview";
+const FEATURE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
 const isValidPreview = (marker) =>
-  typeof marker?.featureName === "string" && marker.featureName.trim() !== "";
+  typeof marker?.featureName === "string" &&
+  FEATURE_NAME.test(marker.featureName);
 
 let propagated = 0;
 for (const [route, pathItem] of Object.entries(spec.paths ?? {})) {
@@ -172,6 +177,7 @@ for (const [route, pathItem] of Object.entries(spec.paths ?? {})) {
       pathMarker = pathItem[PREVIEW];
     } else {
       console.warn(`sync-spec: ignoring invalid ${PREVIEW} on path ${route}`);
+      delete pathItem[PREVIEW];
     }
   }
   for (const [method, operation] of Object.entries(pathItem)) {
