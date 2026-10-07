@@ -30,6 +30,8 @@ const EJECTS = [
   "src/theme/Schema/index.tsx",
   "src/theme/Schema/normalize.ts",
   "src/theme/SchemaItem/index.tsx",
+  // Copy of the plugin's default API page template (lib/index.js).
+  "scripts/prisma-browser/api-page.mustache",
 ];
 
 const repoRoot = path.resolve(
