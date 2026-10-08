@@ -6,7 +6,8 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 
 import CookieConsent from "@site/src/components/CookieConsent";
-import { isPBPath, stripBaseUrl } from "@site/src/components/PBPortal/pbRoute";
+import { isPBPath } from "@site/src/components/PBPortal/pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 
 // Fire a GA4 custom event. window.gtag is installed by docusaurus-plugin-gtm
@@ -252,11 +253,11 @@ export default function Root({ children }) {
     siteConfig: { customFields },
   } = useDocusaurusContext();
   const errorReporterApiKey = customFields.errorReporterApiKey;
-  const { pathname: routePath, search } = useLocation();
+  const { search } = useLocation();
   // PB gating compares the site path (baseUrl removed) so it also holds in
   // subpath builds such as internal previews.
+  const pathname = useSitePath();
   const baseUrl = useBaseUrl("/");
-  const pathname = stripBaseUrl(routePath, baseUrl);
 
   // Keep ?ref=nav single on every route change (and initial load), on Prisma
   // Browser routes only.

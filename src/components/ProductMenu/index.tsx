@@ -8,11 +8,10 @@ import React, {
 import { createPortal } from "react-dom";
 import clsx from "clsx";
 import Link from "@docusaurus/Link";
-import { useLocation } from "@docusaurus/router";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import IconExternalLink from "@theme/Icon/ExternalLink";
 
-import { stripBaseUrl } from "@site/src/components/PBPortal/pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import {
   MENU_GROUPS,
   type MenuGroup,
@@ -394,9 +393,8 @@ function ProductMenuDesktop(): JSX.Element {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef(new Map<string, HTMLButtonElement>());
   const [moreBelow, setMoreBelow] = useState(false);
-  const { pathname: routePath } = useLocation();
   // Product paths are site paths, so drop the baseUrl subpath builds add.
-  const pathname = stripBaseUrl(routePath, useBaseUrl("/"));
+  const pathname = useSitePath();
   const searchUrl = useBaseUrl("/search");
 
   const groups = useMemo(() => searchGroups(query), [query]);

@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import Navbar from "@theme-original/Navbar";
-import {
-  PB_BASE,
-  isPBPath,
-  usePBSitePath,
-} from "@site/src/components/PBPortal/pbRoute";
+import { pbSection } from "@site/src/components/PBPortal/pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import Switcher from "@site/src/components/PBPortal/Switcher";
 import "@site/src/components/PBPortal/pb-portal.scss";
 
@@ -12,8 +9,8 @@ import "@site/src/components/PBPortal/pb-portal.scss";
 // highlight the active tab. Returns null on every non-PB page (the switcher is
 // not rendered there and the original navbar is returned untouched).
 function surfaceForPath(pathname) {
-  if (!isPBPath(pathname)) return null;
-  const section = pathname.slice(PB_BASE.length).split("/")[1];
+  const section = pbSection(pathname);
+  if (section === null) return null;
   if (section === "api") return "api";
   if (section === "guide") return "guide";
   if (section === "release-notes") return "release-notes";
@@ -24,7 +21,7 @@ function surfaceForPath(pathname) {
 // container so they scroll as one unit (the switcher can no longer slide behind
 // the navbar). Keeps the PB surface tokens in sync with pan.dev's theme toggle.
 export default function NavbarWrapper(props) {
-  const surface = surfaceForPath(usePBSitePath());
+  const surface = surfaceForPath(useSitePath());
 
   useEffect(() => {
     if (!surface) return undefined;

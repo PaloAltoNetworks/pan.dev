@@ -1,6 +1,6 @@
 import React from "react";
 import Layout from "@theme/Layout";
-import { usePBSitePath } from "./pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import { PBPrevNext } from "./PrevNext";
 import { PBRailNav } from "./RailNav";
 import { GuideAiMenu } from "./GuideLlmDownload";
@@ -16,7 +16,7 @@ export default function PBPortal({
   children,
 }) {
   // Site path without the baseUrl, so guide nav matching works in subpath builds.
-  const pathname = usePBSitePath();
+  const pathname = useSitePath();
   const isGuide = surface === "guide";
   const withRail = isGuide || Boolean(sidebar);
 

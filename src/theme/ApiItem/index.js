@@ -1,6 +1,7 @@
 import React from "react";
 import ApiItem from "@theme-original/ApiItem";
-import { PB_BASE, usePBSitePath } from "@site/src/components/PBPortal/pbRoute";
+import { pbSection } from "@site/src/components/PBPortal/pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import "@site/src/components/PBPortal/pb-portal.scss";
 
 // Scoped wrapper around the OpenAPI reference item. The surface switcher now
@@ -9,7 +10,7 @@ import "@site/src/components/PBPortal/pb-portal.scss";
 // reference UI, and only on /prisma-browser/api pages. All other API pages
 // fall straight through to the original component.
 export default function ApiItemWrapper(props) {
-  const onBrowserMgmt = usePBSitePath().startsWith(`${PB_BASE}/api`);
+  const onBrowserMgmt = pbSection(useSitePath()) === "api";
 
   if (!onBrowserMgmt) return <ApiItem {...props} />;
 

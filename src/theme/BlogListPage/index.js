@@ -8,10 +8,11 @@
 import React from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import useBaseUrl from "@docusaurus/useBaseUrl";
+import useRouteContext from "@docusaurus/useRouteContext";
 import BlogListPageOriginal from "@theme-original/BlogListPage";
 import ReleaseNotesView from "@site/src/components/PBPortal/ReleaseNotes/ReleaseNotesView";
-import { stripBaseUrl } from "@site/src/components/PBPortal/pbRoute";
 
+const PB_RELEASE_NOTES_ID = "pb-release-notes";
 const PB_RELEASE_NOTES_BASE = "/prisma-browser/release-notes";
 
 function toRelease({ content }) {
@@ -27,16 +28,13 @@ function toRelease({ content }) {
 }
 
 export default function BlogListPage(props) {
-  const { items, metadata } = props;
+  const { items } = props;
   const { siteConfig } = useDocusaurusContext();
+  const { plugin } = useRouteContext();
   const feedUrl =
     siteConfig.url + useBaseUrl(`${PB_RELEASE_NOTES_BASE}/rss.xml`);
 
-  const basePath = stripBaseUrl(
-    metadata?.blogBasePath ?? metadata?.permalink ?? "",
-    siteConfig.baseUrl
-  );
-  if (!basePath.startsWith(PB_RELEASE_NOTES_BASE)) {
+  if (plugin.id !== PB_RELEASE_NOTES_ID) {
     return <BlogListPageOriginal {...props} />;
   }
 

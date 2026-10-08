@@ -8,7 +8,8 @@
 import React, { useCallback, useMemo } from "react";
 
 import { translate } from "@docusaurus/Translate";
-import { isPBPath, usePBSitePath } from "@site/src/components/PBPortal/pbRoute";
+import { isPBPath } from "@site/src/components/PBPortal/pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import { setSchemaSelection } from "@theme/ApiExplorer/SchemaSelection/slice";
 import { useTypedDispatch } from "@theme/ApiItem/hooks";
 import { ClosingArrayBracket, OpeningArrayBracket } from "@theme/ArrayBrackets";
@@ -49,9 +50,7 @@ import { getPBQualifierMessage } from "../SchemaItem/pbQualifierMessage";
 // Apart from this hook and its two call sites below, the file is an unmodified
 // eject of docusaurus-theme-openapi-docs 5.2.0. See UPSTREAM-SYNC.md.
 function useQualifierMessage(): (schema?: SchemaObject) => string | undefined {
-  return isPBPath(usePBSitePath())
-    ? getPBQualifierMessage
-    : getQualifierMessage;
+  return isPBPath(useSitePath()) ? getPBQualifierMessage : getQualifierMessage;
 }
 
 interface MarkdownProps {

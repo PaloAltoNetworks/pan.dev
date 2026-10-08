@@ -13,6 +13,13 @@ function slugFromPath(pathname) {
   return (pathname || "").replace(/\/+$/, "").split("/").pop();
 }
 
+const COPY_ICON = { idle: "fa-copy", copied: "fa-check", failed: "fa-xmark" };
+const COPY_LABEL = {
+  idle: "Copy for AI",
+  copied: "Copied",
+  failed: "Copy failed",
+};
+
 // Page-header "for AI" control: a split button rendered beside the guide H1.
 // Primary click copies the current page as Markdown; the caret opens a menu
 // with the per-page and full-guide downloads. Copy and per-page download both
@@ -21,7 +28,8 @@ function slugFromPath(pathname) {
 export function GuideAiMenu({ pathname }) {
   const slug = slugFromPath(pathname);
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  // "idle" | "copied" | "failed"
+  const [copyState, setCopyState] = useState("idle");
   const ref = useRef(null);
   // The generated files are static assets, so prefix the site baseUrl for
   // subpath builds. Hooks stay above the early return below.
@@ -47,16 +55,27 @@ export function GuideAiMenu({ pathname }) {
   if (!slug) return null;
 
   const copyPage = async () => {
-    try {
-      const res = await fetch(pageUrl);
+    // Safari only allows a clipboard write that starts inside the click, so
+    // hand the clipboard a pending item now and let the fetch resolve into it.
+    const text = fetch(pageUrl).then((res) => {
       if (!res.ok) throw new Error(`${res.status} fetching ${pageUrl}`);
-      const text = await res.text();
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
+      return res.text();
+    });
+    try {
+      if (typeof ClipboardItem === "function" && navigator.clipboard.write) {
+        const blob = text.then((t) => new Blob([t], { type: "text/plain" }));
+        await navigator.clipboard.write([
+          new ClipboardItem({ "text/plain": blob }),
+        ]);
+      } else {
+        await navigator.clipboard.writeText(await text);
+      }
+      setCopyState("copied");
     } catch (err) {
       console.error("Copy for AI failed", err);
+      setCopyState("failed");
     }
+    setTimeout(() => setCopyState("idle"), 1600);
   };
 
   return (
@@ -64,15 +83,15 @@ export function GuideAiMenu({ pathname }) {
       <div className="pb-ai-split">
         <button
           type="button"
-          className={clsx("pb-ai-main", copied && "is-copied")}
+          className={clsx("pb-ai-main", copyState === "copied" && "is-copied")}
           onClick={copyPage}
           title="Copy this page as Markdown to use with ChatGPT, Claude, or any LLM."
         >
           <i
-            className={`fa-solid ${copied ? "fa-check" : "fa-copy"}`}
+            className={`fa-solid ${COPY_ICON[copyState]}`}
             aria-hidden="true"
           />
-          <span>{copied ? "Copied" : "Copy for AI"}</span>
+          <span>{COPY_LABEL[copyState]}</span>
         </button>
         <button
           type="button"

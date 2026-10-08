@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { resolveBaseUrl, resolveSiteUrl } from "../site-url.cjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "../..");
@@ -32,24 +33,14 @@ const basePath = "/prisma-browser/guide/";
 // mirroring how static/spec/*.yaml is served at /spec/*.yaml.
 const staticOut = path.join(repoRoot, "static/prisma-browser");
 // Absolute base for rewriting site-relative links so an LLM sees real URLs.
-// The env vars override the host so a non-production bundle links itself
-// rather than production. The fallback is the production host, which is what
-// live builds and local runs emit. Keep this in sync with `url` and `baseUrl`
-// in docusaurus.config.ts. A site served under a subpath carries that baseUrl
-// in every absolute link.
-function resolveBaseUrl() {
-  if (process.env.CI_MERGE_REQUEST_IID) {
-    if (process.env.CI_PROJECT_DIR == "dev") return "/";
-    return (
-      process.env.GL_PAGES_BASE_URL ??
-      `/-/${process.env.CI_PROJECT_NAME}/-/jobs/${process.env.CI_JOB_ID}/artifacts/public/`
-    );
-  }
-  return process.env.GL_PAGES_BASE_URL ?? "/";
-}
+// url and baseUrl come from the same helpers as docusaurus.config.ts, so a
+// non-production bundle links itself rather than production, and a site served
+// under a subpath carries that baseUrl in every absolute link. Normalize them
+// the way Docusaurus does: no trailing slash on url, and a leading and trailing
+// slash on baseUrl.
 const SITE_URL = (
-  (process.env.GL_PAGES_URL || process.env.CI_PAGES_URL || "https://pan.dev") +
-  resolveBaseUrl()
+  resolveSiteUrl().replace(/\/+$/, "") +
+  `/${resolveBaseUrl()}/`.replace(/\/{2,}/g, "/")
 ).replace(/\/+$/, "");
 // Served copy of the OpenAPI spec (see sync-spec.mjs). The LLM bundles link it
 // so a model fed the guides can still resolve fields the guides do not list.
