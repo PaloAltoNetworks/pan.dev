@@ -391,6 +391,12 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          secure_agentless_access: {
+            specPath: "openapi-specs/scm/config/secure_agentless_access",
+            outputDir: "products/scm/api/config/secure_agentless_access",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           msppaygo: {
             specPath: "openapi-specs/sase/msp-paygo",
             outputDir: "products/sase/api/msp-paygo",

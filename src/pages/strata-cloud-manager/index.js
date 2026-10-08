@@ -222,6 +222,11 @@ export default function SCMLandingPage() {
         ],
         "Other Configuration": [
           {
+            to: "scm/api/config/secure_agentless_access/introduction",
+            label: "Secure Agentless Access (SAA) Configuration",
+            icon: "api-doc",
+          },
+          {
             to: "/prisma-browser/guide/guide-overview",
             label: "Prisma Access Browser",
             icon: "api-doc",
