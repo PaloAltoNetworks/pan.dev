@@ -15,6 +15,25 @@ These release notes identify API changes made for the various Strata Cloud Manag
 
 ## October 2026
 
+### Strata Cloud Manager — Software Update (New)
+
+New Software Update APIs for SASE, NGFW, and Cloud NGFW configurations. Use these APIs to retrieve software update schedules and status for managed devices.
+
+<details><summary>View endpoints (4)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/schedules` | List software update schedules |
+| GET | `/schedules/{id}` | Get software update schedule by ID |
+| GET | `/status` | List software update status |
+| GET | `/status/{id}` | Get software update status by ID |
+
+</details>
+
+See [Software Update APIs](/scm/api/config/sase/setup/) for full details.
+
+---
+
 ### Strata Cloud Manager — Secure Agentless Access (New)
 
 These APIs enable configuration API for Secure Agentless Access (SAA).
