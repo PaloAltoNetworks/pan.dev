@@ -1,0 +1,275 @@
+openapi: 3.0.3
+info:
+  title: Config Cleanup API
+  description: APIs for identifying and managing unused or redundant configuration objects.
+  version: 1.0.0
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    email: support@paloaltonetworks.com
+    name: Palo Alto Networks Technical Support
+    url: 'https://support.paloaltonetworks.com'
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: 'https://api.strata.paloaltonetworks.com/config/deployment/v1'
+    description: Current
+  - url: 'https://api.sase.paloaltonetworks.com/sse/config/v1'
+    description: Legacy
+tags:
+- name: Config Cleanup
+  description: Operations for identifying unused or redundant configuration objects.
+
+paths:
+  /posture/config-cleanup/v1/zerohit-rules:
+    get:
+      tags:
+        - Config Cleanup
+      summary: Get Zero-Hit Security Rules
+      description: |
+        Retrieves security rules that have never been hit (zero traffic matches) for a specified manager.
+
+        Use "SCM" as the manager_hostname to retrieve rules from Strata Cloud Manager.
+        For Panorama, provide the Panorama hostname.
+      operationId: GetZeroHitRules
+      parameters:
+        - name: manager_hostname
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            Manager hostname to query. Use "SCM" for Strata Cloud Manager,
+            or the Panorama hostname for Panorama-managed rules.
+          example: "SCM"
+        - name: location
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by folder (SCM) or device group (Panorama).
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 200
+          description: Maximum number of rules to return.
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Number of rules to skip for pagination.
+      responses:
+        '200':
+          description: Zero-hit rules retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZeroHitRulesResponse'
+        '400':
+          description: Invalid request parameters (e.g., missing manager_hostname)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Manager not found or no data available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        _errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: The error code representing a specific error condition.
+                example: "API_I00035"
+              message:
+                type: string
+                description: A brief description of the error condition.
+                example: "Invalid Request Payload"
+              details:
+                type: array
+                items:
+                  type: string
+                description: An explanation of the error condition.
+                example: ["Missing required parameter: manager_hostname"]
+              help:
+                type: string
+                format: uri
+                description: A URL link to documentation describing the error condition.
+                example: "https://docs.example.com/errors#API_I00035"
+        _request_id:
+          type: string
+          format: uuid
+          description: The request ID for troubleshooting purposes.
+          example: "eb18eb0c-d5b7-43f3-9e38-38464ee11e2f"
+
+    ZeroHitRulesResponse:
+      type: object
+      description: Response containing zero-hit security rules.
+      required:
+        - ok
+        - result
+      properties:
+        ok:
+          type: boolean
+        result:
+          $ref: '#/components/schemas/ZeroHitRulesResult'
+
+    ZeroHitRulesResult:
+      type: object
+      description: Zero-hit rules result data.
+      required:
+        - status
+        - data
+        - total
+      properties:
+        status:
+          type: string
+          enum: [success, in_progress, failed]
+        currentTime:
+          type: string
+          format: date-time
+        lastAnalysisTime:
+          type: string
+          format: date-time
+        platform:
+          type: string
+          enum: [scm, panorama]
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ZeroHitRule'
+        limit:
+          type: integer
+        offset:
+          type: integer
+        total:
+          type: integer
+
+    ZeroHitRule:
+      type: object
+      description: A security rule with zero traffic hits.
+      required:
+        - name
+        - uuid
+        - type
+        - location
+        - platform
+      properties:
+        name:
+          type: string
+          description: Rule name
+          example: "Allow-All-Traffic"
+        uuid:
+          type: string
+          description: Rule UUID
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        type:
+          type: string
+          description: Rule type (e.g., "security", "nat")
+          example: "security"
+        location:
+          type: string
+          description: Folder (SCM) or Device Group (Panorama)
+          example: "Shared"
+        platform:
+          type: string
+          enum: [scm, panorama]
+          example: "panorama"
+        created_time:
+          type: string
+          format: date-time
+          example: "2026-01-01T00:00:00Z"
+        updated_time:
+          type: string
+          format: date-time
+          example: "2026-04-01T00:00:00Z"
+        hit_timestamp:
+          type: string
+          format: date-time
+          description: Last hit timestamp (empty if never hit)
+          example: null
+        days_with_zero_hits:
+          type: integer
+          description: Number of days since the rule had zero hits
+          example: 106
+        description:
+          type: string
+          description: Rule description
+          example: "Allow all outbound traffic from trust zone"
+        tag:
+          type: array
+          items:
+            type: string
+          description: Rule tags
+          example: ["legacy", "needs-review"]
+        status:
+          type: string
+          description: Rule status (Panorama only)
+          example: "active"
+        disabled:
+          type: boolean
+          example: false
+        action:
+          type: string
+          description: Rule action (allow, deny, drop)
+          example: "allow"
+        from:
+          type: array
+          items:
+            type: string
+          example: ["trust"]
+        to:
+          type: array
+          items:
+            type: string
+          example: ["untrust"]
+        source:
+          type: array
+          items:
+            type: string
+          example: ["any"]
+        destination:
+          type: array
+          items:
+            type: string
+          example: ["any"]
+        application:
+          type: array
+          items:
+            type: string
+          example: ["any"]
+        service:
+          type: array
+          items:
+            type: string
+          example: ["any"]
+        profile_setting:
+          type: object
+          description: Security profile settings
+          additionalProperties: true
+          example:
+            group: ["best-practice"]
