@@ -1,0 +1,857 @@
+openapi: 3.0.0
+info:
+  title: Software Update
+  version: 1.0.0
+  description: >
+    API for managing adhoc (immediate, one-off) software update schedules
+    for NGFW devices in SCM.
+    © 2026 Palo Alto Networks, Inc
+  termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
+  contact:
+    name: Palo Alto Networks
+    url: 'https://www.paloaltonetworks.com/company/contact-support'
+    email: support@paloaltonetworks.com
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+
+servers:
+  - url: 'https://api.strata.paloaltonetworks.com/config/setup/software-update/v1'
+
+tags:
+  - name: Schedules
+    description: Manage software update schedules for NGFW devices
+  - name: Status
+    description: Query software update execution status
+
+paths:
+  /schedules:
+    get:
+      tags:
+        - Schedules
+      summary: List software update schedules
+      description: >
+        Returns all software update schedules for the authenticated tenant,
+        ordered most recent first. Use `schedule_type` to filter by adhoc or
+        scheduled. Returns an empty `data` array if none exist.
+        Paginated by default (`limit`/`offset`); pass `pagination=false` to
+        receive the full unpaginated result set instead.
+      operationId: ListSchedules
+      parameters:
+        - $ref: '#/components/parameters/schedule_type_filter'
+        - $ref: '#/components/parameters/pagination'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: Schedules retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/schedules'
+                  limit:
+                    type: integer
+                    description: Maximum number of objects per page (for paginated responses).
+                    default: 200
+                  offset:
+                    type: integer
+                    description: Offset into the total number of objects (for paginated responses).
+                    default: 0
+                  total:
+                    type: integer
+                    description: Total number of objects available.
+              examples:
+                schedule-list:
+                  summary: Schedule list (device-list mode and rule mode)
+                  value:
+                    data:
+                      - id: "de2de53e-707a-4240-9b9c-d13870cb866e"
+                        schedule_type: "adhoc"
+                        name: "alice_2026-07-08_06:00:00_UTC"
+                        target_version: "11.0.3-h1"
+                        allow_downgrade: false
+                        ha_orchestration: false
+                        install_starttime: "2026-07-08T06:00:00Z"
+                        devices:
+                          - "007999000839967"
+                      - id: "4e7be06e-7570-4ad8-a4de-b7d239e2cdf3"
+                        schedule_type: "adhoc"
+                        name: "alice_2026-07-23_07:00:00_UTC"
+                        description: "Emergency CVE patch"
+                        rules:
+                          - "production-pa-3420-upgrade"
+                          - "production-pa-5440-upgrade"
+                        target_version: "11.1.2-h2"
+                        allow_downgrade: false
+                        ha_orchestration: true
+                        install_starttime: "2026-07-23T07:00:00Z"
+                        devices:
+                          - "007999000839968"
+                          - "007999000839969"
+                    limit: 200
+                    offset: 0
+                    total: 2
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    post:
+      tags:
+        - Schedules
+      summary: Create a software update schedule
+      description: >
+        Creates a software update schedule. Set `schedule_type` to `adhoc` for
+        an immediate one-off update.
+
+        Provide exactly one of `devices` (explicit serial list) or `rules`
+        (one or more Software Upgrade Rule names).
+
+        All valid requests create a schedule and return 201 with the created
+        schedule record (use its `id` to poll `GET /status/{id}`). Devices that
+        are already undergoing an active upgrade are automatically skipped —
+        their status will show all steps `SKIPPED` with the description
+        `"Device is already undergoing a software update"`.
+
+        If `ha_orchestration` is `true` and an HA device is submitted without its
+        peer, returns 400 with `_errors[0].code = HA_PEER_MISSING` and
+        `_errors[0].details.devices` listing the affected serials.
+
+        Returns 409 if a duplicate is detected (same user, same second).
+      operationId: CreateSchedules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/schedule-request'
+            examples:
+              adhoc-device-list:
+                summary: Adhoc — explicit device list
+                value:
+                  schedule_type: "adhoc"
+                  target_version: "11.2.5"
+                  devices:
+                    - "007999000839967"
+                    - "007999000839968"
+                  allow_downgrade: false
+                  description: "Emergency CVE patch"
+              adhoc-rule-mode:
+                summary: Adhoc — single Software Upgrade Rule
+                value:
+                  schedule_type: "adhoc"
+                  target_version: "11.2.5"
+                  rules:
+                    - "production-pa-3420-upgrade"
+                  allow_downgrade: false
+              adhoc-multi-rule-mode:
+                summary: Adhoc — multiple Software Upgrade Rules (devices unioned)
+                value:
+                  schedule_type: "adhoc"
+                  target_version: "11.2.5"
+                  rules:
+                    - "production-pa-3420-upgrade"
+                    - "production-pa-5440-upgrade"
+                  allow_downgrade: false
+      responses:
+        '201':
+          description: >
+            Schedule created. Use `id` to poll `GET /status/{id}` for per-device
+            outcomes. Devices already undergoing an active upgrade are
+            automatically skipped and appear in the status response as SKIPPED.
+          headers:
+            Location:
+              description: URL of the created schedule resource.
+              schema:
+                type: string
+              example: "/schedules/a3f9c2d1-84b2-4e1a-9c3d-f2e8b7a6c5d4"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/schedules'
+              examples:
+                created:
+                  summary: Schedule created
+                  value:
+                    id: "a3f9c2d1-84b2-4e1a-9c3d-f2e8b7a6c5d4"
+                    schedule_type: "adhoc"
+                    name: "alice_2026-07-08_06:00:00_UTC"
+                    description: "Emergency CVE patch"
+                    target_version: "11.2.5"
+                    allow_downgrade: false
+                    ha_orchestration: false
+                    install_starttime: "2026-07-08T06:00:00Z"
+                    devices:
+                      - "007999000839967"
+                      - "007999000839968"
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  /schedules/{id}:
+    get:
+      tags:
+        - Schedules
+      summary: Get a software update schedule
+      description: >
+        Returns the record for one software update schedule, identified by
+        the schedule UUID returned by `POST /schedules` as `id`.
+      operationId: GetSchedulesByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          description: Schedule record retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/schedules'
+              example:
+                id: "de2de53e-707a-4240-9b9c-d13870cb866e"
+                schedule_type: "adhoc"
+                name: "alice_2026-07-08_06:00:00_UTC"
+                target_version: "11.0.3-h1"
+                allow_downgrade: false
+                ha_orchestration: false
+                install_starttime: "2026-07-08T06:00:00Z"
+                devices:
+                  - "007999000839967"
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    delete:
+      tags:
+        - Schedules
+      summary: Delete a software update schedule
+      description: >
+        Removes a software update schedule record by UUID. Deletion is not
+        allowed while any device in the schedule is still upgrading.
+        Once every device has reached a terminal state (completed,
+        failed, or skipped), the schedule record can be deleted; this only
+        removes the record itself and does not alter the devices' already
+        terminal software state.
+
+        Returns 409 if any device in the schedule is still actively upgrading
+        or queued past its start time. To resolve: use `GET /status/{id}` to
+        check per-device progress, wait for it to reach a terminal state, then
+        retry the delete.
+      operationId: DeleteSchedulesByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  /status:
+    get:
+      tags:
+        - Status
+      summary: List software update status
+      description: >
+        Returns the step-level execution status for all software update batches
+        for the tenant. Ordered most recent first. Use `schedule_type` to filter
+        by `adhoc` or `scheduled`. Omit to return all batches. Paginated by
+        default (`limit`/`offset`); pass `pagination=false` to receive the full
+        unpaginated result set instead.
+      operationId: ListStatus
+      parameters:
+        - $ref: '#/components/parameters/schedule_type_filter'
+        - $ref: '#/components/parameters/pagination'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: Status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/status'
+                  limit:
+                    type: integer
+                    description: Maximum number of objects per page (for paginated responses).
+                    default: 200
+                  offset:
+                    type: integer
+                    description: Offset into the total number of objects (for paginated responses).
+                    default: 0
+                  total:
+                    type: integer
+                    description: Total number of objects available.
+              example:
+                data:
+                  - id: "de2de53e-707a-4240-9b9c-d13870cb866e"
+                    schedule_type: "adhoc"
+                    overall_status: "INPROGRESS"
+                    devices:
+                      - device_serial: "007999000839967"
+                        rule_id: "e5cd5aa3-ee00-40bc-b395-8524fed8a932"
+                        status:
+                          start_time: "2026-07-08T06:00:40Z"
+                          end_time: ""
+                          status_details:
+                            initialize:
+                              state: "COMPLETED"
+                              description: ""
+                              start_time: "2026-07-08T06:00:35Z"
+                              end_time: "2026-07-08T06:00:40Z"
+                            precheck:
+                              state: "COMPLETED"
+                              description: ""
+                              start_time: "2026-07-08T06:00:40Z"
+                              end_time: "2026-07-08T06:01:01Z"
+                            content:
+                              state: "INPROGRESS"
+                              description: "Min Content Version: 8634-7655"
+                              start_time: "2026-07-08T06:01:01Z"
+                              end_time: ""
+                            downloading:
+                              state: ""
+                              description: ""
+                              start_time: ""
+                              end_time: ""
+                            upgrading:
+                              state: ""
+                              description: ""
+                              start_time: ""
+                              end_time: ""
+                            postcheck:
+                              state: ""
+                              description: ""
+                              start_time: ""
+                              end_time: ""
+                limit: 200
+                offset: 0
+                total: 1
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  /status/{id}:
+    get:
+      tags:
+        - Status
+      summary: Get software update status
+      description: >
+        Returns the step-level execution status for all devices in a specific
+        software update batch, identified by the schedule UUID returned by POST.
+      operationId: GetStatusByID
+      parameters:
+        - $ref: '#/components/parameters/uuid'
+      responses:
+        '200':
+          description: Status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+              example:
+                id: "de2de53e-707a-4240-9b9c-d13870cb866e"
+                schedule_type: "adhoc"
+                overall_status: "INPROGRESS"
+                devices:
+                  - device_serial: "007999000839967"
+                    rule_id: "e5cd5aa3-ee00-40bc-b395-8524fed8a932"
+                    status:
+                      start_time: "2026-07-08T06:00:40Z"
+                      end_time: ""
+                      status_details:
+                        initialize:
+                          state: "COMPLETED"
+                          description: ""
+                          start_time: "2026-07-08T06:00:35Z"
+                          end_time: "2026-07-08T06:00:40Z"
+                        precheck:
+                          state: "INPROGRESS"
+                          description: ""
+                          start_time: "2026-07-08T06:00:40Z"
+                          end_time: ""
+                        content:
+                          state: ""
+                          description: ""
+                          start_time: ""
+                          end_time: ""
+                        downloading:
+                          state: ""
+                          description: ""
+                          start_time: ""
+                          end_time: ""
+                        upgrading:
+                          state: ""
+                          description: ""
+                          start_time: ""
+                          end_time: ""
+                        postcheck:
+                          state: ""
+                          description: ""
+                          start_time: ""
+                          end_time: ""
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+components:
+  schemas:
+    # ─── Request body ────────────────────────────────────────────────────────
+    schedule-request:
+      type: object
+      description: >
+        Request body for creating a software update schedule.
+        Set `schedule_type` to `adhoc`. Provide exactly one of
+        `devices` (explicit serial list) or `rules` (Software Upgrade Rule names).
+      oneOf:
+        - title: device-list
+          required:
+            - schedule_type
+            - target_version
+            - devices
+        - title: rule-mode
+          required:
+            - schedule_type
+            - target_version
+            - rules
+      properties:
+        schedule_type:
+          type: string
+          description: Schedule type. Only `adhoc` is supported for POST.
+          enum:
+            - adhoc
+          example: "adhoc"
+        target_version:
+          type: string
+          description: >
+            Target software version. Must exist in the platform's software
+            version catalog.
+          maxLength: 64
+          example: "11.2.5"
+        devices:
+          type: array
+          description: Device serial numbers to update. Mutually exclusive with `rules`.
+          minItems: 1
+          items:
+            type: string
+          example:
+            - "007999000839967"
+            - "007999000839968"
+        rules:
+          type: array
+          description: >
+            One or more Software Upgrade Rule names whose matched devices will
+            be updated. Devices are unioned across all rules with duplicates
+            removed. Mutually exclusive with `devices`.
+          minItems: 1
+          items:
+            type: string
+            maxLength: 63
+          example:
+            - "production-pa-3420-upgrade"
+        allow_downgrade:
+          type: boolean
+          description: >
+            When `true`, allows installing a version lower than what is
+            currently running on the device.
+          default: false
+        ha_orchestration:
+          type: boolean
+          description: >
+            When `true`, the API enforces that both HA peers are present in the
+            device list. An HA device without its peer returns 400. Set to `false`
+            (default) to treat devices individually without HA peer validation.
+          default: false
+        description:
+          type: string
+          description: Optional free-text description. Stored verbatim.
+          maxLength: 1023
+          example: "Emergency CVE patch Q3"
+
+    # ─── Schedule record (GET list / GET-by-ID / POST 201) ───────────────────
+    schedules:
+      type: object
+      description: A software update schedule record.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Schedule UUID.
+          readOnly: true
+          example: "de2de53e-707a-4240-9b9c-d13870cb866e"
+        schedule_type:
+          type: string
+          description: Schedule type. `adhoc` for immediate one-off upgrades; `scheduled` for recurring schedules.
+          enum:
+            - adhoc
+            - scheduled
+          example: "adhoc"
+        name:
+          type: string
+          description: >
+            Schedule name. For adhoc: auto-generated as
+            `<username>_<YYYY-MM-DD_HH:MM:SS>_UTC`.
+          maxLength: 63
+          readOnly: true
+          example: "alice_2026-07-08_06:00:00_UTC"
+        description:
+          type: string
+          description: Optional free-text description.
+          maxLength: 1023
+          example: "Emergency CVE patch"
+        rules:
+          type: array
+          description: >
+            Software Upgrade Rule name(s) used at request time. Absent in
+            device-list mode.
+          items:
+            type: string
+          example:
+            - "production-pa-3420-upgrade"
+            - "production-pa-5440-upgrade"
+        target_version:
+          type: string
+          description: Target software version requested.
+          example: "11.0.3-h1"
+        allow_downgrade:
+          type: boolean
+          description: Whether downgrading to a lower version was permitted.
+          example: false
+        ha_orchestration:
+          type: boolean
+          description: >
+            `true` if the caller requested HA-aware upgrade (peer presence
+            validated at submission time).
+          example: false
+        install_starttime:
+          type: string
+          format: date-time
+          description: UTC time the update was triggered (RFC3339).
+          example: "2026-07-08T06:00:00Z"
+        devices:
+          type: array
+          description: >
+            Device serial numbers targeted by this schedule. Snapshot captured
+            at request time.
+          items:
+            type: string
+          example:
+            - "007999000839967"
+
+    # ─── Status schemas ───────────────────────────────────────────────────────
+    step-detail:
+      type: object
+      description: State and timestamps for a single upgrade pipeline step.
+      properties:
+        state:
+          type: string
+          description: Current state of the step. Empty string means not yet started.
+          enum:
+            - ""
+            - STARTED
+            - INPROGRESS
+            - COMPLETED
+            - FAILED
+            - SKIPPED
+          example: "COMPLETED"
+        description:
+          type: string
+          description: >
+            Human-readable detail. For FAILED or SKIPPED steps, describes
+            the reason.
+          example: ""
+        start_time:
+          type: string
+          format: date-time
+          description: UTC timestamp when this step started (RFC3339). Empty if not started.
+          example: "2026-07-08T06:00:35Z"
+        end_time:
+          type: string
+          format: date-time
+          description: UTC timestamp when this step ended (RFC3339). Empty if not finished.
+          example: "2026-07-08T06:00:40Z"
+
+    device-status:
+      type: object
+      description: Per-device upgrade execution status within a batch.
+      properties:
+        device_serial:
+          type: string
+          description: Serial number of the firewall.
+          example: "007999000839967"
+        rule_id:
+          type: string
+          format: uuid
+          description: Internal rule UUID associated with this device in the batch.
+          example: "e5cd5aa3-ee00-40bc-b395-8524fed8a932"
+        status:
+          type: object
+          description: Full upgrade status blob for this device.
+          properties:
+            start_time:
+              type: string
+              format: date-time
+              description: UTC timestamp when upgrade processing started (RFC3339).
+              example: "2026-07-08T06:00:40Z"
+            end_time:
+              type: string
+              format: date-time
+              description: UTC timestamp when upgrade processing ended (RFC3339).
+              example: "2026-07-08T06:01:01Z"
+            status_details:
+              type: object
+              description: >
+                Per-step status. Standard steps: `initialize`, `precheck`,
+                `content`, `downloading`, `upgrading`, `postcheck`.
+              additionalProperties:
+                $ref: '#/components/schemas/step-detail'
+
+    status:
+      type: object
+      description: >
+        Batch-level upgrade status for one schedule, including per-device
+        step detail.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID of the software update batch.
+          readOnly: true
+          example: "de2de53e-707a-4240-9b9c-d13870cb866e"
+        schedule_type:
+          type: string
+          description: Schedule type of this batch.
+          enum:
+            - adhoc
+            - scheduled
+          example: "adhoc"
+        overall_status:
+          type: string
+          description: >
+            Rolled-up status for the entire batch, in the same vocabulary as
+            `step-detail.state`, plus `TIMEDOUT` for a device stuck actively
+            mid-upgrade (INPROGRESS/STARTED) for longer than the watchdog
+            timeout with no further status update.
+            Priority: `FAILED` > `TIMEDOUT` > `INPROGRESS` > `STARTED` >
+            `COMPLETED` > `""` (queued/not yet started).
+          enum:
+            - ""
+            - STARTED
+            - INPROGRESS
+            - TIMEDOUT
+            - COMPLETED
+            - FAILED
+          example: "INPROGRESS"
+        devices:
+          type: array
+          description: Per-device status entries for every device in the batch.
+          items:
+            $ref: '#/components/schemas/device-status'
+
+    # ─── Error schema ─────────────────────────────────────────────────────────
+    generic-error:
+      type: object
+      properties:
+        _errors:
+          type: array
+          description: Array of error objects.
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: Machine-readable error code.
+              message:
+                type: string
+                description: Human-readable error message.
+                example: "Validation failed"
+              details:
+                type: object
+                description: Structured error details.
+              help:
+                type: string
+                description: Optional help text.
+        _request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier for troubleshooting.
+
+  # ─── Responses ────────────────────────────────────────────────────────────────
+  responses:
+    http_ok:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            description: Empty object. This operation has no response body.
+
+    bad_request_errors_basic:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic-error'
+
+    bad_request_errors_basic_with_body:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic-error'
+
+    auth_errors:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic-error'
+
+    access_errors:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic-error'
+
+    not_found:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic-error'
+
+    conflict_errors:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic-error'
+
+    default_errors:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic-error'
+
+  # ─── Parameters ──────────────────────────────────────────────────────────────
+  parameters:
+    uuid:
+      name: id
+      in: path
+      required: true
+      description: The UUID of the resource.
+      schema:
+        type: string
+        format: uuid
+      example: "a3f9c2d1-84b2-4e1a-9c3d-f2e8b7a6c5d4"
+
+    schedule_type_filter:
+      name: schedule_type
+      in: query
+      required: false
+      description: >
+        Filter results by schedule type. Omit to return all records.
+      schema:
+        type: string
+        enum:
+          - adhoc
+          - scheduled
+      example: "adhoc"
+
+    pagination:
+      name: pagination
+      in: query
+      description: >
+        Whether to paginate the response using `limit`/`offset`. Defaults to
+        `true`. Set to `false` to receive the full unpaginated result set.
+      required: false
+      schema:
+        type: boolean
+        default: true
+
+    limit:
+      name: limit
+      in: query
+      description: The maximum number of results per page.
+      required: false
+      schema:
+        type: integer
+        default: 200
+
+    offset:
+      name: offset
+      in: query
+      description: The offset into the list of results returned.
+      required: false
+      schema:
+        type: integer
+        default: 0
+
+  # ─── Security ─────────────────────────────────────────────────────────────────
+  securitySchemes:
+    scmOAuth:
+      type: oauth2
+      description: OAuth 2.0 Client Credentials flow
+      flows:
+        clientCredentials:
+          tokenUrl: 'https://auth.apps.paloaltonetworks.com/oauth2/access_token'
+          scopes:
+            tsg_id: Your tenant service group (tsg_id:XXXXXXXXXX)
+    scmToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token with JWT format
+
+security:
+  - scmToken: []
