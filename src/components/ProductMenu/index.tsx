@@ -8,9 +8,10 @@ import React, {
 import { createPortal } from "react-dom";
 import clsx from "clsx";
 import Link from "@docusaurus/Link";
-import { useLocation } from "@docusaurus/router";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import IconExternalLink from "@theme/Icon/ExternalLink";
 
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import {
   MENU_GROUPS,
   type MenuGroup,
@@ -34,7 +35,7 @@ const HOVER_INTENT_MS = 250;
  * than read straight after the click. Returns false when DocSearch is not on
  * the page, which leaves the caller's /search link to handle it.
  */
-function openSiteSearch(query: string): boolean {
+function openSiteSearch(query: string, searchUrl: string): boolean {
   const button = document.querySelector<HTMLButtonElement>(".DocSearch-Button");
   if (!button) {
     return false;
@@ -52,7 +53,7 @@ function openSiteSearch(query: string): boolean {
       } else {
         // The modal never mounted its input in time; fall back to the search
         // page rather than leaving the user in an empty modal with a lost term.
-        window.location.assign(`/search?q=${encodeURIComponent(query)}`);
+        window.location.assign(`${searchUrl}?q=${encodeURIComponent(query)}`);
       }
       return;
     }
@@ -392,7 +393,9 @@ function ProductMenuDesktop(): JSX.Element {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef(new Map<string, HTMLButtonElement>());
   const [moreBelow, setMoreBelow] = useState(false);
-  const { pathname } = useLocation();
+  // Product paths are site paths, so drop the baseUrl subpath builds add.
+  const pathname = useSitePath();
+  const searchUrl = useBaseUrl("/search");
 
   const groups = useMemo(() => searchGroups(query), [query]);
   const visible = useMemo(
@@ -844,9 +847,9 @@ function ProductMenuDesktop(): JSX.Element {
                         const term = query.trim();
                         close();
                         window.requestAnimationFrame(() => {
-                          if (!openSiteSearch(term)) {
+                          if (!openSiteSearch(term, searchUrl)) {
                             window.location.assign(
-                              `/search?q=${encodeURIComponent(term)}`
+                              `${searchUrl}?q=${encodeURIComponent(term)}`
                             );
                           }
                         });
