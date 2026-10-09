@@ -470,7 +470,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-sase-network configurations": {
-            specPath: "openapi-specs/scm/config/sase/network/network-services _R3_v1.2.yaml",
+            specPath: "openapi-specs/scm/config/sase/network",
             outputDir: "products/scm/api/config/sase/network",
             sidebarOptions: { groupPathsBy: "tag" },
           },
@@ -520,7 +520,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-ngfw-network": {
-            specPath: "openapi-specs/scm/config/ngfw/network/network-services _R3_v1.2.yaml",
+            specPath: "openapi-specs/scm/config/ngfw/network",
             outputDir: "products/scm/api/config/ngfw/network",
             sidebarOptions: { groupPathsBy: "tag" },
           },
