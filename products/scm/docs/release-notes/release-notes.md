@@ -52,6 +52,14 @@ These APIs enable configuration API for Secure Agentless Access (SAA).
 
 See [Secure Agentless Access APIs](/scm/api/config/secure-agentless-access/saa-apis/) for full details.
 
+---
+
+### Strata Cloud Manager — Mobileagent (Updated)
+
+Additional endpoint and schema updates.
+
+See [Mobileagent APIs](/scm/api/config/sase/mobileagent/static-ip-ciam/) for full details.
+
 ## September 2026
 
 ### Strata Cloud Manager — Compliance Frameworks (Updated)

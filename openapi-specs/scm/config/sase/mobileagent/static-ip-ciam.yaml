@@ -1,0 +1,1330 @@
+openapi: 3.0.3
+
+info:
+  title: Static IP (CIAM) API
+  version: 1.0.0
+  description: |
+    Manage static IP allocation for Prisma Access mobile users.
+
+    Mobile users normally receive an arbitrary source IP address from a shared
+    pool. The Static IP feature assigns each matched user a persistent address,
+    so that downstream systems can apply IP-based access control to individual
+    users.
+
+    ## Resources
+
+    - **Context-Aware IP Pools** — bind address space to user and location
+      match criteria. Pools are evaluated in priority order.
+    - **Custom User Geolocations** — named sets of IP subnets that identify
+      where a user is connecting from.
+    - **Summary IP Pools** — the aggregate subnets advertised for the tenant.
+
+    ## Pool evaluation order
+
+    Context-aware IP pools are matched top-down: the first pool whose criteria
+    match the connecting user supplies the address. The topmost pool therefore
+    has the highest priority.
+
+    A pool named `Default Pool` always occupies the last position. It cannot be
+    moved, and no other pool can be placed after it.
+
+    ## Addressing objects
+
+    Most operations address objects by **name** rather than by ID. The `id`
+    returned by list and get operations is a server-assigned UUID and is
+    accepted by the `/{id}` retrieve and delete operations.
+
+    Update operations are available **by name only**. `PUT` against an
+    `/{id}` path is not implemented and returns `405 Method Not Allowed`;
+    use `PUT /<resource>?name=<name>` instead.
+
+    © 2025 Palo Alto Networks, Inc
+  contact:
+    name: Palo Alto Networks Technical Support
+    url: 'https://support.paloaltonetworks.com'
+    email: support@paloaltonetworks.com
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+
+servers:
+  - url: 'https://api.strata.paloaltonetworks.com/config/mobile-agent/v1'
+    description: Current
+  - url: 'https://api.sase.paloaltonetworks.com/sse/config/v1/mobile-agent'
+    description: Legacy
+
+security:
+  - scmToken: []
+
+# -----------------------------------------------------------------------------
+# Top-level tags drive the pan.dev sidebar grouping.
+# -----------------------------------------------------------------------------
+tags:
+  - name: Context-Aware IP Pools
+    description: |
+      Create and manage context-aware IP pools that assign persistent source IP
+      addresses to mobile users based on user identity and location context.
+  - name: Custom User Geolocations
+    description: |
+      Define named sets of IP subnets that identify user locations, for use as
+      match criteria in context-aware IP pools.
+  - name: Summary IP Pools
+    description: |
+      Manage the summary subnets that provide the aggregate address space for
+      context-aware IP pools.
+
+paths:
+  # ===========================================================================
+  # Context-Aware IP Pools
+  # ===========================================================================
+  /context-aware-ip-pools:
+    get:
+      operationId: ListContextAwareIPPools
+      summary: List context-aware IP pools
+      description: |
+        Returns context-aware IP pools in priority order. Supply the `name`
+        query parameter to retrieve a single pool by name.
+
+        Set `pagination=false` to bypass the envelope. The response is then a
+        bare JSON array of context-aware IP pool objects, and the `limit` and
+        `offset` parameters are ignored.
+      tags:
+        - Context-Aware IP Pools
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/pagination'
+      responses:
+        '200':
+          description: A list of context-aware IP pools.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContextAwareIpPoolList'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    post:
+      operationId: CreateContextAwareIPPools
+      summary: Create a context-aware IP pool
+      description: |
+        Creates a context-aware IP pool. New pools are appended above the
+        `Default Pool`; use the multi-move operation to change priority.
+      tags:
+        - Context-Aware IP Pools
+      parameters:
+        - $ref: '#/components/parameters/folder'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/context-aware-ip-pools'
+            example:
+              name: validation_rest_api_pool
+              pool_type: Static-IP
+              lease_period: 86400
+              grace_period: 3600
+              ip_pool:
+                - 1.2.6.0/24
+              users:
+                - example.com\jane_doe
+              user_groups:
+                - name: grp10
+                  directory: example.com
+              theatres:
+                - North America & South America
+              gateway_edge_locations:
+                - South America West (Lima)**
+              user_locations:
+                - AQ
+      responses:
+        '201':
+          description: The context-aware IP pool was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/context-aware-ip-pools'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    put:
+      operationId: UpdateContextAwareIPPools
+      summary: Update a context-aware IP pool
+      description: |
+        Replaces the configuration of the context-aware IP pool identified by
+        the `name` query parameter.
+      tags:
+        - Context-Aware IP Pools
+      parameters:
+        - $ref: '#/components/parameters/name_required'
+        - $ref: '#/components/parameters/folder'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/context-aware-ip-pools'
+      responses:
+        '200':
+          description: The context-aware IP pool was updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/context-aware-ip-pools'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    delete:
+      operationId: DeleteContextAwareIPPools
+      summary: Delete IP pool by name
+      description: |
+        Deletes the context-aware IP pool with the specified name.
+
+        The `name` query parameter accepts a comma-separated list of names, so
+        several pools can be deleted in a single request. When every name is
+        deleted successfully the response is `200` with an empty body. When
+        only some names fail the response is `207` and reports the outcome of
+        each name. When every name fails the response is `400` with the same
+        per-name report.
+
+        A name that does not exist is treated as already deleted and counts as
+        a success.
+      tags:
+        - Context-Aware IP Pools
+      parameters:
+        - $ref: '#/components/parameters/name_required'
+        - $ref: '#/components/parameters/folder'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '207':
+          description: |
+            Some of the requested names were deleted and some failed. The body
+            reports the outcome for each name.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiStatusDeleteResult'
+        '400':
+          description: |
+            The request was invalid, or every requested name failed to delete.
+            In the latter case the body is the per-name report.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/generic_error'
+                  - $ref: '#/components/schemas/MultiStatusDeleteResult'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  /context-aware-ip-pools/{id}:
+    parameters:
+      - $ref: '#/components/parameters/uuid'
+    get:
+      operationId: GetContextAwareIPPoolsByID
+      summary: Retrieve a context-aware IP pool
+      description: Returns a single context-aware IP pool by its unique identifier.
+      tags:
+        - Context-Aware IP Pools
+      responses:
+        '200':
+          description: The requested context-aware IP pool.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/context-aware-ip-pools'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    delete:
+      operationId: DeleteContextAwareIPPoolsByID
+      summary: Delete IP pool by ID
+      description: Deletes a context-aware IP pool by its unique identifier.
+      tags:
+        - Context-Aware IP Pools
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  '/context-aware-ip-pools:multi-move':
+    post:
+      operationId: MultiMoveContextAwareIPPools
+      summary: Reorder context-aware IP pools
+      description: |
+        Moves one or more context-aware IP pools to a new position in the
+        evaluation order. This is the only supported way to change pool
+        priority.
+
+        The target position is given by the `where` query parameter:
+
+        - **`top`** — Move to the top of the list (highest priority).
+        - **`bottom`** — Move to the lowest position, immediately before
+          `Default Pool`.
+        - **`before`** — Move before the pool named in `dst`. Requires `dst`.
+        - **`after`** — Move after the pool named in `dst`. Requires `dst`.
+
+        ### Default Pool constraints
+
+        `Default Pool` must remain at the bottom of the list. The service
+        rejects requests that would violate this:
+
+        - Moving `Default Pool` itself returns an error.
+        - Using `where=after&dst=Default Pool` returns an error.
+        - `where=bottom` is internally rewritten to
+          `where=before&dst=Default Pool`.
+      tags:
+        - Context-Aware IP Pools
+      parameters:
+        - $ref: '#/components/parameters/where'
+        - $ref: '#/components/parameters/dst'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiMoveRequest'
+            example:
+              source:
+                folder: Mobile Users
+                name:
+                  - jane_doe_pool
+              destination:
+                folder: Mobile Users
+      responses:
+        '201':
+          description: |
+            The pools were reordered successfully. Multi-move is treated as a
+            resource-creating action and returns `201 Created`. The body lists
+            the names of the moved pools.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiMoveResult'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  # ===========================================================================
+  # Custom User Geolocations
+  # ===========================================================================
+  /custom-user-geolocations:
+    get:
+      operationId: ListCustomUserGeolocations
+      summary: List custom user geolocations
+      description: |
+        Returns custom user geolocation entries in a paginated envelope. Supply
+        the `name` query parameter to retrieve a single entry by name.
+
+        Set `pagination=false` to bypass the envelope. The response is then a
+        bare JSON array of custom user geolocation objects, and the `limit` and
+        `offset` parameters are ignored.
+      tags:
+        - Custom User Geolocations
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/name'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/pagination'
+      responses:
+        '200':
+          description: A list of custom user geolocations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUserGeolocationList'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    post:
+      operationId: CreateCustomUserGeolocations
+      summary: Create a custom user geolocation
+      description: Creates a named set of IP subnets that identifies a user location.
+      tags:
+        - Custom User Geolocations
+      parameters:
+        - $ref: '#/components/parameters/folder'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/custom-user-geolocations'
+            example:
+              name: Remote-Workers
+              ip_subnets:
+                - 172.12.0.0/20
+      responses:
+        '201':
+          description: The custom user geolocation was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-user-geolocations'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    put:
+      operationId: UpdateCustomUserGeolocations
+      summary: Update a custom user geolocation
+      description: |
+        Replaces the configuration of the custom user geolocation identified by
+        the `name` query parameter.
+      tags:
+        - Custom User Geolocations
+      parameters:
+        - $ref: '#/components/parameters/name_required'
+        - $ref: '#/components/parameters/folder'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/custom-user-geolocations'
+      responses:
+        '200':
+          description: The custom user geolocation was updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-user-geolocations'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    delete:
+      operationId: DeleteCustomUserGeolocations
+      summary: Delete geolocation by name
+      description: |
+        Deletes the custom user geolocation with the specified name.
+
+        The `name` query parameter accepts a comma-separated list of names, so
+        several geolocations can be deleted in a single request. When every
+        name is deleted successfully the response is `200` with an empty body.
+        When only some names fail the response is `207` and reports the outcome
+        of each name. When every name fails the response is `400` with the same
+        per-name report.
+
+        A name that does not exist is treated as already deleted and counts as
+        a success.
+      tags:
+        - Custom User Geolocations
+      parameters:
+        - $ref: '#/components/parameters/name_required'
+        - $ref: '#/components/parameters/folder'
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '207':
+          description: |
+            Some of the requested names were deleted and some failed. The body
+            reports the outcome for each name.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiStatusDeleteResult'
+        '400':
+          description: |
+            The request was invalid, or every requested name failed to delete.
+            In the latter case the body is the per-name report.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/generic_error'
+                  - $ref: '#/components/schemas/MultiStatusDeleteResult'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  /custom-user-geolocations/{id}:
+    parameters:
+      - $ref: '#/components/parameters/uuid'
+    get:
+      operationId: GetCustomUserGeolocationsByID
+      summary: Retrieve a custom user geolocation
+      description: Returns a single custom user geolocation by its unique identifier.
+      tags:
+        - Custom User Geolocations
+      responses:
+        '200':
+          description: The requested custom user geolocation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-user-geolocations'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    delete:
+      operationId: DeleteCustomUserGeolocationsByID
+      summary: Delete geolocation by ID
+      description: Deletes a custom user geolocation by its unique identifier.
+      tags:
+        - Custom User Geolocations
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  '/custom-user-geolocations:rename':
+    put:
+      operationId: RenameCustomUserGeolocations
+      summary: Rename a custom user geolocation
+      description: |
+        Renames an existing custom user geolocation. References to the previous
+        name are updated automatically.
+      tags:
+        - Custom User Geolocations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenameRequest'
+      responses:
+        '200':
+          description: The custom user geolocation was renamed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/custom-user-geolocations'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  # ===========================================================================
+  # Summary IP Pools
+  # ===========================================================================
+  /summary-ip-pools:
+    get:
+      operationId: ListSummaryIPPools
+      summary: List summary IP pools
+      description: |
+        Returns the summary IP pool subnets configured for the tenant in a
+        paginated envelope. The `data` member is a flat list of CIDR strings.
+
+        Set `pagination=false` to return every subnet in one response. The
+        response is then an object containing only `data` and `total`, and the
+        `limit` and `offset` parameters are ignored.
+      tags:
+        - Summary IP Pools
+      parameters:
+        - $ref: '#/components/parameters/folder'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/pagination'
+      responses:
+        '200':
+          description: A list of summary IP pools.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryIpPoolList'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+    post:
+      operationId: CreateSummaryIPPools
+      summary: Add subnets to summary IP pools
+      description: |
+        Adds one subnet to the summary IP pool address space.
+
+        The subnet must not overlap an existing summary subnet. Adding a
+        network that is already configured returns `409`; adding a different
+        network that overlaps an existing one returns `400`.
+      tags:
+        - Summary IP Pools
+      parameters:
+        - $ref: '#/components/parameters/folder'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/summary-ip-pools'
+            example:
+              subnet: 10.200.20.0/24
+      responses:
+        '201':
+          description: The subnet was added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/summary-ip-pools'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic_with_body'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '409':
+          $ref: '#/components/responses/conflict_errors'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+  /summary-ip-pools/{id}:
+    delete:
+      operationId: DeleteSummaryIPPoolsByID
+      summary: Delete summary IP pool subnet
+      description: |
+        Removes a summary IP pool subnet.
+
+        The path segment is the subnet in CIDR notation. Because a CIDR value
+        contains a `/`, it must be URL-encoded as `%2F` — for example,
+        `10.200.20.0%2F24`.
+
+        The subnet is matched by network, so `10.200.20.0%2F24` also removes a
+        configured entry written with host bits, such as `10.200.20.5/24`. If
+        no configured subnet has the same network, the response is `404`.
+      tags:
+        - Summary IP Pools
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: |
+            The subnet to remove, in CIDR notation, URL-encoded.
+          schema:
+            type: string
+          example: 10.200.20.0%2F24
+      responses:
+        '200':
+          $ref: '#/components/responses/http_ok'
+        '400':
+          $ref: '#/components/responses/bad_request_errors_basic'
+        '401':
+          $ref: '#/components/responses/auth_errors'
+        '403':
+          $ref: '#/components/responses/access_errors'
+        '404':
+          $ref: '#/components/responses/not_found'
+        default:
+          $ref: '#/components/responses/default_errors'
+
+components:
+  securitySchemes:
+    scmOAuth:
+      type: oauth2
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the
+        OAuth 2.0 Client Credentials flow.  Please use the `client_id`,
+        `client_secret` values associated with an IAM service account along
+        with a scope value of `tsg_id:XXXXXXXXXX`, where `XXXXXXXXXX` is the
+        Tenant Service Group (TSG) ID.  The resulting JWT access token should
+        be attached to all API calls as a `Bearer` token in the `Authorization`
+        header (ex. `Authorization: Bearer tokenstring`).
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.apps.paloaltonetworks.com/oauth2/access_token
+          scopes: {}
+    scmToken:
+      type: http
+      description: |
+        Strata Cloud Manager APIs authenticate client requests using the
+        OAuth 2.0 Client Credentials flow.  Please use the `client_id`,
+        `client_secret` values associated with an IAM service account along
+        with a scope value of `tsg_id:XXXXXXXXXX`, where `XXXXXXXXXX` is the
+        Tenant Service Group (TSG) ID.  The resulting JWT access token should
+        be attached to all API calls as a `Bearer` token in the `Authorization`
+        header (ex. `Authorization: Bearer tokenstring`).
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    folder:
+      name: folder
+      in: query
+      required: false
+      description: The configuration folder in which the object is defined.
+      schema:
+        type: string
+      example: Mobile Users
+    name:
+      name: name
+      in: query
+      required: false
+      description: Return only the object with this name.
+      schema:
+        type: string
+      example: test
+    name_required:
+      name: name
+      in: query
+      required: true
+      description: The name of the object to operate on.
+      schema:
+        type: string
+      example: validation_rest_api_pool
+    where:
+      name: where
+      in: query
+      required: true
+      description: |
+        The target position for the move. `before` and `after` require the
+        `dst` parameter. Any other value, or `before`/`after` without `dst`,
+        returns `400`.
+      schema:
+        type: string
+        enum:
+          - top
+          - bottom
+          - before
+          - after
+      example: top
+    dst:
+      name: dst
+      in: query
+      required: false
+      description: |
+        The name of the reference pool. Required when `where` is `before` or
+        `after`.
+      schema:
+        type: string
+      example: Default Pool
+    uuid:
+      name: id
+      in: path
+      required: true
+      description: The unique identifier of the object.
+      schema:
+        type: string
+        format: uuid
+      example: 99006f89-78a3-41f0-acde-692dc2063485
+    limit:
+      name: limit
+      in: query
+      required: false
+      description: The maximum number of results to return.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 200
+    offset:
+      name: offset
+      in: query
+      required: false
+      description: The zero-based index of the first result to return.
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+    pagination:
+      name: pagination
+      in: query
+      required: false
+      description: |
+        Whether to paginate the results. Set this to `false` to return all
+        results in one response, in which case `limit` and `offset` are
+        ignored. See each operation for the unpaginated response shape.
+      schema:
+        type: boolean
+        default: true
+      example: true
+
+  responses:
+    http_ok:
+      description: |
+        OK. The object was deleted. The response body is an empty JSON
+        object.
+      content:
+        application/json:
+          schema:
+            type: object
+            maxProperties: 0
+    bad_request_errors_basic:
+      description: |
+        Bad Request. A query or path parameter is missing or invalid, or the
+        request violates a constraint such as the reserved `Default Pool`
+        rules.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          example:
+            _errors:
+              - code: DC_0001
+                message: "cannot delete 'Default Pool' - this is a reserved system pool"
+                details: ""
+            _request_id: 7e0480f5-c35a-4d0b-a727-aea9c9c28a56
+    bad_request_errors_basic_with_body:
+      description: |
+        Bad Request. The request body or a parameter failed validation, or an
+        object with the same name already exists (`API_I00013`).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          example:
+            _errors:
+              - code: DC_0001
+                message: "validation failed: name is required"
+                details: ""
+            _request_id: 7e0480f5-c35a-4d0b-a727-aea9c9c28a56
+    auth_errors:
+      description: Unauthorized. Authentication credentials are missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+    access_errors:
+      description: |
+        Forbidden. The authenticated principal lacks the required permission.
+        Each operation requires the corresponding
+        `prisma_access.<resource>.<action>` permission.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+    not_found:
+      description: Not Found. The requested object does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          example:
+            _errors:
+              - code: DC_0001
+                message: pool with id 99006f89-78a3-41f0-acde-692dc2063485 not found
+                details: null
+            _request_id: 7e0480f5-c35a-4d0b-a727-aea9c9c28a56
+    conflict_errors:
+      description: |
+        Conflict. The request conflicts with the existing configuration, for
+        example the subnet is already configured in the summary IP pool.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+          example:
+            _errors:
+              - code: DC_0001
+                message: subnet "10.200.20.0/24" already exists in the summary IP pool
+                details: null
+            _request_id: 7e0480f5-c35a-4d0b-a727-aea9c9c28a56
+    default_errors:
+      description: General Errors. An unexpected server-side error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/generic_error'
+
+  schemas:
+    # -- Context-Aware IP Pools -----------------------------------------------
+    context-aware-ip-pools:
+      type: object
+      description: |
+        A context-aware IP pool that assigns persistent source IP addresses to
+        mobile users based on user identity and location context.
+
+        Match criteria determine which users draw addresses from this pool.
+        Pools are evaluated top-down and the first match wins, so pool order
+        determines precedence.
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The server-assigned unique identifier of the pool.
+          example: 99006f89-78a3-41f0-acde-692dc2063485
+        name:
+          type: string
+          maxLength: 63
+          description: The name of the pool. Must be unique within the configuration scope.
+          example: validation_rest_api_pool
+        pool_type:
+          type: string
+          description: The allocation behavior of the pool.
+          enum:
+            - Static-IP
+          example: Static-IP
+        project_name:
+          type: string
+          description: The project that owns this pool.
+        ip_pool:
+          type: array
+          description: The IP subnets, in CIDR notation, allocated to this pool.
+          items:
+            type: string
+          example:
+            - 1.2.6.0/24
+        lease_period:
+          type: integer
+          format: int32
+          description: |
+            The duration, in seconds, for which an allocated IP address remains
+            assigned to a user.
+          example: 86400
+        grace_period:
+          type: integer
+          format: int32
+          description: |
+            The additional duration, in seconds, for which an address is held
+            after the lease expires before returning to the pool.
+          example: 3600
+        users:
+          type: array
+          description: |
+            The individual users matched by this pool. Values may be bare
+            usernames or `<directory>\<username>`. Use `Any` to match all users.
+          items:
+            type: string
+          example:
+            - example.com\jane_doe
+        user_groups:
+          type: array
+          description: The user groups matched by this pool.
+          items:
+            $ref: '#/components/schemas/UserGroupRef'
+        theatres:
+          type: array
+          description: |
+            The geographic theatres in which this pool applies. Use `Any` to
+            match all theatres.
+          items:
+            type: string
+          example:
+            - North America & South America
+        gateway_edge_locations:
+          type: array
+          description: The Prisma Access gateway edge locations served by this pool.
+          items:
+            type: string
+          example:
+            - South America West (Lima)**
+        location_groups:
+          type: array
+          description: The location groups matched by this pool.
+          items:
+            type: string
+        user_locations:
+          type: array
+          description: |
+            The user locations matched by this pool, as ISO 3166-1 alpha-2
+            country codes.
+          items:
+            type: string
+          example:
+            - AQ
+        custom_user_locations:
+          type: array
+          description: |
+            The names of custom user geolocations matched by this pool.
+          items:
+            type: string
+        devices:
+          type: array
+          description: The devices matched by this pool.
+          items:
+            type: string
+
+    UserGroupRef:
+      type: object
+      description: A reference to a user group in a specific directory.
+      properties:
+        name:
+          type: string
+          description: |
+            The name of the user group. For directory-backed groups this is the
+            full distinguished name.
+          example: CN=Engineering,OU=Groups,DC=example,DC=com
+        directory:
+          type: string
+          description: The identifier of the directory that contains the group.
+          example: example.com
+
+    ContextAwareIpPoolList:
+      type: object
+      description: A paginated collection of context-aware IP pools, in priority order.
+      properties:
+        data:
+          type: array
+          description: The context-aware IP pools in this page of results.
+          items:
+            $ref: '#/components/schemas/context-aware-ip-pools'
+        limit:
+          type: integer
+          format: int32
+          description: The maximum number of results requested.
+          example: 200
+        offset:
+          type: integer
+          format: int32
+          description: The zero-based index of the first result returned.
+          example: 0
+        total:
+          type: integer
+          format: int32
+          description: The total number of results available.
+          example: 3
+
+    # -- Custom User Geolocations ---------------------------------------------
+    custom-user-geolocations:
+      type: object
+      description: |
+        A named set of IP subnets that identifies a user location. Mobile users
+        connecting from one of these subnets match this geolocation, which can
+        then be referenced by a context-aware IP pool.
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          description: The server-assigned unique identifier of the entry.
+        name:
+          type: string
+          maxLength: 63
+          description: The name of the geolocation entry.
+          example: Remote-Workers
+        description:
+          type: string
+          maxLength: 1023
+          description: A free-form description of the geolocation entry.
+        ip_subnets:
+          type: array
+          description: The IP subnets, in CIDR notation, that define this geolocation.
+          items:
+            type: string
+          example:
+            - 172.12.0.0/20
+
+    CustomUserGeolocationList:
+      type: object
+      description: A paginated collection of custom user geolocation entries.
+      properties:
+        data:
+          type: array
+          description: The custom user geolocation entries in this page of results.
+          items:
+            $ref: '#/components/schemas/custom-user-geolocations'
+        limit:
+          type: integer
+          format: int32
+          description: The maximum number of results requested.
+          example: 200
+        offset:
+          type: integer
+          format: int32
+          description: The zero-based index of the first result returned.
+          example: 0
+        total:
+          type: integer
+          format: int32
+          description: The total number of results available.
+          example: 1
+
+    # -- Summary IP Pools -----------------------------------------------------
+    summary-ip-pools:
+      type: object
+      description: |
+        A summary subnet backing the context-aware IP pool address space.
+      required:
+        - subnet
+      properties:
+        subnet:
+          type: string
+          description: The IP subnet in CIDR notation.
+          example: 10.200.20.0/24
+
+    SummaryIpPoolList:
+      type: object
+      description: |
+        A paginated collection of the summary IP pool subnets configured for
+        the tenant.
+
+        `data` is a flat array of CIDR strings, not objects.
+      properties:
+        data:
+          type: array
+          description: The summary subnets, in CIDR notation.
+          items:
+            type: string
+          example:
+            - 100.11.0.0/16
+            - 10.200.0.0/28
+            - 90.90.0.0/16
+        limit:
+          type: integer
+          format: int32
+          description: The maximum number of results requested.
+          example: 200
+        offset:
+          type: integer
+          format: int32
+          description: The zero-based index of the first result returned.
+          example: 0
+        total:
+          type: integer
+          format: int32
+          description: The total number of subnets configured.
+          example: 3
+
+    # -- Requests -------------------------------------------------------------
+    MultiMoveRequest:
+      type: object
+      description: |
+        A request to reorder context-aware IP pools. The target position is
+        supplied in the `where` and `dst` query parameters.
+      required:
+        - source
+        - destination
+      properties:
+        source:
+          $ref: '#/components/schemas/MultiMoveSource'
+        destination:
+          $ref: '#/components/schemas/MultiMoveDestination'
+
+    MultiMoveSource:
+      type: object
+      description: The pools to move.
+      required:
+        - folder
+        - name
+      properties:
+        folder:
+          type: string
+          description: The configuration folder that contains the pools.
+          example: Mobile Users
+        name:
+          type: array
+          description: |
+            The names of the pools to move, in the desired order. Must not
+            include `Default Pool`.
+          items:
+            type: string
+          example:
+            - jane_doe_pool
+
+    MultiMoveDestination:
+      type: object
+      description: The location the pools are moved to.
+      required:
+        - folder
+      properties:
+        folder:
+          type: string
+          description: The configuration folder to move the pools into.
+          example: Mobile Users
+
+    RenameRequest:
+      type: object
+      description: A request to rename an existing object.
+      required:
+        - name
+        - new_name
+      properties:
+        name:
+          type: string
+          description: The current name of the object.
+        new_name:
+          type: string
+          maxLength: 63
+          description: The new name for the object.
+
+    # -- Results and errors ---------------------------------------------------
+    MultiMoveResult:
+      type: object
+      description: The outcome of a multi-move request.
+      properties:
+        status:
+          type: string
+          description: The result reported by the configuration service.
+          example: success
+        data:
+          type: array
+          nullable: true
+          description: The names of the pools that were moved.
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of a moved pool.
+                example: jane_doe_pool
+
+    MultiStatusDeleteResult:
+      type: object
+      description: |
+        The per-name outcome of a delete request that supplied a
+        comma-separated list of names. Returned with `207` when only some names
+        failed, and with `400` when every name failed.
+      properties:
+        failed_items:
+          type: array
+          description: The names that could not be deleted, each with a reason.
+          items:
+            $ref: '#/components/schemas/FailedDeleteItem'
+        successful_items:
+          type: array
+          description: The names that were deleted successfully.
+          items:
+            type: string
+          example:
+            - validation_rest_api_pool
+
+    FailedDeleteItem:
+      type: object
+      description: A single name that could not be deleted.
+      properties:
+        key:
+          type: string
+          description: The name that could not be deleted.
+          example: missing_pool
+        reason:
+          type: string
+          description: The reason the name could not be deleted.
+          example: Object not found
+
+    generic_error:
+      type: object
+      description: The standard error envelope returned by configuration APIs.
+      properties:
+        _errors:
+          type: array
+          description: The list of errors that occurred.
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+        _request_id:
+          type: string
+          description: The unique identifier of the request, for support correlation.
+          example: 7e0480f5-c35a-4d0b-a727-aea9c9c28a56
+
+    ErrorDetail:
+      type: object
+      description: A single error entry.
+      properties:
+        code:
+          type: string
+          description: A machine-readable error code.
+          example: PRISMA_ACCESS_API_I00013
+        message:
+          type: string
+          description: A human-readable description of the error.
+          example: Object already exists
+        details:
+          type: object
+          nullable: true
+          additionalProperties: true
+          description: Additional structured context about the error, if any.
+        help:
+          type: string
+          description: A link to documentation about the error, when available.
