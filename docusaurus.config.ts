@@ -520,7 +520,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-ngfw-network": {
-            specPath: "openapi-specs/scm/config/ngfw/network/network-services _R3_v1.2.yaml",
+            specPath: "openapi-specs/scm/config/ngfw/network/network-services.yaml",
             outputDir: "products/scm/api/config/ngfw/network",
             sidebarOptions: { groupPathsBy: "tag" },
           },
