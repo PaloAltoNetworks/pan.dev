@@ -456,6 +456,7 @@ const config = {
           "config-sase-mobileagent": {
             specPath: "openapi-specs/scm/config/sase/mobileagent",
             outputDir: "products/scm/api/config/sase/mobileagent",
+            proxy: "https://cors.pan.dev",
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-sase-objects": {

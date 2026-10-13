@@ -120,6 +120,11 @@ export default function SCMLandingPage() {
             label: "Security Services",
             icon: "api-doc",
           },
+          {
+            to: "scm/api/config/sase/mobileagent/mobileagent-api",
+            label: "GlobalProtect",
+            icon: "api-doc",
+          },
         ],
         "NGFW Configuration": [
           {
