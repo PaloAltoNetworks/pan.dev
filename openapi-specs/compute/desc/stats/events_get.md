@@ -5,7 +5,7 @@ Returns events statistics for your environment.
 Refer to the following example cURL command retrieves event stats:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -10,7 +10,7 @@ Management audits are:
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

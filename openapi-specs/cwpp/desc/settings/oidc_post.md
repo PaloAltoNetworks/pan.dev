@@ -7,7 +7,7 @@ For more information, see [OIDC](https://docs.paloaltonetworks.com/prisma/prisma
 Refer to the following example cURL request:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

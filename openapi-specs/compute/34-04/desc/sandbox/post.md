@@ -1,0 +1,1 @@
+Adds a sandbox scan result, the scan is augmented with geolocation data and returned to the client
