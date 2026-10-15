@@ -79,13 +79,13 @@ You get a paginated envelope: `pageInfo` plus a `data` array of `User` objects. 
 | `user.name` | string | Filter by name. |
 | `user.email` | string | Filter by email. |
 | `user.status` | enum | `active` or `suspended`. |
-| `groupId` | string | Filter by user group. Comma-separated to match multiple groups (`groupId=id1,id2`). |
+| `groupId` | string | Filter by user group. Comma-separated to match multiple groups (`groupId=id1,id2`). Reads active (published) membership; to read draft membership, list the group's members (see [User groups](/prisma-browser/guide/user-groups)). |
 | `user.first_seen_gte` | date-time | First seen at or after. |
 | `user.last_seen_lte` | date-time | Last seen at or before. |
 | `sort` | enum | `user.name`, `user.email`, `user.first_seen`, `user.last_seen`, `user.status`. |
 | `order` | enum | `asc` or `desc`. |
 | `cursor` | string | Opaque pagination cursor. |
-| `limit` | integer | Page size. |
+| `limit` | integer | Page size, default 100. Values above 1000 are reduced to 1000. |
 | `includeDeleted` | boolean | Include deleted users in the result. |
 
 ---
@@ -152,6 +152,8 @@ These are [direct actions](/prisma-browser/guide/direct-actions): they act on th
 | Suspend the user | `POST /seb-api/v1/users/suspend` | Revokes browser access across the user's known and future devices. |
 | Restore access | `POST /seb-api/v1/users/resume` | Reactivates a suspended user. |
 | Invalidate sessions | `POST /seb-api/v1/users/force-reauth` | Forces re-authentication on all active devices. |
+
+Each action accepts up to 10,000 user IDs per request. Each ID is a 29-character user ID, for example `0UREXAMPLEUSERXXXXXXXXXXXXXXX`; a malformed ID returns `400`.
 
 ```bash
 curl -sS -X POST "$PB_API_BASE/users/suspend" \
