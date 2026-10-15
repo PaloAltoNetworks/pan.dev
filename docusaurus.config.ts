@@ -299,8 +299,9 @@ const config = {
           copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
           language: "en",
           // Emit a description that reads cleanly in Slack/Teams/readers (which
-          // strip HTML and collapse whitespace): summary, one line per change
-          // type, then a link back to the full on-site release note.
+          // strip HTML and collapse whitespace): summary, one paragraph per
+          // change prefixed with its type, then a link back to the full on-site
+          // release note.
           createFeedItems: async ({
             blogPosts,
             defaultCreateFeedItems,
@@ -345,8 +346,8 @@ const config = {
                 const texts = changes
                   .filter((c) => c.type === t)
                   .map((c) => stripHtml(c.text));
-                if (texts.length) {
-                  parts.push(`<p>${esc(`${TYPE_LABEL[t]}: ${texts.join("; ")}`)}</p>`);
+                for (const text of texts) {
+                  parts.push(`<p>${esc(`${TYPE_LABEL[t]}: ${text}`)}</p>`);
                 }
               }
               // Link back to the release notes list page (not the individual
