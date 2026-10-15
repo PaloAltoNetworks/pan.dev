@@ -1,0 +1,133 @@
+---
+title: 'Preview features'
+sidebar_label: 'Preview features'
+pb_guide:
+  group: Basics
+  groupOrder: 10
+  order: 70
+  summary: Opt in to API capabilities that are published ahead of general availability
+---
+
+A **preview feature** is an API endpoint that is published ahead of general availability (GA) so you can build against it early. It is a release stage on the way to GA, not an experiment: the endpoint runs on the same production infrastructure as the rest of the API and is covered by the same support process. Each preview feature has a name, and you select the ones you want with a request header.
+
+**On this page:** the preview lifecycle, find the feature name, opt in, behavior without the header, what the header does not change, when a feature reaches GA.
+
+---
+
+## The preview lifecycle
+
+| Stage | In the published specification | Needs the header | Shape can still change |
+|---|---|---|---|
+| Preview | Yes, carrying a preview marker | Yes | Yes, announced in the release notes before it ships |
+| Generally available | Yes, no marker | No | No, normal compatibility rules apply |
+
+The header gate exists so that a change to a preview feature reaches only the clients that asked for it, rather than every caller of the API. A preview feature is named in the [release notes](/prisma-browser/release-notes) when it publishes, when its shape changes, and when it reaches GA.
+
+---
+
+## Find the feature name
+
+The feature name is the exact string you send in the header. There are three places to find it.
+
+**The API reference.** A preview endpoint is labelled `Preview` in the reference navigation and carries a banner naming its feature at the top of its page.
+
+**The published specification.** Download the OpenAPI specification from the portal and search for `x-prisma-browser-preview`. The marker is the authoritative list of what is in preview and under which name.
+
+The marker appears on a single operation:
+
+```yaml
+paths:
+  /reports:
+    get:
+      operationId: GetReports
+      x-prisma-browser-preview:
+        featureName: new-feature-name
+```
+
+or on a path, in which case it covers every operation under that path:
+
+```yaml
+paths:
+  /reports:
+    x-prisma-browser-preview:
+      featureName: new-feature-name
+    get:
+      operationId: GetReports
+    post:
+      operationId: CreateReport
+```
+
+In both, `new-feature-name` is the value you send.
+
+**The release notes.** Each preview feature is named in the [release notes](/prisma-browser/release-notes) entry that publishes it, along with what it does.
+
+A feature name is a lowercase slug: it starts with a letter from `a` to `z` and continues with lowercase letters, digits, or hyphens. One name can cover several endpoints that ship together, so selecting it enables every endpoint marked with that name.
+
+---
+
+## Opt in
+
+Send the feature name in the `x-prisma-browser-preview` header on every request to the preview endpoint:
+
+```
+x-prisma-browser-preview: new-feature-name
+```
+
+Select several features with a comma-separated list. Spaces and tabs around each name are ignored:
+
+```
+x-prisma-browser-preview: new-feature-name,another-feature-name
+```
+
+The exact value `true` selects every preview feature:
+
+```
+x-prisma-browser-preview: true
+```
+
+Prefer the feature name in production code, so a new preview feature never reaches your client without you choosing it.
+
+The API reference page of each preview endpoint shows the header in its code samples, already filled in with the endpoint's feature name.
+
+Three rules govern the value:
+
+- **`true` stands alone.** It cannot appear as one entry in a list.
+- **A name that is not a valid slug makes the whole header malformed.** Uppercase letters, underscores, a leading digit or hyphen, an empty entry, and the reserved words `true` and `false` inside a list are all rejected. A malformed header enables nothing, and it does not fail a request to a generally available endpoint.
+- **A well-formed name that no feature uses is accepted and matches nothing.** This is what makes it safe to keep sending a name after its feature reaches GA.
+
+---
+
+## Behavior without the header
+
+A request to a preview endpoint without the matching feature selected is rejected with `400` before it reaches the handler. It returns the standard error envelope described in [Errors](/prisma-browser/guide/errors):
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request: preview operations require x-prisma-browser-preview with the matching feature or true",
+    "timestamp": "2026-09-15T10:00:00Z"
+  }
+}
+```
+
+:::note
+A client generated from the OpenAPI specification by a public generator does not send the header, because generators drop `x-` extensions. Add the header yourself in the generated client, or the endpoint is unreachable.
+:::
+
+---
+
+## What the header does not change
+
+The header is consent, not authorization. Selecting a feature tells the API you accept that the endpoint may change before GA; it does not grant access. Once the header passes, the request is handled like any other: authentication, role permissions, and the endpoint's own checks still apply, and the endpoint returns its usual errors. For example, a capability that is not enabled on your tenant returns the error documented for that endpoint, not the preview `400`.
+
+Send the header on every request to a preview endpoint. Do not rely on a request without it succeeding.
+
+---
+
+## When a feature reaches GA
+
+The marker leaves the published specification and the endpoint works for every caller, with or without the header. Clients that still send the name keep working, because a well-formed name that no feature uses is accepted and matches nothing. Remove the header once you no longer depend on any preview feature.
+
+---
+

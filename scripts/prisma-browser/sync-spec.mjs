@@ -153,6 +153,150 @@ if (ungrouped.length > 0) {
   );
 }
 
+// The page template reads `x-prisma-browser-preview` from the operation, but the
+// plugin's loader drops path item extensions, so a marker on a path item never
+// reaches its operations. Copy a valid path marker onto every operation under it
+// that has no valid marker of its own (an operation's own marker wins, and
+// `x-prisma-browser-preview: false` opts an operation out). A marker with an
+// invalid featureName is removed with a warning, never fatal, since this script
+// runs in every site build.
+//
+// The page template writes featureName into MDX, where `{` or `}` would break
+// the page and with it the whole build, so only a plain token is valid.
+const PREVIEW = "x-prisma-browser-preview";
+const FEATURE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
+// Why a marker is invalid, or undefined when it is valid.
+function previewProblem(marker) {
+  const name = marker?.featureName;
+  if (typeof name === "number") {
+    return `featureName ${name} is a number; quote it in the spec`;
+  }
+  if (typeof name !== "string" || name === "") {
+    return "featureName is missing";
+  }
+  if (!FEATURE_NAME.test(name)) {
+    return `featureName "${name}" may only contain letters, digits, ".", "_" and "-", starting with a letter or digit`;
+  }
+  return undefined;
+}
+
+let propagated = 0;
+for (const [route, pathItem] of Object.entries(spec.paths ?? {})) {
+  if (!pathItem || typeof pathItem !== "object") continue;
+  let pathMarker;
+  if (PREVIEW in pathItem) {
+    const problem = previewProblem(pathItem[PREVIEW]);
+    if (problem) {
+      console.warn(
+        `sync-spec: ignoring ${PREVIEW} on path ${route}: ${problem}`
+      );
+      delete pathItem[PREVIEW];
+    } else {
+      pathMarker = pathItem[PREVIEW];
+    }
+  }
+  for (const [method, operation] of Object.entries(pathItem)) {
+    if (!METHODS.has(method) || !operation || typeof operation !== "object") {
+      continue;
+    }
+    if (operation[PREVIEW] === false) {
+      delete operation[PREVIEW];
+      continue;
+    }
+    if (PREVIEW in operation) {
+      const problem = previewProblem(operation[PREVIEW]);
+      if (!problem) continue;
+      // Drop it so the template does not render a banner for it.
+      console.warn(
+        `sync-spec: ignoring ${PREVIEW} on ${method.toUpperCase()} ${route}: ${problem}`
+      );
+      delete operation[PREVIEW];
+    }
+    if (pathMarker) {
+      operation[PREVIEW] = { ...pathMarker };
+      propagated++;
+    }
+  }
+}
+
+if (propagated > 0) {
+  console.log(
+    `sync-spec: copied path-level ${PREVIEW} onto ${propagated} operation(s)`
+  );
+}
+
+// The banner names featureName, while the request panel and the code samples
+// send the header parameter's prefilled value, so the two must agree. The
+// header is declared in the spec, on the operation or once on the path (the
+// plugin merges path parameters into each operation by name, and the
+// operation's own wins). Mismatches are warnings, never fatal.
+function resolveParameter(parameter) {
+  const ref = parameter?.$ref;
+  if (typeof ref !== "string") return parameter;
+  const match = /^#\/components\/parameters\/(.+)$/.exec(ref);
+  return match ? spec.components?.parameters?.[match[1]] : undefined;
+}
+
+function previewHeader(pathItem, operation) {
+  const find = (parameters) =>
+    (Array.isArray(parameters) ? parameters : [])
+      .map(resolveParameter)
+      .find((p) => p?.name?.toLowerCase() === PREVIEW);
+  return find(operation.parameters) ?? find(pathItem.parameters);
+}
+
+// The value the theme prefills: schema.default first, then the examples.
+function prefilledValue(parameter) {
+  const named =
+    parameter.examples && typeof parameter.examples === "object"
+      ? Object.values(parameter.examples)[0]?.value
+      : undefined;
+  return (
+    parameter.schema?.default ??
+    parameter.example ??
+    parameter.schema?.example ??
+    named
+  );
+}
+
+for (const [route, pathItem] of Object.entries(spec.paths ?? {})) {
+  if (!pathItem || typeof pathItem !== "object") continue;
+  for (const [method, operation] of Object.entries(pathItem)) {
+    if (!METHODS.has(method) || !operation || typeof operation !== "object") {
+      continue;
+    }
+    const where = `${method.toUpperCase()} ${route}`;
+    const featureName = operation[PREVIEW]?.featureName;
+    const header = previewHeader(pathItem, operation);
+    if (!featureName) {
+      if (header) {
+        console.warn(
+          `sync-spec: ${where} is not in preview but declares the ${PREVIEW} header`
+        );
+      }
+      continue;
+    }
+    if (!header) {
+      console.warn(
+        `sync-spec: ${where} is in preview (${featureName}) but does not declare the ${PREVIEW} header`
+      );
+      continue;
+    }
+    if (header.in !== "header" || header.required !== true) {
+      console.warn(
+        `sync-spec: ${where}: the ${PREVIEW} parameter must be a required header`
+      );
+    }
+    const prefilled = prefilledValue(header);
+    if (prefilled !== featureName) {
+      console.warn(
+        `sync-spec: ${where}: the ${PREVIEW} header prefills "${prefilled}", but the marker's featureName is "${featureName}"`
+      );
+    }
+  }
+}
+
 fs.writeFileSync(staticSpec, yaml.dump(spec, { lineWidth: -1, noRefs: true }));
 
 console.log(

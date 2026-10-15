@@ -391,6 +391,17 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
+          secure_agentless_access: {
+            specPath: "openapi-specs/scm/config/secure_agentless_access",
+            outputDir: "products/scm/api/config/secure_agentless_access",
+            proxy: "https://cors.pan.dev",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
+          msppaygo: {
+            specPath: "openapi-specs/sase/msp-paygo",
+            outputDir: "products/sase/api/msp-paygo",
+            sidebarOptions: { groupPathsBy: "tag" },
+          },
           auth: {
             specPath: "openapi-specs/sase/auth",
             outputDir: "products/sase/api/auth",
@@ -459,7 +470,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-sase-network configurations": {
-            specPath: "openapi-specs/scm/config/sase/network/network-services _R3_v1.2.yaml",
+            specPath: "openapi-specs/scm/config/sase/network",
             outputDir: "products/scm/api/config/sase/network",
             sidebarOptions: { groupPathsBy: "tag" },
           },
@@ -509,7 +520,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           "config-ngfw-network": {
-            specPath: "openapi-specs/scm/config/ngfw/network/network-services _R3_v1.2.yaml",
+            specPath: "openapi-specs/scm/config/ngfw/network/network-services.yaml",
             outputDir: "products/scm/api/config/ngfw/network",
             sidebarOptions: { groupPathsBy: "tag" },
           },
@@ -699,6 +710,9 @@ const config = {
             // off because tagGroup mode repeats it inside every group.
             showInfoPage: false,
             sidebarOptions: { groupPathsBy: "tagGroup" },
+            // Adds the "Preview" sidebar label and page banner for operations
+            // marked with x-prisma-browser-preview.
+            template: "scripts/prisma-browser/api-page.mustache",
           },
           ztna: {
             specPath: "openapi-specs/access/ztna",
@@ -829,6 +843,7 @@ const config = {
           iot: {
             specPath: "openapi-specs/iot/iot.yaml",
             outputDir: "products/iot/api",
+            proxy: "https://cors.pan.dev",
           },
           "threat-vault": {
             specPath: "openapi-specs/threat-vault/",

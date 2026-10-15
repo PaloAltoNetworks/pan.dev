@@ -16,6 +16,38 @@ These release notes identify API changes made for the various SASE services.
 - [Prisma Access Cloud Managed Release Notes](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-release-notes/release-information)
 - [Prisma Access Insights Release Updates](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-insights/insights/app-updates)
 
+## September 2026
+
+### Prisma SASE — Msp Paygo (New)
+
+These APIs enable mSP PayGo lifecycle management APIs for child tenant provisioning, SCM onboarding, CIE configuration, and edge location lookup.
+
+<details><summary>View endpoints (17)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| POST | `/mt/config/v1/user` | Create child tenant service account |
+| GET | `/mt/paygo/v1/cie/details` | Get CIE SP entity details |
+| POST | `/mt/paygo/v1/cie/validate-url` | Validate SAML metadata URL |
+| GET | `/mt/paygo/v1/locations` | Get edge locations by theater |
+| GET | `/mt/paygo/v1/locations/nearest` | Find nearest edge locations |
+| GET | `/mt/paygo/v1/packages` | List product packages |
+| GET | `/mt/paygo/v1/packages/{id}/manifest` | Get package manifest |
+| GET | `/mt/paygo/v1/packages/{packageId}/regions` | Get supported regions for a package |
+| GET | `/mt/paygo/v1/tenant/{rootTsgId}` | List child tenants under a root |
+| POST | `/mt/paygo/v1/tenant/{rootTsgId}/activate-child` | Activate a child tenant |
+| PUT | `/mt/paygo/v1/tenant/{rootTsgId}/child/{childTsgId}` | Amend child tenant SKU allocations |
+| DELETE | `/mt/paygo/v1/tenant/{rootTsgId}/child/{childTsgId}` | Deprovision a child tenant |
+| GET | `/mt/paygo/v1/usage/activity-log/child/{childTsgId}` | Activity log for a child tenant |
+| GET | `/mt/paygo/v1/usage/summary/child/{childTsgId}` | Usage summary for a child tenant |
+| GET | `/mt/paygo/v1/usage/totals` | Get aggregated usage totals |
+| GET | `/mt/paygo/v1/usage/trend/mobile-users` | 6-month mobile user trend |
+| GET | `/mt/paygo/v1/usage/trend/sites` | 6-month remote network site trend |
+
+</details>
+
+See [Msp Paygo APIs](/sase/api/msp-paygo/msp-paygo/) for full details.
+
 ## August 2026
 
 ### System Metrics API v3.0 (New)
