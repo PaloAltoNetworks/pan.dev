@@ -87,8 +87,7 @@ module.exports = {
           ],
         },
       ],
-    },  
-                 
+    },
     {
       type: "category",
       label: "SASE Configuration",
