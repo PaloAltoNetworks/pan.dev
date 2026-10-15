@@ -15,6 +15,26 @@ These release notes identify API changes made for the various Strata Cloud Manag
 
 ## October 2026
 
+### CloudNGFW, NGFW, SASE — Security Services (Updated)
+
+Updated the Zone Protection Profile schema in the Security Services API across all deployment types (CloudNGFW, NGFW, SASE). Flood protection property names have been normalized from hyphenated format to underscore format for consistency with the rest of the API.
+
+| Previous Name | New Name |
+| ------------- | -------- |
+| `tcp-syn` | `tcp_syn` |
+| `syn-cookies` | `syn_cookies` |
+| `other-ip` | `other_ip` |
+| `alarm-rate` | `alarm_rate` |
+| `activate-rate` | `activate_rate` |
+| `maximal-rate` | `maximal_rate` |
+| `max-concurrent-limit` | `max_concurrent_limit` |
+
+:::caution Breaking Change
+If your integration references the previous hyphenated property names in Zone Protection Profile flood-protection settings, update them to the new underscore format.
+:::
+
+---
+
 ### Strata Cloud Manager — Secure Agentless Access (New)
 
 These APIs enable configuration API for Secure Agentless Access (SAA).
