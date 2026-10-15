@@ -1,0 +1,221 @@
+---
+title: 'Entity limits'
+sidebar_label: 'Entity limits'
+pb_guide:
+  group: Basics
+  groupOrder: 10
+  order: 65
+  summary: How many objects a tenant can hold, how large a stored list can grow, and how much one bulk call or upload can carry
+---
+
+**Entity limits** cap how much configuration your tenant can hold: how many objects of a type exist, and how large a stored list can grow over many requests. It also lists how many entries each control accepts, how many items one bulk call can carry, and how large an uploaded file can be. The same limits apply in Strata Cloud Manager, which uses this API. For limits on how you call the API (rate, page size, request size), see [System limits](/prisma-browser/guide/system-limits).
+
+**The OpenAPI specification is the source of truth for every limit.** Each schema declares its limits as `maxLength` and `maxItems`, and the API reference shows them on every endpoint. This page does not repeat every field limit. It highlights the limits the specification cannot express, because they depend on what your tenant already holds, and the limits customers ask about most. If this page and the specification disagree, the specification wins.
+
+**On this page:** common questions, field limits vs entity limits, per-tenant limits, stored list limits, rule scope, control limits, bulk operations, uploaded assets, how entity limits behave, related.
+
+---
+
+## Common questions
+
+- **How many rules can I create?** 1000 per policy type (sign-in, security, access and data, customization). Built-in and default rules are not counted. See [Per-tenant limits](#per-tenant-limits).
+- **How many IP addresses can one rule have?** 1000 public and 1000 private entries, each an address or a range. See [Rule scope](#rule-scope).
+- **How many users or user groups can one rule scope?** 1000 users and 1000 user groups. See [Rule scope](#rule-scope).
+- **How many extensions can an allow or block list hold?** 15,000 in the `allowedOrBlockedExtensions` control, and 100 force-installed extensions. See [Control limits](#control-limits).
+- **How many URLs can a custom application hold?** 100 by default, raisable per tenant up to 5000. Across all custom, private, and non-web applications, 15,000 per tenant. See [Stored list limits](#stored-list-limits).
+- **How many users can a local user group hold?** 25,000. See [Stored list limits](#stored-list-limits).
+- **Do the same limits apply in Strata Cloud Manager?** Yes. Strata Cloud Manager uses this API, so the same limits apply.
+
+---
+
+## Field limits vs entity limits
+
+Two kinds of limit apply to a write:
+
+| Kind | What it checks | Where it is documented |
+|---|---|---|
+| Field limit | One value or list in a single request: a `name` length, the number of items in an `add` list | The API reference, as `maxLength` and `maxItems` on each schema |
+| Entity limit | The state after the request: the total objects in your tenant, or the full size of a stored list | This page |
+
+A request can pass every field limit and still fail an entity limit. For example, a delta `PATCH` that adds 50 URLs is within the request's `maxItems`, but it fails if the application already holds 80 URLs and its limit is 100.
+
+---
+
+## Per-tenant limits
+
+The maximum number of objects of each type your tenant can hold.
+
+| Object | Limit per tenant |
+|---|---|
+| Rules, per policy type | 1000 |
+| Sections, per policy type | 500 |
+| Custom applications | 5000 |
+| Private applications | 2000 |
+| URLs across all custom, private, and non-web applications | 15,000 |
+| Application groups | 500 |
+| Device groups | 500 |
+| Tags | 10,000 |
+
+The rule and section limits apply to each of the four policy types (sign-in, security, access and data, customization) separately. Built-in and default rules do not count against the rule limit. Catalog applications do not count against the application or URL limits. Private application CIDRs count against the URL limit.
+
+---
+
+## Stored list limits
+
+The maximum size of a list stored on one object, however many requests built it up.
+
+| Object | List | Limit |
+|---|---|---|
+| Custom or private application | URLs | 100 by default, raisable per tenant up to 5000 |
+| Private application | `cidrs` | 100 |
+| Any application | Tags | 63 |
+| Application group | Applications | 2000 |
+| Local user group | Users | 25,000 |
+
+The URLs per application limit is set per tenant. The API reference shows the highest value any tenant can have, not your tenant's value, and no endpoint returns your tenant's value. When a request exceeds it, the `400` message states the effective maximum. Contact your account team to confirm your value or to raise it above 100.
+
+---
+
+## Rule scope
+
+Each rule can scope up to 1000 items in every scope attribute, however many requests built the scope up.
+
+| Scope attribute | Maximum per rule |
+|---|---|
+| Users (`scope.users.users`) | 1000 |
+| User groups (`scope.users.userGroups`) | 1000 |
+| Device groups (`scope.deviceGroups.deviceGroups`) | 1000 |
+| Public IP addresses or ranges (`scope.publicIps.publicIps`) | 1000 |
+| Private IP addresses or ranges (`scope.privateIps.privateIps`) | 1000 |
+| Locations (`scope.locations.locations`) | All available countries |
+| SaaS, private, non-web, and local desktop applications | 1000 per family |
+| Application groups | 1000 |
+| External dynamic lists | 1000 |
+| Web classifications | 100 |
+
+### Tenant conditions (access and data rules)
+
+| Field | Maximum per rule |
+|---|---|
+| `applications.tenantConditions.aws.accountIds` | 35,000 |
+| `applications.tenantConditions.aws.regions` | 100 |
+| Every other tenant condition list (Microsoft 365, Google, Google Cloud console, GitHub, Slack, OpenAI, Claude, and the per-application `apps` domains) | 100 each |
+
+---
+
+## Control limits
+
+How many entries each control's lists accept. Character limits on individual fields are in the API reference.
+
+### Security controls
+
+| Control | List | Maximum entries |
+|---|---|---|
+| `allowedOrBlockedExtensions` | `extensions` | 15,000 |
+| `allowedPrinters` | `allowedPrinters` | 500 |
+| `authenticationServerAllowlist` | `includedDomains` | 500 |
+| `cookies` | `excludedDomains` | 500 |
+|  | `includedDomains` | 500 |
+| `enhancedTrackingProtection` | `excludeDomains` | 500 |
+| `forceHttps` | `excludedDomains` | 500 |
+| `internetExplorerCompatibilityMode` | `sites` | 600 |
+| `javaScriptV8JitAndWebAssembly` | `excludedDomains` | 500 |
+| `kerberosDelegationAllowlist` | `includedDomains` | 500 |
+| `launchingExternalApplications` | `exceptions` | 50 |
+|  | `exceptions[].protocolSchemes` | 32 |
+| `localNetworkAccessRestrictions` | `allowList` | 500 |
+|  | `blockList` | 500 |
+| `notifications` | `excludedDomains` | 500 |
+| `pagesWithInsecureContent` | `excludedDomains` | 500 |
+| `popups` | `excludedDomains` | 500 |
+| `restrictExtensionHostPermissions` | `includedDomains` | 500 |
+| `trustedCertificateAuthorities` | `additionalCertificates` | 100 |
+| `webRtc` | `excludedDomains` | 500 |
+
+### Access and data controls
+
+| Control | List | Maximum entries |
+|---|---|---|
+| `fileProtection` | `fileDownload.fileSha256Filter.hashes` | 100 |
+|  | `fileDownload.fileTypeFilter.customExtensions` | 50 |
+|  | `fileUpload.fileSha256Filter.hashes` | 100 |
+|  | `fileUpload.fileTypeFilter.customExtensions` | 50 |
+| `screenshot` | `allowedApplicationIds` | 100 |
+| `webUserInteraction` | `selectors` | 1000 |
+
+### Access and data login controls
+
+| Control | List | Maximum entries |
+|---|---|---|
+| `formLogin` | `domains` | 300 |
+| `idpLogin` | `providers` | 300 |
+| `socialLogin` | `googleAllowedDomains` | 300 |
+
+### Customization controls
+
+| Control | List | Maximum entries |
+|---|---|---|
+| `adminMessages` | `messages` | 10 |
+| `autoLaunchExternalApplications` | `rules` | 25 |
+|  | `rules[].allowedOrigins` | 50 |
+| `automaticClientCertificateSelection` | `rules` | 100 |
+|  | `rules[].urlPatterns` | 20 |
+| `customTexts` | `overrides` | 100 |
+| `enterpriseBrowserPolicies` | `policies` | 200 |
+| `extensionForceInstall` | `extensions` | 100 |
+| `internalNetworkDetection` | `hostDetection.expectedIpAddresses` | 100 |
+| `managedShortcuts` | `shortcuts` | 200 |
+| `onBrowserStartup` | `urlsToOpen` | 50 |
+| `requestDesktopMobileSite` | `rules` | 500 |
+| `searchEngineContentFiltering` | `engines` | 10 |
+| `sidebar` | `shortcuts` | 12 |
+| `webAppForceList` | `webApps` | 50 |
+
+---
+## Bulk operations
+
+Each value is the maximum number of items in a single request. Split larger workloads across requests, and remember that each request counts against the [rate limit](/prisma-browser/guide/system-limits#rate-limit).
+
+| Operation | Maximum items per request |
+|---|---|
+| Create applications (`POST /applications/bulk-create/{type}`) | 1000 |
+| Delete applications (`POST /applications/bulk-delete`) | 2000 |
+| Device actions: archive, restore, suspend, resume, delete | 10,000 device IDs |
+| Device force re-authentication | 100 device IDs |
+| User actions: suspend, resume, force re-authentication | 10,000 user IDs |
+| Bulk update tags and classification (`POST /applications/tags/bulk-update`) | 500 applications |
+| Rule or section moves (`PATCH /policy/{type}/positions`) | 100 moves |
+| Add or remove items on a list with a delta `PATCH` | The list's own limit, see [Stored list limits](#stored-list-limits) |
+
+A device or user action over the limit returns `400` with `error.code` `VALIDATION_ERROR`. Each device ID and user ID must be a 29-character ID.
+
+---
+
+## Uploaded assets
+
+| Asset | Endpoint | Maximum size | Formats |
+|---|---|---|---|
+| Company logo | `POST /assets/company-logo` | 1 MiB, up to 600 px wide | PNG |
+| Browser icon | `POST /assets/browser-icon` | 3 MiB | PNG |
+| Background image | `POST /assets/background-image` | 3 MiB | PNG, SVG, JPG |
+| Proxy auto-configuration (PAC) file | `POST /assets/pac-file` | 2 MiB | `.pac`, `.dat`, `.js`, or no extension |
+| End User License Agreement (EULA), preview | `POST /assets/eula` | 2 MiB | `.html`, `.htm` |
+| Web app icon | `POST /assets/web-app-icon` | 200 KiB | PNG, JPG, GIF |
+
+An upload over the size limit returns `413` with `error.code` `REQUEST_ENTITY_TOO_LARGE` and the exact byte limit in the message. A wrong file type returns `400`.
+
+---
+
+## How entity limits behave
+
+- **Publish checks the rule limit.** A publish is rejected with `400` when it would take a policy type past 1000 rules. Built-in and default rules are not counted.
+- **Over the limit fails the whole request.** The API returns `400`, and nothing in the request is applied. Branch on `error.code`. See [System limits](/prisma-browser/guide/system-limits#limit-errors) for the response shape.
+- **Delta `PATCH` counts the result.** The limit applies to the stored list plus the items you add, not to the size of the request. See [Delta patch](/prisma-browser/guide/delta-patch).
+- **Existing configuration is not broken.** An object or tenant that was over a limit before the limit applied stays readable and keeps working. You can remove items, but you cannot add more until it is back under the limit.
+- **Check before a large import.** Read the current counts with `includeTotalCount` (see [Pagination](/prisma-browser/guide/pagination)) and compare them with the limits above before you create objects in bulk. You can count rules and sections per policy type, applications by type, application groups, device groups, and tags (preview) this way. No endpoint returns the total URLs across applications, so keep a margin below that limit.
+
+---
+
+## Related
+- Basics: [System limits](/prisma-browser/guide/system-limits), [Delta patch](/prisma-browser/guide/delta-patch), [Pagination](/prisma-browser/guide/pagination), [Errors](/prisma-browser/guide/errors)
+- Building blocks: [Applications](/prisma-browser/guide/applications), [Application groups](/prisma-browser/guide/application-groups), [Device groups](/prisma-browser/guide/device-groups), [Rules](/prisma-browser/guide/rules)

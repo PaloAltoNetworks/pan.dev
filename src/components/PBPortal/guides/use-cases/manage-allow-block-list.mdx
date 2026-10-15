@@ -84,7 +84,7 @@ Response (`200`):
 { "id": "0AP01BLOCKLISTXXXXXXXXXXXXXXX" }
 ```
 
-The rule never changes again. Publish (or [partial-publish](/prisma-browser/guide/draft-and-publish#partial-publish) only the application).
+The rule never changes again. Publish (or [partial-publish](/prisma-browser/guide/draft-and-publish#partial-publish) only the application; partial publish is a [preview feature](/prisma-browser/guide/preview-features) and needs `x-prisma-browser-preview: partial-publish`).
 
 :::note
 One application holds up to 100 URLs. If your list can exceed that, split across multiple applications or use approach B.
@@ -207,6 +207,7 @@ import os, requests
 
 base = os.environ["PB_API_BASE"]
 headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
+publish_headers = {**headers, "x-prisma-browser-preview": "partial-publish"}  # partial publish is a preview feature
 rule_id = os.environ["RULE_ID"]
 
 # 1. Create the list-holder app (once)
@@ -235,7 +236,7 @@ def sync_urls(to_add, to_remove):
 sync_urls(["newtracker.example.com"], ["tracker.example.com"])
 
 # 4. Publish just the app
-requests.post(f"{base}/configuration-management/draft/partial-publish", headers=headers,
+requests.post(f"{base}/configuration-management/draft/partial-publish", headers=publish_headers,
               json={"entityIds": [app_id], "description": "Update blocklist"}, timeout=30)
 ```
 

@@ -11,7 +11,7 @@ pb_guide:
 
 ---
 
-An access and data rule can enforce an Enterprise DLP (data loss prevention) data profile through `dataControls.dlpProfileId`. The profile itself is defined in Enterprise DLP, a separate service, so this is a two-part task: look up the profile ID in the DLP API, then attach it to your rule.
+An access and data rule can enforce an Enterprise DLP (data loss prevention) data profile through the rule's `dlp` object (`dlp.profileId`). The profile itself is defined in Enterprise DLP, a separate service, so this is a two-part task: look up the profile ID in the DLP API, then attach it to your rule.
 
 **Use this when:** you want a rule in the Prisma Browser to apply an existing Enterprise DLP data profile (for example, to detect and block sensitive content on upload or in the clipboard).
 
@@ -49,7 +49,7 @@ Fetch one profile by ID with `GET /v2/api/data-profiles/{resourceId}`.
 
 ## 2. Attach the profile to your rule
 
-Set `dataControls.dlpProfileId` on the access and data rule. Use the `id` value from the DLP API (the same string shown in the Enterprise DLP UI).
+Set `dlp.profileId` on the access and data rule. Use the `id` value from the DLP API (the same string shown in the Enterprise DLP UI).
 
 ```bash
 export RULE_ID='0RLEXAMPLEACCESSRULEXXXXXXX'
@@ -60,8 +60,8 @@ curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
   -H "Authorization: Bearer $PB_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
+        "dlp": { "profileId": "11995044" },
         "dataControls": {
-          "dlpProfileId": "11995044",
           "fileProtection": {
             "fileUpload": { "action": "block" }
           }
@@ -76,7 +76,11 @@ Response (`200`):
 ```
 
 :::caution
-**A DLP profile cannot stand alone.** `dlpProfileId` must accompany at least one inline data control (or a control set). Sending `dlpProfileId` with no controls is rejected. The example pairs it with `fileProtection` so the profile actually drives enforcement.
+**Pair the profile with data controls.** The profile defines what sensitive content is; the rule's data controls (here, `fileProtection`) decide what happens when content matches. `dlp.profileId` needs at least one inline data control on the rule; a profile on its own returns `400`.
+:::
+
+:::caution
+**`dataControls.dlpProfileId` is deprecated.** Use `dlp.profileId`; the same applies to `dataControls.dlpProfile` (now `dlp.profile`) and `dataControls.bypassDlpProfileValidation` (now `dlp.bypassProfileValidation`). The old locations still work during the deprecation window and will then be removed.
 :::
 
 :::caution
@@ -88,8 +92,10 @@ Response (`200`):
 Reads return the profile as an expanded object rather than the flat ID:
 
 ```json
-"dataControls": { "dlpProfile": { "id": "11995044", "name": "PII - strict" } }
+"dlp": { "profile": { "id": "11995044", "name": "PII - strict" } }
 ```
+
+To unlink the profile, send `"dlp": { "profileId": null }` in a `PATCH`.
 
 Publish to enforce it:
 
@@ -103,7 +109,8 @@ Returns `201` when a new active version is created.
 
 ## Tips and gotchas
 
-- **Profile-control compatibility is validated.** Some controls only work with certain profile types; an incompatible pairing is rejected with `400`. To save anyway (the incompatible control becomes a runtime no-op), set `dataControls.bypassDlpProfileValidation: true`. Use this deliberately.
+- **Profile-control compatibility is validated.** Some controls only work with certain profile types; an incompatible pairing is rejected with `400`. To save anyway (the incompatible control becomes a runtime no-op), set `dlp.bypassProfileValidation: true`. Use this deliberately. Controls that are entirely unsupported for the profile's content type are rejected even with bypass on.
+- **Detection confidence (on-device profiles).** `dlp.detectionConfidence` is `relaxed` (the default, more matches) or `strict` (uses the profile's own confidence, fewer matches). It is valid only when the rule links an on-device data profile; a rule with no profile, a cloud-assisted profile, or a block action rejects it with `400`, and bypass does not change that. Changing the profile resets it to `relaxed`.
 - **Same tenant, both services.** The DLP profile and the Browser rule must belong to the same tenant.
 
 ## Related

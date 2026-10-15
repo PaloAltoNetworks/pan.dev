@@ -20,17 +20,19 @@ A **non-web application** (`type: non-web`) represents a remote connection over 
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
-| `name` | string | yes | Display name shown in policy and events |
+| `name` | string | yes | Display name shown in policy and events. Up to 50 characters |
 | `type` | string | yes | Must be `non-web` |
 | `address` | string | yes | Host or IP address of the target host. Accepted on write and returned on read |
 | `protocol` | string | yes | Remote-access protocol: `rdp` or `ssh` |
 | `port` | string | yes | Port or port range |
 | `routeToPrisma` | boolean | no | Whether traffic is routed through Prisma Access |
+| `rdsGatewayHostname` | string | no | Remote Desktop Services (RDS) gateway host name. `rdp` only. On `PATCH`, send `null` to remove the gateway, which also clears `bypassRdsGatewayForLocalAddresses` |
+| `bypassRdsGatewayForLocalAddresses` | boolean | no | Whether the Prisma Browser bypasses the RDS gateway for local addresses. `rdp` only |
 | `description` | string | no | Up to 2500 characters |
 | `classification` | string | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
 | `tagIDs` | array or object | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
 
-`address`, `protocol`, and `port` together form the connection tuple, and that tuple identifies the application: two non-web applications cannot share all three.
+`address`, `protocol`, `port`, and, for `rdp`, `rdsGatewayHostname` together identify the application: two non-web applications cannot share all of them. Two `rdp` applications that differ only by gateway are distinct.
 
 You do not supply a `urls` list, but reads return one. The Prisma Browser generates a single `chrome-extension://` entry that the Prisma Browser Extension uses to hand the connection off to the right remote-connection handler. It is derived from the application ID and the protocol, not from `address`, so it looks unrelated to what you sent. Treat it as read-only.
 
@@ -40,7 +42,10 @@ You do not supply a `urls` list, but reads return one. The Prisma Browser genera
 
 | Limit | Value |
 |---|---|
+| `name` length | 50 characters |
 | `description` length | 2500 characters |
+
+For per-tenant totals and how stored lists are counted, see [Entity limits](/prisma-browser/guide/entity-limits).
 
 ---
 
@@ -67,6 +72,8 @@ Response (`200`). The application is returned with its `address`, `protocol`, `p
       "type": "non-web",
       "id": "0AP01SSHBASTIONXXXXXXXXXXXXXX",
       "name": "Internal SSH",
+      "classification": "Sanctioned",
+      "tags": [ { "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX", "name": "Finance approved" } ],
       "description": "Bastion host SSH",
       "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
       "urls": [ "chrome-extension://<extension-id>/internal-ssh.html?appid=0AP01SSHBASTIONXXXXXXXXXXXXXX" ],
@@ -100,6 +107,8 @@ Response (`200`):
   "type": "non-web",
   "id": "0AP01SSHBASTIONXXXXXXXXXXXXXX",
   "name": "Internal SSH",
+  "classification": "Sanctioned",
+  "tags": [ { "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX", "name": "Finance approved" } ],
   "description": "Bastion host SSH",
   "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
   "urls": [ "chrome-extension://<extension-id>/internal-ssh.html?appid=0AP01SSHBASTIONXXXXXXXXXXXXXX" ],
@@ -214,7 +223,7 @@ All paths are under the `/seb-api/v1` base.
 :::
 
 :::caution
-**The connection tuple must be unique.** Creating a second non-web application with the same `address`, `protocol`, and `port` as an existing one is rejected. Change at least one of the three.
+**The connection tuple must be unique.** Creating a second non-web application with the same `address`, `protocol`, `port`, and RDS gateway as an existing one is rejected. Change at least one of them.
 :::
 
 ---
@@ -250,5 +259,5 @@ Response (`201`):
 ---
 
 ## Related
-- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Private applications](/prisma-browser/guide/applications-private), [Application groups](/prisma-browser/guide/application-groups)
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Private applications](/prisma-browser/guide/applications-private), [Application tags](/prisma-browser/guide/application-tags), [Application groups](/prisma-browser/guide/application-groups)
 - Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), [Pagination](/prisma-browser/guide/pagination)
