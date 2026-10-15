@@ -1,0 +1,456 @@
+---
+title: 'Application tags'
+sidebar_label: 'Application tags'
+pb_guide:
+  group: Policy objects
+  groupOrder: 30
+  order: 65
+  subgroup: Applications
+  summary: Free-form labels you define once and attach to applications for grouping and reporting
+---
+
+An **application tag** is a free-form label you define and attach to [applications](/prisma-browser/guide/applications) for your own grouping and reporting. A tag carries nothing but an ID and a name: it holds no settings of its own. Tags are a visibility feature today, so attaching one to an application does not change what the Prisma Browser allows or blocks. Use tags to slice your application inventory along dimensions policy does not model, for example ownership, compliance scope, or migration status.
+
+Tags are managed here, but attached on the application: you create the tag with this API, then send its ID in `tagIDs` when you create or update an application (see [Tags and classification](/prisma-browser/guide/applications#tags-and-classification)), or attach it to many applications at once with [bulk update](#bulk-update). You can tag every application type, including the catalog types (`catalog` and `localdesktopcatalog`).
+
+:::note
+**The tag endpoints are in preview.** Send `-H "x-prisma-browser-preview: application-tags"` on every call to `/applications/tags`. Without it the API returns `400`. Attaching tags on the application and filtering applications by tag do not need the header. See [Preview features](/prisma-browser/guide/preview-features).
+:::
+
+**On this page:** what you can and cannot do, object model, limits, retrieve, create, update, delete, bulk update, find applications by tag, endpoint reference, tips, examples.
+
+---
+
+## What you can and cannot do
+
+| Operation | Supported? | How |
+|---|---|---|
+| List tags | Yes | [`GET /applications/tags`](/prisma-browser/api/list-application-tags), with `name` search, sorting, and pagination |
+| Read one tag | Yes | [`GET /applications/tags/{id}`](/prisma-browser/api/get-application-tag-by-id) |
+| Create a tag | Yes | [`POST /applications/tags`](/prisma-browser/api/create-application-tag) |
+| Rename a tag | Yes | [`PUT /applications/tags/{id}`](/prisma-browser/api/update-application-tag) |
+| Delete a tag | Yes | [`DELETE /applications/tags/{id}`](/prisma-browser/api/delete-application-tag), only when no application carries it |
+| Attach a tag to an application | Yes, on the application | Send `tagIDs` on the application create or [`PATCH`](/prisma-browser/api/patch-application-by-type-and-id) |
+| Add or remove tags, or set classification, on many applications | Yes | [`POST /applications/tags/bulk-update`](/prisma-browser/api/bulk-update-application-tags), up to 500 applications per call |
+| Find the applications that carry a tag | Yes | `tagId` or `tagName` filter on [`GET /applications`](/prisma-browser/api/list-applications) |
+| Tag any application type, including `catalog` and `localdesktopcatalog` | Yes | `tagIDs` on create (the four types you create) or on `PATCH` (all six types), or bulk update |
+| Create, rename, or delete tags in bulk | No | Loop over single calls |
+
+Tags are part of the draft. A tag you create is not in the active configuration until you publish.
+
+---
+
+## Object model
+
+A tag is two fields:
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `id` | string | read-only | Assigned on create. `0TG` followed by 26 digits and uppercase letters (never `I`, `L`, `O`, or `U`) |
+| `name` | string | yes | 1 to 127 characters. Unique across the tenant |
+
+```json
+{
+  "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX",
+  "name": "Finance approved"
+}
+```
+
+An application returns its tags as the same objects, under `tags`:
+
+```json
+"tags": [
+  { "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX", "name": "Finance approved" },
+  { "id": "0TG01PC11NSC0PEXXXXXXXXXXXXXX", "name": "PCI in scope" }
+]
+```
+
+Because the application stores the tag by ID, renaming a tag updates every application that carries it. You never have to touch the applications to change a label.
+
+---
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| `name` length | 1 to 127 characters |
+| Tags per application | 63 |
+| Applications per bulk update | 500 |
+| Tags per tenant | See [Entity limits](/prisma-browser/guide/entity-limits#per-tenant-limits) |
+
+---
+
+## Retrieve
+
+### List and filter
+
+Supports `name` search, `sort` and `order`, and pagination (`limit` / `cursor`).
+
+```
+GET /seb-api/v1/applications/tags
+```
+
+```bash
+curl -sS -G "$PB_API_BASE/applications/tags" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags" \
+  --data-urlencode "name=finance" \
+  --data-urlencode "sort=tag.name" \
+  --data-urlencode "order=asc" \
+  --data-urlencode "limit=50"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    {
+      "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX",
+      "name": "Finance approved"
+    },
+    {
+      "id": "0TG01F1NANCEREV1EWXXXXXXXXXXX",
+      "name": "Finance review"
+    }
+  ],
+  "pageInfo": {
+    "hasNextPage": false,
+    "cursor": "gaFpvTBURzAxTTQzRVJGRjBXVFlB",
+    "totalCount": 2
+  }
+}
+```
+
+| Parameter | Notes |
+|---|---|
+| `name` | Matches tags whose name contains this value |
+| `sort` | `tag.name` or `tag.id` |
+| `order` | `asc` or `desc` |
+| `limit` | Maximum number of tags to return, 1 or more |
+| `cursor` | Opaque string from `pageInfo.cursor`; pass it to read the next page |
+| `configurationVersion` | `draft` (the default) or `active` |
+| `includeTotalCount` | `pageInfo.totalCount` is on the first page by default. `true` returns it on every page, `false` omits it |
+
+Page through with `pageInfo.hasNextPage` and `pageInfo.cursor`, as described in [Pagination](/prisma-browser/guide/pagination).
+
+### Get one
+
+```
+GET /seb-api/v1/applications/tags/{id}
+```
+
+```bash
+curl -sS "$PB_API_BASE/applications/tags/$TAG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags"
+```
+
+Response (`200`):
+
+```json
+{
+  "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX",
+  "name": "Finance approved"
+}
+```
+
+A tag that exists in the draft but has not been published yet returns `404` when you ask for the active version with `configurationVersion=active`.
+
+---
+
+## Create
+
+`name` is the only field, and it must be unique across the tenant.
+
+```
+POST /seb-api/v1/applications/tags
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/tags" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Finance approved" }'
+```
+
+Returns `201 Created` with the new tag ID. Capture it for later snippets:
+
+```bash
+export TAG_ID='0TG01F1NANCEAPPR0VEDXXXXXXXXX'
+```
+
+A name that already exists returns `409`. A name shorter than 1 or longer than 127 characters returns `400`.
+
+Remember: this edits the **draft**. Publish to make it live (see
+[Draft and publish](/prisma-browser/guide/draft-and-publish)). With
+[partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) you can publish
+just this tag.
+
+---
+
+## Update
+
+`PUT` renames the tag. `name` is the only field you can change, and it is required on every call.
+
+```
+PUT /seb-api/v1/applications/tags/{id}
+```
+
+```bash
+curl -sS -X PUT "$PB_API_BASE/applications/tags/$TAG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Finance approved 2026" }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX" }
+```
+
+The new name is returned by every application that carries the tag, with no further calls. Renaming to a name another tag already uses returns `409`.
+
+:::note
+**Attaching and detaching happen on the application, not here.** To change which applications carry a tag, send `tagIDs` on the application. The delta form adds and removes specific tags without re-sending the whole set: `"tagIDs": { "add": [ "0TG..." ], "remove": [ "0TG..." ] }`. See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification).
+:::
+
+---
+
+## Delete
+
+```
+DELETE /seb-api/v1/applications/tags/{id}
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/applications/tags/$TAG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags"
+```
+
+Returns `204` with an empty body.
+
+A tag that is still attached to at least one application returns `409` and is not deleted. Detach it from every application first, then delete it.
+
+---
+
+## Bulk update
+
+Add or remove tags, or set the classification, on up to 500 applications in one call. The update is atomic: either every application is updated or none is.
+
+```
+POST /seb-api/v1/applications/tags/bulk-update
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/tags/bulk-update" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "applicationIds": [ "0AP01ACMEW1K1XXXXXXXXXXXXXXXX", "0AP01HRP0RTA1XXXXXXXXXXXXXXXX" ],
+        "addTagIds": [ "0TG01PC11NSC0PEXXXXXXXXXXXXXX" ],
+        "removeTagIds": [ "0TG01PEND1NGREV1EWXXXXXXXXXXX" ],
+        "classification": "Sanctioned"
+      }'
+```
+
+Returns `204` with an empty body.
+
+| Field | Required | Notes |
+|---|---|---|
+| `applicationIds` | yes | 1 to 500 unique application IDs |
+| `addTagIds` | no | Tag IDs to attach to every listed application |
+| `removeTagIds` | no | Tag IDs to detach from every listed application |
+| `classification` | no | `Sanctioned`, `Tolerated`, `Unsanctioned`, or `Unclassified`, set on every listed application |
+
+Send at least one of `addTagIds`, `removeTagIds`, or `classification`. A tag ID cannot appear in both `addTagIds` and `removeTagIds` in the same request.
+
+Remember: this edits the **draft**. Publish to make it live.
+
+---
+
+## Find applications by tag
+
+Filter the applications list by tag ID or by tag name. Both filters take a comma-separated list and return applications that carry any of the values. `tagId` and `tagName` cannot be combined in one request. `tagName` is case-sensitive. These filters are on the applications endpoints, so they do not need the preview header.
+
+```bash
+curl -sS -G "$PB_API_BASE/applications" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "tagName=PCI in scope,Finance approved" \
+  --data-urlencode "limit=100"
+```
+
+The same filters work on `GET /applications/type/{type}`. Add `classification` (also comma-separated) to narrow the result to one or more classifications. See [Applications](/prisma-browser/guide/applications#retrieve).
+
+---
+
+## Endpoint reference
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | [`/applications/tags`](/prisma-browser/api/list-application-tags) | List tags (search, sort, paginate) |
+| `GET` | [`/applications/tags/{id}`](/prisma-browser/api/get-application-tag-by-id) | Read one tag |
+| `POST` | [`/applications/tags`](/prisma-browser/api/create-application-tag) | Create one tag |
+| `PUT` | [`/applications/tags/{id}`](/prisma-browser/api/update-application-tag) | Rename one tag |
+| `DELETE` | [`/applications/tags/{id}`](/prisma-browser/api/delete-application-tag) | Delete one tag |
+| `POST` | [`/applications/tags/bulk-update`](/prisma-browser/api/bulk-update-application-tags) | Add or remove tags, or set classification, on up to 500 applications |
+
+All paths are under the `/seb-api/v1` base. Every path in this table needs `x-prisma-browser-preview: application-tags`.
+
+---
+
+## Tips and gotchas
+
+:::note
+**Tags are a visibility feature today.** Tags and classification help you review your application inventory: filter and group applications by your own labels on the Application Usage page in Strata Cloud Manager when you assess what is in use and who owns it. Rules do not match on tags yet, so attaching one does not change enforcement. Using tags and classification in policy is planned for a future release. To act on a set of applications in policy today, use an [application group](/prisma-browser/guide/application-groups).
+:::
+
+:::note
+**Tags and classification are different fields.** `classification` records how your organization treats an application (`Sanctioned`, `Tolerated`, `Unsanctioned`, `Unclassified`) and is stored separately. A tag is never returned in `classification` and a classification is never returned in `tags`, so never model classification as a tag named `Sanctioned`. See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification).
+:::
+
+:::caution
+**Delete is blocked while the tag is in use.** `DELETE` returns `409` if any application still carries the tag. There is no cascade and no force flag, so to retire a label, find the applications that carry it with the `tagId` filter, detach it with one [bulk update](#bulk-update) (`removeTagIds`), then delete the tag.
+:::
+
+:::note
+**Rename instead of recreating.** Applications reference the tag by ID, so renaming keeps every attachment intact. Deleting and recreating gives you a new ID and detaches the tag from every application.
+:::
+
+---
+
+## Examples
+
+<details>
+<summary>Seed a taxonomy, then publish once</summary>
+
+Create several tags, then publish a single time so the whole set goes live together.
+
+```bash
+for NAME in "Finance approved" "PCI in scope" "Pending review"; do
+  curl -sS -X POST "$PB_API_BASE/applications/tags" \
+    -H "Authorization: Bearer $PB_TOKEN" \
+    -H "x-prisma-browser-preview: application-tags" \
+    -H "Content-Type: application/json" \
+    -d "{ \"name\": \"$NAME\" }"
+done
+```
+
+Each call returns `201` with the new tag ID. Publish once when the loop finishes (see [Draft and publish](/prisma-browser/guide/draft-and-publish)).
+
+</details>
+
+<details>
+<summary>Find a tag ID by name</summary>
+
+Search by name instead of listing every tag.
+
+```bash
+curl -sS -G "$PB_API_BASE/applications/tags" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags" \
+  --data-urlencode "name=PCI" \
+  --data-urlencode "limit=10"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    {
+      "id": "0TG01PC11NSC0PEXXXXXXXXXXXXXX",
+      "name": "PCI in scope"
+    }
+  ],
+  "pageInfo": {
+    "hasNextPage": false,
+    "cursor": "gaFpvTBURzAxTTQzRVJGRjBXVFlB",
+    "totalCount": 1
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Create a tag and attach it to a new application</summary>
+
+Create the tag, capture its ID, then reference it in `tagIDs` on the application.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/tags" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags" \
+  -H "Content-Type: application/json" \
+  -d '{ "name": "Finance approved" }'
+```
+
+Returns `201` with the new tag ID:
+
+```bash
+export TAG_ID='0TG01F1NANCEAPPR0VEDXXXXXXXXX'
+```
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/type/custom" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Acme Wiki",
+        "type": "custom",
+        "urls": [ { "url": "wiki.acme.example.com" } ],
+        "tagIDs": [ "0TG01F1NANCEAPPR0VEDXXXXXXXXX" ]
+      }'
+```
+
+Returns `201` with the new application ID.
+
+</details>
+
+<details>
+<summary>Retire a tag that is still in use</summary>
+
+Find the applications that carry the tag, detach it from all of them in one bulk update, then delete it.
+
+```bash
+curl -sS -G "$PB_API_BASE/applications" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "tagId=$TAG_ID" \
+  --data-urlencode "limit=500"
+```
+
+Collect the `id` of each application in `data`, then detach the tag:
+
+```bash
+curl -sS -X POST "$PB_API_BASE/applications/tags/bulk-update" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "applicationIds": [ "0AP01ACMEW1K1XXXXXXXXXXXXXXXX" ],
+        "removeTagIds": [ "0TG01F1NANCEAPPR0VEDXXXXXXXXX" ]
+      }'
+```
+
+```bash
+curl -sS -X DELETE "$PB_API_BASE/applications/tags/$TAG_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: application-tags"
+```
+
+Returns `204`. Deleting before you detach returns `409`. If more than 500 applications carry the tag, page through the list and send one bulk update per 500 applications.
+
+</details>
+
+---
+
+## Related
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Custom applications](/prisma-browser/guide/applications-custom), [Application groups](/prisma-browser/guide/application-groups)
+- API reference: [List application tags](/prisma-browser/api/list-application-tags), [Bulk update tags and classification](/prisma-browser/api/bulk-update-application-tags)
+- Concepts: [Preview features](/prisma-browser/guide/preview-features), [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), [Pagination](/prisma-browser/guide/pagination), [Delta patch](/prisma-browser/guide/delta-patch)
