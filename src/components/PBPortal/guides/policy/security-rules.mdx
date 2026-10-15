@@ -5,11 +5,11 @@ pb_guide:
   group: Policy
   groupOrder: 40
   order: 40
-  summary: Harden the Prisma Browser with extension, cookie, and certificate controls
+  summary: Harden the Prisma Browser with extension, cookie, certificate, session, and HTTPS controls
 
 ---
 
-Security rules harden the Prisma Browser: they govern extensions, developer tools, cookies, network APIs, certificate trust, and dozens of other protections. A security rule carries a `controls` map, where each key is a named control and its value is that control's settings. See [Policy overview](/prisma-browser/guide/rules) for the concepts shared by all policy types.
+Security rules harden the Prisma Browser: they govern extensions, cookies, network APIs, certificate trust, key protection, session refresh, HTTPS enforcement, and dozens of other protections. A security rule carries a `controls` map, where each key is a named control and its value is that control's settings. See [Policy overview](/prisma-browser/guide/rules) for the concepts shared by all policy types.
 
 :::note
 The Policy APIs are in **Beta** and are enabled by request. Contact your account team to join the Beta program.
@@ -46,6 +46,8 @@ Each control is addressed by name and **replaced as a whole**. Most controls tak
 }
 ```
 
+`developerToolsForExtensions` allows or blocks extensions that users load by drag and drop or in developer mode. It does not control DevTools on web pages: that is the `developerToolsOnWebPages` data control on [access and data rules](/prisma-browser/guide/access-and-data-rules).
+
 ## Create a security rule
 
 ```
@@ -60,7 +62,7 @@ curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
   -H "Authorization: Bearer $PB_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-        "name": "Block developer tools on extensions",
+        "name": "Block sideloaded extensions",
         "mode": "active",
         "scope": { "users": { "isAny": true } },
         "controls": { "developerToolsForExtensions": { "action": "block" } }
@@ -97,7 +99,7 @@ Expand an example to see the request, response, and notes.
 <details>
 <summary>Baseline browser hardening for everyone</summary>
 
-A single rule that turns on a handful of common protections. Omitting `scope` (or using `isAny`) applies it to all users. Each control is a spec-defined key: `developerToolsForExtensions` and `basicAuthenticationOverHttp` take `allow`/`block`; `cookiesProtection` takes `enable`/`disable`.
+A single rule that turns on a handful of common protections. Omitting `scope` (or using `isAny`) applies it to all users. Each control is a spec-defined key: `developerToolsForExtensions` (extensions loaded by drag and drop or developer mode) and `basicAuthenticationOverHttp` take `allow`/`block`; `cookiesProtection` takes `enable`/`disable`.
 
 ```bash
 curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
@@ -112,6 +114,37 @@ curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
           "cookiesProtection": { "action": "enable" },
           "pagesWithSslErrors": { "action": "block" },
           "basicAuthenticationOverHttp": { "action": "block" }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Protect keys, time out idle sessions, and enforce HTTPS</summary>
+
+Three controls for endpoint and session hardening:
+
+- `hardwareBackedKeysProtection` (`enable`/`disable`): the Prisma Browser protects its cryptographic keys with hardware and OS-level mechanisms, such as the TPM and platform key stores, using the strongest protection available on the endpoint.
+- `sessionRefresh`: requires the user to re-authenticate. Besides `maxSessionDuration` and `onBrowserClosed`, it accepts `inactivityTimeout`, the idle time before re-authentication: `1min`, `2min`, `5min`, `15min`, `30min`, `45min`, or `1hour`.
+- `forceHttps`: forces HTTPS instead of HTTP. Set `blockBypass: true` to remove the option to proceed past the HTTPS warning page.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Endpoint and session hardening",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": {
+          "hardwareBackedKeysProtection": { "action": "enable" },
+          "sessionRefresh": { "action": "enable", "maxSessionDuration": "12hours", "inactivityTimeout": "30min" },
+          "forceHttps": { "action": "enable", "blockBypass": true }
         }
       }'
 ```

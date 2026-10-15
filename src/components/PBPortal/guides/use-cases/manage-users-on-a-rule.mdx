@@ -117,7 +117,7 @@ Response (`200`):
 { "id": "0UG01SCOPEXXXXXXXXXXXXXXXXXXX", "userGroupId": "0UG01SCOPEXXXXXXXXXXXXXXXXXXX" }
 ```
 
-The rule stays put; only the group changes. Publish the group (with [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), publish only `0UG...`).
+The rule stays put; only the group changes. Publish the group (with [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), publish only the user group; partial publish is a [preview feature](/prisma-browser/guide/preview-features) and needs `x-prisma-browser-preview: partial-publish`).
 
 :::note
 This is the foundation of a [gradual rollout](/prisma-browser/guide/gradual-rollout-with-user-group): keep adding members to the group over time and the rule's reach expands with each publish.
@@ -164,6 +164,7 @@ import os, requests
 
 base = os.environ["PB_API_BASE"]
 headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
+publish_headers = {**headers, "x-prisma-browser-preview": "partial-publish"}  # partial publish is a preview feature
 rule_id = os.environ["RULE_ID"]
 
 # 1. Create a local user group
@@ -186,7 +187,7 @@ def set_members(add=(), remove=()):
 set_members(add=["0UR01DANXXXXXXXXXXXXXXXXXXXXX"])
 
 # 4. Publish only the group
-requests.post(f"{base}/configuration-management/draft/partial-publish", headers=headers,
+requests.post(f"{base}/configuration-management/draft/partial-publish", headers=publish_headers,
     json={"entityIds": [ug_id], "description": "Expand rule audience"}, timeout=30)
 ```
 
