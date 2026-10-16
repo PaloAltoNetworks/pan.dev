@@ -1,7 +1,7 @@
 Retrieves the details and state of all host service runtime models in CSV format
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

@@ -1,7 +1,7 @@
 Initiates a serverless scan of your environments.
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

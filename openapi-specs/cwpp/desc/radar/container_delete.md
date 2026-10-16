@@ -1,7 +1,7 @@
 Deletes a learned connection between two containers.
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

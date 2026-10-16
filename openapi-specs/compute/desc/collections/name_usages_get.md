@@ -12,7 +12,7 @@ To invoke this endpoint in the Console UI:
 Refer to the following example cURL command that retrieves all policies with name `my-collection`:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

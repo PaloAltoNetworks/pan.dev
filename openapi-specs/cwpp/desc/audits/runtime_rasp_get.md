@@ -1,7 +1,7 @@
 Returns JSON data describing all RASP Defender runtime events.
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -1,7 +1,7 @@
 Triggers Console to refresh its data from the **Intelligence Stream**
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

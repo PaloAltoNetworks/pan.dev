@@ -3,7 +3,7 @@ Retrieves the version number of the latest available Prisma Cloud Compute releas
 Example curl command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
