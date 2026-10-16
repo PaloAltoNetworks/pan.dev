@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Navbar from "@theme-original/Navbar";
-import { useLocation } from "@docusaurus/router";
+import { pbSection } from "@site/src/components/PBPortal/pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import Switcher from "@site/src/components/PBPortal/Switcher";
 import "@site/src/components/PBPortal/pb-portal.scss";
 
@@ -8,25 +9,19 @@ import "@site/src/components/PBPortal/pb-portal.scss";
 // highlight the active tab. Returns null on every non-PB page (the switcher is
 // not rendered there and the original navbar is returned untouched).
 function surfaceForPath(pathname) {
-  if (pathname.startsWith("/prisma-browser/api")) return "api";
-  if (pathname.startsWith("/prisma-browser/guide")) return "guide";
-  if (pathname.startsWith("/prisma-browser/release-notes"))
-    return "release-notes";
-  if (
-    pathname === "/prisma-browser" ||
-    pathname.startsWith("/prisma-browser/")
-  ) {
-    return "overview";
-  }
-  return null;
+  const section = pbSection(pathname);
+  if (section === null) return null;
+  if (section === "api") return "api";
+  if (section === "guide") return "guide";
+  if (section === "release-notes") return "release-notes";
+  return "overview";
 }
 
 // Wrap the pan.dev navbar and the Prisma Browser switcher in a single sticky
 // container so they scroll as one unit (the switcher can no longer slide behind
 // the navbar). Keeps the PB surface tokens in sync with pan.dev's theme toggle.
 export default function NavbarWrapper(props) {
-  const { pathname } = useLocation();
-  const surface = surfaceForPath(pathname);
+  const surface = surfaceForPath(useSitePath());
 
   useEffect(() => {
     if (!surface) return undefined;
