@@ -5,7 +5,7 @@ Returns the advanced settings for Defenders.
 Refer to the following example cURL command that gets all advanced settings for Defenders:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

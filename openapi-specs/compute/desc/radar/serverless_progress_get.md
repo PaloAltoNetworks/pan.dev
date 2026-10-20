@@ -1,7 +1,7 @@
 Returns the scan progress from Console's Radar page (serverless view).
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

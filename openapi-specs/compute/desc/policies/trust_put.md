@@ -1,7 +1,7 @@
 Updates the list of rules that make up your trusted images policy.
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

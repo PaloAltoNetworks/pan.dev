@@ -1,0 +1,1 @@
+Returns the cloud controller addresses for Tas defenders.

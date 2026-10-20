@@ -5,7 +5,7 @@ Creates an augmented Dockerfile with Defender and dependencies included as a ZIP
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \
