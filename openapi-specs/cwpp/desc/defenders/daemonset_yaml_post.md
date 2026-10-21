@@ -5,7 +5,7 @@ Creates a DaemonSet deployment file in YAML format that you can use to deploy De
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

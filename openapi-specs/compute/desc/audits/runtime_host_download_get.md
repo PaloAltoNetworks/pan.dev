@@ -5,7 +5,7 @@ Returns the runtime host audit events data in CSV format.
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

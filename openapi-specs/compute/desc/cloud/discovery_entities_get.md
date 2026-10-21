@@ -7,7 +7,7 @@ Use this API endpoint along with the `GET, api/vVERSION/cloud/discovery` to get 
 Refer to the following cURL example request:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -4,14 +4,14 @@ sidebar_label: 'Errors'
 pb_guide:
   group: Basics
   groupOrder: 10
-  order: 60
+  order: 52
   summary: Error response shape and common troubleshooting patterns
 
 ---
 
-Every endpoint returns a structured **error envelope** so your automation can branch on typed codes rather than parsing prose. This page covers the envelope shape, common HTTP statuses, typed error codes, and how to handle them well.
+Most error responses use a structured **error envelope**, so your automation can branch on typed codes rather than parsing prose. A few do not; see [Responses without the envelope](#responses-without-the-envelope). This page covers the envelope shape, common HTTP statuses, typed error codes, and how to handle them well.
 
-**On this page:** the envelope, common statuses, error codes, handling errors well.
+**On this page:** the envelope, common statuses, responses without the envelope, error codes, handling errors well.
 
 ## The envelope
 
@@ -36,11 +36,22 @@ Every endpoint returns a structured **error envelope** so your automation can br
 | 401 | Missing or expired token | Fetch a new token (see [Authentication](/prisma-browser/guide/authentication)) |
 | 403 | Token valid but lacks permission | Use a Super User service account for writes |
 | 404 | Resource or configuration version not found | Verify the ID and `configurationVersion` |
-| 409 | Conflict (for example, publishing an empty draft, or a concurrent rule edit) | Inspect the message; often safe to ignore |
+| 409 | Conflict (for example, publishing an empty draft, a concurrent rule edit, or another publish in progress) | Inspect `error.code`: `CONFLICT` is often safe to ignore, `PUBLISH_IN_PROGRESS` is safe to retry after a short wait |
+| 413 | Request body or uploaded file too large | Reduce the payload; see [System limits](/prisma-browser/guide/system-limits). Branch on the status: an oversized request body gets the gateway's body, not this envelope |
 | 422 | Well-formed request the server cannot act on | Inspect the message and adjust the request |
-| 500 | Server error | Retry with backoff; if persistent, contact support |
+| 429 | Tenant rate limit exceeded | Wait 60 seconds, then retry every 15 seconds. The body is the gateway's, not this envelope; pace calls with the `RateLimit-Remaining` header. See [System limits](/prisma-browser/guide/system-limits#rate-limit) |
+| 500 | Server error, or a response too large to return (`RESPONSE_TOO_LARGE`) | Retry with backoff; for `RESPONSE_TOO_LARGE`, request a smaller `limit` and continue with the cursor. If the error persists, contact support |
+| 501 | Operation not supported for the objects you named | Do not retry; inspect `error.code` |
 
-`401` is enforced at the SASE platform (OAuth) layer, ahead of the policy handlers, so it carries the platform's own response rather than the envelope below.
+## Responses without the envelope
+
+| Response | Body |
+|---|---|
+| `401` | The authentication layer's own response |
+| `413` for an oversized request body | The API gateway's body |
+| `429` | The API gateway's body: `{ "_error": { "code", "message", "_request_id" } }` |
+
+Branch on the HTTP status first, then on `error.code` when the body carries the envelope.
 
 ## Error codes
 
@@ -53,24 +64,31 @@ The `error.code` is a typed discriminator. Some codes add a structured `details`
 | `CONTIGUITY_VIOLATION` | 400 | `details.sectionId`, `details.ruleIds` (rules of a section not contiguous) |
 | `INCOMPLETE_ARRAY` | 400 | `details.missingRules`, `details.missingSections` (positions array omits existing items) |
 | `NOT_FOUND` | 404 | none |
+| `CONFIGURATION_VERSION_NOT_FOUND` | 404 | none (the `configurationVersion` you asked for does not exist) |
 | `FIELD_REFERENCE_NOT_FOUND` | 404 | `details.errors[]` (a referenced rule, section, or anchor ID does not exist) |
 | `FORBIDDEN` | 403 | none |
-| `UNSUPPORTED_OPERATION` | 400 | none (for example, draft mode not enabled for the tenant) |
+| `UNSUPPORTED_OPERATION` | 501 | none |
+| `PARTIAL_PUBLISH_POLICY_UNSUPPORTED` | 501 | `details.errors[]` (a partial publish named a rule or section) |
+| `PARTIAL_PUBLISH_TYPE_UNSUPPORTED` | 501 | `details.errors[]` (a partial publish named an object type it does not support) |
 | `CONFLICT` | 409 | none (the request conflicts with the current state of the resource) |
+| `PUBLISH_IN_PROGRESS` | 409 | none (another publish or draft reset holds the draft, so nothing was published) |
+| `REQUEST_ENTITY_TOO_LARGE` | 413 | none (an uploaded file exceeds its size limit) |
 | `UNPROCESSABLE_ENTITY` | 422 | none (well-formed request the server cannot act on) |
-| `NOT_IMPLEMENTED` | 501 | none |
+| `INTERNAL_ERROR` | 500 | none |
+| `RESPONSE_TOO_LARGE` | 500 | none (the response exceeds the service limit; request a smaller page) |
 | `PROVIDER_IN_USE` | 409 | `details` naming what still references the cloud storage provider |
 
-The bulk device and user actions add their own codes: `DEVICES_NOT_FOUND`, `USERS_NOT_FOUND`, `INVALID_DEVICE_ID`, `INVALID_USER_ID`, `INVALID_STATUS_TRANSITION`, `UNEXPECTED_DEVICE_STATUS`, `CANNOT_DELETE_SUSPENDED_DEVICE` and `MAX_DEVICES_EXCEEDED`.
+The bulk device and user actions add their own codes: `DEVICES_NOT_FOUND`, `USERS_NOT_FOUND`, `INVALID_DEVICE_ID`, `INVALID_USER_ID`, `INVALID_STATUS_TRANSITION`, `UNEXPECTED_DEVICE_STATUS`, `CANNOT_DELETE_SUSPENDED_DEVICE`. A request with more device or user IDs than an action accepts returns `VALIDATION_ERROR`; see [Devices](/prisma-browser/guide/devices) and [Users](/prisma-browser/guide/users) for the limits.
 
 The code vocabulary is open: handle unknown codes by falling back to the HTTP status.
 
 ## Handling errors well
 
-- **Treat `4xx` as actionable, `5xx` as retryable.** For `400`, read `error.code` and, for field errors, `details.errors[].field`; for `401`, refresh the token; for `403`, check the service account's role. For `5xx`, retry with exponential backoff.
+- **Treat `4xx` as actionable, `5xx` as retryable.** For `400`, read `error.code` and, for field errors, `details.errors[].field`; for `401`, refresh the token; for `403`, check the service account's role. For `500`, retry with exponential backoff.
+- **Retry `429`, not other `4xx`.** A `429` clears on its own: wait, then retry slowly. Do not retry `501`: the operation is not available for that tenant or those objects.
 - **Branch on `error.code` and HTTP status, not on `message`.** The human-readable text can change.
 
 :::note
-Every endpoint returns this envelope, including devices, users, user groups, device groups, cloud storage and [User requests](/prisma-browser/guide/user-requests). The `details` object is populated on the policy and object endpoints; elsewhere the response carries `error.code` and `error.message` only.
+Every endpoint returns this envelope for its own errors (`401` and `429` excepted), including devices, users, user groups, device groups, cloud storage and [User requests](/prisma-browser/guide/user-requests). The `details` object is populated on the policy and object endpoints; elsewhere the response carries `error.code` and `error.message` only.
 :::
 

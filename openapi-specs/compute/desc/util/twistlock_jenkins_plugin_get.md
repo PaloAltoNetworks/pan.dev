@@ -7,7 +7,7 @@ Although this endpoint is supported, no backwards compatibility is offered for i
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -L \
   -o twistlock-jenkins-plugin.hpi \
