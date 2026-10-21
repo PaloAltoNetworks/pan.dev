@@ -31,13 +31,17 @@ Every list response has the same top-level shape:
 
 ## Query parameters
 
-- `limit`: integer, 1 to 1000, default 100.
+- `limit`: integer, at least 1, default 100. The maximum page size is 1000, and what happens above it depends on the list:
+  - Object lists (users, devices, user groups, device groups, user group members, applications, application groups and application tags) reduce a value above 1000 to 1000 rather than reject it.
+  - The four policy GETs and pending changes reject a value above 1000 with `400`.
+
+  Either way, always loop on `pageInfo.hasNextPage`. See [System limits](/prisma-browser/guide/system-limits).
 - `cursor`: opaque string from the previous `pageInfo.cursor`. Do not construct or parse it.
 - `includeTotalCount`: optional boolean controlling whether `pageInfo.totalCount` is populated. Default: present on the first page (no cursor) and absent on subsequent pages. Set `=true` to force it on every page, or `=false` to skip it entirely. The count reflects the same filters as the list.
 
 Because the total is a property of the whole result set, the default gives it to a paginating client once up front (on the first page): read it there rather than expecting it on every page.
 
-`includeTotalCount` is supported on the object and policy list endpoints: users, devices, user groups, device groups, applications, applications-by-type, application groups, and the four policy GETs (security, customization, sign-in, access and data).
+`includeTotalCount` is supported on the object and policy list endpoints: users, devices, user groups, user group members, device groups, applications, applications-by-type, application groups, application tags, and the four policy GETs (security, customization, sign-in, access and data).
 
 :::note
 `/user-requests` is cursor-paginated but its `pageInfo` carries only `hasNextPage` and `cursor`: it has no `totalCount` and does not accept `includeTotalCount`.

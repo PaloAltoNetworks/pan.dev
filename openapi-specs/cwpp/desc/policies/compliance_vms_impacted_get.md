@@ -8,7 +8,7 @@ Use query parameters to retrieve the list of impacted resources by *account ID*,
 Refer to the following example cURL command, which retrieves a list of impacted resources:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

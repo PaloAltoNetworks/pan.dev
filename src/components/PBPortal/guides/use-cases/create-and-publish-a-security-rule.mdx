@@ -11,7 +11,7 @@ pb_guide:
 
 ---
 
-A complete, copy-pasteable walkthrough: authenticate, create a rule on the draft, verify it, then publish it so it goes live. The example creates a security rule, but the same create -> verify -> publish flow applies to every policy type (see [Policy overview](/prisma-browser/guide/rules)). By the end you will have an enforced rule that blocks developer tools on browser extensions for all users.
+A complete, copy-pasteable walkthrough: authenticate, create a rule on the draft, verify it, then publish it so it goes live. The example creates a security rule, but the same create -> verify -> publish flow applies to every policy type (see [Policy overview](/prisma-browser/guide/rules)). By the end you will have an enforced rule that blocks extensions loaded by drag and drop or in developer mode, for all users.
 
 **Prerequisites:** a Super User service account (writes require it) and the environment variables from [Getting started](/prisma-browser/guide/getting-started): `PB_API_BASE`, `PB_TOKEN`. New here? Read [Authentication](/prisma-browser/guide/authentication) and [Draft and publish](/prisma-browser/guide/draft-and-publish) first.
 
@@ -26,7 +26,7 @@ flowchart LR
 
 ## 1. Create the rule (on the draft)
 
-A security rule needs a `name` and a `mode` (`active` or `disabled`); add a `controls` object with at least one control to make it enforce something. `scope` (who it applies to) is optional, but you should always set it: a rule with no scope applies to everyone. Here we deliberately apply to all users (`scope.users.isAny = true`) and block DevTools on extensions.
+A security rule needs a `name` and a `mode` (`active` or `disabled`); add a `controls` object with at least one control to make it enforce something. `scope` (who it applies to) is optional, but you should always set it: a rule with no scope applies to everyone. Here we deliberately apply to all users (`scope.users.isAny = true`) and block extensions loaded by drag and drop or in developer mode (`developerToolsForExtensions`).
 
 The create endpoint:
 
@@ -39,8 +39,8 @@ curl -sS -X POST "$PB_API_BASE/policy/security/rules" \
   -H "Authorization: Bearer $PB_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-        "name": "Block developer tools on extensions",
-        "description": "Prevent inspection of browser extensions via DevTools",
+        "name": "Block sideloaded extensions",
+        "description": "Block extensions loaded by drag and drop or developer mode",
         "mode": "active",
         "scope": { "users": { "isAny": true } },
         "controls": {
@@ -83,7 +83,7 @@ Promote the draft to a new active version. Add a description so the version hist
 curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
   -H "Authorization: Bearer $PB_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"description": "Add: block DevTools on extensions"}'
+  -d '{"description": "Add: block sideloaded extensions"}'
 ```
 
 `201` means a new active version was created and your rule is now enforced. If you get `409`, the draft had no changes (did step 1 succeed?). See [Draft and publish](/prisma-browser/guide/draft-and-publish#full-publish-responses) for all publish responses.
@@ -113,8 +113,8 @@ headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
 
 # 1. Create on the draft
 body = {
-    "name": "Block developer tools on extensions",
-    "description": "Prevent inspection of browser extensions via DevTools",
+    "name": "Block sideloaded extensions",
+    "description": "Block extensions loaded by drag and drop or developer mode",
     "mode": "active",
     "scope": {"users": {"isAny": True}},
     "controls": {"developerToolsForExtensions": {"action": "block"}},
@@ -129,7 +129,7 @@ assert rule["controls"]["developerToolsForExtensions"]["action"] == "block"
 pub = requests.post(
     f"{base}/configuration-management/draft/publish",
     headers=headers,
-    json={"description": "Add: block DevTools on extensions"},
+    json={"description": "Add: block sideloaded extensions"},
     timeout=30,
 )
 print("publish:", pub.status_code, "rule:", rule_id)

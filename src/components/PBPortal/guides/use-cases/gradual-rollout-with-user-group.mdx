@@ -86,7 +86,7 @@ The rule is now fixed. Every later step touches only the group, never the rule.
 
 ## 3. Expand in batches
 
-Each rollout wave: add the next batch of users to the group, then publish only the group with [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) so the wave does not carry unrelated draft edits.
+Each rollout wave: add the next batch of users to the group, then publish only the group with [partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) so the wave does not carry unrelated draft edits. Partial publish is a [preview feature](/prisma-browser/guide/preview-features): send `x-prisma-browser-preview: partial-publish`.
 
 ```bash
 # Add the next wave
@@ -98,6 +98,7 @@ curl -sS -X PUT "$PB_API_BASE/user-groups/$UG_ID" \
 # Publish only the group
 curl -sS -X POST "$PB_API_BASE/configuration-management/draft/partial-publish" \
   -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: partial-publish" \
   -H "Content-Type: application/json" \
   -d '{"entityIds": ["'"$UG_ID"'"], "description": "DevTools block: wave 2"}'
 ```
@@ -129,6 +130,7 @@ import os, time, requests
 
 base = os.environ["PB_API_BASE"]
 headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
+publish_headers = {**headers, "x-prisma-browser-preview": "partial-publish"}  # partial publish is a preview feature
 rule_id = os.environ["RULE_ID"]
 
 waves = [
@@ -151,7 +153,7 @@ requests.post(f"{base}/configuration-management/draft/publish", headers=headers,
 for i, wave in enumerate(waves[1:], start=2):
     requests.put(f"{base}/user-groups/{ug_id}", headers=headers,
         json={"users": [{"userId": u, "action": "add"} for u in wave]}, timeout=30).raise_for_status()
-    requests.post(f"{base}/configuration-management/draft/partial-publish", headers=headers,
+    requests.post(f"{base}/configuration-management/draft/partial-publish", headers=publish_headers,
         json={"entityIds": [ug_id], "description": f"DevTools block: wave {i}"}, timeout=30)
     time.sleep(0)  # replace with your cadence (e.g. one wave per day)
 ```

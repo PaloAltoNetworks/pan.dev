@@ -23,13 +23,13 @@ The Policy APIs are in **Beta** and are enabled by request. This applies to all 
 |---|---|---|
 | Sign-in | [Sign-in rules](/prisma-browser/guide/sign-in-rules) | Whether and how users can sign in to the Prisma Browser |
 | Access and data | [Access and data rules](/prisma-browser/guide/access-and-data-rules) | Which applications and URLs are reachable, and how data moves (login and data controls, DLP) |
-| Security | [Security rules](/prisma-browser/guide/security-rules) | Browser hardening controls (extensions, cookies, certificates, developer tools) |
+| Security | [Security rules](/prisma-browser/guide/security-rules) | Browser hardening controls (extensions, cookies, certificates, sessions, HTTPS) |
 | Customization | [Customization rules](/prisma-browser/guide/customization-rules) | Branding and look-and-feel controls (logo, theme, shortcuts, start pages) |
 
 Each policy type has the same shape of endpoints (substitute the type):
 
 ```
-GET    /seb-api/v1/policy/{type}                 list rules + sections (paginated)
+GET    /seb-api/v1/policy/{type}                 list rules + sections (paginated, filterable)
 POST   /seb-api/v1/policy/{type}/rules           create a rule
 GET    /seb-api/v1/policy/{type}/rules/{id}      get one rule (full detail)
 PATCH  /seb-api/v1/policy/{type}/rules/{id}      update a rule
@@ -39,6 +39,29 @@ DELETE /seb-api/v1/policy/{type}/rules/{id}      delete a rule
 :::note
 **No "list rules" endpoint.** You list a policy's rules by reading the whole policy (`GET /policy/{type}`), which returns rules and sections interleaved in evaluation order. List items are summaries; fetch a rule's full body with `GET /policy/{type}/rules/{id}`.
 :::
+
+A tenant can have up to 1,000 rules per policy type. Built-in and default rules are not counted. Creating a rule that would take a policy type above 1,000 returns `400`; [publish](/prisma-browser/guide/draft-and-publish) also returns `400` if the draft would grow past it. 1,000 is the default and can be raised per tenant; contact your account team.
+
+## Find rules
+
+`GET /policy/{type}` takes query filters, so you can find the rules that apply to a user or carry a control without reading the whole policy. Repeat a parameter to pass several values.
+
+| Filter | Matches |
+|---|---|
+| `name` | Rule name contains the value, case-insensitive |
+| `id`, `mode` | Rule ID, rule mode |
+| `user`, `userGroup` | User or user group ID. Includes any-scope rules and rules scoped to a group that contains the user, unless you add `userExplicitOnly=true` |
+| `userName`, `userEmail` | User name or email contains the value, case-insensitive (at least 3 characters). Combines with `user` |
+| `deviceGroup` | Device group ID. Includes default rules unless you add `deviceGroupExplicitOnly=true` |
+| `control` | Security and Customization: rules that carry this control key |
+| `dataControl`, `loginControl` | Access and data: rules that carry this data or login control key. Access and data rules also filter by application, DLP profile, web classification, and log level |
+| `action` | Sign-in: rule action |
+
+```bash
+curl -sS -G "$PB_API_BASE/policy/security" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  --data-urlencode "control=sessionRefresh"
+```
 
 ## Scope: who a rule applies to
 
@@ -72,7 +95,7 @@ Rules are organized into **sections** and evaluated in order. Sections are ident
 Ordering is managed through the positions sub-resource of each type:
 
 - `PUT /policy/{type}/positions` submits the full ordered list of rules and sections. Index 0 is evaluated first; rules in a section must be contiguous.
-- `PATCH /policy/{type}/positions` applies partial moves (`top` / `bottom` / `before` / `after` an anchor, with a target section), applied atomically, without resubmitting the whole order.
+- `PATCH /policy/{type}/positions` applies partial moves (`top` / `bottom` / `before` / `after` an anchor, with a target section), applied atomically, without resubmitting the whole order. Up to 100 moves per request; see [Bulk operations](/prisma-browser/guide/entity-limits#bulk-operations) in Entity limits.
 
 See [Reorder rules and sections](/prisma-browser/guide/reorder-rules-and-sections) for both approaches.
 
@@ -101,7 +124,7 @@ When an action or control prompts the user, a `userPrompt` object chooses how:
 | `proceedWithReason` | They must type a justification to continue |
 | `adminApproval` | They submit a request an administrator must approve |
 
-The custom message text shown to the user (typically on a block) is a separate `customDialogText` object with `title` (1-80 chars, required), `description` (up to 360 chars), and an optional `externalLink` (`{ label, url }`). See each type's page for which actions and controls support prompts and custom text.
+The custom message text shown to the user (typically on a block) is a separate `customDialogText` object with `title` (1-80 chars, required), `description`, and an optional `externalLink` (`{ label, url }`). The `description` limit depends on where the dialog appears: up to 5000 characters on access dialogs (block, redirect, and Open in Prisma Browser pages), up to 500 on data control dialogs (clipboard, file download, file upload), and up to 360 everywhere else. See each type's page for which actions and controls support prompts and custom text.
 
 ## Patch semantics summary
 

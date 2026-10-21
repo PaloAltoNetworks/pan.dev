@@ -5,7 +5,7 @@ Returns the full Docker image name for Defender.
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

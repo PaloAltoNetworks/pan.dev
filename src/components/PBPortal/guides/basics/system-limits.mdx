@@ -1,0 +1,143 @@
+---
+title: 'System limits'
+sidebar_label: 'System limits'
+pb_guide:
+  group: Basics
+  groupOrder: 10
+  order: 55
+  summary: Rate limit, page size, request and response size, and limit errors that apply to every call
+---
+
+**System limits** govern how you call the API: how many requests you can send, how many items a page can carry, and how large a request or response can be. They protect service availability and apply to every integration on your tenant. For how much you can configure and how much one call can carry (objects per tenant, URLs per application, bulk calls, uploaded files), see [Entity limits](/prisma-browser/guide/entity-limits).
+
+**On this page:** rate limit, pagination, request and response size, limit errors, reducing request volume, related.
+
+:::caution
+Limit values can change between releases. Do not hardcode them into integration logic. Read the rate limit from the response headers at runtime, and treat the OpenAPI specification (`maxItems`, `maxLength`) as the authoritative catalog for field limits. If this page and the specification disagree, the specification wins.
+:::
+
+---
+
+## Rate limit
+
+The API accepts **600 requests per minute per tenant**, counted in fixed one-minute windows. If a window goes over 600, every request fails for the rest of that window and for the whole next window: a block of one to two minutes, depending on when in the window you went over. Capacity then comes back all at once.
+
+| Property | Value |
+|---|---|
+| Allowance | 600 requests per minute |
+| Window | Fixed, one minute |
+| Block after exceeding | Rest of the current window plus the next window (1 to 2 minutes) |
+| Keyed on | Tenant service group (`tsg_id`) |
+| Shared across | All endpoints and all clients of the tenant |
+
+- **Per tenant, not per credential.** The allowance belongs to the tenant service group. Adding service accounts or requesting a new access token does not raise it.
+- **One budget for the whole API.** Calls to applications, devices, users, and policy endpoints all draw from the same counter.
+- **Shared across integrations.** A Terraform run, a SIEM connector, and an ad hoc script on the same tenant compete for the same allowance.
+
+### Response headers
+
+Every response, including a `429`, reports the state of your allowance:
+
+| Header | Description |
+|---|---|
+| `RateLimit-Limit` | Total allowance for the current window (requests per minute per tenant) |
+| `RateLimit-Remaining` | Requests left in the current window |
+
+The API does not return a `Retry-After` header or a reset timestamp.
+
+### When you exceed the limit
+
+The API returns `429 Too Many Requests`. The response, body and headers, comes from the API gateway, not from the Prisma Browser service, so the body does not use the standard error envelope:
+
+```json
+{
+  "_error": {
+    "code": "429",
+    "message": "Rate limit quota reached.",
+    "_request_id": "00000000-0000-0000-0000-000000000000"
+  }
+}
+```
+
+- **Pace yourself instead of bursting.** Read `RateLimit-Remaining` on every response and slow down as it approaches zero. Spreading calls evenly, at under 10 per second, avoids hitting the limit at all.
+- **Handle `429` by status code.** Do not parse the body for `error.code`: the gateway body uses `_error`. Every operation in the OpenAPI specification declares `429` with this body (`RateLimitResponse`), so a generated client can map it to a typed error.
+- **Wait 60 seconds, then retry slowly.** Retrying while blocked neither shortens nor extends the block. It only produces more `429` responses. After 60 seconds, send one request every 15 seconds until one succeeds, then resume at a paced rate.
+
+---
+
+## Pagination
+
+| Limit | Value |
+|---|---|
+| Page size (`limit`) | 1 to 1000, default 100 |
+| `limit` above 1000 | Policy lists and the pending changes list reject it with `400`. Other lists cap it and return at most 1000 items |
+| `limit` of 0 | Rejected with `400` on every list |
+| Cursor | Opaque; policy list and group member cursors are at most 2048 characters |
+
+Always send a `limit` from 1 to 1000. Loop on `pageInfo.hasNextPage` and do not assume you received everything you asked for. Pass `pageInfo.cursor` back unmodified. There is no `offset` parameter. See [Pagination](/prisma-browser/guide/pagination) for the loop.
+
+---
+
+## Request and response size
+
+| Limit | Value | When exceeded |
+|---|---|---|
+| JSON request body | 10 MB | `413`, returned by the API gateway |
+| Response body | Service limit | `500` with `error.code` `RESPONSE_TOO_LARGE` |
+
+A request body over the limit is stopped at the API gateway before it reaches the API, so the `413` body is the gateway's and does not use the standard error envelope:
+
+```json
+{
+  "fault": {
+    "faultstring": "Body buffer overflow",
+    "detail": { "errorcode": "protocol.http.TooBigBody" }
+  }
+}
+```
+
+Handle `413` by its status code, not by the shape of the body.
+
+A response can be very large when a page holds many large objects, for example `GET /applications?limit=1000` on a tenant whose custom applications each hold thousands of URLs. If a list call returns `RESPONSE_TOO_LARGE`, request a smaller `limit` and continue with the cursor.
+
+---
+
+## Limit errors
+
+A request that breaks a field, list, or per-tenant limit returns `400`. Branch on `error.code`, which identifies the failure (for example `VALIDATION_ERROR`):
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request: validate: invalid: moves (array: len 101 greater than maximum 100)",
+    "timestamp": "2026-09-27T10:00:00Z"
+  }
+}
+```
+
+| Status | Cause |
+|---|---|
+| `400` | A field, list, or per-tenant count limit was exceeded |
+| `413` | The request body (gateway body, not the standard envelope) or uploaded file is too large |
+| `429` | The tenant rate limit was exceeded (gateway body, not the standard envelope) |
+| `500` | The response was too large (`error.code` `RESPONSE_TOO_LARGE`) |
+
+Objects that already exceed a limit stay readable. You can shrink them, but a request that would grow them further is rejected. See [Errors](/prisma-browser/guide/errors) for the full envelope.
+
+---
+
+## Reducing request volume
+
+Most throttling is a pagination problem rather than a capacity problem.
+
+- **Request full pages.** Setting `limit=1000` cuts the number of calls needed to walk a large collection by a factor of ten.
+- **Filter on the server.** Use each list endpoint's query parameters instead of fetching everything and filtering locally.
+- **Ask for the total once.** `pageInfo.totalCount` is returned on the first page by default. Do not force it on every page.
+- **Leave expansions off.** Opt-in parameters such as `includeCatalogAttributes=true` on the applications list add data to every item. Turn them on only when you read that data.
+- **Reuse your access token.** Cache the token for its lifetime instead of requesting one per call. See [Authentication](/prisma-browser/guide/authentication).
+
+---
+
+## Related
+- Basics: [Entity limits](/prisma-browser/guide/entity-limits), [Pagination](/prisma-browser/guide/pagination), [Errors](/prisma-browser/guide/errors), [Authentication](/prisma-browser/guide/authentication)

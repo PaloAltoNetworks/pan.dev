@@ -7,7 +7,7 @@ This endpoint returns the same response as `/api/v<VERSION>/stats/vulnerabilitie
 Refer to the following example cURL command that refreshes the vulnerability statistics for current day:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \
