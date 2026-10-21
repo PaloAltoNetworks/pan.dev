@@ -5,7 +5,7 @@ Retrieves the Base64-encoded SSL root certificate self-signed by primary certifi
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

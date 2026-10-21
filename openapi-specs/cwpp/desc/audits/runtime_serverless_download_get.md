@@ -5,7 +5,7 @@ Returns the scan audit events data in CSV format for any configured serverless f
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: text/csv' \
   -X GET \

@@ -1,0 +1,1 @@
+Returns a list of hosts for which the firewall policy rule applies to.

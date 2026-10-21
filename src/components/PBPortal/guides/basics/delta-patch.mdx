@@ -144,7 +144,7 @@ Remember: this changed the **draft**. Publish to make it live (see [Draft and pu
 
 - **Pick one strategy per field.** Sending both `applicationIds` and `addApplicationIds` for the same list is contradictory; send one.
 - **Set the mode too if you are turning the scope on.** Adding specific applications usually means `accessMode: "specific"`. Send it in the same PATCH.
-- **Idempotency.** Adding an item already present, or removing one already absent, is a safe no-op rather than an error. This makes delta patches retry-safe.
+- **Not idempotent.** Adding an item that is already in the list, or removing one that is not, returns `400` (`VALIDATION_ERROR`, for example "application ... already exists in the rule"). Nothing in that request is applied. Before you retry a delta, read the rule to see whether the first attempt went through.
 - **Minimum items.** Add/remove arrays expect at least one item; omit the field entirely if you have nothing to add or remove.
 
 ## Per-intent examples
@@ -255,7 +255,7 @@ Response (`200`):
 </details>
 
 :::note
-Adding an item already present, or removing one already absent, is a safe no-op rather than an error, so these PATCHes are retry-safe. Send `accessMode: "specific"` in the same PATCH when you are turning the scope on.
+Adding an item that is already present, or removing one that is absent, returns `400`, so a repeated delta fails rather than doing nothing. Send `accessMode: "specific"` in the same PATCH when you are turning the scope on.
 :::
 
 ---

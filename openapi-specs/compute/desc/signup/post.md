@@ -7,7 +7,7 @@ Although this endpoint is supported, no backwards compatibility is offered for i
 The following cURL command creates the initial admin user with the username `admin` and password `password`.
 
 ```bash
-$ curl \
+$ curl -k \
   -H 'Content-Type: application/json' \
   -X POST \
   -d '{"username": "admin", "password": "password"}' \

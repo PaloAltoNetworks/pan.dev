@@ -1,7 +1,7 @@
 Retrieves a list of all CNNF network objects.
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

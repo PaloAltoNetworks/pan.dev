@@ -5,7 +5,7 @@ Downloads a ZIP file with serverless Defender bundle.
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/octet-stream' \
   -o serverless_bundle.zip \

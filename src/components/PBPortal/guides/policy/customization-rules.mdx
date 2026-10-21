@@ -5,11 +5,11 @@ pb_guide:
   group: Policy
   groupOrder: 40
   order: 50
-  summary: Brand the Prisma Browser with logo, theme, shortcuts, and start pages
+  summary: Brand the Prisma Browser and shape the user experience: logo, theme, shortcuts, start pages, EULA, and web apps
 
 ---
 
-Customization rules change the look, feel, and end-user experience of the Prisma Browser: the logo, theme color, home page, new-tab page, pinned shortcuts, and more. A customization rule has the **same shape as a [security rule](/prisma-browser/guide/security-rules)**: a `controls` map keyed by control name. Only the path (`/policy/customization`) and the available control names differ. See [Policy overview](/prisma-browser/guide/rules) for the shared concepts.
+Customization rules change the look, feel, and end-user experience of the Prisma Browser: the logo, theme color, home page, new-tab page, pinned shortcuts, admin messages, a EULA users must accept, force-installed web apps, and more. A customization rule has the **same shape as a [security rule](/prisma-browser/guide/security-rules)**: a `controls` map keyed by control name. Only the path (`/policy/customization`) and the available control names differ. See [Policy overview](/prisma-browser/guide/rules) for the shared concepts.
 
 :::note
 The Policy APIs are in **Beta** and are enabled by request. Contact your account team to join the Beta program.
@@ -27,9 +27,9 @@ Base path: `/seb-api/v1/policy/customization`.
 | `scope` | No (recommended) | Who the rule applies to. Omitting it applies the rule to everyone. |
 | `description` | No | Up to 300 characters |
 
-## Branding assets come from the Assets API
+## Files come from the Assets API
 
-Controls that display a file (logo, browser icon, background image, PAC file) do not take the binary directly. You first upload the file with the [Assets API](/prisma-browser/guide/assets), which returns an asset ID, then set that ID on the control. For example, `companyLogo.companyLogoId` is the value returned by `POST /assets/company-logo`.
+Controls that use a file (logo, browser icon, background image, PAC file, EULA body, web app icon) do not take the binary directly. You first upload the file with the [Assets API](/prisma-browser/guide/assets), which returns an asset ID, then set that ID on the control. For example, `companyLogo.companyLogoId` is the value returned by `POST /assets/company-logo`.
 
 ```json
 {
@@ -37,7 +37,7 @@ Controls that display a file (logo, browser icon, background image, PAC file) do
   "mode": "active",
   "scope": { "users": { "isAny": true } },
   "controls": {
-    "companyLogo": { "mode": "setCompanyLogo", "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" },
+    "companyLogo": { "mode": "setCompanyLogo", "companyLogoId": "7c1e2f4a-3b5d-4e6f-8a9b-0c1d2e3f4a5b.png" },
     "themeColor": { "mode": "custom", "color": "#485BFF" }
   }
 }
@@ -94,9 +94,9 @@ Expand an example to see the request, response, and notes.
 <details>
 <summary>Upload a logo and apply it (Assets API + companyLogo control)</summary>
 
-The flagship two-API flow: upload the PNG to get a `companyLogoId`, then set it on the `companyLogo` control. See [Assets](/prisma-browser/guide/assets) for all four asset types and their limits.
+The flagship two-API flow: upload the PNG to get a `companyLogoId`, then set it on the `companyLogo` control. See [Assets](/prisma-browser/guide/assets) for all asset types and their limits.
 
-**Step 1: upload the logo** (multipart, the only file upload in the API)
+**Step 1: upload the logo** (multipart, like every asset upload)
 
 ```bash
 curl -sS -X POST "$PB_API_BASE/assets/company-logo" \
@@ -107,7 +107,7 @@ curl -sS -X POST "$PB_API_BASE/assets/company-logo" \
 Response (`201 Created`):
 
 ```json
-{ "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" }
+{ "companyLogoId": "7c1e2f4a-3b5d-4e6f-8a9b-0c1d2e3f4a5b.png" }
 ```
 
 **Step 2: set the returned ID on a customization rule**
@@ -120,7 +120,7 @@ curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
         "name": "Company logo",
         "mode": "active",
         "controls": {
-          "companyLogo": { "mode": "setCompanyLogo", "companyLogoId": "0ASEXAMPLECOMPANYLOGOXXXXXX" }
+          "companyLogo": { "mode": "setCompanyLogo", "companyLogoId": "7c1e2f4a-3b5d-4e6f-8a9b-0c1d2e3f4a5b.png" }
         }
       }'
 ```
@@ -158,7 +158,7 @@ The resolved rule: the fields you sent, every server-side default filled in, and
 <details>
 <summary>Pin managed shortcuts to the new-tab page</summary>
 
-The `managedShortcuts` control sets the applications that appear on the new-tab page and in bookmarks. Use `mode: "setShortcuts"` and provide a `shortcuts` list.
+The `managedShortcuts` control sets the applications that appear on the new-tab page and in bookmarks. Use `mode: "setShortcuts"` and provide a `shortcuts` list of up to 200 entries, at most 16 of them with `pinned: true`. More than 16 pinned shortcuts returns `400`.
 
 ```bash
 curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
@@ -216,6 +216,98 @@ curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
 Response (`201`):
 
 The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Require users to accept a EULA</summary>
+
+The `eula` control shows an End User License Agreement that users must accept. Upload the HTML body first with `POST /assets/eula` (a [preview feature](/prisma-browser/guide/preview-features): send `x-prisma-browser-preview: eula-upload`), then set the returned `eulaId` as `contentId`. `title` (up to 100 characters) and `contentId` are required when `enabled` is `true`. See [Assets](/prisma-browser/guide/assets) for the upload.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Acceptable use agreement",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": {
+          "eula": {
+            "enabled": true,
+            "title": "Acceptable use agreement",
+            "contentId": "3f2b8c1e-7a4d-4e9b-9c21-5d6f0a1b2c3d.html"
+          }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Force-install web apps</summary>
+
+The `webAppForceList` control silently installs up to 50 web apps (PWAs) that users cannot uninstall. Each `url` must be HTTPS and unique in the list. `launchContainer` is `window` (a standalone app window) or `tab` (the default). An icon is optional: omit `webAppIcon` to use the app's manifest icon, set `webAppIcon.webAppIconId` to an icon uploaded with `POST /assets/web-app-icon`, or set `webAppIcon.iconUrl` together with `webAppIcon.iconHash` (the SHA-256 of the file, 64 lowercase hex characters). Use one icon method per app. An empty `webApps` list installs nothing.
+
+```bash
+curl -sS -X POST "$PB_API_BASE/policy/customization/rules" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Company web apps",
+        "mode": "active",
+        "scope": { "users": { "isAny": true } },
+        "controls": {
+          "webAppForceList": {
+            "webApps": [
+              { "url": "https://timesheets.example.com", "displayName": "Timesheets", "launchContainer": "window", "createDesktopShortcut": true },
+              { "url": "https://wiki.example.com" }
+            ]
+          }
+        }
+      }'
+```
+
+Response (`201`):
+
+The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
+
+</details>
+
+<details>
+<summary>Admin messages, network error tips, and IdP-synced shortcuts</summary>
+
+- `adminMessages`: up to 10 messages on the new-tab page. Set `pushMessage: true` on a message to open the admin messages dialog on the New Tab page.
+- `networkErrorPopover` (`enable`/`disable`): shows or hides the Troubleshooting Tips on network error pages.
+- `identityProviderSyncedShortcuts`: shows the applications assigned to the user in the identity provider as shortcuts on the New Tab page. With `action: "enabled"`, set `idpProvider` to `okta` or `entraID`. For `entraID`, also set `idpAppsProviderId` to an enabled Entra ID application sync provider (list them with `GET /integrations/idp-application-sync`). With `action: "disabled"`, omit both fields.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/customization/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "controls": {
+          "adminMessages": {
+            "mode": "enabled",
+            "messages": [
+              { "title": "Maintenance on Saturday", "description": "Email will be unavailable from 02:00 to 04:00 UTC.", "pushMessage": true }
+            ]
+          },
+          "networkErrorPopover": { "action": "disable" },
+          "identityProviderSyncedShortcuts": { "action": "enabled", "idpProvider": "okta" }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMP1ECVST0M1ZAT10NXXXXXX" }
+```
 
 </details>
 

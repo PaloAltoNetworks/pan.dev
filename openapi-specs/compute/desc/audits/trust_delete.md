@@ -1,7 +1,7 @@
 Deletes all the trust audits from the events page in Console.
 
 ```
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \
