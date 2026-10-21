@@ -5,7 +5,7 @@ Returns the certificate bundle that Defender needs to securely connect to Consol
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

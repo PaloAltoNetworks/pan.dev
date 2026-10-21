@@ -2,7 +2,7 @@ Deletes **all** access audits. This deletion cannot be undone.
 
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X DELETE \

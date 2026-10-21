@@ -17,6 +17,24 @@ In addition, you can refer to the TechDocs [product documentation](https://docs.
 See also the [change log](../../cdss/docs/release-notes/changelog) for information on all changes to this API documentation, some of which have
 occurred in between API product releases.
 
+## October 2026
+
+### Threat Vault — Unified API Spec and Frontier Virtual Patching Fields
+
+The Threat Vault API specs for Threat Prevention and Advanced Threat Prevention have been consolidated into a single unified spec under the [Threat Vault](/threat-vault/api/threat-vault/) category.
+
+This update also introduces new response fields for [Frontier Virtual Patching](https://docs.paloaltonetworks.com/advanced-threat-prevention/getting-started/about-advanced-threat-prevention-plus/frontier-virtual-patching) (FVP) predisclosure signatures, returned in the [Request Threat Metadata](/threat-vault/api/threats/) and [Request Threat Metadata in Batch Mode](/threat-vault/api/threatsbatch/) responses:
+
+| Field | Description |
+| ----- | ----------- |
+| `vulnerability_disclosed_date` | Date the vulnerability was publicly disclosed. Null if not yet disclosed. |
+| `first_pre_disclosure_at` | Date the FVP signature was first released, before public disclosure. Null if not applicable. |
+| `discovered_by` | Source that discovered the vulnerability: `oss_research` (NOVA) or `cdp_partner_portal` (Critical Defense Program). |
+| `content_version_min` | Minimum content version for the signature. |
+| `content_version_max` | Maximum content version for the signature. |
+
+These fields are available to Advanced Threat Prevention Plus (ATP+) subscription holders.
+
 ## August 2026
 
 ### Enterprise DLP — DLP API v2 (New)

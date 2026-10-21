@@ -5,7 +5,7 @@ The following example uses basic auth to list history of commands that are run o
 
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -16,7 +16,7 @@ The following command gives list of sudo events on hosts.
 
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
@@ -27,7 +27,7 @@ $ curl \
 The following command gives list of SSHD events on hosts. 
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -2,7 +2,7 @@ Returns a list of all cloud compliance scan results.
 
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

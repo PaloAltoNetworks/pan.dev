@@ -11,7 +11,7 @@ pb_guide:
 
 A **user group** scopes a rule to a set of users. Groups come in two flavors: **local** groups you create and manage directly through this API, and **sso** groups synced from your identity provider (IdP). A rule references a group via its scope, and you control who the rule applies to by editing the group's membership. Use a **local** group when you want a rule's audience driven by your own logic (a script, a CMDB, a rollout schedule).
 
-**On this page:** membership model, limits, examples, endpoint reference, tips.
+**On this page:** membership model, limits, examples, list members, endpoint reference, tips.
 
 ---
 
@@ -27,6 +27,16 @@ The `provider` field tells you where a group comes from:
 :::note
 **Use local groups for automation.** When you want a rule's audience to be driven by your own logic (a script, a CMDB, a rollout schedule), create a **local** user group and manage its members through the API. SSO groups mirror the IdP; change them there, not here.
 :::
+
+---
+
+## Limits
+
+| What | Limit |
+|---|---|
+| Users in one local user group | 25,000 |
+| User groups one rule can scope (`scope.users.userGroups`) | 1000 |
+| `limit` on `GET /user-groups` and `GET /user-groups/{id}/members` | Default 100; values above 1000 are capped at 1000 |
 
 ---
 
@@ -69,7 +79,7 @@ Results are cursor-paginated: the response carries a `pageInfo` object. Pass the
 
 | Query param | Notes |
 |---|---|
-| `limit` | Number of groups to return. |
+| `limit` | Number of groups to return. Default 100; values above 1000 are capped at 1000. |
 | `cursor` | Opaque string marking where to resume listing. |
 
 #### Get one
@@ -171,10 +181,8 @@ Response (`200`):
 }
 ```
 
-:::caution
-**Draft mode for local user groups is rolling out.** On most tenants, changes to a user group (including membership edits) land in the **draft** and go live only when you publish. On a tenant that has not received the rollout yet, the same edits apply directly to the **active** version and there is nothing to publish.
-
-To confirm which mode a tenant is in, open the user groups page in Strata Cloud Manager. If you can switch between the Published and Draft versions there, the tenant is draft-gated and your automation must publish after every write.
+:::note
+Changes to a user group, including membership edits, land in the **draft** and go live only when you publish. Your automation must publish after every write.
 :::
 
 ### Delete
@@ -199,18 +207,19 @@ Response (`200`):
 
 ### Publish with partial publish
 
-The typical [gradual rollout](/prisma-browser/guide/gradual-rollout-with-user-group) loop is: edit group membership, then partial publish only that group so unrelated draft edits are left untouched. Partial publish is available through the API (not yet in the UI). The `id` to publish comes back in the response of the write itself, so no extra lookup is needed.
+The typical [gradual rollout](/prisma-browser/guide/gradual-rollout-with-user-group) loop is: edit group membership, then partial publish only that group so unrelated draft edits are left untouched. Partial publish is available through the API only. It is a [preview feature](/prisma-browser/guide/preview-features): send `x-prisma-browser-preview: partial-publish`. The `id` to publish comes back in the response of the write itself, so no extra lookup is needed.
 
 ```bash
 curl -sS -X POST "$PB_API_BASE/configuration-management/draft/partial-publish" \
   -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: partial-publish" \
   -H "Content-Type: application/json" \
   -d '{ "entityIds": ["'"$UG_ID"'"], "description": "ServiceNow INC0042311: contractor offboarding" }'
 ```
 
 Returns `201` with the new configuration version and the IDs that went live. Creating and deleting groups follow the same pattern: perform the write, then publish the `id` it returned.
 
-If the group has no pending change, for example because the write added a user who was already a member, the call returns `404`:
+If the group has no pending change, the call returns `404`. This happens when the write changed nothing (for example, it added a user who was already a member), in which case there is nothing to publish:
 
 ```json
 {
@@ -218,12 +227,71 @@ If the group has no pending change, for example because the write added a user w
     "code": "NOT_FOUND",
     "message": "No pending change found for one or more of the specified entities.",
     "timestamp": "2026-08-06T09:15:00Z",
-    "details": []
+    "details": {
+      "errors": [
+        {
+          "index": 0,
+          "field": "entityIds",
+          "error": "no pending change in the current draft",
+          "value": "0UG01PILOTXXXXXXXXXXXXXXXXXXX"
+        }
+      ]
+    }
   }
 }
 ```
 
 See [Publish a single object (partial publish)](/prisma-browser/guide/automate-with-partial-publish) for the full error matrix.
+
+### List the members of a group
+
+```
+GET /seb-api/v1/user-groups/{id}/members
+```
+
+:::note
+**Preview.** [Returns the members of a user group](/prisma-browser/api/list-user-group-members) is a [preview feature](/prisma-browser/guide/preview-features). Send `x-prisma-browser-preview: user-group-members` on every call; without it the request returns `400`.
+:::
+
+```bash
+curl -sS -G "$PB_API_BASE/user-groups/$UG_ID/members" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: user-group-members" \
+  --data-urlencode "limit=2"
+```
+
+Response (`200`):
+
+```json
+{
+  "data": [
+    { "id": "0UR01ALICEXXXXXXXXXXXXXXXXXXX", "name": "Alice Example", "email": "alice@example.com" },
+    { "id": "0UR01BOBXXXXXXXXXXXXXXXXXXXXX", "name": "Bob Example", "email": "bob@example.com" }
+  ],
+  "pageInfo": { "hasNextPage": true, "cursor": "eyJ2ZXJzaW9uIjoxfQ", "totalCount": 45 },
+  "metadata": { "configurationVersion": { "id": "0CV01EXAMPLEXXXXXXXXXXXXXXXXX", "status": "draft", "number": 0 } }
+}
+```
+
+| Query param | Notes |
+|---|---|
+| `configurationVersion` | `draft` (default) or `active`. Applies to local groups. SSO group membership comes from directory sync and is always read live. Send the same value on every page. |
+| `limit` | Default 100; values above 1000 are capped at 1000. |
+| `cursor` | `pageInfo.cursor` from the previous page. |
+| `includeTotalCount` | `pageInfo.totalCount` is filled on the first page by default; set `true` or `false` to override. |
+
+Each member is a user reference with `id`, `name`, and `email`. API service accounts are not listed.
+
+How it differs from `GET /users?groupId=`:
+
+| | `GET /user-groups/{id}/members` | `GET /users?groupId=` |
+|---|---|---|
+| Membership read | Draft by default, or active with `configurationVersion=active` | Always active |
+| Returns | `id`, `name`, `email` per member | Full user objects |
+
+Use the members endpoint to check a membership edit before you publish it. `metadata` is omitted when the tenant has no configuration versioning; on such a tenant, do not send `configurationVersion`, or the request returns `400`.
+
+The path `id` must be a user group ID such as `0UG01PILOTXXXXXXXXXXXXXXXXXXX`. A malformed ID returns `400`; an unknown group returns `404`.
 
 ### Read back what is live
 
@@ -242,6 +310,7 @@ curl -sS "$PB_API_BASE/user-groups/$UG_ID?configurationVersion=active" \
 |---|---|---|
 | `GET` | `/user-groups` | List user groups (paginate) |
 | `GET` | `/user-groups/{id}` | Read one user group |
+| `GET` | `/user-groups/{id}/members` | List the members of a user group (preview: `user-group-members`) |
 | `POST` | `/user-groups` | Create a user group |
 | `PUT` | `/user-groups/{id}` | Add or remove members (incremental) |
 | `DELETE` | `/user-groups/{id}` | Delete a user group |
@@ -253,7 +322,7 @@ All paths are under the `/seb-api/v1` base.
 ## Tips and gotchas
 
 :::note
-**One call changes who a rule covers.** Editing a group's membership changes the audience of every rule that references it, without touching the rules themselves. Publish just that group with partial publish (API only today) so the membership change does not ship unrelated draft edits. See [Publish a single object (partial publish)](/prisma-browser/guide/automate-with-partial-publish).
+**One call changes who a rule covers.** Editing a group's membership changes the audience of every rule that references it, without touching the rules themselves. Publish just that group with partial publish (API only today, preview) so the membership change does not ship unrelated draft edits. See [Publish a single object (partial publish)](/prisma-browser/guide/automate-with-partial-publish).
 :::
 
 :::note

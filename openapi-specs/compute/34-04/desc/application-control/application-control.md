@@ -1,0 +1,1 @@
+Prisma Cloud Compute creates and stores host application rules for your environment.

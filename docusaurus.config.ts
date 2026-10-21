@@ -299,8 +299,9 @@ const config = {
           copyright: `Copyright © ${new Date().getFullYear()} Palo Alto Networks, Inc.`,
           language: "en",
           // Emit a description that reads cleanly in Slack/Teams/readers (which
-          // strip HTML and collapse whitespace): summary, one line per change
-          // type, then a link back to the full on-site release note.
+          // strip HTML and collapse whitespace): summary, one paragraph per
+          // change prefixed with its type, then a link back to the full on-site
+          // release note.
           createFeedItems: async ({
             blogPosts,
             defaultCreateFeedItems,
@@ -345,8 +346,8 @@ const config = {
                 const texts = changes
                   .filter((c) => c.type === t)
                   .map((c) => stripHtml(c.text));
-                if (texts.length) {
-                  parts.push(`<p>${esc(`${TYPE_LABEL[t]}: ${texts.join("; ")}`)}</p>`);
+                for (const text of texts) {
+                  parts.push(`<p>${esc(`${TYPE_LABEL[t]}: ${text}`)}</p>`);
                 }
               }
               // Link back to the release notes list page (not the individual
@@ -913,8 +914,8 @@ const config = {
             specPath: "openapi-specs/compute",
             outputDir: "products/compute/api",
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
-            version: "34.04",
-            label: "v34.04",
+            version: "34.05",
+            label: "v34.05",
             showExtensions: true,
             hideSendButton: true,
             baseUrl: "/compute/api/",
@@ -981,6 +982,13 @@ const config = {
             showExtensions: true,
             sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
             baseUrl: "/compute/api/34-03/",
+          },
+          compute_3404: {
+            specPath: "openapi-specs/compute/34-04",
+            outputDir: "products/compute/api/34-04",
+            showExtensions: true,
+            sidebarOptions: { groupPathsBy: "tag", categoryLinkSource: "tag" },
+            baseUrl: "/compute/api/34-04/",
           },
         },
       },
