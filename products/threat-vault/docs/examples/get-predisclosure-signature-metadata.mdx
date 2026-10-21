@@ -1,0 +1,145 @@
+---
+id: get-predisclosure-signature-metadata
+title: Request Predisclosure Signature Metadata (Frontier Virtual Patching)
+description: Threat Vault API example showing how to request metadata for a Frontier Virtual Patching predisclosure signature.
+hide_title: false
+hide_table_of_contents: false
+keywords:
+  - security subscription
+  - frontier virtual patching
+  - predisclosure
+---
+
+The API Reference information for retrieving threat signature metadata can be found
+[here](/threat-vault/api/threat-vault#operation/threats).
+
+## Overview
+
+The Threat Vault API returns Frontier Virtual Patching (FVP) predisclosure signature metadata alongside standard vulnerability signature data. Predisclosure signatures protect against vulnerabilities that have not been publicly disclosed or patched by software vendors.
+
+FVP signatures include additional response fields that are not present in standard vulnerability signatures:
+
+- `first_pre_disclosure_at` — Date the FVP signature was first released, before public disclosure.
+- `vulnerability_disclosed_date` — Date the vulnerability was publicly disclosed. Null while the signature is in predisclosure.
+- `discovered_by` — Source that discovered the vulnerability: `oss_research` (NOVA open-source scanning) or `cdp_partner_portal` (Critical Defense Program partner feed).
+
+Keep a few things in mind when formatting your API query:
+
+1. All the query strings in Get requests must be a URL-Encoded parameter string. If you use a space in the URL-Encoded request, you must include either a plus sign (+) or %20 to replace the space.
+2. You can specify the content type of the request body and response by specifying the Content-Type header. Some responses generate an HTTP response in addition to a JSON object.
+3. Do not embed API keys in code or application source tree files. This can inadvertently expose the API key. Instead, consider storing the API key in environmental variables or files that are excluded from your application source tree files.
+
+## Example 1: Request metadata for a predisclosure vulnerability signature
+
+```shell-session
+curl -H 'X-API-KEY: API_KEY' 'https://api.threatvault.paloaltonetworks.com/service/v1/threats?id=THREAT_ID'
+```
+
+A successful API call returns `status="success"` along with the signature details. For a predisclosure signature, the response includes FVP-specific fields and limited metadata (the name uses a generic format and CVE is unassigned while under embargo):
+
+```json
+{
+  "success": true,
+  "link": {
+    "next": null,
+    "previous": null
+  },
+  "count": 1,
+  "data": {
+    "vulnerability": [
+      {
+        "id": "544458",
+        "name": "Pre-Disclosure Vulnerability Exploit",
+        "description": "Under Embargo - Details withheld until coordinated disclosure",
+        "category": "code-execution",
+        "severity": "high",
+        "default_action": "alert",
+        "content_version_min": "",
+        "content_version_max": "",
+        "first_pre_disclosure_at": "2026-09-24",
+        "discovered_by": "oss_research",
+        "vulnerability_disclosed_date": null,
+        "cve": [
+          "unassigned"
+        ],
+        "vendor": [],
+        "reference": [],
+        "status": "pre-disclosure",
+        "details": {},
+        "min_version": "11.1",
+        "max_version": "",
+        "ori_release_version": null,
+        "latest_release_version": null,
+        "ori_release_time": null,
+        "latest_release_time": null
+      }
+    ]
+  },
+  "message": "Successful"
+}
+```
+
+Key fields to note for predisclosure signatures:
+
+- **`name`** — All predisclosure signatures use `"Pre-Disclosure Vulnerability Exploit"`. After disclosure, this changes to a descriptive name for the specific vulnerability.
+- **`status`** — `"pre-disclosure"` while under embargo. Changes to the standard signature status after disclosure.
+- **`cve`** — Contains `"unassigned"` while in predisclosure. Populated with CVE identifiers after the vulnerability is publicly disclosed.
+- **`vendor`**, **`reference`** — Empty while in predisclosure. Populated after the vulnerability is publicly disclosed.
+- **`vulnerability_disclosed_date`** — `null` while in predisclosure. Set to the disclosure date after the vulnerability is publicly disclosed.
+- **`first_pre_disclosure_at`** — The date the FVP signature was first deployed to the cloud. This tells you when preemptive protection began.
+- **`discovered_by`** — `"oss_research"` for vulnerabilities discovered by NOVA (open-source scanning) or `"cdp_partner_portal"` for vulnerabilities from the Critical Defense Program.
+- **`default_action`** — Set to `"alert"` for predisclosure signatures. May change after disclosure.
+
+## Example 2: Predisclosure signature after public disclosure
+
+After the vulnerability is publicly disclosed and the signature migrates to a standard content update, the same Threat ID returns updated metadata:
+
+```json
+{
+  "success": true,
+  "link": {
+    "next": null,
+    "previous": null
+  },
+  "count": 1,
+  "data": {
+    "vulnerability": [
+      {
+        "id": "544458",
+        "name": "Example Software Library Buffer Overflow Vulnerability",
+        "description": "A buffer overflow vulnerability exists in Example Software Library versions prior to 3.2.1. The vulnerability is due to improper bounds checking when parsing crafted input. An attacker could exploit this vulnerability by sending specially crafted requests to a vulnerable server. Successful exploitation could lead to remote code execution.",
+        "category": "code-execution",
+        "severity": "high",
+        "default_action": "reset-server",
+        "content_version_min": "9200",
+        "content_version_max": "",
+        "first_pre_disclosure_at": "2026-09-24",
+        "discovered_by": "oss_research",
+        "vulnerability_disclosed_date": "2026-11-14",
+        "cve": [
+          "CVE-2026-XXXXX"
+        ],
+        "vendor": [
+          "ExampleVendor-SA-2026-001"
+        ],
+        "reference": [
+          "https://example.com/security/advisory/2026-001"
+        ],
+        "status": "released",
+        "details": {
+          "change_data": "signature released to content"
+        },
+        "min_version": "11.1",
+        "max_version": "",
+        "ori_release_version": "9200",
+        "latest_release_version": "9200",
+        "ori_release_time": "2026-11-15T10:00:00Z",
+        "latest_release_time": "2026-11-15T10:00:00Z"
+      }
+    ]
+  },
+  "message": "Successful"
+}
+```
+
+After disclosure, the signature retains its original Threat ID and `first_pre_disclosure_at` date, but the `name`, `description`, `cve`, `vendor`, `reference`, and `vulnerability_disclosed_date` fields are populated with full details.

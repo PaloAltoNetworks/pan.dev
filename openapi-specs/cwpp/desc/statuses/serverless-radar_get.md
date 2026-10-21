@@ -1,7 +1,7 @@
 Returns the status of the serverless scans.
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

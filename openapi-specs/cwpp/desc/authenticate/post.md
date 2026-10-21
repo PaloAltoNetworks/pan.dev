@@ -9,7 +9,7 @@ You can set the validity period in Console under **Manage > Authentication > Log
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -H "Content-Type: application/json" \
   -X POST \
   -d \

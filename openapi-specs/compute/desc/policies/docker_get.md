@@ -3,7 +3,7 @@ Retrieves a list of all access control rules for Docker Engine commands.
 Example curl command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

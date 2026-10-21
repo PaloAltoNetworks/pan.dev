@@ -21,25 +21,27 @@ Base path: `/seb-api/v1/policy/access-and-data`.
 
 | Field | Required | Notes |
 |---|---|---|
-| `name` | Yes | 1-300 characters |
+| `name` | Yes | 1-350 characters |
 | `mode` | Yes | `active` or `disabled` |
 | `applications` | Yes | Which applications/URLs the rule targets. At least one segment must be configured. |
 | `access` | Yes | The access decision: `{ "action": "allow" \| "block" \| "prompt" \| "redirect" }`, plus optional access controls. |
 | `tracking` | Yes | Logging and evidence. Must include `logLevel` (`off`, `anonymized`, `on`, `enhanced`). |
 | `scope` | No (recommended) | Who the rule applies to. Omitting it applies to everyone. |
 | `loginControls` | No | Login behavior, keyed by type (`formLogin`, `passkeyLogin`, `idpLogin`, `socialLogin`). |
-| `dataControls` | No | Data protection controls + optional `dlpProfileId`. |
+| `dataControls` | No | Data protection controls. When sent, it must contain at least one non-null control. |
+| `dlp` | No | Enterprise DLP settings: `profileId`, `bypassProfileValidation`, `detectionConfidence`. Replaces the deprecated `dataControls.dlpProfileId`. |
 
 ## Structure
 
-The four building blocks of every access and data rule:
+The building blocks of every access and data rule:
 
 | Block | Purpose |
 |---|---|
 | `applications` | Defines the target: `saas`, `private`, `nonWeb`, `localDesktop`, and `applicationGroups` segments, each with an `accessMode` of `none`, `any`, or `specific`. |
 | `access` | The decision (`allow`/`block`/`prompt`/`redirect`) plus access controls like `label`, `requireAuthentication`, and `openInPrismaBrowser`. |
 | `loginControls` | How users may authenticate to the target application (form login, passkeys, IdP, social). |
-| `dataControls` | What users may do with data: clipboard, file upload/download, watermarking, printing, screenshots, and DLP. |
+| `dataControls` | What users may do with data: clipboard, file upload/download, watermarking, printing, screenshots, web page interaction, and request identification (`userAgent`, `customHttpHeader`). |
+| `dlp` | The Enterprise DLP data profile the rule scans content against. |
 
 A complete rule with all five application segments, the access decision, login controls, data controls, and tracking:
 
@@ -78,6 +80,43 @@ A complete rule with all five application segments, the access decision, login c
 ```
 
 `applicationGroups` accepts only `none` or `specific` (there is no `any`). `nonWeb` accepts `none`, `anyAdminDefined`, or `specific`. The remaining three segments (`saas`, `private`, `localDesktop`) accept `none`, `any`, or `specific`.
+
+### Tenant restrictions by application
+
+`applications.tenantConditions.apps` limits supported applications to your organization's accounts. Each key is an application name and holds the email domains that count as your tenant. A user signed in with an address outside those domains is treated as a personal or third-party account.
+
+```json
+"tenantConditions": {
+  "apps": {
+    "zoom": { "domains": [ "example.com" ] },
+    "figma": { "domains": [ "example.com", "example.co.uk" ] }
+  }
+}
+```
+
+| Key | Application |
+|---|---|
+| `airtable` | Airtable |
+| `bitbucket` | Bitbucket |
+| `bonusly` | Bonusly |
+| `box` | Box |
+| `concur` | SAP Concur |
+| `figma` | Figma |
+| `launchdarkly` | LaunchDarkly |
+| `linear` | Linear |
+| `lucid` | Lucid |
+| `mongodb` | MongoDB |
+| `newrelic` | New Relic |
+| `pagerduty` | PagerDuty |
+| `panopto` | Panopto |
+| `posthog` | PostHog |
+| `sentry` | Sentry |
+| `typeform` | Typeform |
+| `workday` | Workday |
+| `zendesk` | Zendesk |
+| `zoom` | Zoom |
+
+Each application takes up to 100 domains, and a rule accepts at most 1000 domains across all applications.
 
 ## Create an access and data rule
 
@@ -122,7 +161,16 @@ The resolved rule: the fields you sent, every server-side default filled in, and
 ## Login and data controls
 
 - Login controls (`loginControls`) gate how users authenticate to the target application. See [Manage login and data controls](/prisma-browser/guide/manage-login-and-data-controls).
-- Data controls (`dataControls`) protect data in the session, and can attach an Enterprise DLP profile via `dlpProfileId`. See [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile).
+- Data controls (`dataControls`) protect data in the session. See [Manage login and data controls](/prisma-browser/guide/manage-login-and-data-controls).
+- The top-level `dlp` object links an Enterprise DLP data profile (`dlp.profileId`). See [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile).
+
+:::caution
+**`dataControls.dlpProfileId` is deprecated.** Use `dlp.profileId`. The same applies to `dataControls.dlpProfile` (now `dlp.profile`) and `dataControls.bypassDlpProfileValidation` (now `dlp.bypassProfileValidation`). The old locations still work during the deprecation window and will then be removed.
+:::
+
+:::note
+**`userAgent` and `customHttpHeader`.** Configure these controls under `dataControls`. They moved here from customization rules: a customization rule keeps and can still edit the ones it already has, but adding a new one there returns `400`.
+:::
 
 :::note
 **Controls are replaced whole on PATCH.** A control you include replaces its previous body; omitted controls are preserved; `null` removes a control. There is no per-element delta inside a control.
@@ -219,9 +267,9 @@ curl -sS -X POST "$PB_API_BASE/policy/access-and-data/rules" \
           },
           "fileProtection": {
             "fileDownload": { "action": "block" }
-          },
-          "dlpProfileId": "11995044"
+          }
         },
+        "dlp": { "profileId": "11995044" },
         "tracking": { "logLevel": "enhanced", "sessionRecording": false }
       }'
 ```
@@ -267,9 +315,9 @@ curl -sS -X POST "$PB_API_BASE/policy/access-and-data/rules" \
         },
         "access": { "action": "allow" },
         "dataControls": {
-          "dlpProfileId": "11995044",
           "fileProtection": { "fileUpload": { "action": "block" } }
         },
+        "dlp": { "profileId": "11995044" },
         "tracking": { "logLevel": "on", "sessionRecording": false }
       }'
 ```
@@ -278,7 +326,7 @@ Response (`201`):
 
 The resolved rule: the fields you sent, every server-side default filled in, and the new `id`.
 
-**Note:** `dlpProfileId` cannot stand alone. It must accompany at least one inline data control (here, `fileProtection`). See [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile).
+**Note:** `dlp.profileId` needs at least one inline data control on the rule; a profile on its own returns `400`. See [Set a DLP profile on a rule](/prisma-browser/guide/set-a-dlp-profile).
 
 </details>
 
@@ -337,6 +385,61 @@ Response (`200`):
 ```
 
 Set `excludeOmnibox: true` on a direction to leave the address bar out of the restriction.
+
+</details>
+
+<details>
+<summary>Hide, disable, or mask page elements</summary>
+
+`webUserInteraction` targets elements by CSS selector. Each selector takes an `action`: `hide` (the default), `disable`, or `mask`. `selectors` is required and non-empty when the control's `action` is `enable`.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "dataControls": {
+          "webUserInteraction": {
+            "action": "enable",
+            "selectors": [
+              { "name": "Export button", "selector": "#export", "action": "disable" },
+              { "name": "Salary column", "selector": ".salary", "action": "mask" }
+            ]
+          }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEACCESSRULEXXXXXXX" }
+```
+
+</details>
+
+<details>
+<summary>Identify Prisma Browser traffic with a header</summary>
+
+Add a custom HTTP header, or a User-Agent component, to requests that match the rule, so an upstream proxy or the application can recognize them.
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/policy/access-and-data/rules/$RULE_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "dataControls": {
+          "customHttpHeader": { "mode": "custom", "customHeaderName": "X-Corp-Browser", "customHeaderValue": "prisma" },
+          "userAgent": { "mode": "custom", "additionalComponent": "CorpManaged" }
+        }
+      }'
+```
+
+Response (`200`):
+
+```json
+{ "id": "0RLEXAMPLEACCESSRULEXXXXXXX" }
+```
 
 </details>
 

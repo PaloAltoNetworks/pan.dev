@@ -8,7 +8,7 @@ For more information, see [Logging](https://docs.paloaltonetworks.com/prisma/pri
 Refer to the following example cURL request that enables verbose scan output for syslog and stdout:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X POST \

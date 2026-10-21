@@ -13,7 +13,7 @@ To view the more details about the progress of a regular or on-demand registry s
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

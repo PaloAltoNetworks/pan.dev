@@ -1,7 +1,7 @@
 Returns the workload statistics from Console.
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

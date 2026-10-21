@@ -5,7 +5,7 @@ Retrieves a list of tags.
 Refer to the following example cURL command that retrieves a list of tags:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

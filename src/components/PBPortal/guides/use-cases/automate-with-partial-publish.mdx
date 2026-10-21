@@ -12,7 +12,7 @@ pb_guide:
 ---
 
 :::caution
-**Partial publish is not in the public API yet.** The endpoint is implemented but gated per tenant, so it is absent from the published API reference. Confirm it is enabled on your tenant before relying on it.
+**Partial publish is a [preview feature](/prisma-browser/guide/preview-features).** Send `x-prisma-browser-preview: partial-publish` on every call; without it the request returns `400`. See [Partial publish draft](/prisma-browser/api/partial-publish-draft-configuration) in the API reference.
 :::
 
 When automation changes one object, you usually want to publish only that object, not whatever else happens to be sitting in the shared draft. [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) makes this a clean two-call pattern: edit the object, then publish only that object by ID.
@@ -25,7 +25,7 @@ When automation changes one object, you usually want to publish only that object
 **Prerequisites:** a Super User service account and the environment variables from [Getting started](/prisma-browser/guide/getting-started). Read [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish) and [Draft and publish](/prisma-browser/guide/draft-and-publish) first.
 
 :::note
-**Non-policy objects only.** This phase supports user groups (`0UG`), application groups (`0AG`), applications (`0AP`), device groups (`0DG`), and tags (`0TG`). Naming a rule or section returns `501`. For policy changes, use a normal full publish.
+**Non-policy objects only.** Partial publish supports user groups, application groups, applications, device groups, and application tags. Naming a rule or section returns `501 PARTIAL_PUBLISH_POLICY_UNSUPPORTED`; for policy changes, use a normal full publish.
 :::
 
 ---
@@ -64,6 +64,7 @@ The `id` you need for the next call comes back in this response, so no extra loo
 ```bash
 curl -sS -X POST "$PB_API_BASE/configuration-management/draft/partial-publish" \
   -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: partial-publish" \
   -H "Content-Type: application/json" \
   -d '{ "entityIds": ["'"$UG_ID"'"], "description": "ServiceNow INC0042311: contractor offboarding" }'
 ```
@@ -94,6 +95,7 @@ Where one automation run modifies several objects, collect the IDs and submit th
 ```bash
 curl -sS -X POST "$PB_API_BASE/configuration-management/draft/partial-publish" \
   -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: partial-publish" \
   -H "Content-Type: application/json" \
   -d '{
         "entityIds": [
@@ -150,6 +152,7 @@ import os, requests
 
 base = os.environ["PB_API_BASE"]
 headers = {"Authorization": f"Bearer {os.environ['PB_TOKEN']}"}
+publish_headers = {**headers, "x-prisma-browser-preview": "partial-publish"}
 
 def edit_and_publish_group(ug_id, add=(), remove=(), reason=None):
     # 1. Edit the object
@@ -160,7 +163,7 @@ def edit_and_publish_group(ug_id, add=(), remove=(), reason=None):
                      json={"users": users}, timeout=30).raise_for_status()
 
     # 2. Publish only that object
-    resp = requests.post(f"{base}/configuration-management/draft/partial-publish", headers=headers,
+    resp = requests.post(f"{base}/configuration-management/draft/partial-publish", headers=publish_headers,
         json={"entityIds": [ug_id], "description": reason or f"Update {ug_id}"}, timeout=30)
     resp.raise_for_status()
     return resp.json()
@@ -175,7 +178,7 @@ print("published:", result["publishedEntityIds"], "version:", result["configurat
 
 ## Error cases
 
-Errors share one envelope. Where present, `details[]` identifies the offending items, and `field` gives the position in the request, for example `entityIds[2]`:
+Errors share one envelope. Where present, `details.errors[]` identifies the offending items: `field` names the request field, `index` its position, `value` the offending ID, and `error` (when present) the reason:
 
 ```json
 {
@@ -183,20 +186,26 @@ Errors share one envelope. Where present, `details[]` identifies the offending i
     "code": "NOT_FOUND",
     "message": "No pending change found for one or more of the specified entities.",
     "timestamp": "2026-08-06T09:15:00Z",
-    "details": []
+    "details": {
+      "errors": [
+        { "index": 0, "field": "entityIds", "error": "no pending change in the current draft", "value": "0UG01TEAMXXXXXXXXXXXXXXXXXXXX" }
+      ]
+    }
   }
 }
 ```
 
 | HTTP | `code` | Condition | What to do |
 |---|---|---|---|
-| 400 | `VALIDATION_ERROR` | An ID is malformed or duplicated, the list is empty or exceeds 1000 items, or the body carries only `description` | Correct the request. This is a defect in the caller; do not retry unchanged |
+| 400 | `VALIDATION_ERROR` | An ID is malformed or duplicated, the list is empty or exceeds 1000 items, the body carries only `description`, or the `x-prisma-browser-preview` header is missing | Correct the request. This is a defect in the caller; do not retry unchanged |
 | 403 | `FORBIDDEN` | The service account cannot publish configuration changes | Use a Super User account |
-| 404 | `NOT_FOUND` | A valid, supported ID has no pending change in the draft. `details[]` lists every affected ID | Usually the write made no material change, or the object was already published. Do not retry unchanged |
-| 409 | `CONFLICT` | A named object depends on an unpublished change you did not include. `details[].ids` lists the blockers | Include the blocking IDs and retry, or escalate. Reports the first conflict found |
+| 404 | `NOT_FOUND` | A valid, supported ID has no pending change in the draft. `details.errors[]` lists every affected ID | Usually the write made no material change, or the object was already published. Do not retry unchanged |
+| 409 | `CONFLICT` | A named object depends on an unpublished change you did not include. `details.errors[].ids` lists the blockers | Include the blocking IDs and retry, or escalate. Reports only the first conflict found |
+| 409 | `PUBLISH_IN_PROGRESS` | Another publish or a draft reset holds the draft lock. Nothing was published | Wait, then retry |
+| 429 | (gateway) | The tenant's request rate limit was exceeded | Retry after the current window; see [Errors](/prisma-browser/guide/errors) |
 | 500 | `INTERNAL_ERROR` | Unexpected server-side failure | Retry with bounded exponential backoff. Nothing was published |
-| 501 | `PARTIAL_PUBLISH_POLICY_UNSUPPORTED` | You named a rule or section (`0RL` / `0SR`) | Publish policy changes with a full publish |
-| 501 | `UNSUPPORTED_OPERATION` | The entity type is not partially publishable, or partial publish is not enabled for the tenant | Use a full publish |
+| 501 | `PARTIAL_PUBLISH_POLICY_UNSUPPORTED` | You named a rule or section. `details.errors[]` lists every offender | Publish policy changes with a full publish |
+| 501 | `PARTIAL_PUBLISH_TYPE_UNSUPPORTED` | You named an entity that is not supported in draft mode. `details.errors[]` lists every offender | Use a full publish |
 
 Two of these deserve explicit handling:
 

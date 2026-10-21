@@ -5,7 +5,7 @@ You can also add optional query parameters to this API call, in this example `cl
 The following example curl command retrieves the list of addresses:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \
