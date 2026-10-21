@@ -5,7 +5,7 @@ Retrieves all audit events for log inspection checks that are configured under h
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

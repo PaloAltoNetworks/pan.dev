@@ -15,7 +15,7 @@ The returned JSON object has the following structure:
 Refer to the following example cURL command:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

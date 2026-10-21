@@ -5,7 +5,7 @@ Returns statistics about the resources protected by Prisma Cloud Compute, includ
 Refer to the following example cURL command that retrieves dashboard stats:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

@@ -70,11 +70,11 @@ POST /seb-api/v1/configuration-management/draft/partial-publish
 **Partial publish** promotes only the objects you name in `entityIds`. The rest of the draft stays pending.
 
 :::caution
-**Partial publish is not in the public API yet.** The endpoint is implemented but gated per tenant, so it is absent from the published API reference. Confirm it is enabled on your tenant before relying on it.
+**Partial publish is a [preview feature](/prisma-browser/guide/preview-features).** Send `x-prisma-browser-preview: partial-publish` on every call; without it the request returns `400`. See [Partial publish draft](/prisma-browser/api/partial-publish-draft-configuration) in the API reference.
 :::
 
 :::note
-**Non-policy objects only.** Partial publish supports user groups, application groups, applications, device groups, and tags. Naming a rule (`0RL`) or a section (`0SR`) returns `501 PARTIAL_PUBLISH_POLICY_UNSUPPORTED`. Publish policy changes with a full publish.
+**Non-policy objects only.** Partial publish supports user groups, application groups, applications, device groups, and application tags. Naming a rule or a section returns `501 PARTIAL_PUBLISH_POLICY_UNSUPPORTED`; publish policy changes with a full publish.
 :::
 
 ### Full publish
@@ -93,6 +93,7 @@ A `201` means a new active version was created and everything staged in the draf
 ```bash
 curl -sS -X POST "$PB_API_BASE/configuration-management/draft/partial-publish" \
   -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: partial-publish" \
   -H "Content-Type: application/json" \
   -d '{
         "entityIds": [ "0UG01PILOTXXXXXXXXXXXXXXXXXXX" ],
@@ -120,13 +121,15 @@ Always include a `description` that references your internal ticket or change-re
 | HTTP | Meaning | What to do |
 |---|---|---|
 | 201 | A new active version was created | Done. Your changes are live. |
-| 409 | The draft has no changes | Nothing to publish; usually safe to ignore |
+| 400 | The request is invalid (for example a `description` over 255 characters), or the draft would leave more than 1000 rules in one policy type | Correct the request, or delete rules from the draft before you publish |
 | 403 | Service account lacks write permission | Use a Super User account |
-| 501 | Draft mode is not supported for this tenant | Contact your account team |
+| 409 | `CONFLICT`: the draft has no changes | Nothing to publish; usually safe to ignore |
+| 409 | `PUBLISH_IN_PROGRESS`: another publish or a draft reset holds the draft lock. Nothing was published | Wait, then retry |
+| 429 | The tenant's request rate limit was exceeded | Retry after the current window; see [Errors](/prisma-browser/guide/errors) |
 
 ### Partial publish responses
 
-A `201` returns the new version and the IDs that went live, as shown above. Errors share one envelope. Where present, `details[]` identifies the offending items, and `field` gives the position in the request, for example `entityIds[2]`:
+A `201` returns the new version and the IDs that went live, as shown above. Errors use the format below. Where present, `details.errors[]` identifies the offending items: `field` names the request field, `index` its position, `value` the offending ID, and `error` (when present) the reason:
 
 ```json
 {
@@ -134,20 +137,26 @@ A `201` returns the new version and the IDs that went live, as shown above. Erro
     "code": "NOT_FOUND",
     "message": "No pending change found for one or more of the specified entities.",
     "timestamp": "2026-08-06T09:15:00Z",
-    "details": []
+    "details": {
+      "errors": [
+        { "index": 0, "field": "entityIds", "error": "no pending change in the current draft", "value": "0UG01PILOTXXXXXXXXXXXXXXXXXXX" }
+      ]
+    }
   }
 }
 ```
 
 | HTTP | `code` | Condition | What to do |
 |---|---|---|---|
-| 400 | `VALIDATION_ERROR` | An ID is malformed or duplicated, the list is empty or exceeds 1000 items, or the body carries only `description` | Correct the request. This is a defect in the caller; do not retry unchanged |
+| 400 | `VALIDATION_ERROR` | An ID is malformed or duplicated, the list is empty or exceeds 1000 items, the body carries only `description`, or the `x-prisma-browser-preview` header is missing | Correct the request. This is a defect in the caller; do not retry unchanged |
 | 403 | `FORBIDDEN` | The service account cannot publish configuration changes | Use a Super User account |
-| 404 | `NOT_FOUND` | A valid, supported ID has no pending change in the draft. `details[]` lists every affected ID | Usually the write made no material change, or the object was already published. Do not retry unchanged |
-| 409 | `CONFLICT` | A named object depends on an unpublished change you did not include. `details[].ids` lists the blockers | Include the blocking IDs and retry, or escalate. Reports the first conflict found |
+| 404 | `NOT_FOUND` | A valid, supported ID has no pending change in the draft. `details.errors[]` lists every affected ID | Usually the write made no material change, or the object was already published. Do not retry unchanged |
+| 409 | `CONFLICT` | A named object depends on an unpublished change you did not include. `details.errors[].ids` lists the blockers | Include the blocking IDs and retry, or escalate. Reports only the first conflict found |
+| 409 | `PUBLISH_IN_PROGRESS` | Another publish or a draft reset holds the draft lock. Nothing was published | Wait, then retry |
+| 429 | (gateway) | The tenant's request rate limit was exceeded | Retry after the current window; see [Errors](/prisma-browser/guide/errors) |
 | 500 | `INTERNAL_ERROR` | Unexpected server-side failure | Retry with bounded exponential backoff. Nothing was published |
-| 501 | `PARTIAL_PUBLISH_POLICY_UNSUPPORTED` | The request named a rule or section | Publish policy objects with a full publish |
-| 501 | `UNSUPPORTED_OPERATION` | The request named an unsupported object type, or partial publish is not enabled for the tenant | Use a full publish |
+| 501 | `PARTIAL_PUBLISH_POLICY_UNSUPPORTED` | The request named a rule or section. `details.errors[]` lists every offender | Publish policy objects with a full publish |
+| 501 | `PARTIAL_PUBLISH_TYPE_UNSUPPORTED` | The request named an entity that is not supported in draft mode. `details.errors[]` lists every offender | Use a full publish |
 
 Two of these deserve explicit handling in automation:
 
@@ -206,6 +215,7 @@ An empty draft returns `200` with an empty `data` array, not `404`. Paginate wit
 ```bash
 curl -sS -X POST "$PB_API_BASE/configuration-management/draft/partial-publish" \
   -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: partial-publish" \
   -H "Content-Type: application/json" \
   -d '{"entityIds": ["0UG01PILOTXXXXXXXXXXXXXXXXXXX"], "description": "CHG-00124: add pilot user group"}'
 ```
@@ -228,6 +238,7 @@ curl -sS -X POST "$PB_API_BASE/configuration-management/draft/publish" \
 # Step 2b: or publish only the specific objects you want
 curl -sS -X POST "$PB_API_BASE/configuration-management/draft/partial-publish" \
   -H "Authorization: Bearer $PB_TOKEN" \
+  -H "x-prisma-browser-preview: partial-publish" \
   -H "Content-Type: application/json" \
   -d '{"entityIds": ["0UG01PILOTXXXXXXXXXXXXXXXXXXX"], "description": "CHG-00124: add pilot user group"}'
 ```
@@ -307,7 +318,7 @@ To stage a change without enforcing it immediately, create rules with `"mode": "
 
 - **"I created a rule but it isn't enforced."** You created it on the draft. Publish to make it active.
 - **"My GET doesn't show my change."** You probably read `?configurationVersion=active`. Remove it (or use `draft`) to see pending edits.
-- **"Publish returned 409."** The draft is identical to active. There was nothing to publish.
+- **"Publish returned 409."** Check `error.code`. `CONFLICT` means the draft is identical to active and there was nothing to publish. `PUBLISH_IN_PROGRESS` means another publish was running; retry after it finishes.
 - **Concurrent editors.** The draft is shared per tenant. If multiple automations (or a human in Strata Cloud Manager) edit at once, a publish promotes everyone's staged changes together. Use `GET /configuration-management/draft/pending-changes` to check what is staged before publishing.
 
 ---

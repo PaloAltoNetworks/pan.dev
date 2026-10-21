@@ -92,6 +92,10 @@ module.exports = {
             },
             {
               type: "doc",
+              id: "threat-vault/docs/examples/get-predisclosure-signature-metadata",
+            },
+            {
+              type: "doc",
               id: "threat-vault/docs/examples/get-content-release-notes",
             },
             {

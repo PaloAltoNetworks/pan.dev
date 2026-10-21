@@ -5,7 +5,7 @@ Returns the proxy settings for Prisma Cloud Compute containers to access the Int
 Refer to the following example cURL request:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

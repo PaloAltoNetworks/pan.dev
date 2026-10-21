@@ -21,7 +21,7 @@ Create `custom_check.json` file (example):
 Refer to the following example curl command that uses basic auth to update the checks:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X PUT \

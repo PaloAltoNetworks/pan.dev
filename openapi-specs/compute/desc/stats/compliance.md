@@ -5,7 +5,7 @@ For the current day, the response will also include detailed compliance stats fo
 The following example command that uses curl and basic auth to retrieve compliance statistics:
 
 ```bash
-$ curl \
+$ curl -k \
   -u <USER> \
   -H 'Content-Type: application/json' \
   -X GET \

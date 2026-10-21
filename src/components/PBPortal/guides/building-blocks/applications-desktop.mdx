@@ -12,7 +12,7 @@ pb_guide:
 
 A **desktop application** represents a native application installed on the endpoint, identified by the executable file names it runs under. Use it when policy needs to recognize a program outside the browser. Reference it from an [access and data rule](/prisma-browser/guide/access-and-data-rules) directly or through an [application group](/prisma-browser/guide/application-groups).
 
-There are two types. You define a `localdesktopcustom` application yourself. A `localdesktopcatalog` application comes from the catalog that Palo Alto Networks curates, and is read-only.
+There are two types. You define a `localdesktopcustom` application yourself. A `localdesktopcatalog` application comes from the catalog that Palo Alto Networks curates: you can set its classification and tags, but nothing else.
 
 **On this page:** custom vs catalog, key fields, limits, retrieve, create, update, delete, endpoint reference, tips, examples.
 
@@ -24,10 +24,10 @@ There are two types. You define a `localdesktopcustom` application yourself. A `
 |---|---|---|
 | Who defines it | You | Palo Alto Networks |
 | Scope | Your tenant only | Shared by all tenants |
-| Create, update, delete | Yes | No |
+| Create, update, delete | Yes | No (classification and tags only) |
 | List and read | Yes | Yes |
 | Reference from a rule | Yes | Yes |
-| Set `classification` and `tagIDs` | Yes | Not yet. Setting them through the API is planned for a future release. Until then, set them on the Applications page in the Prisma Browser admin console in Strata Cloud Manager |
+| Set `classification` and `tagIDs` | Yes | Yes, with `PATCH` or [bulk update](/prisma-browser/guide/application-tags#bulk-update) |
 | Executables | 1 to 50, you choose them | Fixed, curated |
 
 Both types are Windows-only, and both are matched the same way: the Prisma Browser compares the running process against the `originalFileName` entries in `executables`, case-insensitively.
@@ -50,7 +50,7 @@ For a `localdesktopcustom` application you send:
 | `classification` | string | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
 | `tagIDs` | array or object | no | See [Tags and classification](/prisma-browser/guide/applications#tags-and-classification) |
 
-A `localdesktopcatalog` application returns the same fields, including `classification` and `tags`, but accepts none of them: it has no create or update endpoint.
+A `localdesktopcatalog` application returns the same fields, including `classification` and `tags`. Of those, it accepts only `classification` and `tagIDs`, on `PATCH` with `"type": "localdesktopcatalog"`.
 
 Desktop applications have no `urls` list, so the URL object and strict mode do not apply.
 
@@ -65,6 +65,8 @@ Desktop applications have no `urls` list, so the URL object and strict mode do n
 | Executables per application | 1 to 50 |
 | Executable file name length | 255 characters |
 | `description` length | 2500 characters |
+
+For per-tenant totals and how stored lists are counted, see [Entity limits](/prisma-browser/guide/entity-limits).
 
 ---
 
@@ -95,6 +97,8 @@ Response (`200`):
       "name": "Acme Desktop Client",
       "description": "",
       "category": "Uncategorized",
+      "classification": "Sanctioned",
+      "tags": [ { "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX", "name": "Finance approved" } ],
       "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
       "executables": { "data": [ { "originalFileName": "acme-client.exe" } ] }
     }
@@ -125,6 +129,8 @@ Response (`200`):
   "name": "Acme Desktop Client",
   "description": "Acme native client and helper",
   "category": "Uncategorized",
+  "classification": "Sanctioned",
+  "tags": [ { "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX", "name": "Finance approved" } ],
   "metadata": { "createdTime": "2026-01-15T10:00:00Z", "lastUpdatedTime": "2026-01-15T10:00:00Z" },
   "executables": {
     "data": [
@@ -162,6 +168,8 @@ Response (`200`):
       "name": "Zoom",
       "description": "Video conferencing tool providing high-quality meetings, webinars, and screen sharing.",
       "category": "Internet Conferencing",
+      "classification": "Sanctioned",
+      "tags": [ { "id": "0TG01F1NANCEAPPR0VEDXXXXXXXXX", "name": "Finance approved" } ],
       "metadata": { "createdTime": "2026-03-26T16:12:00Z", "lastUpdatedTime": "2026-03-26T16:12:00Z" },
       "executables": { "data": [ { "originalFileName": "Zoom" } ] }
     }
@@ -289,6 +297,7 @@ To delete many at once, use [bulk delete](/prisma-browser/guide/applications#bul
 | `DELETE` | `/applications/type/localdesktopcustom/{id}` | Delete one desktop application |
 | `GET` | `/applications/type/localdesktopcatalog` | List the desktop catalog (filter, paginate) |
 | `GET` | `/applications/type/localdesktopcatalog/{id}` | Read one catalog desktop application |
+| `PATCH` | `/applications/type/localdesktopcatalog/{id}` | Set `classification` and `tagIDs` on a catalog desktop application |
 
 All paths are under the `/seb-api/v1` base.
 
@@ -305,7 +314,14 @@ All paths are under the `/seb-api/v1` base.
 :::
 
 :::note
-**The catalog is read-only through this API.** There is no create, update, or delete endpoint for `localdesktopcatalog`. A catalog entry still returns `classification` and `tags` scoped to your tenant. Setting them through the API is planned for a future release. Until then, set them on the Applications page in the Prisma Browser admin console in Strata Cloud Manager.
+**On the catalog you set classification and tags only.** There is no create or delete endpoint for `localdesktopcatalog`, and `PATCH` accepts only `classification` and `tagIDs`. Those values are scoped to your tenant:
+
+```bash
+curl -sS -X PATCH "$PB_API_BASE/applications/type/localdesktopcatalog/$APP_ID" \
+  -H "Authorization: Bearer $PB_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ "type": "localdesktopcatalog", "classification": "Tolerated" }'
+```
 :::
 
 ---
@@ -343,6 +359,6 @@ Response (`201`):
 ---
 
 ## Related
-- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Custom applications](/prisma-browser/guide/applications-custom), [Application groups](/prisma-browser/guide/application-groups)
+- Applications: [Applications overview](/prisma-browser/guide/applications), [Tags and classification](/prisma-browser/guide/applications#tags-and-classification), [Custom applications](/prisma-browser/guide/applications-custom), [Application tags](/prisma-browser/guide/application-tags), [Application groups](/prisma-browser/guide/application-groups)
 - Policy: [Access and data rules](/prisma-browser/guide/access-and-data-rules)
 - Concepts: [Draft and publish](/prisma-browser/guide/draft-and-publish), [Partial publish](/prisma-browser/guide/draft-and-publish#partial-publish), [Pagination](/prisma-browser/guide/pagination)
