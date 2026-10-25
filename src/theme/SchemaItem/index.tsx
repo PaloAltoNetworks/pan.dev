@@ -20,7 +20,8 @@
 import React, { ReactNode } from "react";
 
 import { translate } from "@docusaurus/Translate";
-import { useLocation } from "@docusaurus/router";
+import { isPBPath } from "@site/src/components/PBPortal/pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import { Example } from "@theme/Example";
 import Markdown from "@theme/Markdown";
 import clsx from "clsx";
@@ -30,8 +31,6 @@ import { guard } from "docusaurus-theme-openapi-docs/lib/markdown/utils";
 
 import { renderSchemaBadges } from "./badges";
 import { getPBQualifierMessage } from "./pbQualifierMessage";
-
-const PB_BASE = "/prisma-browser";
 
 export interface Props {
   children?: ReactNode;
@@ -161,8 +160,7 @@ export default function SchemaItem(props: Props) {
   // Generate qualifierMessage from schema if not provided. Prisma Browser pages
   // use the corrected labels in ./pbQualifierMessage; every other product keeps
   // the stock upstream output, so this swizzle stays behaviour-neutral for them.
-  const { pathname } = useLocation();
-  const isPBRoute = pathname.startsWith(PB_BASE);
+  const isPBRoute = isPBPath(useSitePath());
   const buildQualifierMessage = isPBRoute
     ? getPBQualifierMessage
     : getQualifierMessage;
