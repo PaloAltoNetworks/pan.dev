@@ -17,8 +17,8 @@ servers:
 tags:
     - name: Reports API
       description: Retrieve DLP scan reports
-    - name: Incidents API
-      description: Manage and retrieve DLP incidents (v1/v2)
+    - name: Incidents API (Deprecated)
+      description: Manage and retrieve DLP incidents (v1/v2) (Deprecated)
     - name: OCR Enablement
       description: OCR Enablement API v2
     - name: Endpoint Policies
@@ -274,7 +274,7 @@ paths:
                                 value: 00d53ebf-c386-4b95-ad05-6819517c3450
                 required: true
             tags:
-                - Incidents API
+                - Incidents API (Deprecated)
             parameters:
                 -
                     name: region
@@ -336,7 +336,7 @@ paths:
                                 value: This is a note for incident
                 required: true
             tags:
-                - Incidents API
+                - Incidents API (Deprecated)
             parameters:
                 -
                     name: incidentID
@@ -382,7 +382,7 @@ paths:
         delete:
             operationId: deleteIncidentNotes
             tags:
-                - Incidents API
+                - Incidents API (Deprecated)
             parameters:
                 -
                     name: incidentID
@@ -439,7 +439,7 @@ paths:
                                 value: assigned
                 required: true
             tags:
-                - Incidents API
+                - Incidents API (Deprecated)
             parameters:
                 -
                     name: incidentID
@@ -484,59 +484,10 @@ paths:
             summary: Update Incident Resolution
             operationId: updateIncidentResolutionStatus
     /v1/api/incidents/assignee:
-        summary: Get All Assignees
-        description: Get All Assignees
         servers:
             -
                 url: 'https://api.dlp.paloaltonetworks.com'
                 description: ''
-        get:
-            operationId: getIncidentAssignees
-            tags:
-                - Incidents API
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    $ref: '#/components/schemas/IncidentAssignee'
-                            examples:
-                                assignees:
-                                    value:
-                                        -
-                                            id: 00d53ebf-c386-4b95-ad05-6819517c3450
-                                            tenantId: '5886928188517009408'
-                                            firstName: test u
-                                            lastName: test
-                                            emailAddress: test@test.com
-                                            status: ACTIVE
-                                            createdAt: '2024-Jan-11 23:16:33 UTC'
-                                            updatedAt: '2024-Feb-14 19:13:01 UTC'
-                                        -
-                                            id: 133b9b0d-6e64-40ca-abec-15ff3b906b80
-                                            tenantId: '5886928188517009408'
-                                            firstName: user
-                                            lastName: my last name
-                                            emailAddress: user1@test.com
-                                            status: ACTIVE
-                                            createdAt: '2023-Aug-03 21:23:39 UTC'
-                    description: OK
-                '400':
-                    description: Bad Request
-                '401':
-                    description: Unauthorized
-                '403':
-                    description: Forbidden
-                '404':
-                    description: Not Found
-                '500':
-                    description: Internal server error
-            security:
-                -
-                    JWTAuth: []
-            summary: Get All Assignees
         put:
             operationId: createOrUpdateIncidentAssignees
             requestBody:
@@ -546,7 +497,7 @@ paths:
                             $ref: '#/components/schemas/IncidentAssigneeDTO'
                 required: true
             tags:
-                - Incidents API
+                - Incidents API (Deprecated)
             responses:
                 '200':
                     description: OK
@@ -565,7 +516,7 @@ paths:
     '/v1/api/incidents/assignee/{assigneeId}':
         get:
             tags:
-                - Incidents API
+                - Incidents API (Deprecated)
             parameters:
                 -
                     name: assigneeId
@@ -606,6 +557,206 @@ paths:
                     JWTAuth: []
             summary: Get Assignee by ID
             operationId: getIncidentAssigneesById
+    /v2/api/incidents:
+        description: Get Bulk Incidents
+        servers:
+            -
+                url: 'https://api.dlp.paloaltonetworks.com'
+                description: ''
+        get:
+            tags:
+                - Incidents API (Deprecated)
+            parameters:
+                -
+                    name: ascending
+                    description: get the list of incident in ascending order or not(default false)
+                    schema:
+                        type: boolean
+                    in: query
+                    required: false
+                -
+                    name: channel
+                    description: ngfw or prisma-access
+                    schema:
+                        enum:
+                            - ngfw
+                            - prisma-access
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: end_time
+                    description: query incident until
+                    schema:
+                        format: date-time
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: file_shas
+                    description: >-
+                        get incidents triggered by file hash. must be a comma separated list of one or more
+                        sha256 hashes of files
+                    schema:
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: page_number
+                    description: page_number
+                    schema:
+                        format: int32
+                        type: integer
+                    in: query
+                    required: false
+                -
+                    name: page_size
+                    description: page_size
+                    schema:
+                        format: int32
+                        type: integer
+                    in: query
+                    required: false
+                -
+                    name: region
+                    description: region (defaults to us)
+                    schema:
+                        type: string
+                        enum:
+                            - us
+                            - eu
+                            - uk
+                            - jp
+                            - in
+                            - ap
+                            - ca
+                            - au
+                            - par
+                    in: query
+                    required: false
+
+                -
+                    name: report_ids
+                    description: report_ids
+                    schema:
+                        type: array
+                        items:
+                            type: string
+                    in: query
+                    required: false
+                -
+                    name: sort_by
+                    description: sort by. default sort by creation time
+                    schema:
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: start_time
+                    description: start_time
+                    schema:
+                        format: date-time
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: user_ids
+                    description: query by user ids
+                    schema:
+                        type: array
+                        items:
+                            type: string
+                    in: query
+                    required: false
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IncidentResponse'
+                            examples:
+                                incidentResponseExample:
+                                    value:
+                                        page:
+                                            size: 10
+                                            number: 1
+                                            total_elements: 290
+                                            total_pages: 29
+                                        resources:
+                                            -
+                                                incident_id: 7c3dca3d-1c08-4147-b171-9faba84739d4
+                                                tenant_id: '5886928188517009408'
+                                                report_id: '1572154781'
+                                                data_profile_id: 11995044
+                                                data_profile_name: PII
+                                                file_sha: >-
+                                                    a4d58aa3caeb73b56028f597de2b3263d64e2835f277f31c97be53bc76a29e47
+                                                file_name: SSNpattern
+                                                file_type: pdf
+                                                incident_creation_time: '2023-Dec-07 18:41:12 UTC'
+                                                channel: ngfw
+                                                source: ngfw
+                                                action: alert
+                                            -
+                                                incident_id: 81985a40-dae5-4e80-8147-678892ccfc00
+                                                tenant_id: '5886928188517009408'
+                                                report_id: '2968440380'
+                                                data_profile_id: 11995410
+                                                data_profile_name: Portugal_LNAME_high
+                                                file_sha: >-
+                                                    6c25d79cd1dee00b3a6ee6bbb985dae6ee5bdfa31a8dfcffa241786c8c3893a7
+                                                file_name: test_portugal_LNAME.txt
+                                                file_type: txt
+                                                incident_creation_time: '2023-Dec-07 18:39:38 UTC'
+                                                channel: ngfw
+                                                source: ngfw
+                                                action: alert
+                                            -
+                                                incident_id: 08f014d8-ed13-490e-bfc4-7363f43a4af1
+                                                tenant_id: '5886928188517009408'
+                                                report_id: '1347859663'
+                                                data_profile_id: 11995355
+                                                data_profile_name: inline_timing_11_12_edm
+                                                file_sha: >-
+                                                    6c8d18c544aba3b44cfa487d5020ec102a6317a6a5164e270bbecf6ea37df925
+                                                file_name: all_patterns_data_1_MB.txt
+                                                file_type: txt
+                                                incident_creation_time: '2023-Dec-06 19:39:46 UTC'
+                                                channel: ngfw
+                                                source: ngfw
+                                                action: alert
+                                            -
+                                                incident_id: 6c7d838a-1b25-44fe-8917-1ff760c0eae5
+                                                tenant_id: '5886928188517009408'
+                                                report_id: '3741398016'
+                                                data_profile_id: 11995295
+                                                data_profile_name: DemoWideNestedProfile
+                                                file_sha: >-
+                                                    a4d58aa3caeb73b56028f597de2b3263d64e2835f277f31c97be53bc76a29e47
+                                                file_name: SSNpattern
+                                                file_type: pdf
+                                                incident_creation_time: '2023-Dec-05 21:54:21 UTC'
+                                                channel: ngfw
+                                                source: ngfw
+                                                action: alert
+                    description: OK
+                '400':
+                    $ref: '#/components/responses/IncidentsBadRequest'
+                '401':
+                    $ref: '#/components/responses/IncidentsUnauthorized'
+                '403':
+                    $ref: '#/components/responses/IncidentsForbidden'
+                '404':
+                    $ref: '#/components/responses/IncidentsNotFound'
+                '500':
+                    $ref: '#/components/responses/IncidentsInternalServerError'
+                '503':
+                    $ref: '#/components/responses/IncidentsServiceUnavailable'
+            security:
+                -
+                    JWTAuth: []
+            summary: Get Incidents
+            operationId: getAllIncidentsV2
     '/v2/api/incidents/{incidentID}':
         description: Get Incident Details
         servers:
@@ -614,7 +765,7 @@ paths:
                 description: ''
         get:
             tags:
-                - Incidents API
+                - Incidents API (Deprecated)
             parameters:
                 -
                     examples:
@@ -856,204 +1007,6 @@ paths:
                         - par
                     type: string
                 in: query
-    /v2/api/incidents:
-        description: Get Bulk Incidents
-        servers:
-            -
-                url: 'https://api.dlp.paloaltonetworks.com'
-                description: ''
-        get:
-            tags:
-                - Incidents API
-            parameters:
-                -
-                    name: ascending
-                    description: get the list of incident in ascending order or not(default false)
-                    schema:
-                        type: boolean
-                    in: query
-                    required: false
-                -
-                    name: channel
-                    description: ngfw or prisma-access
-                    schema:
-                        enum:
-                            - ngfw
-                            - prisma-access
-                        type: string
-                    in: query
-                    required: false
-                -
-                    name: end_time
-                    description: query incident until
-                    schema:
-                        format: date-time
-                        type: string
-                    in: query
-                    required: false
-                -
-                    name: file_shas
-                    description: >-
-                        get incidents triggered by file hash. must be a comma separated list of one or more
-                        sha256 hashes of files
-                    schema:
-                        type: string
-                    in: query
-                    required: false
-                -
-                    name: page_number
-                    description: page_number
-                    schema:
-                        format: int32
-                        type: integer
-                    in: query
-                    required: false
-                -
-                    name: page_size
-                    description: page_size
-                    schema:
-                        format: int32
-                        type: integer
-                    in: query
-                    required: false
-                -
-                    name: region
-                    description: region (defaults to us)
-                    schema:
-                        type: string
-                        enum:
-                            - us
-                            - eu
-                            - uk
-                            - jp
-                            - in
-                            - ap
-                            - ca
-                            - au
-                            - par
-                    in: query
-                    required: false
-
-                -
-                    name: report_ids
-                    description: report_ids
-                    schema:
-                        type: array
-                        items:
-                            type: string
-                    in: query
-                    required: false
-                -
-                    name: sort_by
-                    description: sort by. default sort by creation time
-                    schema:
-                        type: string
-                    in: query
-                    required: false
-                -
-                    name: start_time
-                    description: start_time
-                    schema:
-                        format: date-time
-                        type: string
-                    in: query
-                    required: false
-                -
-                    name: user_ids
-                    description: query by user ids
-                    schema:
-                        type: array
-                        items:
-                            type: string
-                    in: query
-                    required: false
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/IncidentResponse'
-                            examples:
-                                incidentResponseExample:
-                                    value:
-                                        page:
-                                            size: 10
-                                            number: 1
-                                            total_elements: 290
-                                            total_pages: 29
-                                        resources:
-                                            -
-                                                incident_id: 7c3dca3d-1c08-4147-b171-9faba84739d4
-                                                tenant_id: '5886928188517009408'
-                                                report_id: '1572154781'
-                                                data_profile_id: 11995044
-                                                data_profile_name: PII
-                                                file_sha: >-
-                                                    a4d58aa3caeb73b56028f597de2b3263d64e2835f277f31c97be53bc76a29e47
-                                                file_name: SSNpattern
-                                                file_type: pdf
-                                                incident_creation_time: '2023-Dec-07 18:41:12 UTC'
-                                                channel: ngfw
-                                                source: ngfw
-                                                action: alert
-                                            -
-                                                incident_id: 81985a40-dae5-4e80-8147-678892ccfc00
-                                                tenant_id: '5886928188517009408'
-                                                report_id: '2968440380'
-                                                data_profile_id: 11995410
-                                                data_profile_name: Portugal_LNAME_high
-                                                file_sha: >-
-                                                    6c25d79cd1dee00b3a6ee6bbb985dae6ee5bdfa31a8dfcffa241786c8c3893a7
-                                                file_name: test_portugal_LNAME.txt
-                                                file_type: txt
-                                                incident_creation_time: '2023-Dec-07 18:39:38 UTC'
-                                                channel: ngfw
-                                                source: ngfw
-                                                action: alert
-                                            -
-                                                incident_id: 08f014d8-ed13-490e-bfc4-7363f43a4af1
-                                                tenant_id: '5886928188517009408'
-                                                report_id: '1347859663'
-                                                data_profile_id: 11995355
-                                                data_profile_name: inline_timing_11_12_edm
-                                                file_sha: >-
-                                                    6c8d18c544aba3b44cfa487d5020ec102a6317a6a5164e270bbecf6ea37df925
-                                                file_name: all_patterns_data_1_MB.txt
-                                                file_type: txt
-                                                incident_creation_time: '2023-Dec-06 19:39:46 UTC'
-                                                channel: ngfw
-                                                source: ngfw
-                                                action: alert
-                                            -
-                                                incident_id: 6c7d838a-1b25-44fe-8917-1ff760c0eae5
-                                                tenant_id: '5886928188517009408'
-                                                report_id: '3741398016'
-                                                data_profile_id: 11995295
-                                                data_profile_name: DemoWideNestedProfile
-                                                file_sha: >-
-                                                    a4d58aa3caeb73b56028f597de2b3263d64e2835f277f31c97be53bc76a29e47
-                                                file_name: SSNpattern
-                                                file_type: pdf
-                                                incident_creation_time: '2023-Dec-05 21:54:21 UTC'
-                                                channel: ngfw
-                                                source: ngfw
-                                                action: alert
-                    description: OK
-                '400':
-                    description: Bad Request
-                '401':
-                    description: Unauthorized
-                '403':
-                    description: Forbidden
-                '404':
-                    description: Not Found
-                '500':
-                    description: Internal server error
-            security:
-                -
-                    JWTAuth: []
-            summary: Get Incidents
-            operationId: getAllIncidentsV2
     /v2/api/peripherals/{resourceId}:
         get:
             tags:
@@ -2439,79 +2392,6 @@ paths:
                                 $ref: '#/components/schemas/PageDataFilteringProfileResponse'
 components:
     schemas:
-        PageData:
-            title: PageData
-            type: object
-            properties:
-                number:
-                    format: int32
-                    type: integer
-                size:
-                    format: int32
-                    type: integer
-                total_elements:
-                    format: int32
-                    type: integer
-                total_pages:
-                    format: int32
-                    type: integer
-        IncidentResponse:
-            title: PagedDataResponse<IncidentDTO>
-            required:
-                - page
-            type: object
-            properties:
-                page:
-                    $ref: '#/components/schemas/PageData'
-                    description: ''
-                resources:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/IncidentDTO'
-        IncidentDTO:
-            title: IncidentDTO
-            type: object
-            properties:
-                action:
-                    enum:
-                        - alert
-                        - block
-                        - none
-                    type: string
-                app_id:
-                    type: string
-                app_name:
-                    type: string
-                channel:
-                    enum:
-                        - ngfw
-                        - prisma-access
-                    type: string
-                data_profile_id:
-                    format: int64
-                    type: integer
-                data_profile_name:
-                    type: string
-                file_name:
-                    type: string
-                file_sha:
-                    type: string
-                file_type:
-                    type: string
-                incident_creation_time:
-                    type: string
-                    example: 'yyyy-MMM-dd HH:mm:ss z'
-                incident_id:
-                    format: uuid
-                    type: string
-                report_id:
-                    type: string
-                source:
-                    type: string
-                tenant_id:
-                    type: string
-                user:
-                    type: string
         MatchInfo:
             title: MatchInfo
             type: object
@@ -2727,6 +2607,79 @@ components:
                     description: ''
                     type: string
                     example: 'yyyy-MMM-dd HH:mm:ss z'
+        PageData:
+            title: PageData
+            type: object
+            properties:
+                number:
+                    format: int32
+                    type: integer
+                size:
+                    format: int32
+                    type: integer
+                total_elements:
+                    format: int32
+                    type: integer
+                total_pages:
+                    format: int32
+                    type: integer
+        IncidentResponse:
+            title: PagedDataResponse<IncidentDTO>
+            required:
+                - page
+            type: object
+            properties:
+                page:
+                    $ref: '#/components/schemas/PageData'
+                    description: ''
+                resources:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IncidentDTO'
+        IncidentDTO:
+            title: IncidentDTO
+            type: object
+            properties:
+                action:
+                    enum:
+                        - alert
+                        - block
+                        - none
+                    type: string
+                app_id:
+                    type: string
+                app_name:
+                    type: string
+                channel:
+                    enum:
+                        - ngfw
+                        - prisma-access
+                    type: string
+                data_profile_id:
+                    format: int64
+                    type: integer
+                data_profile_name:
+                    type: string
+                file_name:
+                    type: string
+                file_sha:
+                    type: string
+                file_type:
+                    type: string
+                incident_creation_time:
+                    type: string
+                    example: 'yyyy-MMM-dd HH:mm:ss z'
+                incident_id:
+                    format: uuid
+                    type: string
+                report_id:
+                    type: string
+                source:
+                    type: string
+                tenant_id:
+                    type: string
+                user:
+                    type: string
         ScanContentResponse:
             title: ScanContentResponse
             type: object
@@ -5136,6 +5089,116 @@ components:
                     $ref: '#/components/schemas/PageableObject'
                 empty:
                     type: boolean
+        IncidentsErrorResponse:
+            description: Error returned by the Incidents API.
+            type: object
+            properties:
+                statusCode:
+                    description: HTTP status code.
+                    type: integer
+                    format: int32
+                    example: 400
+                message:
+                    description: >-
+                        Description of the error. When the backend service rejects the request, this is its JSON
+                        error body as a string.
+                    type: string
+                    example: '{"error":"Invalid parameter: Invalid column name: Foo"}'
+                timestamp:
+                    description: Time the error occurred, in ISO 8601 format.
+                    type: string
+                    format: date-time
+                    example: '2026-10-12T18:25:43.511Z'
+        IncidentsServerErrorResponse:
+            description: Error returned for an unexpected server error.
+            type: object
+            properties:
+                timestamp:
+                    description: Time the error occurred, in ISO 8601 format.
+                    type: string
+                    format: date-time
+                    example: '2026-10-12T18:25:43.511Z'
+                path:
+                    description: Request path.
+                    type: string
+                    example: /v4/api/incidents
+                status:
+                    description: HTTP status code.
+                    type: integer
+                    format: int32
+                    example: 500
+                error:
+                    description: HTTP status reason phrase.
+                    type: string
+                    example: Internal Server Error
+                requestId:
+                    description: Identifier of the request, useful when contacting support.
+                    type: string
+                    example: 6f1c2a7e-12
+        IncidentsEmptyBody:
+            description: Empty response body.
+            type: string
+            maxLength: 0
+            example: ''
+    responses:
+        IncidentsBadRequest:
+            description: >-
+                Bad Request - the request is invalid, for example a required field or parameter is missing or
+                invalid. When the backend service rejects the request, the message field contains its error body
+                as a JSON string.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsErrorResponse'
+                    examples:
+                        invalidParameter:
+                            summary: Invalid filter or parameter
+                            value:
+                                statusCode: 400
+                                message: '{"error":"Invalid parameter: Invalid column name: Foo"}'
+                                timestamp: '2026-10-12T18:25:43.511Z'
+                        validationFailure:
+                            summary: Request body validation failure
+                            value:
+                                statusCode: 400
+                                message: '{"message":"Request validation errors","errors":["Body: time_range: must not be null"]}'
+                                timestamp: '2026-10-12T18:25:43.511Z'
+        IncidentsUnauthorized:
+            description: Unauthorized - the Authorization header is missing, or the bearer token is invalid or expired. The response has no body.
+            content:
+                text/plain:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsEmptyBody'
+        IncidentsForbidden:
+            description: Forbidden - the token does not have the incidents privilege this operation requires. The response has no body.
+            content:
+                text/plain:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsEmptyBody'
+        IncidentsNotFound:
+            description: Not Found - the requested resource does not exist.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsErrorResponse'
+        IncidentsInternalServerError:
+            description: Internal Server Error - an unexpected error occurred while processing the request.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsServerErrorResponse'
+        IncidentsServiceUnavailable:
+            description: >-
+                Service Unavailable - the incident service was overloaded or failed, and the request still failed
+                after retries. Retry the request later.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsErrorResponse'
+                    example:
+                        statusCode: 503
+                        message: Management api failed to process after max retries
+                        timestamp: '2026-10-12T18:25:43.511Z'
     securitySchemes:
         JWTAuth:
             scheme: bearer
