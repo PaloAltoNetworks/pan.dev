@@ -1,8 +1,8 @@
 openapi: 3.0.2
 info:
-    title: DLP API (Beta)
+    title: DLP API
     version: 1.0.0
-    description: Enterprise DLP Beta APIs
+    description: Enterprise DLP APIs
     license:
         name: MIT
         url: https://opensource.org/license/mit
@@ -15,13 +15,13 @@ servers:
         url: 'https://api.dlp.paloaltonetworks.com'
         description: Prod host
 tags:
-    - name: Incidents API (Beta)
-      description: Beta Incidents API — retrieve, filter, download, and update incidents
+    - name: Incidents API
+      description: Incidents API — retrieve, filter, download, and update incidents
 paths:
     /v4/api/incidents:
         post:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Retrieve initial incident records with token
             description: |
                 This API is used for the initial retrieval of incident details. It allows you to
@@ -74,12 +74,18 @@ paths:
                                 query_token: test_token
                                 total_rows: 1
                 "400":
-                    description: Bad Request
+                    $ref: '#/components/responses/IncidentsBadRequest'
+                "401":
+                    $ref: '#/components/responses/IncidentsUnauthorized'
+                "403":
+                    $ref: '#/components/responses/IncidentsForbidden'
                 "500":
-                    description: Internal Server Error
+                    $ref: '#/components/responses/IncidentsInternalServerError'
+                "503":
+                    $ref: '#/components/responses/IncidentsServiceUnavailable'
         get:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Retrieve paginated incident records using token
             description: This API is used to fetch subsequent pages of incident records after an initial request to the POST /incidents API. It requires a token obtained from the initial POST request, along with page_size and offset to control pagination.
             operationId: getIncidentInventoryTableResults
@@ -137,13 +143,19 @@ paths:
                                 query_token: test_token
                                 total_rows: 1
                 "400":
-                    description: Bad Request
+                    $ref: '#/components/responses/IncidentsBadRequest'
+                "401":
+                    $ref: '#/components/responses/IncidentsUnauthorized'
+                "403":
+                    $ref: '#/components/responses/IncidentsForbidden'
                 "500":
-                    description: Internal Server Error
+                    $ref: '#/components/responses/IncidentsInternalServerError'
+                "503":
+                    $ref: '#/components/responses/IncidentsServiceUnavailable'
     /v4/api/incidents/download:
         post:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Get signed download URL for incidents
             description: |
                 Generate a secure, time-limited URL (valid for 5 minutes) to directly download incident
@@ -168,13 +180,19 @@ paths:
                             example:
                                 download_url: https://storage.googleapis.com/casb-data-platform-prod-uim-inc-export/1494634703/incidents_20250721_205140_e3f288124dec432c8f94ed4f5b49b19b.csv.gz?test_signed_url
                 "400":
-                    description: Bad Request
+                    $ref: '#/components/responses/IncidentsBadRequest'
+                "401":
+                    $ref: '#/components/responses/IncidentsUnauthorized'
+                "403":
+                    $ref: '#/components/responses/IncidentsForbidden'
                 "500":
-                    description: Internal Server Error
+                    $ref: '#/components/responses/IncidentsInternalServerError'
+                "503":
+                    $ref: '#/components/responses/IncidentsServiceUnavailable'
     /v4/api/incidents/management:
         post:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Update key details for incidents
             description: |
                 Update key incident information like assignee details, resolution status, priority,
@@ -210,13 +228,19 @@ paths:
                             example:
                                 success: 1
                 "400":
-                    description: Bad Request
+                    $ref: '#/components/responses/IncidentsBadRequest'
+                "401":
+                    $ref: '#/components/responses/IncidentsUnauthorized'
+                "403":
+                    $ref: '#/components/responses/IncidentsForbidden'
                 "500":
-                    description: Internal Server Error
+                    $ref: '#/components/responses/IncidentsInternalServerError'
+                "503":
+                    $ref: '#/components/responses/IncidentsServiceUnavailable'
     '/v4/api/incidents/{id}':
         get:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Retrieve incident details by ID
             description: For a given incident id, return incident details.
             operationId: getIncidentDetails
@@ -354,9 +378,71 @@ paths:
                                 status_description: Query results are ready.
                                 total_rows: 1
                 "400":
-                    description: Bad Request
+                    $ref: '#/components/responses/IncidentsBadRequest'
+                "401":
+                    $ref: '#/components/responses/IncidentsUnauthorized'
+                "403":
+                    $ref: '#/components/responses/IncidentsForbidden'
                 "500":
-                    description: Internal Server Error
+                    $ref: '#/components/responses/IncidentsInternalServerError'
+                "503":
+                    $ref: '#/components/responses/IncidentsServiceUnavailable'
+    /v1/api/incidents/assignee:
+        summary: Get All Assignees
+        description: "Get All Assignees. Please refer to the [IAM](https://appsvc.docs.pan.run/zeus/scmp-doc/iam/) documentation"
+        servers:
+            -
+                url: 'https://api.dlp.paloaltonetworks.com'
+                description: ''
+        get:
+            operationId: getIncidentAssignees
+            tags:
+                - Incidents API
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/IncidentAssignee'
+                            examples:
+                                assignees:
+                                    value:
+                                        -
+                                            id: 00d53ebf-c386-4b95-ad05-6819517c3450
+                                            tenantId: '5886928188517009408'
+                                            firstName: test u
+                                            lastName: test
+                                            emailAddress: test@test.com
+                                            status: ACTIVE
+                                            createdAt: '2024-Jan-11 23:16:33 UTC'
+                                            updatedAt: '2024-Feb-14 19:13:01 UTC'
+                                        -
+                                            id: 133b9b0d-6e64-40ca-abec-15ff3b906b80
+                                            tenantId: '5886928188517009408'
+                                            firstName: user
+                                            lastName: my last name
+                                            emailAddress: user1@test.com
+                                            status: ACTIVE
+                                            createdAt: '2023-Aug-03 21:23:39 UTC'
+                    description: OK
+                '400':
+                    $ref: '#/components/responses/IncidentsBadRequest'
+                '401':
+                    $ref: '#/components/responses/IncidentsUnauthorized'
+                '403':
+                    $ref: '#/components/responses/IncidentsForbidden'
+                '404':
+                    $ref: '#/components/responses/IncidentsNotFound'
+                '500':
+                    $ref: '#/components/responses/IncidentsInternalServerError'
+                '503':
+                    $ref: '#/components/responses/IncidentsServiceUnavailable'
+            security:
+                -
+                    JWTAuth: []
+            summary: Get All Assignees
 components:
     schemas:
         IncidentInventoryRequest:
@@ -947,6 +1033,153 @@ components:
                     type: string
                 policy_version:
                     type: string
+        IncidentAssignee:
+            title: IncidentAssignee
+            required:
+                - status
+            type: object
+            properties:
+                createdAt:
+                    description: create at
+                    type: string
+                    example: 'yyyy-MMM-dd HH:mm:ss z'
+                emailAddress:
+                    description: email address of the assignee
+                    type: string
+                firstName:
+                    description: assignee first name
+                    type: string
+                id:
+                    format: uuid
+                    description: ID of the assignee
+                    type: string
+                lastName:
+                    description: assignee last name
+                    type: string
+                status:
+                    description: active assignee or inactivate assignee
+                    enum:
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    example: '"ACTIVE" or "INACTIVE"'
+                tenantId:
+                    description: dlp tenant id
+                    type: string
+                updatedAt:
+                    description: ''
+                    type: string
+                    example: 'yyyy-MMM-dd HH:mm:ss z'
+        IncidentsErrorResponse:
+            description: Error returned by the Incidents API.
+            type: object
+            properties:
+                statusCode:
+                    description: HTTP status code.
+                    type: integer
+                    format: int32
+                    example: 400
+                message:
+                    description: >-
+                        Description of the error. When the backend service rejects the request, this is its JSON
+                        error body as a string.
+                    type: string
+                    example: '{"error":"Invalid parameter: Invalid column name: Foo"}'
+                timestamp:
+                    description: Time the error occurred, in ISO 8601 format.
+                    type: string
+                    format: date-time
+                    example: '2026-10-12T18:25:43.511Z'
+        IncidentsServerErrorResponse:
+            description: Error returned for an unexpected server error.
+            type: object
+            properties:
+                timestamp:
+                    description: Time the error occurred, in ISO 8601 format.
+                    type: string
+                    format: date-time
+                    example: '2026-10-12T18:25:43.511Z'
+                path:
+                    description: Request path.
+                    type: string
+                    example: /v4/api/incidents
+                status:
+                    description: HTTP status code.
+                    type: integer
+                    format: int32
+                    example: 500
+                error:
+                    description: HTTP status reason phrase.
+                    type: string
+                    example: Internal Server Error
+                requestId:
+                    description: Identifier of the request, useful when contacting support.
+                    type: string
+                    example: 6f1c2a7e-12
+        IncidentsEmptyBody:
+            description: Empty response body.
+            type: string
+            maxLength: 0
+            example: ''
+    responses:
+        IncidentsBadRequest:
+            description: >-
+                Bad Request - the request is invalid, for example a required field or parameter is missing or
+                invalid. When the backend service rejects the request, the message field contains its error body
+                as a JSON string.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsErrorResponse'
+                    examples:
+                        invalidParameter:
+                            summary: Invalid filter or parameter
+                            value:
+                                statusCode: 400
+                                message: '{"error":"Invalid parameter: Invalid column name: Foo"}'
+                                timestamp: '2026-10-12T18:25:43.511Z'
+                        validationFailure:
+                            summary: Request body validation failure
+                            value:
+                                statusCode: 400
+                                message: '{"message":"Request validation errors","errors":["Body: time_range: must not be null"]}'
+                                timestamp: '2026-10-12T18:25:43.511Z'
+        IncidentsUnauthorized:
+            description: Unauthorized - the Authorization header is missing, or the bearer token is invalid or expired. The response has no body.
+            content:
+                text/plain:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsEmptyBody'
+        IncidentsForbidden:
+            description: Forbidden - the token does not have the incidents privilege this operation requires. The response has no body.
+            content:
+                text/plain:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsEmptyBody'
+        IncidentsNotFound:
+            description: Not Found - the requested resource does not exist.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsErrorResponse'
+        IncidentsInternalServerError:
+            description: Internal Server Error - an unexpected error occurred while processing the request.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsServerErrorResponse'
+        IncidentsServiceUnavailable:
+            description: >-
+                Service Unavailable - the incident service was overloaded or failed, and the request still failed
+                after retries. Retry the request later.
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/IncidentsErrorResponse'
+                    example:
+                        statusCode: 503
+                        message: Management api failed to process after max retries
+                        timestamp: '2026-10-12T18:25:43.511Z'
     securitySchemes:
         JWTAuth:
             scheme: bearer

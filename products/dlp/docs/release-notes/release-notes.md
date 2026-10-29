@@ -13,6 +13,22 @@ keywords:
 
 Everything we ship for the DLP API, newest first. Pick a date to see exactly what changed, including breaking changes, what you need to do, and links to the affected endpoints.
 
+## October 2026
+
+### Dlp — Dlp (Updated)
+
+Additional endpoint and schema updates.
+
+See [Dlp APIs](/dlp/api/dlp-api-spec-v2/) for full details.
+
+---
+
+### Dlp — Dlp (Updated)
+
+Additional endpoint and schema updates.
+
+See [Dlp APIs](/dlp/api/dlp-api-spec/) for full details.
+
 ## August 2026
 
 ### DLP — DLP API Spec (New)
