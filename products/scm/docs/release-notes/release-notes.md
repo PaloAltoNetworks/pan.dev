@@ -72,6 +72,18 @@ These APIs enable configuration API for Secure Agentless Access (SAA).
 
 See [Secure Agentless Access APIs](/scm/api/config/secure-agentless-access/saa-apis/) for full details.
 
+---
+
+### Strata Cloud Manager — Config Cleanup (Updated)
+
+1 new endpoint and 1 removed endpoint.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/zerohit-rules` | Get Zero-Hit Security Rules |
+
+See [Config Cleanup APIs](/scm/api/config/posture-management/config-cleanup/config-cleanup/) for full details.
+
 ## September 2026
 
 ### Strata Cloud Manager — Compliance Frameworks (Updated)
