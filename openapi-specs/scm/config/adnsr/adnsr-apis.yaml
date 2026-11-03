@@ -150,6 +150,11 @@ components:
             - 550e8400-e29b-41d4-a716-446655440000
           readOnly: true
           type: string
+        is_dynamic_ip:
+          description: Whether this connection source represents a single dynamic IP that is tracked and auto-updated. Returned on create.
+          examples:
+            - false
+          type: boolean
         last_updated_at:
           description: The timestamp when the connection source was last updated.
           examples:
@@ -193,6 +198,11 @@ components:
             - Description of connection source
           maxLength: 256
           type: string
+        is_dynamic_ip:
+          description: Mark this connection source as a dynamic-IP source (a single IP that is tracked and auto-updated). Settable only at creation.
+          examples:
+            - false
+          type: boolean
         name:
           description: Name of the connection source
           examples:
@@ -216,6 +226,31 @@ components:
           $ref: "#/components/schemas/connection-source"
       required:
         - item
+      type: object
+    connection-source-update-input:
+      additionalProperties: false
+      properties:
+        description:
+          description: Description of the connection source
+          examples:
+            - Description of connection source
+          maxLength: 256
+          type: string
+        name:
+          description: Name of the connection source
+          examples:
+            - My Connection Source
+          maxLength: 128
+          minLength: 4
+          type: string
+        profile_id:
+          description: Profile ID associated with the connection source
+          examples:
+            - 550e8400-e29b-41d4-a716-446655440000
+          type: string
+      required:
+        - name
+        - profile_id
       type: object
     connection-sources:
       additionalProperties: false
@@ -534,7 +569,7 @@ components:
           description: Username for EDL authentication
           examples:
             - admin
-          maxLength: 40
+          maxLength: 255
           type: string
         valid_lines:
           description: Number of valid lines in the EDL
@@ -570,7 +605,7 @@ components:
         password:
           examples:
             - password(Optional)
-          maxLength: 40
+          maxLength: 255
           type: string
         poll_duration:
           enum:
@@ -591,7 +626,7 @@ components:
         user:
           examples:
             - username(Optional)
-          maxLength: 40
+          maxLength: 255
           type: string
       required:
         - name
@@ -792,11 +827,87 @@ components:
           type: integer
         - enum:
             - 1023
-          title: 1023 - Allowed Subnet Required
+          title: 1023 - Manually Verified Subnet Required
           type: integer
         - enum:
             - 1024
           title: 1024 - Cross Tenant Subnet Conflict
+          type: integer
+        - enum:
+            - 1025
+          title: 1025 - IPv6 Not Supported
+          type: integer
+        - enum:
+            - 1026
+          title: 1026 - Rule Priority Out Of Range
+          type: integer
+        - enum:
+            - 1027
+          title: 1027 - Rule Name Conflict
+          type: integer
+        - enum:
+            - 1028
+          title: 1028 - Rule Priority Conflict
+          type: integer
+        - enum:
+            - 1029
+          title: 1029 - Rule Count Limit Exceeded
+          type: integer
+        - enum:
+            - 1030
+          title: 1030 - Rule User Group Limit Exceeded
+          type: integer
+        - enum:
+            - 1031
+          title: 1031 - Rule User Group Required
+          type: integer
+        - enum:
+            - 1032
+          title: 1032 - Rule Schema Invalid
+          type: integer
+        - enum:
+            - 1033
+          title: 1033 - CIE Directory Not Found
+          type: integer
+        - enum:
+            - 1034
+          title: 1034 - CIE User Group Not Found
+          type: integer
+        - enum:
+            - 1035
+          title: 1035 - CIE User Group Ambiguous
+          type: integer
+        - enum:
+            - 1036
+          title: 1036 - CIE User Group Malformed
+          type: integer
+        - enum:
+            - 1037
+          title: 1037 - CIE Tenant Not Onboarded
+          type: integer
+        - enum:
+            - 1038
+          title: 1038 - CIE Unavailable
+          type: integer
+        - enum:
+            - 1039
+          title: 1039 - Security Policy Not Provisioned
+          type: integer
+        - enum:
+            - 1040
+          title: 1040 - Security Policy Rule Not Found
+          type: integer
+        - enum:
+            - 1041
+          title: 1041 - Security Policy Rules Partial Not Found
+          type: integer
+        - enum:
+            - 1042
+          title: 1042 - Security Profile Not Found
+          type: integer
+        - enum:
+            - 1043
+          title: 1043 - Security Policy Disabled
           type: integer
       title: error-code
       type: integer
@@ -1310,6 +1421,11 @@ components:
           examples:
             - https://dns.example.com/dns-query
           type: string
+        dot_endpoint:
+          description: DNS over TLS endpoint
+          examples:
+            - dns.example.com
+          type: string
         primary_ip:
           description: Primary IPv4 address of the resolver
           examples:
@@ -1334,6 +1450,257 @@ components:
         - primary_ip
         - secondary_ip
         - doh_endpoint
+        - dot_endpoint
+      type: object
+    security-policy-rule:
+      additionalProperties: false
+      properties:
+        created_at:
+          description: Timestamp (UTC) when the rule was created
+          examples:
+            - "2023-01-15T10:30:00Z"
+          format: date-time
+          readOnly: true
+          type: string
+        description:
+          description: Optional explanatory text for this rule
+          examples:
+            - Applies the associated DNS security profile when this rule's match conditions are met
+          type: string
+        is_enabled:
+          description: Whether this rule is active and evaluated by the dataplane
+          examples:
+            - true
+          type: boolean
+        last_updated_at:
+          description: Timestamp (UTC) when the rule was last updated
+          examples:
+            - "2023-01-20T14:45:00Z"
+          format: date-time
+          readOnly: true
+          type: string
+        name:
+          description: Human-readable rule name, unique within the policy
+          examples:
+            - Block High Risk Domains
+          type: string
+        policy_id:
+          description: Identifier of the parent policy container (the tenant's implicit DEFAULT container)
+          examples:
+            - 223e4567-e89b-12d3-a456-426614174001
+          readOnly: true
+          type: string
+        priority:
+          description: Evaluation order, 1-indexed. Rules are evaluated ascending; 1 is evaluated first. Priorities are consecutive with no gaps within a policy.
+          examples:
+            - 5
+          format: int64
+          minimum: 1
+          type: integer
+        profile_id:
+          description: DNS security profile applied when this rule matches
+          examples:
+            - 323e4567-e89b-12d3-a456-426614174002
+          type: string
+        profile_name:
+          description: Display name of the applied profile, joined from the profiles table so clients need no second lookup
+          examples:
+            - Strict Profile
+          readOnly: true
+          type: string
+        rule:
+          $ref: "#/components/schemas/security-rule-payload"
+          description: "Match conditions for this rule, in resolved form. Each user group appears as an {id, value} pair: id is the Cloud Identity Engine unique identifier the dataplane matches on, so the rule survives the group being renamed, and value is the directory\\group reference the rule was written with. Note this differs from the request body, which takes the reference strings alone. A user matches the rule if they belong to any of the listed groups. Example: {\"conditions\":[{\"type\":\"usergroup\",\"values\":[{\"id\":\"4a9252c8-3703-4120-afe4-4854e4a7616a\",\"value\":\"panwadns.com\\\\Engineering\"}]}]}"
+        rule_id:
+          description: Unique identifier for this rule
+          examples:
+            - 123e4567-e89b-12d3-a456-426614174000
+          readOnly: true
+          type: string
+        tsg_id:
+          description: Tenant service group identifier that owns this rule
+          examples:
+            - "1234567890"
+          readOnly: true
+          type: string
+      required:
+        - rule_id
+        - policy_id
+        - tsg_id
+        - profile_id
+        - name
+        - priority
+        - is_enabled
+        - rule
+      type: object
+    security-policy-rule-body:
+      additionalProperties: false
+      properties:
+        item:
+          $ref: "#/components/schemas/security-policy-rule"
+          description: The security policy rule
+      required:
+        - item
+      type: object
+    security-policy-rule-input:
+      additionalProperties: false
+      properties:
+        description:
+          description: Optional explanatory text for this rule. When present, must be either empty or contain at least one non-whitespace character.
+          examples:
+            - Applies the associated DNS security profile when this rule's match conditions are met
+          maxLength: 1000
+          pattern: ^$|^\s*\S[\s\S]*$
+          type: string
+        is_enabled:
+          description: Whether the rule is active and evaluated by the dataplane. Defaults to true when omitted.
+          examples:
+            - true
+          type: boolean
+        name:
+          description: Rule name, unique within the policy. Must contain at least one non-whitespace character.
+          examples:
+            - Block High Risk Domains
+          maxLength: 255
+          minLength: 1
+          pattern: ^\s*\S[\s\S]*$
+          type: string
+        priority:
+          description: Required 1-indexed position for this rule. The service never assigns a priority. Existing rules at or below this position shift down by one on create; on update the affected range is renumbered. Valid range is 1..N+1 on create and 1..N on update, where N is the current rule count.
+          examples:
+            - 5
+          format: int64
+          type: integer
+        profile_id:
+          description: DNS security profile to apply when this rule matches
+          examples:
+            - 323e4567-e89b-12d3-a456-426614174002
+          maxLength: 64
+          minLength: 1
+          type: string
+        rule:
+          $ref: "#/components/schemas/security-rule-input"
+          description: "Match conditions for this rule. Only the usergroup condition type is supported. Each value names one user group as directory\\group, split on the first backslash; in a JSON document that separator is written as a double backslash. Example: {\"conditions\":[{\"type\":\"usergroup\",\"values\":[\"panwadns.com\\\\Engineering\"]}]}. A user matches the rule if they belong to any of the listed groups. Every group is resolved against the Cloud Identity Engine before the rule is saved: if any name is unknown or matches more than one group the whole request is rejected and nothing is written. The stored rule holds the resolved identifiers alongside these references, so a GET returns a richer shape than was sent."
+      required:
+        - profile_id
+        - name
+        - priority
+        - rule
+      type: object
+    security-policy-rules-page:
+      additionalProperties: false
+      properties:
+        data:
+          description: Security policy rules for the current page, ordered by priority ascending
+          items:
+            $ref: "#/components/schemas/security-policy-rule"
+          type:
+            - array
+            - "null"
+        limit:
+          default: 200
+          description: Maximum number of items returned
+          format: int32
+          maximum: 1000
+          minimum: 1
+          type: integer
+        offset:
+          default: 0
+          description: Number of items skipped
+          format: int32
+          minimum: 0
+          type: integer
+        total:
+          description: Total number of rules matching the query across all pages
+          format: int32
+          minimum: 0
+          type: integer
+      required:
+        - data
+        - total
+        - limit
+        - offset
+      type: object
+    security-rule-condition:
+      additionalProperties: false
+      properties:
+        type:
+          description: The field this condition evaluates. Only user group matching is supported.
+          enum:
+            - usergroup
+          examples:
+            - usergroup
+          type: string
+        values:
+          description: The resolved Cloud Identity Engine groups this condition matches. Matching is OR within the array.
+          items:
+            $ref: "#/components/schemas/security-rule-identity"
+          minItems: 1
+          type: array
+      required:
+        - type
+        - values
+      type: object
+    security-rule-condition-input:
+      additionalProperties: false
+      properties:
+        type:
+          description: The field this condition evaluates. Only user group matching is supported.
+          enum:
+            - usergroup
+          examples:
+            - usergroup
+          type: string
+        values:
+          description: Cloud Identity Engine directory groups to match, each written as directory\group — for example panwadns.com\Everyone. In a JSON document the separator is escaped as a double backslash. The split is on the first backslash, so a group whose own name contains one still parses. Matching is OR within the array. Each group is resolved to a stable identifier when the rule is saved, so a group that does not exist in the tenant's directory is rejected rather than stored.
+          items:
+            type: string
+          minItems: 1
+          type: array
+      required:
+        - type
+        - values
+      type: object
+    security-rule-identity:
+      additionalProperties: false
+      properties:
+        id:
+          description: Cloud Identity Engine unique identifier for the group. Stable across directory renames, and the only field the dataplane matches on.
+          examples:
+            - 4a9252c8-3703-4120-afe4-4854e4a7616a
+          type: string
+        value:
+          description: The directory\group reference this rule was written with, retained so clients can render the rule without a second lookup and so the membership sync job can recover the directory. The group-name half may go stale if the group is renamed; matching is unaffected because it keys on the identifier.
+          examples:
+            - panwadns.com\Engineering
+          type: string
+      required:
+        - id
+        - value
+      type: object
+    security-rule-input:
+      additionalProperties: false
+      properties:
+        conditions:
+          description: Match conditions for this rule. At least one is required. A user matches the rule if they belong to any of the groups named across all conditions.
+          items:
+            $ref: "#/components/schemas/security-rule-condition-input"
+          minItems: 1
+          type: array
+      required:
+        - conditions
+      type: object
+    security-rule-payload:
+      additionalProperties: false
+      properties:
+        conditions:
+          description: Match conditions for this rule, with every user group resolved to its Cloud Identity Engine identifier. A user matches the rule if they belong to any of the listed groups.
+          items:
+            $ref: "#/components/schemas/security-rule-condition"
+          minItems: 1
+          type: array
+      required:
+        - conditions
       type: object
     subnet:
       additionalProperties: false
@@ -1369,6 +1736,23 @@ components:
           format: date-time
           readOnly: true
           type: string
+        name:
+          description: Name of the subnet. Always set for dynamic-IP connection source subnets; optional for others.
+          examples:
+            - office-gateway
+          type: string
+        status:
+          description: "Status of the subnet: verification states (unverified, verified, error) or, for a dynamic-IP connection source, lifecycle states (active, inactive)."
+          enum:
+            - unverified
+            - verified
+            - active
+            - inactive
+            - error
+          examples:
+            - unverified
+          readOnly: true
+          type: string
         verification_url:
           description: The URL used for subnet verification.
           examples:
@@ -1379,6 +1763,7 @@ components:
         - id
         - cidr
         - is_verified
+        - status
       type: object
     subnet-input:
       additionalProperties: false
@@ -1387,6 +1772,11 @@ components:
           description: The CIDR notation of the subnet.
           examples:
             - 10.0.0.0/28
+          type: string
+        name:
+          description: Name of the subnet. Required when adding to a dynamic-IP connection source; optional otherwise.
+          examples:
+            - office-gateway
           type: string
       required:
         - cidr
@@ -1445,6 +1835,23 @@ components:
           format: date-time
           readOnly: true
           type: string
+        name:
+          description: Name of the subnet. Always set for dynamic-IP connection source subnets; optional for others.
+          examples:
+            - office-gateway
+          type: string
+        status:
+          description: "Status of the subnet: verification states (unverified, verified, error) or, for a dynamic-IP connection source, lifecycle states (active, inactive)."
+          enum:
+            - unverified
+            - verified
+            - active
+            - inactive
+            - error
+          examples:
+            - unverified
+          readOnly: true
+          type: string
         verification_url:
           description: The URL used for subnet verification.
           examples:
@@ -1455,6 +1862,7 @@ components:
         - id
         - cidr
         - is_verified
+        - status
       type: object
     subnet-with-connection-source-info-item:
       additionalProperties: false
@@ -2686,7 +3094,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/connection-source-input"
+              $ref: "#/components/schemas/connection-source-update-input"
               description: Connection source to be updated
         required: true
       responses:
@@ -6018,8 +6426,527 @@ paths:
       summary: Get resolver information
       tags:
         - Resolver Info
+  /adns-resolver/v1/security-policy/rules:
+    get:
+      description: Retrieve a paginated list of DNS security policy rules for the tenant's default policy. By default results are ordered by priority (ASC) to match evaluation order; callers may override this with sort_by/sort_order or narrow results with a case-insensitive search over rule name, description and profile name. A response sorted by anything other than priority no longer reflects evaluation order. The response's total is the authoritative rule count for the tenant.
+      operationId: ListSecurityPolicyRules
+      parameters:
+        - description: Maximum number of items to return
+          explode: false
+          in: query
+          name: limit
+          schema:
+            default: 200
+            description: Maximum number of items to return
+            format: int32
+            maximum: 1000
+            minimum: 1
+            type: integer
+        - description: Number of items to skip
+          explode: false
+          in: query
+          name: offset
+          schema:
+            default: 0
+            description: Number of items to skip
+            format: int32
+            minimum: 0
+            type: integer
+        - description: Field to sort by (priority, name, description, profile_name, created_at, last_updated_at)
+          explode: false
+          in: query
+          name: sort_by
+          schema:
+            default: priority
+            description: Field to sort by (priority, name, description, profile_name, created_at, last_updated_at)
+            enum:
+              - priority
+              - name
+              - description
+              - profile_name
+              - created_at
+              - last_updated_at
+            type: string
+        - description: Sort order (ASC or DESC)
+          explode: false
+          in: query
+          name: sort_order
+          schema:
+            default: ASC
+            description: Sort order (ASC or DESC)
+            enum:
+              - ASC
+              - DESC
+            type: string
+        - description: Search term to filter by name, description or profile name
+          explode: false
+          in: query
+          name: search
+          schema:
+            description: Search term to filter by name, description or profile name
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/security-policy-rules-page"
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Not Found
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Method Not Allowed
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Precondition Failed
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unprocessable Entity
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Internal Server Error
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Service Unavailable
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Error
+      summary: List security policy rules
+      tags:
+        - Security Policy Rules
+    post:
+      description: Create a new DNS security policy rule. Priority is required and always supplied in the request. Valid range is 1..N+1 where N is the current rule count; existing rules at or below the requested position shift down. The rule defines match criteria and the security profile to apply when conditions match.
+      operationId: CreateSecurityPolicyRule
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/security-policy-rule-input"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/security-policy-rule-body"
+          description: Created
+          headers:
+            Location:
+              schema:
+                description: URI of the created security policy rule
+                type: string
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Not Found
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Method Not Allowed
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Precondition Failed
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unprocessable Entity
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Internal Server Error
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Service Unavailable
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Error
+      summary: Create security policy rule
+      tags:
+        - Security Policy Rules
+  /adns-resolver/v1/security-policy/rules/{rule-id}:
+    delete:
+      description: Delete a DNS security policy rule by ID. Remaining rules are automatically renumbered to maintain a consecutive priority sequence with no gaps.
+      operationId: DeleteSecurityPolicyRuleByID
+      parameters:
+        - description: Security policy rule ID
+          in: path
+          name: rule-id
+          required: true
+          schema:
+            description: Security policy rule ID
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Not Found
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Method Not Allowed
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Precondition Failed
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unprocessable Entity
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Internal Server Error
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Service Unavailable
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Error
+      summary: Delete security policy rule
+      tags:
+        - Security Policy Rules
+    get:
+      description: Retrieve a single DNS security policy rule by ID. The rule must belong to the tenant's default policy.
+      operationId: GetSecurityPolicyRuleByID
+      parameters:
+        - description: Security policy rule ID
+          in: path
+          name: rule-id
+          required: true
+          schema:
+            description: Security policy rule ID
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/security-policy-rule-body"
+          description: OK
+          headers:
+            Location:
+              schema:
+                description: URI of the created security policy rule
+                type: string
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Not Found
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Method Not Allowed
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Precondition Failed
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unprocessable Entity
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Internal Server Error
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Service Unavailable
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Error
+      summary: Get security policy rule by ID
+      tags:
+        - Security Policy Rules
+    put:
+      description: Update an existing DNS security policy rule. Every mutable field can be changed here, priority included — the move and the field update commit in a single transaction. Valid priority range is 1..N where N is the current rule count. The rule must belong to the tenant's default policy.
+      operationId: UpdateSecurityPolicyRuleByID
+      parameters:
+        - description: Security policy rule ID
+          in: path
+          name: rule-id
+          required: true
+          schema:
+            description: Security policy rule ID
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/security-policy-rule-input"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/security-policy-rule-body"
+          description: OK
+          headers:
+            Location:
+              schema:
+                description: URI of the created security policy rule
+                type: string
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Not Found
+        "405":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Method Not Allowed
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Conflict
+        "412":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Precondition Failed
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unprocessable Entity
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Internal Server Error
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Service Unavailable
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Error
+      summary: Update security policy rule
+      tags:
+        - Security Policy Rules
 security:
   - scmToken: []
 servers:
   - description: Prod
     url: https://api.strata.paloaltonetworks.com
+tags:
+  - description: Manage connection sources and their subnets
+    name: Connection Source
+  - description: Manage custom FQDN lists
+    name: Custom FQDN
+  - description: Manage CA certificates used to fetch external dynamic lists
+    name: EDL CA Certificates
+  - description: Manage external dynamic list definitions
+    name: EDL Definitions
+  - description: Manage internal domains
+    name: Internal Domains
+  - description: Manage misconfigured domains
+    name: Misconfigured Domains
+  - description: Manage DNS security profiles
+    name: Profiles
+  - description: Retrieve resolver IP and endpoint information
+    name: Resolver Info
+  - description: Manage DNS security policy rules that apply a profile to matching user groups
+    name: Security Policy Rules
