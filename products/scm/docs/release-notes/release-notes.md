@@ -13,6 +13,14 @@ keywords:
 
 These release notes identify API changes made for the various Strata Cloud Manager services.
 
+## November 2026
+
+### Strata Cloud Manager — Ngts (Updated)
+
+Additional endpoint and schema updates.
+
+See [Ngts APIs](/scm/api/config/ngts/tlsprotect-cloud/) for full details.
+
 ## October 2026
 
 ### CloudNGFW, NGFW, SASE — Security Services (Updated)
