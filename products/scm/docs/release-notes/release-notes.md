@@ -13,6 +13,14 @@ keywords:
 
 These release notes identify API changes made for the various Strata Cloud Manager services.
 
+## November 2026
+
+### Strata Cloud Manager — Settings (Updated)
+
+Additional endpoint and schema updates.
+
+See [Settings APIs](/scm/api/config/ngfw/device/device-settings/) for full details.
+
 ## October 2026
 
 ### CloudNGFW, NGFW, SASE — Security Services (Updated)
