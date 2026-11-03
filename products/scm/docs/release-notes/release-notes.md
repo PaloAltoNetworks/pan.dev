@@ -19,7 +19,7 @@ These release notes identify API changes made for the various Strata Cloud Manag
 
 Additional endpoint and schema updates.
 
-See [Ngts APIs](/scm/api/config/ngts/tlsprotect-cloud/) for full details.
+See [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) for full details.
 
 ## October 2026
 
