@@ -13,6 +13,14 @@ keywords:
 
 These release notes identify API changes made for the various Strata Cloud Manager services.
 
+## November 2026
+
+### Strata Cloud Manager — Ngts (Updated)
+
+Additional endpoint and schema updates.
+
+See [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) for full details.
+
 ## October 2026
 
 ### CloudNGFW, NGFW, SASE — Security Services (Updated)
@@ -29,7 +37,7 @@ Updated the Zone Protection Profile schema in the Security Services API across a
 | `maximal-rate` | `maximal_rate` |
 | `max-concurrent-limit` | `max_concurrent_limit` |
 
-:::caution Breaking Change
+:::caution[Breaking Change]
 If your integration references the previous hyphenated property names in Zone Protection Profile flood-protection settings, update them to the new underscore format.
 :::
 
@@ -76,13 +84,13 @@ See [Secure Agentless Access APIs](/scm/api/config/secure-agentless-access/saa-a
 
 ### Strata Cloud Manager — Config Cleanup (Updated)
 
-1 new endpoint and 1 removed endpoint.
+1 new endpoint.
 
 | Method | Endpoint | Description |
 | ------ | -------- | ----------- |
 | GET | `/zerohit-rules` | Get Zero-Hit Security Rules |
 
-See [Config Cleanup APIs](/scm/api/config/posture-management/config-cleanup/config-cleanup/) for full details.
+See [Config Cleanup APIs](/scm/api/config/posture-management/config-cleanup/config-cleanup-api/) for full details.
 
 ## September 2026
 
