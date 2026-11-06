@@ -25,7 +25,7 @@ See [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) for full detai
 
 ### Strata Cloud Manager — Adnsr (Updated)
 
-2 new endpoints.
+5 new endpoints. These endpoints are in limited availability.
 
 <details><summary>View endpoints (5)</summary>
 
@@ -39,7 +39,7 @@ See [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) for full detai
 
 </details>
 
-See [Adnsr APIs](/scm/api/config/adnsr/adnsr-apis/) for full details.
+See [Adnsr APIs](/scm/api/config/adnsr/advanced-dns-security-resolver-configuration/) for full details.
 
 ## October 2026
 
