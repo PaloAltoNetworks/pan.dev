@@ -22,6 +22,7 @@ Supported package types:
 - **SASE_CORE** — SASE SWG (Secure Web Gateway) Package
 - **SASE_PRO** — SASE Enterprise Package
 - **PAB** — Prisma Access Browser (Secure Browser)
+- **PAB_PRO** - Prisma Access Browser (Secure Browser) with Private App access
 
 ### Package Catalog
 Retrieve the product packages available for child tenant activation, including full SKU manifests that list all allocatable line items and quantities for each package.
