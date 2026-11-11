@@ -21,6 +21,26 @@ Additional endpoint and schema updates.
 
 See [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) for full details.
 
+---
+
+### Strata Cloud Manager — Adnsr (Updated)
+
+5 new endpoints. These endpoints are in limited availability.
+
+<details><summary>View endpoints (5)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/adns-resolver/v1/security-policy/rules` | List security policy rules |
+| POST | `/adns-resolver/v1/security-policy/rules` | Create security policy rule |
+| GET | `/adns-resolver/v1/security-policy/rules/{rule-id}` | Get security policy rule by ID |
+| PUT | `/adns-resolver/v1/security-policy/rules/{rule-id}` | Update security policy rule |
+| DELETE | `/adns-resolver/v1/security-policy/rules/{rule-id}` | Delete security policy rule |
+
+</details>
+
+See [Adnsr APIs](/scm/api/config/adnsr/advanced-dns-security-resolver-configuration/) for full details.
+
 ## October 2026
 
 ### CloudNGFW, NGFW, SASE — Security Services (Updated)
