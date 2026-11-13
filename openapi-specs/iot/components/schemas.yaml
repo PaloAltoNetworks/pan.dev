@@ -1737,7 +1737,16 @@ schemas:
             Set the group the site belongs to, by group name. `null` removes the
             site from its group, so it sits directly under the top-level group.
             The group must already exist; it is never auto-created. An unknown
-            group name returns HTTP 400.
+            group name returns HTTP 400, and no site in the request is moved.
+            To change only the group of a site, send only `external_id` and
+            `group` for that site; nothing else of the site is changed. In
+            such an item the site name must belong to exactly one site, and
+            the site must be listed only once in the request; otherwise the
+            request returns HTTP 400. An account that has access to only some
+            groups can move a site only between those groups. The groups are
+            set before the rest of the request is processed: if another item
+            of the same request then fails, the request returns HTTP 400 and
+            the sites that were given a group keep it.
         subnetsList:
           type: array
           description: List of subnets associated with this site
@@ -1792,7 +1801,8 @@ schemas:
         description: >-
           The name of the group or site. For the top-level group it is the
           tenant name. For a site it is the site's `external_id`, the value
-          shown as "Name" in the Device Security web interface.
+          shown as "Name" in the Device Security web interface. A site that has
+          no name is listed as `Default Site`.
         example: 'EMEA'
       type:
         type: string
@@ -1892,19 +1902,23 @@ schemas:
         items:
           $ref: '#/schemas/OrganizationNode'
 
-  UpdateOrganizationGroupPayloadSchema:
+  UpdateOrganizationGroupItem:
     type: object
     additionalProperties: false
     description: >-
       Give `name`, `parent`, or both. Renaming a group to its current name, or
-      moving it to its current parent, changes nothing and returns HTTP 200.
-      Unknown fields return HTTP 400.
+      moving it to its current parent, changes nothing. An account that has
+      access to only some groups cannot name a group or a parent outside
+      those groups and the groups beneath them, also when the item would
+      change nothing.
     required:
       - group
     properties:
       group:
         type: string
-        description: 'The current name of the group to rename or move'
+        description: >-
+          The current name of the group to rename or move. In an array, the
+          name the group has after the items before this one.
       name:
         type: string
         minLength: 1
@@ -1922,6 +1936,18 @@ schemas:
           directly under the top-level group. Omit it to leave the group where
           it is.
 
+  UpdateOrganizationGroupPayloadSchema:
+    description: >-
+      One item, or an array of 1 to 1000 items. The items of an array are
+      applied in the order given. Unknown fields return HTTP 400.
+    oneOf:
+      - $ref: '#/schemas/UpdateOrganizationGroupItem'
+      - type: array
+        minItems: 1
+        maxItems: 1000
+        items:
+          $ref: '#/schemas/UpdateOrganizationGroupItem'
+
   UpdateOrganizationGroupResponse:
     type: object
     properties:
@@ -1937,8 +1963,35 @@ schemas:
         type: string
         description: 'Status message indicating the result of the operation'
         example: 'OK'
+      groups:
+        type: array
+        description: 'One group for each item, in request order, as it is after the whole request'
+        items:
+          $ref: '#/schemas/OrganizationNode'
+
+  DeleteOrganizationGroupItem:
+    type: object
+    additionalProperties: false
+    required:
+      - group
+    properties:
       group:
-        $ref: '#/schemas/OrganizationNode'
+        type: string
+        description: >-
+          Name of the group to delete. Exact, case-sensitive match on the group
+          name.
+
+  DeleteOrganizationGroupPayloadSchema:
+    description: >-
+      One item, or an array of 1 to 1000 items. A group cannot be listed
+      twice. Unknown fields return HTTP 400.
+    oneOf:
+      - $ref: '#/schemas/DeleteOrganizationGroupItem'
+      - type: array
+        minItems: 1
+        maxItems: 1000
+        items:
+          $ref: '#/schemas/DeleteOrganizationGroupItem'
 
   DeleteOrganizationGroupResponse:
     type: object
@@ -1955,53 +2008,18 @@ schemas:
         type: string
         description: 'Status message indicating the result of the operation'
         example: 'OK'
+      deletedGroups:
+        type: integer
+        description: 'The number of groups deleted'
+        example: 2
       movedGroups:
         type: integer
-        description: 'The number of subgroups moved to the deleted group''s parent'
-        example: 1
+        description: 'The number of subgroups that moved to another parent group'
+        example: 0
       movedSites:
         type: integer
-        description: 'The number of sites moved to the deleted group''s parent'
-        example: 2
-
-  OrganizationSitesPayloadSchema:
-    type: object
-    additionalProperties: false
-    required:
-      - group
-      - sites
-    properties:
-      group:
-        type: string
-        description: 'The name of the group'
-      sites:
-        type: array
-        minItems: 1
-        maxItems: 1000
-        uniqueItems: true
-        description: 'Site names (`external_id`, the value shown as "Name" in the Device Security web interface)'
-        items:
-          type: string
-
-  OrganizationSitesResponse:
-    type: object
-    properties:
-      ver:
-        type: string
-        description: 'The version of the IoT Security API'
-        example: 'v4.0'
-      api:
-        type: string
-        description: 'The API endpoint that was called'
-        example: 'assignOrganizationSites'
-      message:
-        type: string
-        description: 'Status message indicating the result of the operation'
-        example: 'OK'
-      updated:
-        type: integer
-        description: 'The number of sites updated'
-        example: 2
+        description: 'The number of sites that moved to another parent group'
+        example: 3
 
   CreateNetworkSegmentPayloadSchema:
     type: array
