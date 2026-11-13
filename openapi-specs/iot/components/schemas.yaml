@@ -1624,8 +1624,9 @@ schemas:
           nullable: true
           description: >-
             Set the group the new site belongs to, by group name. `null` or
-            omitted leaves the site ungrouped. The group must already exist; it
-            is never auto-created. An unknown group name returns HTTP 400.
+            omitted leaves the site ungrouped, directly under the top-level
+            group. The group must already exist; it is never auto-created. An
+            unknown group name returns HTTP 400.
 
   CreateSiteResponse:
     type: object
@@ -1691,7 +1692,10 @@ schemas:
               description: >-
                 The group the site belongs to, by name. This is the site's parent
                 group (for example a region, country, or business unit), not a
-                parent site. `null` when the site is not in any group.
+                parent site. `null` when the site is not in any group; such a
+                site sits directly under the top-level group, which is how the
+                Device Security web interface and
+                [Get Organization Hierarchy](/iot/api/organization-get) show it.
               example: 'Finland-Region'
             subnetsList:
               type: array
@@ -1731,8 +1735,18 @@ schemas:
           # parent site)"
           description: >-
             Set the group the site belongs to, by group name. `null` removes the
-            site from its group. The group must already exist; it is never
-            auto-created. An unknown group name returns HTTP 400.
+            site from its group, so it sits directly under the top-level group.
+            The group must already exist; it is never auto-created. An unknown
+            group name returns HTTP 400, and no site in the request is moved.
+            To change only the group of a site, send only `external_id` and
+            `group` for that site; nothing else of the site is changed. In
+            such an item the site name must belong to exactly one site, and
+            the site must be listed only once in the request; otherwise the
+            request returns HTTP 400. An account that has access to only some
+            groups can move a site only between those groups. The groups are
+            set before the rest of the request is processed: if another item
+            of the same request then fails, the request returns HTTP 400 and
+            the sites that were given a group keep it.
         subnetsList:
           type: array
           description: List of subnets associated with this site
@@ -1777,7 +1791,236 @@ schemas:
       message:
         type: string
         description: 'Status message indicating the result of the operation'
-  
+
+  OrganizationNode:
+    type: object
+    description: One node of the organization hierarchy
+    properties:
+      name:
+        type: string
+        description: >-
+          The name of the group or site. For the top-level group it is the
+          tenant name. For a site it is the site's `external_id`, the value
+          shown as "Name" in the Device Security web interface. A site that has
+          no name is listed as `Default Site`.
+        example: 'EMEA'
+      type:
+        type: string
+        enum:
+          - root
+          - group
+          - site
+        description: '`root` for the top-level group, `group` for any other group, `site` for a site'
+        example: 'group'
+      parent:
+        type: string
+        nullable: true
+        description: 'The name of the parent group. `null` for the top-level group.'
+        example: 'acme-tenant'
+      path:
+        type: array
+        description: >-
+          The names from the top-level group down to this node, including the
+          node itself. It is an array because a group name may contain `/`.
+        items:
+          type: string
+        example: ['acme-tenant', 'EMEA']
+
+  GetOrganizationResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+        example: 'v4.0'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+        example: 'getOrganization'
+      total:
+        type: integer
+        description: 'The number of nodes in `list`'
+        example: 6
+      list:
+        type: array
+        description: 'The nodes of the hierarchy, depth first; under each parent, groups and sites are sorted by name'
+        items:
+          $ref: '#/schemas/OrganizationNode'
+
+  CreateOrganizationGroupItem:
+    type: object
+    additionalProperties: false
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        minLength: 1
+        maxLength: 32
+        description: >-
+          Name of the new group, unique in the tenant. Up to 32 characters. It
+          cannot be blank, and cannot contain control characters or any of
+          the following characters: `` ~ ` ! # $ % ^ & * + = [ ] \ { } | < > ? ‘ ’ “ ``
+      parent:
+        type: string
+        nullable: true
+        description: >-
+          Name of the parent group: an existing group, or a group listed
+          earlier in the same request. Empty, `null` or omitted creates the
+          group directly under the top-level group.
+
+  CreateOrganizationGroupPayloadSchema:
+    description: >-
+      One group, or an array of 1 to 1000 groups. In an array, list each
+      parent before its children. Unknown fields return HTTP 400.
+    oneOf:
+      - $ref: '#/schemas/CreateOrganizationGroupItem'
+      - type: array
+        minItems: 1
+        maxItems: 1000
+        items:
+          $ref: '#/schemas/CreateOrganizationGroupItem'
+
+  CreateOrganizationGroupResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+        example: 'v4.0'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+        example: 'createOrganizationGroup'
+      message:
+        type: string
+        description: 'Status message indicating the result of the operation'
+        example: 'OK'
+      groups:
+        type: array
+        description: 'The groups that were created, in request order'
+        items:
+          $ref: '#/schemas/OrganizationNode'
+
+  UpdateOrganizationGroupItem:
+    type: object
+    additionalProperties: false
+    description: >-
+      Give `name`, `parent`, or both. Renaming a group to its current name, or
+      moving it to its current parent, changes nothing. An account that has
+      access to only some groups cannot name a group or a parent outside
+      those groups and the groups beneath them, also when the item would
+      change nothing.
+    required:
+      - group
+    properties:
+      group:
+        type: string
+        description: >-
+          The current name of the group to rename or move. In an array, the
+          name the group has after the items before this one.
+      name:
+        type: string
+        minLength: 1
+        maxLength: 32
+        description: >-
+          The new name for the group, unique in the tenant. Up to 32
+          characters. It cannot be blank, and cannot contain control
+          characters or any of the following characters:
+          `` ~ ` ! # $ % ^ & * + = [ ] \ { } | < > ? ‘ ’ “ ``
+      parent:
+        type: string
+        nullable: true
+        description: >-
+          Name of the group to move this group under. Empty or `null` moves it
+          directly under the top-level group. Omit it to leave the group where
+          it is.
+
+  UpdateOrganizationGroupPayloadSchema:
+    description: >-
+      One item, or an array of 1 to 1000 items. The items of an array are
+      applied in the order given. Unknown fields return HTTP 400.
+    oneOf:
+      - $ref: '#/schemas/UpdateOrganizationGroupItem'
+      - type: array
+        minItems: 1
+        maxItems: 1000
+        items:
+          $ref: '#/schemas/UpdateOrganizationGroupItem'
+
+  UpdateOrganizationGroupResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+        example: 'v4.0'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+        example: 'updateOrganizationGroup'
+      message:
+        type: string
+        description: 'Status message indicating the result of the operation'
+        example: 'OK'
+      groups:
+        type: array
+        description: 'One group for each item, in request order, as it is after the whole request'
+        items:
+          $ref: '#/schemas/OrganizationNode'
+
+  DeleteOrganizationGroupItem:
+    type: object
+    additionalProperties: false
+    required:
+      - group
+    properties:
+      group:
+        type: string
+        description: >-
+          Name of the group to delete. Exact, case-sensitive match on the group
+          name.
+
+  DeleteOrganizationGroupPayloadSchema:
+    description: >-
+      One item, or an array of 1 to 1000 items. A group cannot be listed
+      twice. Unknown fields return HTTP 400.
+    oneOf:
+      - $ref: '#/schemas/DeleteOrganizationGroupItem'
+      - type: array
+        minItems: 1
+        maxItems: 1000
+        items:
+          $ref: '#/schemas/DeleteOrganizationGroupItem'
+
+  DeleteOrganizationGroupResponse:
+    type: object
+    properties:
+      ver:
+        type: string
+        description: 'The version of the IoT Security API'
+        example: 'v4.0'
+      api:
+        type: string
+        description: 'The API endpoint that was called'
+        example: 'deleteOrganizationGroup'
+      message:
+        type: string
+        description: 'Status message indicating the result of the operation'
+        example: 'OK'
+      deletedGroups:
+        type: integer
+        description: 'The number of groups deleted'
+        example: 2
+      movedGroups:
+        type: integer
+        description: 'The number of subgroups that moved to another parent group'
+        example: 0
+      movedSites:
+        type: integer
+        description: 'The number of sites that moved to another parent group'
+        example: 3
+
   CreateNetworkSegmentPayloadSchema:
     type: array
     description: Array of network segment definitions to be created

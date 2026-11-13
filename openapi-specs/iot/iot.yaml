@@ -685,6 +685,64 @@ paths:
       responses:
         $ref: "api/public/deleteSite.yaml#/responses"
 
+  /iot/pub/v1/organization:
+    get:
+      description: "Retrieve the organization hierarchy as one list: the top-level group (named after the tenant), its groups and subgroups, and the sites in each group, as shown on the Sites page of the Device Security web interface. <br/> Each node has its `name`, its `type` (`root`, `group` or `site`), the name of its `parent` group, and its `path` (the names from the top-level group down to the node). For a site, `name` is the site's `external_id`, the value shown as \"Name\" in the Device Security web interface. <br/> Nodes are listed depth first, and the groups and sites under each parent are sorted by name. Sites that are not in any group are listed under the top-level group, and groups without sites are included. Only the groups and sites your account can access are returned; the top-level group is always returned. <br/> Use `group` to get one group and everything beneath it, and `type` to keep one kind of node. An unknown query parameter returns HTTP 400."
+      operationId: organization-get
+      security:
+        - Bearer: []
+      summary: Get Organization Hierarchy
+      tags:
+        - IoT Public API
+      parameters:
+        $ref: "api/public/getOrganization.yaml#/parameters"
+      responses:
+        $ref: "api/public/getOrganization.yaml#/responses"
+
+  /iot/pub/v1/organization/group:
+    post:
+      description: "Create one or more groups in the organization hierarchy. Send one group, or an array of up to 1000 groups. <br/> A `parent` can be an existing group or a group listed earlier in the same request, so several levels can be created in one request: list each parent before its children. An empty, `null` or omitted `parent` creates the group directly under the top-level group. <br/> Group names are unique in a tenant. The hierarchy can be at most five levels deep, counting the top-level group. <br/> The request is all or nothing: if any group is rejected (for example a name that is already used, a parent that does not exist or is listed after its child, or a group that would be too deep), the request returns HTTP 400 and no group is created. <br/> An account that has access to only some groups can change only those groups and the groups beneath them; for any other group the request returns HTTP 400."
+      operationId: organization-groups-create
+      security:
+        - Bearer: []
+      summary: Create Organization Groups
+      tags:
+        - IoT Public API
+      parameters:
+        $ref: "api/public/createOrganizationGroup.yaml#/parameters"
+      requestBody:
+        $ref: "api/public/createOrganizationGroup.yaml#/requestBody"
+      responses:
+        $ref: "api/public/createOrganizationGroup.yaml#/responses"
+    put:
+      description: "Rename groups, move them under another group, or both. Send one item, or an array of up to 1000 items. A group keeps its subgroups and sites, and a move takes them along. <br/> Groups are identified by name, so renaming a group changes the name that scripts and integrations must use for it. <br/> In an array, the items are applied in the order given, and each item uses the result of the items before it: a group that an earlier item renamed is named by its new name. The request is all or nothing: if any item is rejected, the request returns HTTP 400 and no group is changed. <br/> The top-level group cannot be renamed or moved. A move that would place a group under itself or one of its subgroups, or make the hierarchy deeper than five levels (counting the top-level group), returns HTTP 400. If another request changes the hierarchy at the same time and the two conflict, the request returns HTTP 400 and undoes its own changes; retry it. In rare cases a change cannot be undone; the message then names the groups that stay changed. <br/> An account that has access to only some groups can change only those groups and the groups beneath them; for any other group the request returns HTTP 400."
+      operationId: organization-groups-update
+      security:
+        - Bearer: []
+      summary: Rename or Move Organization Groups
+      tags:
+        - IoT Public API
+      parameters:
+        $ref: "api/public/updateOrganizationGroup.yaml#/parameters"
+      requestBody:
+        $ref: "api/public/updateOrganizationGroup.yaml#/requestBody"
+      responses:
+        $ref: "api/public/updateOrganizationGroup.yaml#/responses"
+    delete:
+      description: "Delete one or more groups. The request takes a JSON body: one item, or an array of up to 1000 items, each with the name of a group. <br/> The subgroups and sites of a deleted group are not deleted; they move to its parent group. If the parent is deleted in the same request, they move to the nearest group above it that is not deleted. Sites that move to the top-level group are no longer in any group. No site or device data is removed. <br/> The request is all or nothing: if any group is rejected (for example a name that does not exist or is listed twice), the request returns HTTP 400 and no group is deleted. The top-level group cannot be deleted. <br/> An account that has access to only some groups can change only those groups and the groups beneath them; for any other group the request returns HTTP 400."
+      operationId: organization-groups-delete
+      security:
+        - Bearer: []
+      summary: Delete Organization Groups
+      tags:
+        - IoT Public API
+      parameters:
+        $ref: "api/public/deleteOrganizationGroup.yaml#/parameters"
+      requestBody:
+        $ref: "api/public/deleteOrganizationGroup.yaml#/requestBody"
+      responses:
+        $ref: "api/public/deleteOrganizationGroup.yaml#/responses"
+
   /iot/pub/v1/networkSegment:
     post:
       description: "Create one new network segment definition in IoT Security. <br/> For customers using the IoT Standalone Portal, refer to IoT Standalone Public API Authentication page."
