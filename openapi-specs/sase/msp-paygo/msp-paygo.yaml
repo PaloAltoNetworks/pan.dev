@@ -4,7 +4,7 @@ info:
   description: >-
     MSP PayGo lifecycle management APIs for child tenant provisioning,
     SCM onboarding, CIE configuration, and edge location lookup.
-    Supports package types: SASE_CORE (SASE SWG Package), SASE_PRO (SASE ENT), and PAB (Secure Browser).
+    Supports package types: SASE_CORE (SASE SWG Package), SASE_PRO (SASE ENT), PAB (Secure Browser), and PAB_PRO (PAB Pro).
     © 2025 Palo Alto Networks, Inc
   version: 1.0.0
   termsOfService: 'https://www.paloaltonetworks.com/content/dam/pan/en_US/assets/pdf/legal/palo-alto-networks-end-user-license-agreement-eula.pdf'
@@ -344,7 +344,7 @@ paths:
       description: >-
         Activates a child tenant under the root, provisioning the requested package
         and SKU allocations through the upstream licensing service.
-        Package types: SASE_CORE requires saseCore block, SASE_PRO requires sasePro block, PAB requires pab block.
+        Package types: SASE_CORE requires saseCore block, SASE_PRO requires sasePro block, PAB requires pab block, PAB_PRO requires pabPro block.
         IDP types: MSP_IDP uses the shared Cloud Identity Engine instance, TENANT_IDP provisions a dedicated CIE.
       operationId: activateChildTenant
       security:
@@ -440,6 +440,28 @@ paths:
                     user_count: 100
                     region: apac-sg
                     directory_name: company-directory
+                    addon: []
+              pabPro:
+                summary: Activate PAB Pro
+                value:
+                  tsgId: '9876543213'
+                  packageType: PAB_PRO
+                  packageId: pkg-uuid-pab-pro-001
+                  region: americas
+                  domain: pab-pro.example.com
+                  allocations:
+                    - sku: INT-CBA-MSP-PAN-PRISMA-PAYGO-PB-PRO
+                      quantity: 100
+                      isBase: true
+                  idp:
+                    type: MSP_IDP
+                    provider: okta
+                    url: https://idp.company.com/saml/metadata
+                    user_groups: []
+                  pabPro:
+                    user_count: 100
+                    region: us-east-1
+                    directory_name: pabpro-directory
                     addon: []
       responses:
         '200':
@@ -1322,6 +1344,10 @@ components:
           description: Required when `packageType` is `PAB`
           allOf:
             - $ref: '#/components/schemas/PabDetails'
+        pabPro:
+          description: Required when `packageType` is `PAB_PRO`
+          allOf:
+            - $ref: '#/components/schemas/PabDetails'
         saseCore:
           description: Required when `packageType` is `SASE_CORE`
           allOf:
@@ -1761,6 +1787,7 @@ components:
         - SASE_CORE
         - SASE_PRO
         - PAB
+        - PAB_PRO
       description: 'Package type:
 
         - `SASE_CORE` - **SASE SWG Package**: Secure Internet and SaaS access with Prisma SASE
@@ -1769,6 +1796,8 @@ components:
         Pro
 
         - `PAB` - **PAB**: Secure Browser foundation
+
+        - `PAB_PRO` - **PAB Pro**: Prisma Browser pro package
 
         '
     LokiStatus:
