@@ -16,6 +16,17 @@ These release notes identify API changes made for the various SASE services.
 - [Prisma Access Cloud Managed Release Notes](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-release-notes/release-information)
 - [Prisma Access Insights Release Updates](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-insights/insights/app-updates)
 
+## November 2026
+
+### Prisma SASE — Msp Paygo (Updated)
+
+The MSP PayGo Service API now supports the `PAB_PRO` (PAB Pro) package type.
+
+- Added `PAB_PRO` to the `packageType` values.
+- `POST /mt/paygo/v1/tenant/{rootTsgId}/activate-child` accepts a new `pabPro` block, which is required when `packageType` is `PAB_PRO`.
+
+See [Msp Paygo APIs](/sase/api/msp-paygo/msp-paygo/) for full details.
+
 ## September 2026
 
 ### Prisma SASE — Msp Paygo (New)
