@@ -9,4 +9,4 @@ title: API Release Notes
 
 Additional endpoint and schema updates.
 
-See [Airs APIs](/prisma-airs/api/scan/scan-service/) for full details.
+See [Airs APIs](/prisma-airs/api/airuntimesecurity/scan/prisma-airs-ai-runtime-api-intercept/) for full details.
