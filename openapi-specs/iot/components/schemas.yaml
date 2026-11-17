@@ -1736,17 +1736,17 @@ schemas:
           description: >-
             Set the group the site belongs to, by group name. `null` removes the
             site from its group, so it sits directly under the top-level group.
-            The group must already exist; it is never auto-created. An unknown
+            The group must already exist. It is never auto-created. An unknown
             group name returns HTTP 400, and no site in the request is moved.
-            To change only the group of a site, send only `external_id` and
-            `group` for that site; nothing else of the site is changed. In
-            such an item the site name must belong to exactly one site, and
-            the site must be listed only once in the request; otherwise the
+            To change only the group of a site, send only the `external_id`
+            and `group` for that site. Nothing else of the site is changed. In
+            such an item, the site name must belong to exactly one site, and
+            the site must be listed only once in the request, or else the
             request returns HTTP 400. An account that has access to only some
-            groups can move a site only between those groups. The groups are
+            groups can move a site between only those groups. The groups are
             set before the rest of the request is processed: if another item
-            of the same request then fails, the request returns HTTP 400 and
-            the sites that were given a group keep it.
+            of the same request then fails, the request returns HTTP 400 but
+            the sites that were given a group keep the group assignment.
         subnetsList:
           type: array
           description: List of subnets associated with this site
@@ -1917,8 +1917,9 @@ schemas:
       group:
         type: string
         description: >-
-          The current name of the group to rename or move. In an array, the
-          name the group has after the items before this one.
+          The current name of the group to rename or move. The items of an
+          array are applied in order: if an earlier item in the same request
+          renamed this group, use its new name here.
       name:
         type: string
         minLength: 1
@@ -1965,7 +1966,7 @@ schemas:
         example: 'OK'
       groups:
         type: array
-        description: 'One group for each item, in request order, as it is after the whole request'
+        description: 'One group for each item in the request, in request order. Each group is returned with the name, parent and path it has after all items in the request are applied.'
         items:
           $ref: '#/schemas/OrganizationNode'
 
