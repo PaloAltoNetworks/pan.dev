@@ -41,7 +41,7 @@ paths:
   /v1/scan/sync/request:
     post:
       summary: Send a Synchronous Scan Request
-      description: Post a scan request containing prompt or model response that returns a synchronous scan response
+      description: Post a scan request containing prompt or model response that returns a synchronous scan response. Provide either contents or native. With native, send the provider request or response body as is, and the scan covers the new content in it. When native has a payload, contents is ignored.
       security:
         - x-pan-token: []
       operationId: ScanSyncRequest
@@ -54,6 +54,11 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/ScanRequest"
+            examples:
+              ExampleNativeScanRequestOpenAIChat:
+                $ref: "#/components/examples/ExampleNativeScanRequestOpenAIChat"
+              ExampleNativeScanRequestAnthropic:
+                $ref: "#/components/examples/ExampleNativeScanRequestAnthropic"
       responses:
         "200":
           description: successfully scanned request
@@ -61,6 +66,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ScanResponse"
+              examples:
+                ExampleNativeScanResponse:
+                  $ref: "#/components/examples/ExampleNativeScanResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -271,13 +279,129 @@ components:
         metadata:
           $ref: "#/components/schemas/Metadata"
         contents:
-          description: List of prompt or response or prompt/response pairs. The last element is the one that needs to be scanned, and the previous elements are the context for the scan.
+          description: List of prompt or response or prompt/response pairs. The last element is the one that needs to be scanned, and the previous elements are the context for the scan. Required unless native is sent. Ignored when native has a payload.
           type: array
           items:
             $ref: "#/components/schemas/ScanContent"
+        native:
+          $ref: "#/components/schemas/NativeInput"
       required:
-        - contents
         - ai_profile
+
+    NativeInput:
+      type: object
+      description: A provider request or response body, sent as is. AIRS finds the content to scan in the body.
+      properties:
+        schema:
+          type: string
+          maxLength: 64
+          description: Provider schema of the payload. Supported values are openai.chat.completions, openai.responses and anthropic.messages. Any other value of up to 64 bytes is accepted, and the payload is then read without a schema, in which case schema_mismatch is true in the response.
+        direction:
+          $ref: "#/components/schemas/NativeDirection"
+        payload:
+          description: The provider body, as received.
+      required:
+        - schema
+        - direction
+        - payload
+
+    NativeDirection:
+      type: string
+      description: Whether the payload is a request sent to the model or a response received from it.
+      enum:
+        - request
+        - response
+
+    NativeScanResult:
+      type: object
+      description: What was scanned and what was skipped in the native payload.
+      properties:
+        declared_schema:
+          type: string
+          description: The schema declared in the request.
+        detected:
+          $ref: "#/components/schemas/NativeDetection"
+        schema_mismatch:
+          type: boolean
+          description: True when the payload was not read as the declared schema, because the schema name is not supported or the body does not fit the schema. A failure that is not about the schema, such as a timeout, a limit or an internal error, leaves it false.
+        scanned:
+          type: array
+          description: The scanned elements, at most 100. The scan covers all of them, and scanned_omitted counts those not listed.
+          items:
+            $ref: "#/components/schemas/NativeScannedItem"
+        scanned_omitted:
+          type: integer
+          description: Number of scanned elements left out of scanned to keep the response small.
+        not_scanned:
+          type: array
+          description: The skipped elements, at most 100.
+          items:
+            $ref: "#/components/schemas/NativeNotScannedItem"
+        not_scanned_omitted:
+          type: integer
+          description: Number of skipped elements left out of not_scanned to keep the response small.
+      required:
+        - declared_schema
+        - detected
+        - schema_mismatch
+        - scanned
+        - not_scanned
+
+    NativeDetection:
+      type: object
+      properties:
+        schema:
+          type: string
+          description: Schema the payload was read as. Empty when no schema was applied.
+        direction:
+          $ref: "#/components/schemas/NativeDirection"
+      required:
+        - schema
+        - direction
+
+    NativeScannedItem:
+      type: object
+      properties:
+        path:
+          type: string
+          description: JSON pointer to the element in the payload, cut at 256 bytes. Empty for the whole payload.
+        kind:
+          type: string
+          description: Role of the element, for example user, assistant, system or tool_result.
+        content_type:
+          type: string
+          description: How the element was scanned.
+          enum:
+            - prompt
+            - response
+            - tool_call
+            - tool_response
+        entry:
+          type: integer
+          description: Present for tool_call and tool_response items. Index in tool_detected.input_detected.detection_entries for a tool call, or in tool_detected.output_detected.detection_entries for a tool result.
+        offset:
+          type: integer
+          description: Start of the element in its entry text, or in the prompt or response when parts are joined, in UTF-16 code units.
+      required:
+        - path
+        - kind
+        - content_type
+
+    NativeNotScannedItem:
+      type: object
+      properties:
+        path:
+          type: string
+          description: JSON pointer to the element in the payload, cut at 256 bytes.
+        kind:
+          type: string
+          description: Role of the element.
+        reason:
+          type: string
+          description: Why the element was skipped, for example prior_turn or role_not_scannable.
+      required:
+        - path
+        - kind
 
     AiProfile:
       type: object
@@ -418,6 +542,8 @@ components:
           $ref: "#/components/schemas/ResponseDetectionDetails"
         tool_detected:
           $ref: "#/components/schemas/ToolDetected"
+        native_result:
+          $ref: "#/components/schemas/NativeScanResult"
         created_at:
           type: string
           format: date-time
@@ -1247,6 +1373,82 @@ components:
                         type: string
                         example: "minute"
   examples:
+    ExampleNativeScanRequestOpenAIChat:
+      summary: Native request with an OpenAI chat completions body
+      value:
+        ai_profile:
+          profile_name: my-profile
+        native:
+          schema: openai.chat.completions
+          direction: request
+          payload:
+            model: gpt-4o
+            messages:
+              - role: system
+                content: You are a support assistant for Acme Retail.
+              - role: user
+                content: Hi, I have a question about an order.
+              - role: assistant
+                content: Of course. What is the order number?
+              - role: user
+                content: "It's A-1042. Where is it, and when will it arrive?"
+    ExampleNativeScanRequestAnthropic:
+      summary: Native request with an Anthropic messages body
+      value:
+        ai_profile:
+          profile_name: my-profile
+        native:
+          schema: anthropic.messages
+          direction: request
+          payload:
+            model: claude-sonnet-5-5
+            max_tokens: 512
+            messages:
+              - role: user
+                content: Hi, I have a question about an order.
+              - role: assistant
+                content: Of course. What is the order number?
+              - role: user
+                content: "It's A-1042. Where is it, and when will it arrive?"
+    ExampleNativeScanResponse:
+      summary: Response to the OpenAI chat request, showing what was scanned and skipped
+      value:
+        report_id: R3f2a9c10-1b7d-4c55-9e0a-5d8f1c2b7a41
+        scan_id: 3f2a9c10-1b7d-4c55-9e0a-5d8f1c2b7a41
+        profile_name: my-profile
+        category: benign
+        action: allow
+        timeout: false
+        error: false
+        errors: []
+        prompt_detected:
+          url_cats: false
+          dlp: false
+          injection: false
+          toxic_content: false
+          malicious_code: false
+          agent: false
+          topic_violation: false
+        native_result:
+          declared_schema: openai.chat.completions
+          detected:
+            schema: openai.chat.completions
+            direction: request
+          schema_mismatch: false
+          scanned:
+            - path: /messages/3/content
+              kind: user
+              content_type: prompt
+          not_scanned:
+            - path: /messages/0/content
+              kind: system
+              reason: role_not_scannable
+            - path: /messages/1/content
+              kind: user
+              reason: prior_turn
+            - path: /messages/2/content
+              kind: assistant
+              reason: prior_turn
     ExampleMultipleThreatScanReports:
       summary: Example response with multiple threat scan report entries
       value:
