@@ -242,7 +242,7 @@ export default function SCMLandingPage() {
             icon: "api-doc",
           },
           {
-            to: "/access/api/ztna/ztna-connector-apis",
+            to: "/access/api/ztna/ztna-connector-api",
             label: "ZTNA Connector",
             icon: "api-doc",
           },
