@@ -13,6 +13,34 @@ keywords:
 
 These release notes identify API changes made for the various Strata Cloud Manager services.
 
+## November 2026
+
+### Strata Cloud Manager — Ngts (Updated)
+
+Additional endpoint and schema updates.
+
+See [NGTS TLS Protect Cloud APIs](/scm/api/config/ngts/ngts-api/) for full details.
+
+---
+
+### Strata Cloud Manager — Adnsr (Updated)
+
+5 new endpoints. These endpoints are in limited availability.
+
+<details><summary>View endpoints (5)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/adns-resolver/v1/security-policy/rules` | List security policy rules |
+| POST | `/adns-resolver/v1/security-policy/rules` | Create security policy rule |
+| GET | `/adns-resolver/v1/security-policy/rules/{rule-id}` | Get security policy rule by ID |
+| PUT | `/adns-resolver/v1/security-policy/rules/{rule-id}` | Update security policy rule |
+| DELETE | `/adns-resolver/v1/security-policy/rules/{rule-id}` | Delete security policy rule |
+
+</details>
+
+See [Adnsr APIs](/scm/api/config/adnsr/advanced-dns-security-resolver-configuration/) for full details.
+
 ## October 2026
 
 ### CloudNGFW, NGFW, SASE — Security Services (Updated)
@@ -29,7 +57,7 @@ Updated the Zone Protection Profile schema in the Security Services API across a
 | `maximal-rate` | `maximal_rate` |
 | `max-concurrent-limit` | `max_concurrent_limit` |
 
-:::caution Breaking Change
+:::caution[Breaking Change]
 If your integration references the previous hyphenated property names in Zone Protection Profile flood-protection settings, update them to the new underscore format.
 :::
 
@@ -70,7 +98,19 @@ These APIs enable configuration API for Secure Agentless Access (SAA).
 
 </details>
 
-See [Secure Agentless Access APIs](/scm/api/config/secure-agentless-access/saa-apis/) for full details.
+See [Secure Agentless Access APIs](/scm/api/config/secure_agentless_access/introduction/) for full details.
+
+---
+
+### Strata Cloud Manager — Config Cleanup (Updated)
+
+1 new endpoint.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/zerohit-rules` | Get Zero-Hit Security Rules |
+
+See [Config Cleanup APIs](/scm/api/config/posture-management/config-cleanup/config-cleanup-api/) for full details.
 
 ## September 2026
 
@@ -78,7 +118,7 @@ See [Secure Agentless Access APIs](/scm/api/config/secure-agentless-access/saa-a
 
 Additional endpoint and schema updates for the Compliance Frameworks APIs.
 
-See [Compliance Frameworks APIs](/scm/api/config/posture-management/compliance-framework/compliance-center/) for full details.
+See [Compliance Frameworks APIs](/scm/api/config/posture-management/compliance-framework/compliance-center-api/) for full details.
 
 ---
 
@@ -94,7 +134,7 @@ Updated Logical Routers API for NGFW and SASE. Use these APIs to list, create, r
 | PUT | `/logical-routers/{id}` | Update a logical router |
 | DELETE | `/logical-routers/{id}` | Delete a logical router |
 
-See [Logical Routers API](/scm/api/config/sase/network/logical-routers/) for full details.
+See [Logical Routers API](/scm/api/config/sase/network/logical-routers/logical-routers/) for full details.
 
 ---
 
@@ -110,7 +150,7 @@ Updated Virtual Routers API for NGFW and SASE. Use these APIs to list, create, r
 | PUT | `/virtual-routers/{id}` | Update a virtual router |
 | DELETE | `/virtual-routers/{id}` | Delete a virtual router |
 
-See [Virtual Routers API](/scm/api/config/sase/network/virtual-routers/) for full details.
+See [Virtual Routers API](/scm/api/config/sase/network/virtual-routers/virtual-routers/) for full details.
 
 ---
 
@@ -163,7 +203,7 @@ Updated VR Routing Profiles API for NGFW and SASE. Manage BGP, OSPF, OSPFv3, BFD
 
 </details>
 
-See [VR Routing Profiles API](/scm/api/config/sase/network/vr-routing-profiles/) for full details.
+See [VR Routing Profiles API](/scm/api/config/sase/network/vr-routing-profiles/vr-routing-profiles/) for full details.
 
 ---
 
@@ -171,7 +211,7 @@ See [VR Routing Profiles API](/scm/api/config/sase/network/vr-routing-profiles/)
 
 4 removed endpoints.
 
-See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for full details.
+See [Checks APIs](/scm/api/config/posture-management/checks/posture-check-apis-introduction/) for full details.
 
 ---
 
@@ -190,7 +230,7 @@ See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for
 
 </details>
 
-See [Checks APIs](/scm/api/config/posture-management/checks/posture-checks/) for full details.
+See [Checks APIs](/scm/api/config/posture-management/checks/posture-check-apis-introduction/) for full details.
 
 ## August 2026
 
@@ -262,7 +302,7 @@ New R3 routing APIs introduce Logical Routers, Virtual Routers, and VR Routing P
 
 </details>
 
-See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/network-api/) and [SASE Network Services APIs](/scm/api/config/sase/network/network-api/) for full details.
 
 ---
 
@@ -286,7 +326,7 @@ New R3 Application Tags APIs enable management of application tag definitions fo
 | PUT | `/config/objects/v1/application-tags/{id}` | Update an application tag |
 | DELETE | `/config/objects/v1/application-tags/{id}` | Delete an application tag |
 
-See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/network-api/) and [SASE Network Services APIs](/scm/api/config/sase/network/network-api/) for full details.
 
 ---
 
@@ -302,7 +342,7 @@ R3 Application Tags support extended to Cloud NGFW, providing consistent applica
 | PUT | `/config/objects/v1/application-tags/{id}` | Update an application tag |
 | DELETE | `/config/objects/v1/application-tags/{id}` | Delete an application tag |
 
-See [Cloud NGFW APIs](/scm/api/config/cloudngfw/) for full details.
+See [Cloud NGFW APIs](/scm/api/config/cloudngfw/objects/application-tags/) for full details.
 
 ---
 
@@ -310,7 +350,7 @@ See [Cloud NGFW APIs](/scm/api/config/cloudngfw/) for full details.
 
 R3 update to the Deployment Services API introduces expanded service management capabilities for SASE deployments.
 
-See [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+See [SASE Network Services APIs](/scm/api/config/sase/network/network-api/) for full details.
 
 ---
 
@@ -318,7 +358,7 @@ See [SASE Network Services APIs](/scm/api/config/sase/network/) for full details
 
 R3 release of the Network Services API for both NGFW and SASE platforms with updated schemas and expanded endpoint coverage.
 
-See [NGFW Network Services APIs](/scm/api/config/ngfw/network/) and [SASE Network Services APIs](/scm/api/config/sase/network/) for full details.
+See [NGFW Network Services APIs](/scm/api/config/ngfw/network/network-api/) and [SASE Network Services APIs](/scm/api/config/sase/network/network-api/) for full details.
 
 ---
 
@@ -335,6 +375,19 @@ See [Configuration Operations APIs](/scm/api/config/sase/operations/operations-a
 R3 release updates to Identity Services, Security Services, and Objects APIs across SASE, NGFW, and Cloud NGFW platforms with schema improvements and expanded resource management capabilities.
 
 See [Identity Services APIs](/scm/api/config/sase/identity/identity-api), [Security Services APIs](/scm/api/config/sase/security/security-api/), and [Objects APIs](/scm/api/config/sase/objects/objects-api/) for full details.
+
+---
+
+### Strata Cloud Manager — Policy Optimizer (New)
+
+APIs for retrieving security rules with optimization recommendations and their suggested replacement rules.
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/security-rules` | List Security Rules with Optimization Recommendations |
+| GET | `/security-rules/{id}` | Get Security Rule Optimization Recommendations |
+
+See [Policy Optimizer APIs](/scm/api/config/posture-management/policy-optimizer/policy-optimizer-api/) for full details.
 
 ---
 
@@ -558,7 +611,7 @@ See [SaaS Security Posture Management APIs](/sase/api/sspm/) for full details.
 
 ### Strata Cloud Manager — Configuration APIs (New)
 
-Major platform release introducing the Strata Cloud Manager configuration APIs and [landing page](/strata-cloud-manager/). See the [detailed November 2024 release notes](/scm/docs/release-notes/november2024) for more information.
+Major platform release introducing the Strata Cloud Manager configuration APIs and [landing page](/strata-cloud-manager/).
 
 <details><summary>View highlights (9)</summary>
 
@@ -582,7 +635,7 @@ Major platform release introducing the Strata Cloud Manager configuration APIs a
 
 Management of Prisma Access Browser configurations and policies.
 
-See [Prisma Access Browser APIs](/access/api/browser-mgmt/) for full details.
+See [Prisma Access Browser APIs](/access/api/browser-mgmt/prisma-browser-management-console-public-api/) for full details.
 
 ---
 
@@ -598,7 +651,7 @@ See [Aggregate Monitoring APIs](/sase/api/mt-monitor/) for full details.
 
 Management of interconnect configurations across multiple tenants.
 
-See [Multitenant Interconnect APIs](/sase/api/mt-interconnect/) for full details.
+See [Multitenant Interconnect APIs](/sase/api/mt-interconnect/introduction/) for full details.
 
 ## April 2024
 

@@ -16,6 +16,17 @@ These release notes identify API changes made for the various SASE services.
 - [Prisma Access Cloud Managed Release Notes](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-cloud-managed-release-notes/release-information)
 - [Prisma Access Insights Release Updates](https://docs.paloaltonetworks.com/prisma/prisma-access/prisma-access-insights/insights/app-updates)
 
+## November 2026
+
+### Prisma SASE — Msp Paygo (Updated)
+
+The MSP PayGo Service API now supports the `PAB_PRO` (PAB Pro) package type.
+
+- Added `PAB_PRO` to the `packageType` values.
+- `POST /mt/paygo/v1/tenant/{rootTsgId}/activate-child` accepts a new `pabPro` block, which is required when `packageType` is `PAB_PRO`.
+
+See [Msp Paygo APIs](/sase/api/msp-paygo/msp-paygo-service-api/) for full details.
+
 ## September 2026
 
 ### Prisma SASE — Msp Paygo (New)
@@ -46,7 +57,7 @@ These APIs enable mSP PayGo lifecycle management APIs for child tenant provision
 
 </details>
 
-See [Msp Paygo APIs](/sase/api/msp-paygo/msp-paygo/) for full details.
+See [Msp Paygo APIs](/sase/api/msp-paygo/msp-paygo-service-api/) for full details.
 
 ## August 2026
 
@@ -71,7 +82,7 @@ See [Unified API](/sdwan/api/) and [Legacy API](/sdwan/api/legacy/) for all supp
 
 Managing Prisma SD-WAN configuration via the Legacy API.
 
-See [SD-WAN Legacy APIs](/sdwan/api/legacy/open_api_legacy/) for full details.
+See [SD-WAN Legacy APIs](/sdwan/api/legacy/) for full details.
 
 ---
 
@@ -79,7 +90,7 @@ See [SD-WAN Legacy APIs](/sdwan/api/legacy/open_api_legacy/) for full details.
 
 Managing Prisma SD-WAN configuration via the Unified API.
 
-See [SD-WAN Unified APIs](/sdwan/api/unified/open_api_unified/) for full details.
+See [SD-WAN Unified APIs](/sdwan/api/) for full details.
 
 ## July 2026
 
@@ -176,7 +187,7 @@ See [SP Interconnect APIs](/sase/api/mt-interconnect/introduction/) for full det
 
 Expanded capabilities for managing 5G service configurations.
 
-See [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/) for full details.
+See [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/introduction/) for full details.
 
 ## July 2025
 
@@ -200,7 +211,7 @@ See [SaaS Security Posture Management APIs](/sase/api/sspm/) for full details.
 
 Management capabilities for 5G network services within the SASE platform.
 
-See [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/) for full details.
+See [SASE 5G Manage Services APIs](/sase/api/manage-services-5g/introduction/) for full details.
 
 ## April 2025
 
@@ -232,7 +243,7 @@ See [SaaS Security Posture Management APIs](/sase/api/sspm/) for full details.
 
 Manage Prisma Access Browser configurations, policies, and deployments.
 
-See [Prisma Access Browser APIs](/access/api/browser-mgmt/) for full details.
+See [Prisma Access Browser APIs](/access/api/browser-mgmt/prisma-browser-management-console-public-api/) for full details.
 
 ---
 
@@ -248,7 +259,7 @@ See [Aggregate Monitoring APIs](/sase/api/mt-monitor/) for full details.
 
 Manage interconnect configurations across multiple tenants in the SASE platform.
 
-See [Multitenant Interconnect APIs](/sase/api/mt-interconnect/) for full details.
+See [Multitenant Interconnect APIs](/sase/api/mt-interconnect/introduction/) for full details.
 
 ## April 2024
 
@@ -264,7 +275,7 @@ See [Multitenant Notification APIs](/sase/api/mt-notifications/) for full detail
 
 Access Autonomous Digital Experience Management summary, distribution, and timeseries data including application and agent scores.
 
-See [Autonomous DEM APIs](/access/api/adem/autonomous-dem-api/) and [ADEM examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/) for full details. For more information, see [AI-Powered Autonomous DEM](https://docs.paloaltonetworks.com/autonomous-dem/administration).
+See [Autonomous DEM APIs](/access/api/adem/introduction/) and [ADEM examples](/access/docs/adem/examples/application-performance/mu-experience-score-for-an-app/) for full details. For more information, see [AI-Powered Autonomous DEM](https://docs.paloaltonetworks.com/autonomous-dem/administration).
 
 ## May 2023
 
@@ -285,7 +296,7 @@ See [Custom Roles](/sase/api/iam/custom-roles/) and [Permission Sets](/sase/api/
 
 Zero Trust Network Access Connector management APIs.
 
-See [ZTNA Connector APIs](/access/api/ztna/ztna-connector-apis/) for full details.
+See [ZTNA Connector APIs](/access/api/ztna/ztna-connector-api/) for full details.
 
 ---
 
@@ -335,7 +346,7 @@ See [Subscription Service](/sase/api/subscription/) for full details.
 
 Mobile Agent (GlobalProtect) endpoints added to Prisma Access Configuration API.
 
-See [Mobile Agent APIs](/category/access/api/prisma-access-config/mobile-agent/) for full details.
+See [Mobile Agent APIs](/access/api/prisma-access-config/mobile-agent/) for full details.
 
 ## September 2022
 

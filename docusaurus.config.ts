@@ -741,7 +741,7 @@ const config = {
             sidebarOptions: { groupPathsBy: "tag" },
           },
           ngts: {
-            specPath: "openapi-specs/scm/config/ngts/tlsprotect-cloud.json",
+            specPath: "openapi-specs/scm/config/ngts/tlsprotect-cloud.yaml",
             outputDir: "products/scm/api/config/ngts",
             sidebarOptions: { groupPathsBy: "tag" },
           },
