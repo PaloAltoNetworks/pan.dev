@@ -47,7 +47,7 @@ information is available in the access token that you use to authorize the call.
 The services that do require an `x-panw-region` header in their APIs are: 
 
 * [Aggregate Monitoring APIs](/sase/api/mt-monitor/)
-* [ZTNA Connector APIs](/access/api/ztna/ztna-connector-apis/)
+* [ZTNA Connector APIs](/access/api/ztna/ztna-connector-api/)
 * [Autonomous DEM APIs](/access/api/adem/autonomous-dem-api/)
 
 For example:

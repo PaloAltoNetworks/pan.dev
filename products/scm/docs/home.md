@@ -34,7 +34,7 @@ Strata Cloud Manager offers the following APIs:
   - [SASE](/scm/api/config/sase/operations/config-operations/)
   - [NGFW](/scm/api/config/ngfw/operations/config-operations/)
   - [Cloud NGFW](/scm/api/config/cloudngfw/operations/config-operations/)
-  - [ZTNA Connector](/access/api/ztna/ztna-connector-apis/)
+  - [ZTNA Connector](/access/api/ztna/ztna-connector-api/)
   - [Prisma SD-WAN](/sdwan/docs)
 
 ### Monitoring Services
