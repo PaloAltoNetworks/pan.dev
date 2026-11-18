@@ -13,21 +13,25 @@ keywords:
 
 Everything we ship for the DLP API, newest first. Pick a date to see exactly what changed, including breaking changes, what you need to do, and links to the affected endpoints.
 
-## October 2026
+## November 2026
 
-### Dlp — Dlp (Updated)
+### DLP — DLP API v2 (Updated)
 
-Additional endpoint and schema updates.
+Reordered the **Incidents API (Deprecated)** section so it now appears last in the API navigation, after the current v2 APIs. No endpoints or schemas changed.
 
-See [Dlp APIs](/dlp/api/dlp-api-spec-v2/) for full details.
+See [DLP APIs](/dlp/api/dlp-api-spec-v2/) for full details.
 
 ---
 
-### Dlp — Dlp (Updated)
+## October 2026
+
+### DLP — DLP API v2 (Updated)
 
 Additional endpoint and schema updates.
 
-See [Dlp APIs](/dlp/api/dlp-api-spec/) for full details.
+See [DLP APIs](/dlp/api/dlp-api-spec-v2/) for full details.
+
+---
 
 ## August 2026
 
