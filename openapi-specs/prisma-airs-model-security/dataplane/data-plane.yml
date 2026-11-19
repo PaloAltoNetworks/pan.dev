@@ -1,5 +1,460 @@
 components:
   schemas:
+    AnalysisType:
+      description: 'How a vulnerability was produced: by a static scanner or by WildFire
+        dynamic analysis.'
+      enum:
+      - static
+      - dynamic
+      title: AnalysisType
+      type: string
+    ArtifactListSchema:
+      properties:
+        artifacts:
+          items:
+            $ref: '#/components/schemas/ArtifactResponseSchema'
+          title: Artifacts
+          type: array
+        count_capped:
+          default: false
+          title: Count Capped
+          type: boolean
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+      required:
+      - pagination
+      - artifacts
+      title: ArtifactListSchema
+      type: object
+    ArtifactResponseSchema:
+      properties:
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        latest_version_channels:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/Channel'
+              - type: string
+            type: array
+          - type: 'null'
+          description: Every channel the latest version was scanned through; null
+            when no scan of it carried one. A label, not an access decision.
+          title: Latest Version Channels
+        latest_version_fingerprint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Version Fingerprint
+        latest_version_outcome:
+          anyOf:
+          - $ref: '#/components/schemas/EvalOutcome'
+          - type: string
+          - type: 'null'
+          title: Latest Version Outcome
+        latest_version_revision:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Latest Version Revision
+        latest_version_scan_time:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          title: Latest Version Scan Time
+        latest_version_source_types:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/SourceType'
+              - type: string
+            type: array
+          - type: 'null'
+          title: Latest Version Source Types
+        latest_version_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Latest Version Uuid
+        name:
+          maxLength: 256
+          title: Name
+          type: string
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - name
+      title: ArtifactResponseSchema
+      type: object
+    ArtifactScanBatchSummarySchema:
+      properties:
+        allowed:
+          description: Children whose verdict is ALLOWED
+          title: Allowed
+          type: integer
+        blocked:
+          description: Children whose verdict is BLOCKED
+          title: Blocked
+          type: integer
+        completed:
+          description: 'Children whose verdict is in: PARTIALLY_COMPLETED or COMPLETED'
+          title: Completed
+          type: integer
+        failed:
+          description: Children that failed
+          title: Failed
+          type: integer
+        total:
+          description: Child scans in the batch
+          title: Total
+          type: integer
+      required:
+      - total
+      - completed
+      - failed
+      - blocked
+      - allowed
+      title: ArtifactScanBatchSummarySchema
+      type: object
+    ArtifactScanCreateRequestSchema:
+      additionalProperties: false
+      properties:
+        artifact_type:
+          anyOf:
+          - enum:
+            - SKILL
+            type: string
+          - type: 'null'
+          description: The type of artifact in the archive
+          title: Artifact Type
+        channel:
+          $ref: '#/components/schemas/Channel'
+          default: API
+          description: How the scan was started. A label for the console, not an access
+            decision.
+        name:
+          description: Display name for the scan
+          maxLength: 256
+          minLength: 1
+          title: Name
+          type: string
+        scsg_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: The supply chain security group whose rules evaluate the scan.
+            Required for skill scans.
+          title: Scsg Uuid
+        upload:
+          $ref: '#/components/schemas/UploadSubmissionSchema'
+          description: The archive uploaded to the URL from upload-url
+      required:
+      - upload
+      - name
+      title: ArtifactScanCreateRequestSchema
+      type: object
+    ArtifactScanDetailResponseSchema:
+      properties:
+        artifact_type:
+          anyOf:
+          - $ref: '#/components/schemas/SupplyChainArtifactType'
+          - type: string
+          - type: 'null'
+          description: The artifact's type, SKILL once classified; null until then
+          title: Artifact Type
+        artifact_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: The artifact scanned; null until it is identified
+          title: Artifact Uuid
+        artifact_version_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: The artifact version scanned; null until it is identified
+          title: Artifact Version Uuid
+        batch_summary:
+          anyOf:
+          - $ref: '#/components/schemas/ArtifactScanBatchSummarySchema'
+          - type: 'null'
+          description: Progress across the batch's children; set only on a batch.
+            List the children with GET /v1/artifact-scans?parent_uuid=<uuid>.
+        channel:
+          anyOf:
+          - $ref: '#/components/schemas/Channel'
+          - type: string
+          description: How the scan was started
+          title: Channel
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        duration_seconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: How long the scan ran; null until it finishes
+          title: Duration Seconds
+        error_message:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Why the scan failed, when it did
+          title: Error Message
+        eval_outcome:
+          anyOf:
+          - $ref: '#/components/schemas/EvalOutcome'
+          - type: string
+          - type: 'null'
+          description: The verdict; null until the scan completes
+          title: Eval Outcome
+        eval_summary:
+          anyOf:
+          - $ref: '#/components/schemas/ArtifactScanEvalSummarySchema'
+          - type: 'null'
+          description: Counts of rules passed and failed; null until the scan completes
+        fingerprint:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Content fingerprint; null until the archive is analyzed
+          title: Fingerprint
+        name:
+          description: The scan's name
+          title: Name
+          type: string
+        parent_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: The batch this scan belongs to, if any
+          title: Parent Uuid
+        scsg_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: The supply chain security group's name
+          title: Scsg Name
+        scsg_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: The supply chain security group evaluating the scan; null until
+            one is assigned
+          title: Scsg Uuid
+        source_type:
+          anyOf:
+          - $ref: '#/components/schemas/SourceType'
+          - type: string
+          description: Where the scanned content came from, such as LOCAL
+          title: Source Type
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/SupplyChainArtifactScanStatus'
+          - type: string
+          description: Lifecycle of the scan, separate from its verdict
+          title: Status
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Where the artifact comes from, such as its repository URL
+          title: Uri
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - name
+      - source_type
+      - channel
+      - status
+      title: ArtifactScanDetailResponseSchema
+      type: object
+    ArtifactScanEvalSummarySchema:
+      properties:
+        override_applied:
+          default: false
+          description: Whether a trusted-artifact override decided the verdict
+          title: Override Applied
+          type: boolean
+        rules_failed:
+          default: 0
+          title: Rules Failed
+          type: integer
+        rules_passed:
+          default: 0
+          title: Rules Passed
+          type: integer
+        total_rules:
+          default: 0
+          title: Total Rules
+          type: integer
+      title: ArtifactScanEvalSummarySchema
+      type: object
+    ArtifactScanListSchema:
+      properties:
+        count_capped:
+          default: false
+          title: Count Capped
+          type: boolean
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        scans:
+          items:
+            $ref: '#/components/schemas/ArtifactScanDetailResponseSchema'
+          title: Scans
+          type: array
+      required:
+      - pagination
+      - scans
+      title: ArtifactScanListSchema
+      type: object
+    ArtifactScanLookupRequestSchema:
+      additionalProperties: false
+      properties:
+        channel:
+          $ref: '#/components/schemas/Channel'
+          default: API
+          description: How the scan was started. A label for the console, not an access
+            decision.
+        fingerprint:
+          description: Lowercase hex SHA-256 fingerprint of the skill
+          pattern: ^[a-f0-9]{64}$
+          title: Fingerprint
+          type: string
+        scsg_uuid:
+          description: The supply chain security group whose rules evaluate the result
+          format: uuid
+          title: Scsg Uuid
+          type: string
+      required:
+      - fingerprint
+      - scsg_uuid
+      title: ArtifactScanLookupRequestSchema
+      type: object
+    ArtifactScanUploadUrlResponseSchema:
+      properties:
+        scan_uuid:
+          description: Identifies the upload; pass it as upload.scan_uuid when creating
+            the scan
+          format: uuid
+          title: Scan Uuid
+          type: string
+        upload_expires_at:
+          description: When upload_url stops accepting the upload
+          format: date-time
+          title: Upload Expires At
+          type: string
+        upload_headers:
+          additionalProperties:
+            type: string
+          description: Headers the PUT must send exactly as given. The upload fails
+            without them, or when the archive exceeds the size limit they carry
+          title: Upload Headers
+          type: object
+        upload_url:
+          description: Signed URL that accepts one HTTP PUT of the zip archive, sent
+            with upload_headers
+          title: Upload Url
+          type: string
+      required:
+      - scan_uuid
+      - upload_url
+      - upload_expires_at
+      - upload_headers
+      title: ArtifactScanUploadUrlResponseSchema
+      type: object
+    Channel:
+      description: How a scan entered the product. A label for the console, not an
+        access decision.
+      enum:
+      - UI
+      - SDK
+      - CI_CD
+      - API
+      title: Channel
+      type: string
+    DeviceMetadataRequestSchema:
+      description: 'What an upload reports about its machine. `tool` is accepted and
+        stored but kept
+
+        out of the published schema until the product owner commits to it.'
+      properties:
+        device_id:
+          maxLength: 255
+          title: Device Id
+          type: string
+        os:
+          maxLength: 255
+          title: Os
+          type: string
+        username:
+          maxLength: 255
+          title: Username
+          type: string
+      required:
+      - device_id
+      - username
+      - os
+      title: DeviceMetadataRequestSchema
+      type: object
+    DeviceMetadataResponseSchema:
+      properties:
+        device_id:
+          maxLength: 255
+          title: Device Id
+          type: string
+        os:
+          maxLength: 255
+          title: Os
+          type: string
+        username:
+          maxLength: 255
+          title: Username
+          type: string
+      required:
+      - device_id
+      - username
+      - os
+      title: DeviceMetadataResponseSchema
+      type: object
     ErrorCodes:
       enum:
       - UNKNOWN_ERROR
@@ -565,6 +1020,13 @@ components:
       type: object
     RuleEvaluationResponseSchema:
       properties:
+        analysis_type:
+          anyOf:
+          - $ref: '#/components/schemas/AnalysisType'
+          - type: string
+          default: static
+          description: Whether static or dynamic analysis judges the rule
+          title: Analysis Type
         created_at:
           format: date-time
           title: Created At
@@ -634,6 +1096,7 @@ components:
       - PASSED
       - FAILED
       - ERROR
+      - SKIPPED
       title: RuleEvaluationResult
       type: string
     RuleOrigin:
@@ -654,6 +1117,11 @@ components:
       type: string
     ScanBaseResponseSchema:
       properties:
+        channel:
+          anyOf:
+          - $ref: '#/components/schemas/Channel'
+          - type: 'null'
+          readOnly: true
         created_at:
           format: date-time
           title: Created At
@@ -704,6 +1172,12 @@ components:
         model_uri:
           title: Model Uri
           type: string
+        model_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Model Uuid
         model_version_uuid:
           anyOf:
           - format: uuid
@@ -742,6 +1216,18 @@ components:
         source_type:
           $ref: '#/components/schemas/SourceType'
           readOnly: true
+        supply_chain_security_group_name:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: Supply Chain Security Group Name
+        supply_chain_security_group_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Supply Chain Security Group Uuid
         time_started:
           anyOf:
           - format: date-time
@@ -782,6 +1268,7 @@ components:
       - security_group_name
       - eval_outcome
       - source_type
+      - channel
       title: ScanBaseResponseSchema
       type: object
     ScanCreateRequestSchema:
@@ -944,6 +1431,31 @@ components:
       - type
       title: SortByFileField
       type: string
+    SortByNameOrDateField:
+      description: 'Sort fields for list endpoints whose rows have a user-facing name
+        column.
+
+
+        A superset of SortByDateField, so an endpoint can widen from date-only
+
+        sorting to name sorting without breaking clients already sending
+
+        created_at / updated_at.
+
+
+        The two date members are repeated rather than inherited because Python
+
+        forbids subclassing an Enum that already defines members -- ``class
+
+        SortByNameOrDateField(SortByDateField)`` raises TypeError. The duplication
+
+        is the language''s price for extending an enum, not an oversight.'
+      enum:
+      - created_at
+      - updated_at
+      - name
+      title: SortByNameOrDateField
+      type: string
     SortDirection:
       enum:
       - asc
@@ -961,6 +1473,31 @@ components:
       - GITLAB
       - ALL
       title: SourceType
+      type: string
+    SupplyChainArtifactScanStatus:
+      description: "Lifecycle status of a scan in the unified data-plane artifact_scan\
+        \ table.\n\nCLASSIFYING: the artifact type was not declared and is not known\
+        \ yet.\nANALYZING: the artifact type is known, or the scan is a batch parent,\
+        \ and the\n    scan is running. A batch parent stays ANALYZING while its children\
+        \ run.\nPARTIALLY_COMPLETED: not terminal. The verdict is final; a scanner\
+        \ that cannot\n    change it (WildFire) has not reported yet. Polling clients\
+        \ stop here.\nCOMPLETED: terminal. The verdict is final (none for a type without\
+        \ rules) and\n    nothing is pending. A late result that cannot change the\
+        \ verdict is still\n    stored, and only the eval_summary counts follow it.\n\
+        FAILED: terminal. The scan as a whole failed, and error_message says why."
+      enum:
+      - CLASSIFYING
+      - ANALYZING
+      - PARTIALLY_COMPLETED
+      - COMPLETED
+      - FAILED
+      title: SupplyChainArtifactScanStatus
+      type: string
+    SupplyChainArtifactType:
+      description: The type of artifact being scanned.
+      enum:
+      - SKILL
+      title: SupplyChainArtifactType
       type: string
     ThreatCategory:
       description: 'Enum for threat categories with their descriptions.
@@ -1001,6 +1538,34 @@ components:
       - UNAPPROVED_FORMATS
       title: ThreatCategory
       type: string
+    UploadSubmissionSchema:
+      additionalProperties: false
+      properties:
+        checksum_crc32c:
+          description: Base64-encoded CRC32C of the uploaded archive (4 bytes, big-endian),
+            e.g. 'yZRlqg=='. A mismatch with the uploaded archive rejects the scan.
+          pattern: ^[A-Za-z0-9+/]{5}[AQgw]==$
+          title: Checksum Crc32C
+          type: string
+        scan_uuid:
+          description: The scan_uuid that upload-url returned. Repeating a create
+            with the same scan_uuid returns the existing scan.
+          format: uuid
+          title: Scan Uuid
+          type: string
+        uri:
+          anyOf:
+          - maxLength: 1024
+            type: string
+          - type: 'null'
+          description: Where the archive came from, such as a git URL. Recorded on
+            the scan, never fetched.
+          title: Uri
+      required:
+      - scan_uuid
+      - checksum_crc32c
+      title: UploadSubmissionSchema
+      type: object
     ValidationError:
       properties:
         ctx:
@@ -1074,7 +1639,7 @@ components:
           type: string
         file:
           anyOf:
-          - maxLength: 256
+          - maxLength: 1024
             type: string
           - type: 'null'
           title: File
@@ -1173,6 +1738,536 @@ info:
   version: 0.1.0
 openapi: 3.1.0
 paths:
+  /v1/artifact-scans:
+    get:
+      description: Lists your skill scans, newest first by default (override with
+        sort_field). A batch's parent scan is left out of the list and its children
+        are listed individually instead; pass parent_uuid to list one batch's children,
+        and use the other filters to narrow further. Filtering by an artifact type
+        not enabled for your tenant returns a 404.
+      operationId: list_artifact_scans_v1_artifact_scans_get
+      parameters:
+      - in: query
+        name: sort_field
+        required: false
+        schema:
+          default: created_at
+          enum:
+          - name
+          - created_at
+          title: Sort Field
+          type: string
+      - in: query
+        name: sort_order
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      - description: List this batch's children; the other filters narrow them.
+        in: query
+        name: parent_uuid
+        required: false
+        schema:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: List this batch's children; the other filters narrow them.
+          title: Parent Uuid
+      - in: query
+        name: statuses
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/SupplyChainArtifactScanStatus'
+            type: array
+          - type: 'null'
+          title: Statuses
+      - in: query
+        name: artifact_types
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/SupplyChainArtifactType'
+            type: array
+          - type: 'null'
+          title: Artifact Types
+      - description: Exact SHA-256 fingerprint of the scan
+        in: query
+        name: fingerprint
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          description: Exact SHA-256 fingerprint of the scan
+          title: Fingerprint
+      - description: A scan uuid, or part of a scan name
+        in: query
+        name: search_query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          description: A scan uuid, or part of a scan name
+          title: Search Query
+      - in: query
+        name: start_time
+        required: false
+        schema:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          title: Start Time
+      - in: query
+        name: end_time
+        required: false
+        schema:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          title: End Time
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactScanListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List skill scans
+      tags:
+      - Artifact Scans
+    post:
+      description: Starts analyzing the archive uploaded to the URL from upload-url.
+        Each scan counts toward your daily skill scan limit. Returns 201 when a new
+        scan is created, or 200 with the existing scan if you call this again with
+        the same upload.scan_uuid.
+      operationId: create_artifact_scan_v1_artifact_scans_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArtifactScanCreateRequestSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactScanDetailResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Scan an uploaded skill archive
+      tags:
+      - Artifact Scans
+  /v1/artifact-scans/lookup:
+    post:
+      description: Looks up a skill by its SHA-256 fingerprint and, if it has already
+        been scanned, records the result as a new scan evaluated under the given supply
+        chain security group's rules. Each successful lookup creates a new scan and
+        returns 201; it doesn't use any quota and doesn't count toward the daily skill
+        scan limit. If this returns 404 or a 5xx error, upload the skill archive and
+        create a scan instead.
+      operationId: lookup_artifact_scan_v1_artifact_scans_lookup_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArtifactScanLookupRequestSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactScanDetailResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Scan a skill by fingerprint without uploading it
+      tags:
+      - Artifact Scans
+  /v1/artifact-scans/upload-url:
+    post:
+      description: Returns a new scan ID and a signed URL for uploading a zip archive
+        of the skill, up to 100 MB. Send the upload with the returned upload_headers;
+        the URL expires after 15 minutes. Uploading the archive does not start a scan
+        by itself -- call POST /v1/artifact-scans with this scan_uuid afterward to
+        begin scanning.
+      operationId: create_upload_url_v1_artifact_scans_upload_url_post
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactScanUploadUrlResponseSchema'
+          description: Successful Response
+      summary: Get an upload URL for a skill archive
+      tags:
+      - Artifact Scans
+  /v1/artifact-scans/{scan_uuid}:
+    get:
+      description: Returns the details of one scan. If it's a batch's parent scan,
+        the response includes batch_summary; list the batch's children separately
+        with GET /v1/artifact-scans?parent_uuid=<uuid>. Returns 404 if the scan's
+        artifact type isn't enabled for your tenant.
+      operationId: get_artifact_scan_v1_artifact_scans__scan_uuid__get
+      parameters:
+      - in: path
+        name: scan_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scan Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactScanDetailResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get a skill scan
+      tags:
+      - Artifact Scans
+  /v1/artifact-scans/{scan_uuid}/evaluations:
+    get:
+      description: Returns the outcome of every rule in the scan's supply chain security
+        group, along with each rule's details as recorded at scan time. Returns an
+        empty list if the scan has no rule evaluations yet, or a 404 if the scan's
+        artifact type isn't enabled for your tenant.
+      operationId: list_artifact_scan_evaluations_v1_artifact_scans__scan_uuid__evaluations_get
+      parameters:
+      - in: path
+        name: scan_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scan Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: sort_field
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortByDateField'
+          default: created_at
+      - in: query
+        name: sort_order
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+      - description: Filter by evaluation result
+        in: query
+        name: result
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/RuleEvaluationResult'
+          - type: 'null'
+          description: Filter by evaluation result
+          title: Result
+      - description: Filter by rule instance UUID
+        in: query
+        name: rule_instance_uuid
+        required: false
+        schema:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: Filter by rule instance UUID
+          title: Rule Instance Uuid
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleEvaluationListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List the rule evaluations of a scan
+      tags:
+      - Artifact Scans
+  /v1/artifact-scans/{scan_uuid}/rule-violations:
+    get:
+      description: Returns the findings that broke a rule, grouped by rule, with each
+        rule's details as recorded at scan time. Returns an empty list if the scan
+        has no violations, or a 404 if the scan's artifact type isn't enabled for
+        your tenant.
+      operationId: list_artifact_scan_violations_v1_artifact_scans__scan_uuid__rule_violations_get
+      parameters:
+      - in: path
+        name: scan_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scan Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ViolationListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List the rule violations of a scan
+      tags:
+      - Artifact Scans
+  /v1/artifacts:
+    get:
+      description: Lists the skill artifacts tracked for your tenant, with filtering,
+        sorting, and pagination.
+      operationId: list_artifacts_v1_artifacts_get
+      parameters:
+      - description: Artifact type to list; currently only SKILL
+        in: query
+        name: artifact_type
+        required: true
+        schema:
+          const: SKILL
+          description: Artifact type to list; currently only SKILL
+          title: Artifact Type
+          type: string
+      - in: query
+        name: search_query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          title: Search Query
+      - description: Exact SHA-256 fingerprint of any version of the artifact, not
+          only the latest
+        in: query
+        name: fingerprint
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 256
+            type: string
+          - type: 'null'
+          description: Exact SHA-256 fingerprint of any version of the artifact, not
+            only the latest
+          title: Fingerprint
+      - in: query
+        name: latest_version_outcomes
+        required: false
+        schema:
+          anyOf:
+          - items:
+              enum:
+              - ALLOWED
+              - BLOCKED
+              - ERROR
+              type: string
+            type: array
+          - type: 'null'
+          title: Latest Version Outcomes
+      - in: query
+        name: latest_version_source_types
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/SourceType'
+            type: array
+          - type: 'null'
+          title: Latest Version Source Types
+      - in: query
+        name: latest_version_channels
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/Channel'
+            maxItems: 4
+            type: array
+          - type: 'null'
+          title: Latest Version Channels
+      - in: query
+        name: sort_field
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortByNameOrDateField'
+          default: updated_at
+      - in: query
+        name: sort_order
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: start_time
+        required: false
+        schema:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          title: Start Time
+      - in: query
+        name: end_time
+        required: false
+        schema:
+          anyOf:
+          - format: date-time
+            type: string
+          - type: 'null'
+          title: End Time
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactListSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Artifacts
+      tags:
+      - Artifacts
+  /v1/artifacts/{uuid}:
+    get:
+      description: Returns one skill artifact by its UUID. Returns 404 if the artifact's
+        type isn't enabled for your tenant.
+      operationId: get_artifact_v1_artifacts__uuid__get
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          format: uuid
+          title: Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Artifact
+      tags:
+      - Artifacts
   /v1/evaluations/{uuid}:
     get:
       description: Get a specific evaluation with detailed rule information
@@ -1317,17 +2412,17 @@ paths:
         name: sort_field
         required: false
         schema:
-          $ref: '#/components/schemas/SortByDateField'
+          $ref: '#/components/schemas/SortByNameOrDateField'
           default: updated_at
           description: Field to sort by
-      - description: Direction to sort by
+      - description: Direction to sort sort_field by
         in: query
         name: sort_order
         required: false
         schema:
           $ref: '#/components/schemas/SortDirection'
           default: desc
-          description: Direction to sort by
+          description: Direction to sort sort_field by
       - description: Filter by latest version eval outcomes
         in: query
         name: latest_version_outcomes
@@ -1514,12 +2609,19 @@ paths:
           default: 0
           title: Skip
           type: integer
-      - in: query
+      - description: Direction to sort by `created_at`, which is the only sort this
+          endpoint offers - there is no `sort_field` param. Ties break on `uuid` ascending,
+          so the order is total and paging neither drops nor repeats rows.
+        in: query
         name: sort_order
         required: false
         schema:
           $ref: '#/components/schemas/SortDirection'
           default: desc
+          description: Direction to sort by `created_at`, which is the only sort this
+            endpoint offers - there is no `sort_field` param. Ties break on `uuid`
+            ascending, so the order is total and paging neither drops nor repeats
+            rows.
       - description: Search query for model_uri or uuid
         in: query
         name: search_query
@@ -1542,6 +2644,17 @@ paths:
           - type: 'null'
           description: Filter by security group UUID
           title: Security Group Uuid
+      - description: Filter by supply chain security group UUID
+        in: query
+        name: supply_chain_security_group_uuid
+        required: false
+        schema:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: Filter by supply chain security group UUID
+          title: Supply Chain Security Group Uuid
       - description: Filter by model version UUID
         in: query
         name: model_version_uuid
@@ -1553,6 +2666,21 @@ paths:
           - type: 'null'
           description: Filter by model version UUID
           title: Model Version Uuid
+      - description: Filter by model UUID, matching scans across every version of
+          that model. Scans that failed before their model was resolved have no model
+          UUID and are never returned by this filter.
+        in: query
+        name: model_uuid
+        required: false
+        schema:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: Filter by model UUID, matching scans across every version of
+            that model. Scans that failed before their model was resolved have no
+            model UUID and are never returned by this filter.
+          title: Model Uuid
       - description: A list of source types to filter by
         in: query
         name: source_types

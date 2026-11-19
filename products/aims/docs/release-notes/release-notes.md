@@ -3,6 +3,57 @@ id: release-notes
 title: API Release Notes
 ---
 
+## November 2026
+
+### Aims — Aims (Updated)
+
+8 new endpoints.
+
+<details><summary>View endpoints (9)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/v1/artifact-scans` | List skill scans |
+| POST | `/v1/artifact-scans` | Scan an uploaded skill archive |
+| POST | `/v1/artifact-scans/lookup` | Scan a skill by fingerprint without uploading it |
+| POST | `/v1/artifact-scans/upload-url` | Get an upload URL for a skill archive |
+| GET | `/v1/artifact-scans/{scan_uuid}` | Get a skill scan |
+| GET | `/v1/artifact-scans/{scan_uuid}/evaluations` | List the rule evaluations of a scan |
+| GET | `/v1/artifact-scans/{scan_uuid}/rule-violations` | List the rule violations of a scan |
+| GET | `/v1/artifacts` | List Artifacts |
+| GET | `/v1/artifacts/{uuid}` | Get Artifact |
+
+</details>
+
+See [Aims APIs](/prisma-airs-model-security/api/dataplane/data-plane/) for full details.
+
+---
+
+### Aims — Aims (Updated)
+
+6 new endpoints.
+
+<details><summary>View endpoints (12)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/v1/artifact-overrides` | List Artifact Overrides |
+| POST | `/v1/artifact-overrides` | Create Artifact Override |
+| GET | `/v1/artifact-overrides/{override_uuid}` | Get Artifact Override |
+| DELETE | `/v1/artifact-overrides/{override_uuid}` | Delete Artifact Override |
+| GET | `/v1/supply-chain-security-groups` | List Supply Chain Security Groups |
+| POST | `/v1/supply-chain-security-groups` | Create Supply Chain Security Group |
+| GET | `/v1/supply-chain-security-groups/{scsg_uuid}` | Get Supply Chain Security Group |
+| PATCH | `/v1/supply-chain-security-groups/{scsg_uuid}` | Patch Supply Chain Security Group |
+| DELETE | `/v1/supply-chain-security-groups/{scsg_uuid}` | Delete Supply Chain Security Group |
+| GET | `/v1/supply-chain-security-groups/{scsg_uuid}/rule-instances` | List Scsg Rule Instances |
+| PATCH | `/v1/supply-chain-security-groups/{scsg_uuid}/rule-instances` | Bulk Patch Scsg Rule Instances |
+| GET | `/v1/supply-chain-security-groups/{scsg_uuid}/rule-instances/{rule_instance_uuid}` | Get Scsg Rule Instance |
+
+</details>
+
+See [Aims APIs](/prisma-airs-model-security/api/management/mgmt-plane/) for full details.
+
 ## August 2026
 
 ### Prisma AIRS — AI Model Security Data Plane API (New)
