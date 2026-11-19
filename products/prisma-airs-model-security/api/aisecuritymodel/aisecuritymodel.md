@@ -1,6 +1,6 @@
 ---
 id: aisecuritymodel
-title: "Prisma AIRS AI Model Security Introduction"
+title: "Prisma AIRS AI Supply Chain Security"
 sidebar_label: "Introduction"
 slug: /prisma-airs-model-security/api/aisecuritymodel/aisecuritymodel
 keywords:
