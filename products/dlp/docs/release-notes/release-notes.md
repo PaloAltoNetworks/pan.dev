@@ -15,11 +15,22 @@ Everything we ship for the DLP API, newest first. Pick a date to see exactly wha
 
 ## November 2026
 
-### Dlp — Dlp (Updated)
+### DLP — DLP API (Updated)
 
-Additional endpoint and schema updates.
+The Incidents v1 and v2 endpoints are now deprecated. Use the v4 Incidents API instead.
 
-See [Dlp APIs](/dlp/api/dlp-api-spec-v2/) for full details.
+<details><summary>View all changes (2)</summary>
+
+| Method | Endpoint | Change |
+| ------ | -------- | ------ |
+| GET | `/v1/api/incidents/assignee` | Retrieve all incident assignees (Get All Assignees) |
+| ALL | `/v1/api/incidents/*`, `/v2/api/incidents/*` | Moved to **Incidents API (Deprecated)** |
+
+</details>
+
+**What you need to do:** Migrate any calls to the v1 and v2 incident endpoints to the v4 Incidents API.
+
+See [DLP APIs](/dlp/api/dlp-api/) for full details.
 
 ## August 2026
 
@@ -39,7 +50,7 @@ See [Dlp APIs](/dlp/api/dlp-api-spec-v2/) for full details.
 
 </details>
 
-See [DLP APIs](/dlp/api/dlp-api-spec-beta/) for full details.
+See [DLP APIs](/dlp/api/) for full details.
 
 ---
 
@@ -96,7 +107,7 @@ See [DLP APIs](/dlp/api/) for full details.
 | PATCH | `/v2/api/data-patterns/{resourceId}` | Partially update a data pattern |
 | DELETE | `/v2/api/data-patterns/{resourceId}` | Delete a data pattern |
 
-See [Data Patterns API](/dlp/api/data-patterns/) for full details.
+See [Data Patterns API](/dlp/api/) for full details.
 
 ---
 
@@ -110,7 +121,7 @@ See [Data Patterns API](/dlp/api/data-patterns/) for full details.
 | PUT | `/v2/api/data-profiles/{resourceId}` | Update a data profile |
 | PATCH | `/v2/api/data-profiles/{resourceId}` | Partially update a data profile |
 
-See [Data Profiles API](/dlp/api/data-profiles/) for full details.
+See [Data Profiles API](/dlp/api/) for full details.
 
 ---
 
@@ -125,7 +136,7 @@ See [Data Profiles API](/dlp/api/data-profiles/) for full details.
 | PATCH | `/v2/api/dictionaries/{resourceId}` | Partially update a dictionary |
 | DELETE | `/v2/api/dictionaries/{resourceId}` | Delete a dictionary |
 
-See [Dictionaries API](/dlp/api/dictionaries/) for full details.
+See [Dictionaries API](/dlp/api/) for full details.
 
 ---
 
@@ -140,7 +151,7 @@ See [Dictionaries API](/dlp/api/dictionaries/) for full details.
 | PATCH | `/v2/api/document-types/{resourceId}` | Partially update a document type |
 | DELETE | `/v2/api/document-types/{resourceId}` | Delete a document type |
 
-See [Document Types API](/dlp/api/document-types/) for full details.
+See [Document Types API](/dlp/api/) for full details.
 
 ---
 
@@ -152,7 +163,7 @@ See [Document Types API](/dlp/api/document-types/) for full details.
 | GET | `/v2/api/edm-datasets/{resourceId}` | Retrieve an EDM dataset by ID |
 | DELETE | `/v2/api/edm-datasets/{resourceId}` | Delete an EDM dataset |
 
-See [EDM Datasets API](/dlp/api/edm-datasets/) for full details.
+See [EDM Datasets API](/dlp/api/) for full details.
 
 ---
 
@@ -167,7 +178,7 @@ See [EDM Datasets API](/dlp/api/edm-datasets/) for full details.
 | PATCH | `/v2/api/endpoint-policies/{resourceId}` | Partially update an endpoint policy |
 | DELETE | `/v2/api/endpoint-policies/{resourceId}` | Delete an endpoint policy |
 
-See [Endpoint Policies API](/dlp/api/endpoint-policies/) for full details.
+See [Endpoint Policies API](/dlp/api/) for full details.
 
 ---
 
@@ -189,7 +200,7 @@ See [Endpoint Policies API](/dlp/api/endpoint-policies/) for full details.
 
 </details>
 
-See [Incidents API](/dlp/api/incidents-api/) for full details.
+See [Incidents API](/dlp/api/) for full details.
 
 ---
 
@@ -203,7 +214,7 @@ See [Incidents API](/dlp/api/incidents-api/) for full details.
 | POST | `/v4/api/incidents/management` | Update incident management properties |
 | GET | `/v4/api/incidents/{id}` | Retrieve incident details by ID |
 
-See [Incidents API (Beta)](/dlp/api/incidents-api-beta/) for full details.
+See [Incidents API (Beta)](/dlp/api/) for full details.
 
 ---
 
@@ -214,7 +225,7 @@ See [Incidents API (Beta)](/dlp/api/incidents-api-beta/) for full details.
 | GET | `/v2/api/ocr` | Retrieve OCR enablement status |
 | PUT | `/v2/api/ocr` | Update OCR enablement settings |
 
-See [OCR Enablement API](/dlp/api/ocr-enablement/) for full details.
+See [OCR Enablement API](/dlp/api/) for full details.
 
 ---
 
@@ -228,7 +239,7 @@ See [OCR Enablement API](/dlp/api/ocr-enablement/) for full details.
 | PUT | `/v2/api/peripherals/{resourceId}` | Update a peripheral |
 | DELETE | `/v2/api/peripherals/{resourceId}` | Delete a peripheral |
 
-See [Peripherals API](/dlp/api/peripherals/) for full details.
+See [Peripherals API](/dlp/api/) for full details.
 
 ---
 
@@ -238,7 +249,7 @@ See [Peripherals API](/dlp/api/peripherals/) for full details.
 | ------ | -------- | ----------- |
 | GET | `/v1/public/report/{reportId}` | Retrieve report details by ID |
 
-See [Reports API](/dlp/api/reports-api/) for full details.
+See [Reports API](/dlp/api/) for full details.
 
 ---
 
@@ -252,6 +263,6 @@ See [Reports API](/dlp/api/reports-api/) for full details.
 | PATCH | `/incident/api/v1/incidents/{incidentId}/status` | Update the status of an email DLP incident |
 | GET | `/report/api/v1/reports/{reportId}` | Retrieve a DLP report by ID |
 
-See [Email DLP API](/dlp/api/email-dlp-api/) for full details.
+See [Email DLP API](/email-dlp/api/) for full details.
 
 ---
