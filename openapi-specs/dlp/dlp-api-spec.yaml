@@ -1,8 +1,8 @@
 openapi: 3.0.2
 info:
-    title: DLP API (Beta)
+    title: DLP API
     version: 1.0.0
-    description: Enterprise DLP Beta APIs
+    description: Enterprise DLP APIs
     license:
         name: MIT
         url: https://opensource.org/license/mit
@@ -15,13 +15,13 @@ servers:
         url: 'https://api.dlp.paloaltonetworks.com'
         description: Prod host
 tags:
-    - name: Incidents API (Beta)
-      description: Beta Incidents API — retrieve, filter, download, and update incidents
+    - name: Incidents API
+      description: Incidents API — retrieve, filter, download, and update incidents
 paths:
     /v4/api/incidents:
         post:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Retrieve initial incident records with token
             description: |
                 This API is used for the initial retrieval of incident details. It allows you to
@@ -79,7 +79,7 @@ paths:
                     description: Internal Server Error
         get:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Retrieve paginated incident records using token
             description: This API is used to fetch subsequent pages of incident records after an initial request to the POST /incidents API. It requires a token obtained from the initial POST request, along with page_size and offset to control pagination.
             operationId: getIncidentInventoryTableResults
@@ -143,7 +143,7 @@ paths:
     /v4/api/incidents/download:
         post:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Get signed download URL for incidents
             description: |
                 Generate a secure, time-limited URL (valid for 5 minutes) to directly download incident
@@ -174,7 +174,7 @@ paths:
     /v4/api/incidents/management:
         post:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Update key details for incidents
             description: |
                 Update key incident information like assignee details, resolution status, priority,
@@ -216,7 +216,7 @@ paths:
     '/v4/api/incidents/{id}':
         get:
             tags:
-                - Incidents API (Beta)
+                - Incidents API
             summary: Retrieve incident details by ID
             description: For a given incident id, return incident details.
             operationId: getIncidentDetails
@@ -357,6 +357,204 @@ paths:
                     description: Bad Request
                 "500":
                     description: Internal Server Error
+    /v2/api/incidents:
+        description: Get Bulk Incidents
+        servers:
+            -
+                url: 'https://api.dlp.paloaltonetworks.com'
+                description: ''
+        get:
+            tags:
+                - Incidents API
+            parameters:
+                -
+                    name: ascending
+                    description: get the list of incident in ascending order or not(default false)
+                    schema:
+                        type: boolean
+                    in: query
+                    required: false
+                -
+                    name: channel
+                    description: ngfw or prisma-access
+                    schema:
+                        enum:
+                            - ngfw
+                            - prisma-access
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: end_time
+                    description: query incident until
+                    schema:
+                        format: date-time
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: file_shas
+                    description: >-
+                        get incidents triggered by file hash. must be a comma separated list of one or more
+                        sha256 hashes of files
+                    schema:
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: page_number
+                    description: page_number
+                    schema:
+                        format: int32
+                        type: integer
+                    in: query
+                    required: false
+                -
+                    name: page_size
+                    description: page_size
+                    schema:
+                        format: int32
+                        type: integer
+                    in: query
+                    required: false
+                -
+                    name: region
+                    description: region (defaults to us)
+                    schema:
+                        type: string
+                        enum:
+                            - us
+                            - eu
+                            - uk
+                            - jp
+                            - in
+                            - ap
+                            - ca
+                            - au
+                            - par
+                    in: query
+                    required: false
+
+                -
+                    name: report_ids
+                    description: report_ids
+                    schema:
+                        type: array
+                        items:
+                            type: string
+                    in: query
+                    required: false
+                -
+                    name: sort_by
+                    description: sort by. default sort by creation time
+                    schema:
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: start_time
+                    description: start_time
+                    schema:
+                        format: date-time
+                        type: string
+                    in: query
+                    required: false
+                -
+                    name: user_ids
+                    description: query by user ids
+                    schema:
+                        type: array
+                        items:
+                            type: string
+                    in: query
+                    required: false
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IncidentResponse'
+                            examples:
+                                incidentResponseExample:
+                                    value:
+                                        page:
+                                            size: 10
+                                            number: 1
+                                            total_elements: 290
+                                            total_pages: 29
+                                        resources:
+                                            -
+                                                incident_id: 7c3dca3d-1c08-4147-b171-9faba84739d4
+                                                tenant_id: '5886928188517009408'
+                                                report_id: '1572154781'
+                                                data_profile_id: 11995044
+                                                data_profile_name: PII
+                                                file_sha: >-
+                                                    a4d58aa3caeb73b56028f597de2b3263d64e2835f277f31c97be53bc76a29e47
+                                                file_name: SSNpattern
+                                                file_type: pdf
+                                                incident_creation_time: '2023-Dec-07 18:41:12 UTC'
+                                                channel: ngfw
+                                                source: ngfw
+                                                action: alert
+                                            -
+                                                incident_id: 81985a40-dae5-4e80-8147-678892ccfc00
+                                                tenant_id: '5886928188517009408'
+                                                report_id: '2968440380'
+                                                data_profile_id: 11995410
+                                                data_profile_name: Portugal_LNAME_high
+                                                file_sha: >-
+                                                    6c25d79cd1dee00b3a6ee6bbb985dae6ee5bdfa31a8dfcffa241786c8c3893a7
+                                                file_name: test_portugal_LNAME.txt
+                                                file_type: txt
+                                                incident_creation_time: '2023-Dec-07 18:39:38 UTC'
+                                                channel: ngfw
+                                                source: ngfw
+                                                action: alert
+                                            -
+                                                incident_id: 08f014d8-ed13-490e-bfc4-7363f43a4af1
+                                                tenant_id: '5886928188517009408'
+                                                report_id: '1347859663'
+                                                data_profile_id: 11995355
+                                                data_profile_name: inline_timing_11_12_edm
+                                                file_sha: >-
+                                                    6c8d18c544aba3b44cfa487d5020ec102a6317a6a5164e270bbecf6ea37df925
+                                                file_name: all_patterns_data_1_MB.txt
+                                                file_type: txt
+                                                incident_creation_time: '2023-Dec-06 19:39:46 UTC'
+                                                channel: ngfw
+                                                source: ngfw
+                                                action: alert
+                                            -
+                                                incident_id: 6c7d838a-1b25-44fe-8917-1ff760c0eae5
+                                                tenant_id: '5886928188517009408'
+                                                report_id: '3741398016'
+                                                data_profile_id: 11995295
+                                                data_profile_name: DemoWideNestedProfile
+                                                file_sha: >-
+                                                    a4d58aa3caeb73b56028f597de2b3263d64e2835f277f31c97be53bc76a29e47
+                                                file_name: SSNpattern
+                                                file_type: pdf
+                                                incident_creation_time: '2023-Dec-05 21:54:21 UTC'
+                                                channel: ngfw
+                                                source: ngfw
+                                                action: alert
+                    description: OK
+                '400':
+                    description: Bad Request
+                '401':
+                    description: Unauthorized
+                '403':
+                    description: Forbidden
+                '404':
+                    description: Not Found
+                '500':
+                    description: Internal server error
+            security:
+                -
+                    JWTAuth: []
+            summary: Get Incidents
+            operationId: getAllIncidentsV2
 components:
     schemas:
         IncidentInventoryRequest:
@@ -946,6 +1144,79 @@ components:
                 policy_type:
                     type: string
                 policy_version:
+                    type: string
+        PageData:
+            title: PageData
+            type: object
+            properties:
+                number:
+                    format: int32
+                    type: integer
+                size:
+                    format: int32
+                    type: integer
+                total_elements:
+                    format: int32
+                    type: integer
+                total_pages:
+                    format: int32
+                    type: integer
+        IncidentResponse:
+            title: PagedDataResponse<IncidentDTO>
+            required:
+                - page
+            type: object
+            properties:
+                page:
+                    $ref: '#/components/schemas/PageData'
+                    description: ''
+                resources:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/IncidentDTO'
+        IncidentDTO:
+            title: IncidentDTO
+            type: object
+            properties:
+                action:
+                    enum:
+                        - alert
+                        - block
+                        - none
+                    type: string
+                app_id:
+                    type: string
+                app_name:
+                    type: string
+                channel:
+                    enum:
+                        - ngfw
+                        - prisma-access
+                    type: string
+                data_profile_id:
+                    format: int64
+                    type: integer
+                data_profile_name:
+                    type: string
+                file_name:
+                    type: string
+                file_sha:
+                    type: string
+                file_type:
+                    type: string
+                incident_creation_time:
+                    type: string
+                    example: 'yyyy-MMM-dd HH:mm:ss z'
+                incident_id:
+                    format: uuid
+                    type: string
+                report_id:
+                    type: string
+                source:
+                    type: string
+                tenant_id:
+                    type: string
+                user:
                     type: string
     securitySchemes:
         JWTAuth:
