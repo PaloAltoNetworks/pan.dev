@@ -3,6 +3,30 @@ id: release-notes
 title: API Release Notes
 ---
 
+## November 2026
+
+### Aims — Aims (Updated)
+
+8 new endpoints.
+
+<details><summary>View endpoints (9)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/v1/artifact-scans` | List skill scans |
+| POST | `/v1/artifact-scans` | Scan an uploaded skill archive |
+| POST | `/v1/artifact-scans/lookup` | Scan a skill by fingerprint without uploading it |
+| POST | `/v1/artifact-scans/upload-url` | Get an upload URL for a skill archive |
+| GET | `/v1/artifact-scans/{scan_uuid}` | Get a skill scan |
+| GET | `/v1/artifact-scans/{scan_uuid}/evaluations` | List the rule evaluations of a scan |
+| GET | `/v1/artifact-scans/{scan_uuid}/rule-violations` | List the rule violations of a scan |
+| GET | `/v1/artifacts` | List Artifacts |
+| GET | `/v1/artifacts/{uuid}` | Get Artifact |
+
+</details>
+
+See [Aims APIs](/prisma-airs-model-security/api/aisecuritymodel/dataplane/prisma-airs-modelscan-api/) for full details.
+
 ## August 2026
 
 ### Prisma AIRS — AI Model Security Data Plane API (New)
