@@ -25,7 +25,7 @@ title: API Release Notes
 
 </details>
 
-See [Aims APIs](/prisma-airs-model-security/api/dataplane/data-plane/) for full details.
+See [Aims APIs](/prisma-airs-model-security/api/aisecuritymodel/dataplane/prisma-airs-modelscan-api/) for full details.
 
 ## August 2026
 
