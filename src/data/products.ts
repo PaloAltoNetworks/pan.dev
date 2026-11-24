@@ -128,6 +128,10 @@ export const MENU_GROUPS: MenuGroup[] = [
             label: "Prisma AIRS AI Model Security",
             to: "/prisma-airs-model-security/api/aisecuritymodel/aisecuritymodel/",
           },
+          {
+            label: "Prisma AIRS Red Teaming - Network Channels",
+            to: "/prisma-airs-redteam/api/airt/",
+          },
         ],
       },
       {

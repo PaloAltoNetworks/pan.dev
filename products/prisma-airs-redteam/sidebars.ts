@@ -58,4 +58,8 @@ module.exports = {
 
   ]
   
-  };
+    airt: [
+    "prisma-airs-redteam/api/airt/introduction",
+    ...require("./api/airt/sidebar"),
+  ],
+};
