@@ -392,12 +392,6 @@ const config = {
         id: "default",
         docsPluginId: "default",
         config: {
-          airt: {
-            specPath: "openapi-specs/prisma-airs-redteam/airt",
-            outputDir: "products/prisma-airs-redteam/api/airt",
-            proxy: "https://cors.pan.dev",
-            sidebarOptions: { groupPathsBy: "tag" },
-          },
           secure_agentless_access: {
             specPath: "openapi-specs/scm/config/secure_agentless_access",
             outputDir: "products/scm/api/config/secure_agentless_access",
