@@ -13,6 +13,42 @@ keywords:
 
 Everything we ship for the AIRT API, newest first. Pick a date to see exactly what changed, including breaking changes, what you need to do, and links to the affected endpoints.
 
+## November 2026
+
+### Airt — Airt (Updated)
+
+Additional endpoint and schema updates.
+
+See [Airt APIs](/prisma-airs-redteam/api/airt/dp-openapi/) for full details.
+
+---
+
+### Airt — Airt (Updated)
+
+Additional endpoint and schema updates.
+
+See [Airt APIs](/prisma-airs-redteam/api/airt/mp-openapi/) for full details.
+
+---
+
+### Airt — Airt (New)
+
+These APIs enable openAPI spec for AIRT Network Channels © 2025 Palo Alto Networks, Inc.
+
+<details><summary>View endpoints (5)</summary>
+
+| Method | Endpoint | Description |
+| ------ | -------- | ----------- |
+| GET | `/v1/channels` | List Channels |
+| POST | `/v1/channels` | Create Channel |
+| GET | `/v1/channels/stats` | Get Channel Stats |
+| GET | `/v1/channels/{channelId}` | Get Channel |
+| PATCH | `/v1/channels/{channelId}` | Update Channel |
+
+</details>
+
+See [Airt APIs](/prisma-airs-redteam/api/airt/nb-openapi/) for full details.
+
 ## September 2026
 
 ### Airt — Airt (Updated)
