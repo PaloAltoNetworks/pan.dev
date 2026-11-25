@@ -1,5 +1,236 @@
 components:
   schemas:
+    AnalysisType:
+      description: 'How a vulnerability was produced: by a static scanner or by WildFire
+        dynamic analysis.'
+      enum:
+      - static
+      - dynamic
+      title: AnalysisType
+      type: string
+    ArtifactOverrideCreateRequestSchema:
+      additionalProperties: false
+      example:
+        artifact_name: my-trusted-skill
+        artifact_type: SKILL
+        decision: ALLOW
+        fingerprint: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+        reason: Reviewed and trusted by the security team
+        trusted_by: security-team@example.com
+      properties:
+        artifact_name:
+          maxLength: 256
+          title: Artifact Name
+          type: string
+        artifact_type:
+          description: Always SKILL -- artifact overrides are supported for skill
+            artifacts only.
+          enum:
+          - SKILL
+          type: string
+        decision:
+          $ref: '#/components/schemas/OverrideDecision'
+        fingerprint:
+          title: Fingerprint
+          type: string
+        original_scan_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Original Scan Uuid
+        reason:
+          anyOf:
+          - maxLength: 1024
+            type: string
+          - type: 'null'
+          title: Reason
+        trusted_by:
+          maxLength: 256
+          title: Trusted By
+          type: string
+      required:
+      - artifact_type
+      - artifact_name
+      - fingerprint
+      - decision
+      - trusted_by
+      title: ArtifactOverrideCreateRequestSchema
+      type: object
+    ArtifactOverrideResponseSchema:
+      example:
+        artifact_name: my-trusted-skill
+        artifact_type: SKILL
+        created_at: '2026-01-01T00:00:00Z'
+        created_by: 550e8400-e29b-41d4-a716-446655440001
+        decision: ALLOW
+        fingerprint: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+        reason: Reviewed and trusted by the security team
+        trusted_by: security-team@example.com
+        tsg_id: example-tsg-id
+        updated_at: '2026-01-01T00:00:00Z'
+        uuid: 550e8400-e29b-41d4-a716-446655440000
+        version: 0
+      properties:
+        artifact_name:
+          title: Artifact Name
+          type: string
+        artifact_type:
+          anyOf:
+          - enum:
+            - SKILL
+            type: string
+          - type: string
+          title: Artifact Type
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        created_by:
+          format: uuid
+          title: Created By
+          type: string
+        decision:
+          anyOf:
+          - $ref: '#/components/schemas/OverrideDecision'
+          - type: string
+          title: Decision
+        fingerprint:
+          title: Fingerprint
+          type: string
+        original_scan_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Original Scan Uuid
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        trusted_by:
+          title: Trusted By
+          type: string
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+        version:
+          title: Version
+          type: integer
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - artifact_type
+      - artifact_name
+      - fingerprint
+      - decision
+      - reason
+      - original_scan_uuid
+      - created_by
+      - trusted_by
+      - version
+      title: ArtifactOverrideResponseSchema
+      type: object
+    ArtifactSGSummarySchema:
+      description: 'Per-child rollup nested in SCSG responses. Deliberately has no
+
+        name/description: a MODEL child''s name is server-generated/internal-only
+
+        (see ArtifactSecurityGroupCreateRequestSchema) and SKILL carries none at
+
+        all -- neither is meant to be a client-facing identifier. Use
+
+        artifact_sg_uuid/source_type to tell children apart instead.'
+      properties:
+        artifact_sg_uuid:
+          format: uuid
+          title: Artifact Sg Uuid
+          type: string
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+        enabled_rule_count:
+          title: Enabled Rule Count
+          type: integer
+        source_type:
+          anyOf:
+          - $ref: '#/components/schemas/SourceType'
+          - type: 'null'
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/ModelSecurityGroupState'
+          - type: string
+          title: State
+        version:
+          title: Version
+          type: integer
+      required:
+      - artifact_type
+      - artifact_sg_uuid
+      - state
+      - version
+      - enabled_rule_count
+      title: ArtifactSGSummarySchema
+      type: object
+    ArtifactSecurityGroupCreateRequestSchema:
+      additionalProperties: false
+      description: 'Shared create-payload shape for both MODEL and SKILL children
+        under an
+
+        SCSG (SCSG-specific -- not used by the legacy /v1/security-groups* API,
+
+        which keeps its own ModelSecurityGroupCreateRequestSchema untouched).
+
+
+        name/description are never client-settable here: a MODEL child''s are
+
+        server-generated (`{tsg_id}-{source_type}`, blank description); SKILL
+
+        carries none at all (matching ModelSecurityGroup''s existing
+
+        SKILL-has-no-SG-level-metadata convention).
+
+
+        source_type is required on both, but only meaningful for MODEL -- a SKILL
+
+        payload''s source_type is accepted and ignored; the backend always
+
+        persists SourceType.LOCAL for SKILL regardless of what''s sent.
+
+
+        rule_configurations is validated and applied for both, against the
+
+        catalog rules of the child''s artifact type.'
+      properties:
+        rule_configurations:
+          additionalProperties:
+            $ref: '#/components/schemas/RuleConfigurationSchema'
+          description: Keys in this dictionary should be rule UUIDs to customize upon
+            creation of the artifact security group.
+          propertyNames:
+            maxLength: 64
+          title: Rule Configurations
+          type: object
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+          description: Where this child's content comes from. Required for both MODEL
+            and SKILL, but only meaningful for MODEL -- a SKILL payload's source_type
+            is accepted and ignored.
+      required:
+      - source_type
+      title: ArtifactSecurityGroupCreateRequestSchema
+      type: object
     BatchAssignCustomRuleRequestSchema:
       additionalProperties: false
       properties:
@@ -122,6 +353,10 @@ components:
     CustomRuleCreateRequestSchema:
       additionalProperties: false
       properties:
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          default: MODEL
+          description: Artifact family for the rule. Only MODEL is supported for now.
         compatible_sources:
           items:
             $ref: '#/components/schemas/SourceType'
@@ -190,6 +425,9 @@ components:
       type: object
     CustomRuleListItemSchema:
       properties:
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          description: Artifact family this rule belongs to
         compatible_sources:
           items:
             $ref: '#/components/schemas/SourceType'
@@ -229,8 +467,9 @@ components:
           - type: 'null'
           default: 0
           description: Number of security groups that currently have this rule enabled.
-            Null when reading a historical snapshot (via ?generation=N), since the
-            count is a live value not captured in the snapshot.
+            A security group with several model sources counts once. Null when reading
+            a historical snapshot (via ?generation=N), since the count is a live value
+            not captured in the snapshot.
           title: Enabled Security Group Count
         is_archived:
           title: Is Archived
@@ -288,12 +527,16 @@ components:
       - violation_message
       - remediation_message
       - is_archived
+      - artifact_type
       - created_by
       - updated_by
       title: CustomRuleListItemSchema
       type: object
     CustomRuleResponseSchema:
       properties:
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          description: Artifact family this rule belongs to
         compatible_sources:
           items:
             $ref: '#/components/schemas/SourceType'
@@ -383,6 +626,7 @@ components:
       - violation_message
       - remediation_message
       - is_archived
+      - artifact_type
       - created_by
       - updated_by
       title: CustomRuleResponseSchema
@@ -498,6 +742,20 @@ components:
       - operator
       title: LabelCondition
       type: object
+    ListArtifactOverridesResponseSchema:
+      properties:
+        artifact_overrides:
+          items:
+            $ref: '#/components/schemas/ArtifactOverrideResponseSchema'
+          title: Artifact Overrides
+          type: array
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+      required:
+      - pagination
+      - artifact_overrides
+      title: ListArtifactOverridesResponseSchema
+      type: object
     ListCustomRuleSecurityGroupsResponseSchema:
       properties:
         pagination:
@@ -568,6 +826,20 @@ components:
       - rules
       title: ListModelSecurityRulesResponseSchema
       type: object
+    ListSupplyChainSecurityGroupsResponseSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        supply_chain_security_groups:
+          items:
+            $ref: '#/components/schemas/SupplyChainSecurityGroupListItemSchema'
+          title: Supply Chain Security Groups
+          type: array
+      required:
+      - pagination
+      - supply_chain_security_groups
+      title: ListSupplyChainSecurityGroupsResponseSchema
+      type: object
     ModelSecurityGroupCreateRequestSchema:
       additionalProperties: false
       properties:
@@ -599,6 +871,10 @@ components:
       type: object
     ModelSecurityGroupListItemSchema:
       properties:
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          default: MODEL
+          description: Artifact family this security group belongs to (MODEL or SKILL)
         created_at:
           format: date-time
           title: Created At
@@ -650,6 +926,10 @@ components:
       type: object
     ModelSecurityGroupResponseSchema:
       properties:
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          default: MODEL
+          description: Artifact family this security group belongs to (MODEL or SKILL)
         created_at:
           format: date-time
           title: Created At
@@ -834,6 +1114,14 @@ components:
       type: object
     ModelSecurityRuleListItemSchema:
       properties:
+        analysis_type:
+          $ref: '#/components/schemas/AnalysisType'
+          description: Whether static or dynamic analysis judges the rule (analysis_type_of_rule).
+          readOnly: true
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          default: MODEL
+          description: Artifact family this rule belongs to
         compatible_sources:
           items:
             $ref: '#/components/schemas/SourceType'
@@ -870,8 +1158,9 @@ components:
           - type: 'null'
           default: 0
           description: Number of security groups that currently have this rule enabled.
-            Null when reading a historical snapshot (via ?generation=N), since the
-            count is a live value not captured in the snapshot.
+            A security group with several model sources counts once. Null when reading
+            a historical snapshot (via ?generation=N), since the count is a live value
+            not captured in the snapshot.
           title: Enabled Security Group Count
         name:
           title: Name
@@ -892,15 +1181,21 @@ components:
       - compatible_sources
       - default_state
       - remediation
-      - editable_fields
-      - constant_values
-      - default_values
+      - analysis_type
       title: ModelSecurityRuleListItemSchema
       type: object
     ModelSecurityRuleResponseSchema:
       description: Response schema for model security rules - excludes internal fields
         like opa_path
       properties:
+        analysis_type:
+          $ref: '#/components/schemas/AnalysisType'
+          description: Whether static or dynamic analysis judges the rule (analysis_type_of_rule).
+          readOnly: true
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          default: MODEL
+          description: Artifact family this rule belongs to
         compatible_sources:
           items:
             $ref: '#/components/schemas/SourceType'
@@ -950,11 +1245,14 @@ components:
       - compatible_sources
       - default_state
       - remediation
-      - editable_fields
-      - constant_values
-      - default_values
+      - analysis_type
       title: ModelSecurityRuleResponseSchema
       type: object
+    OverrideDecision:
+      enum:
+      - ALLOW
+      title: OverrideDecision
+      type: string
     PaginationSchema:
       properties:
         total_items:
@@ -997,6 +1295,8 @@ components:
           anyOf:
           - $ref: '#/components/schemas/RuleState'
           - type: 'null'
+          description: Whether to enable this rule for the new security group. Omit
+            to use the rule's default state.
       title: RuleConfigurationSchema
       type: object
     RuleEditableFieldDropdownSchema:
@@ -1132,6 +1432,212 @@ components:
       - ARTIFACT
       title: RuleType
       type: string
+    ScsgArtifactOperationSchema:
+      additionalProperties: false
+      description: One entry in a PATCH request's ``operations`` list.
+      properties:
+        artifact_sg_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          description: The child security group this operation targets. Required for
+            UPDATE and DELETE; must be omitted for CREATE.
+          title: Artifact Sg Uuid
+        artifact_type:
+          $ref: '#/components/schemas/ScsgOperationArtifactType'
+          description: 'The artifact type this operation targets: MODEL or SKILL.'
+        operation:
+          $ref: '#/components/schemas/ScsgOperationType'
+          description: 'The kind of change this operation makes: CREATE, UPDATE, or
+            DELETE.'
+        payload:
+          anyOf:
+          - $ref: '#/components/schemas/ArtifactSecurityGroupCreateRequestSchema'
+          - type: 'null'
+          description: The new child's configuration. Required for CREATE; must be
+            omitted for UPDATE and DELETE.
+      required:
+      - operation
+      - artifact_type
+      title: ScsgArtifactOperationSchema
+      type: object
+    ScsgOperationArtifactType:
+      description: Artifact type an SCSG PATCH operation targets. This phase of the
+        SCSG API only supports creating/mutating MODEL and SKILL children.
+      enum:
+      - MODEL
+      - SKILL
+      title: ScsgOperationArtifactType
+      type: string
+    ScsgOperationType:
+      description: Kind of mutation one entry in an SCSG PATCH request's ``operations``
+        list performs.
+      enum:
+      - CREATE
+      - UPDATE
+      - DELETE
+      title: ScsgOperationType
+      type: string
+    ScsgRuleInstanceListResponseSchema:
+      properties:
+        pagination:
+          $ref: '#/components/schemas/PaginationSchema'
+        rule_instances:
+          items:
+            $ref: '#/components/schemas/ScsgRuleInstanceResponseSchema'
+          title: Rule Instances
+          type: array
+      required:
+      - pagination
+      - rule_instances
+      title: ScsgRuleInstanceListResponseSchema
+      type: object
+    ScsgRuleInstancePatchItemSchema:
+      additionalProperties: false
+      description: 'One entry in ScsgRuleInstancesBulkPatchRequestSchema''s rule_instances
+        map.
+
+        No security_group_uuid here -- the map key (a rule_instance_uuid) already
+
+        disambiguates which instance/group this entry targets.'
+      properties:
+        field_values:
+          anyOf:
+          - additionalProperties: true
+            description: Dictionary for configuring policies custom settings to applicable
+              policies. Allowed keys are approved_formats, approved_locations, approved_licenses,
+              deny_orgs, and denied_org_models. Values should be a list of strings.
+            propertyNames:
+              $ref: '#/components/schemas/RuleFieldValueKey'
+            type: object
+          - type: 'null'
+          title: Field Values
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: 'null'
+          description: The rule instance's new state. Omit to leave it unchanged.
+      title: ScsgRuleInstancePatchItemSchema
+      type: object
+    ScsgRuleInstanceResponseSchema:
+      description: 'Same fields as ModelSecurityRuleInstanceResponseSchema, plus an
+        explicit
+
+        artifact_type: a single response here can mix MODEL and SKILL instances, so
+
+        callers need to know which artifact family governs each one. security_group_uuid
+
+        (inherited from ModelSecurityRuleInstanceBaseSchema) identifies which specific
+
+        child security group the instance belongs to.'
+      properties:
+        artifact_type:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        created_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Created By
+        custom_rule:
+          anyOf:
+          - $ref: '#/components/schemas/CustomRuleInstanceSummarySchema'
+          - type: 'null'
+        custom_rule_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Custom Rule Uuid
+        field_values:
+          additionalProperties: true
+          description: Dictionary for configuring policies custom settings to applicable
+            policies. Allowed keys are approved_formats, approved_locations, approved_licenses,
+            deny_orgs, and denied_org_models. Values should be a list of strings.
+          propertyNames:
+            $ref: '#/components/schemas/RuleFieldValueKey'
+          title: Field Values
+          type: object
+        rule:
+          anyOf:
+          - $ref: '#/components/schemas/ModelSecurityRuleResponseSchema'
+          - type: 'null'
+        security_group_uuid:
+          format: uuid
+          title: Security Group Uuid
+          type: string
+        security_rule_uuid:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Security Rule Uuid
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: string
+          title: State
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        updated_by:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Updated By
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - security_group_uuid
+      - state
+      - artifact_type
+      title: ScsgRuleInstanceResponseSchema
+      type: object
+    ScsgRuleInstancesBulkPatchRequestSchema:
+      additionalProperties: false
+      properties:
+        rule_instances:
+          additionalProperties:
+            $ref: '#/components/schemas/ScsgRuleInstancePatchItemSchema'
+          description: Rule instances to update, keyed by rule_instance_uuid. Up to
+            100 entries per request.
+          maxProperties: 100
+          propertyNames:
+            format: uuid
+          title: Rule Instances
+          type: object
+      required:
+      - rule_instances
+      title: ScsgRuleInstancesBulkPatchRequestSchema
+      type: object
+    ScsgRuleInstancesBulkPatchResponseSchema:
+      properties:
+        rule_instances:
+          items:
+            $ref: '#/components/schemas/ScsgRuleInstanceResponseSchema'
+          title: Rule Instances
+          type: array
+      required:
+      - rule_instances
+      title: ScsgRuleInstancesBulkPatchResponseSchema
+      type: object
     SnapshotVersionListResponseSchema:
       description: 'A page of snapshot version history, newest first.
 
@@ -1171,11 +1677,53 @@ components:
       - timestamp
       title: SnapshotVersionSchema
       type: object
+    SortByArtifactOverrideField:
+      description: 'Sort fields for the Trusted Artifact List (GET /v1/artifact-overrides).
+
+
+        ``artifact_type``/``fingerprint`` are excluded (a 3-value discriminator
+
+        and a hash both carry no meaningful order); ``updated_at`` is excluded
+
+        since overrides are immutable after creation, so it would just repeat
+
+        ``created_at``.'
+      enum:
+      - artifact_name
+      - trusted_by
+      - created_at
+      title: SortByArtifactOverrideField
+      type: string
     SortByDateField:
       enum:
       - created_at
       - updated_at
       title: SortByDateField
+      type: string
+    SortByNameOrDateField:
+      description: 'Sort fields for list endpoints whose rows have a user-facing name
+        column.
+
+
+        A superset of SortByDateField, so an endpoint can widen from date-only
+
+        sorting to name sorting without breaking clients already sending
+
+        created_at / updated_at.
+
+
+        The two date members are repeated rather than inherited because Python
+
+        forbids subclassing an Enum that already defines members -- ``class
+
+        SortByNameOrDateField(SortByDateField)`` raises TypeError. The duplication
+
+        is the language''s price for extending an enum, not an oversight.'
+      enum:
+      - created_at
+      - updated_at
+      - name
+      title: SortByNameOrDateField
       type: string
     SortDirection:
       enum:
@@ -1195,6 +1743,279 @@ components:
       - ALL
       title: SourceType
       type: string
+    SupplyChainArtifactType:
+      description: The type of artifact a security group or rule applies to.
+      enum:
+      - MODEL
+      - SKILL
+      title: SupplyChainArtifactType
+      type: string
+    SupplyChainSecurityGroupCreateRequestSchema:
+      additionalProperties: false
+      description: 'Deliberately keeps model_security_groups/skill_security_groups
+        as
+
+        separate, explicitly-named fields rather than one generic
+
+        `artifacts: list[...]` keyed by a type discriminator. Even though both
+
+        fields currently share the same payload shape
+
+        (ArtifactSecurityGroupCreateRequestSchema), a future artifact type is not
+
+        guaranteed to fit that same shape -- keeping each artifact type as its own
+
+        named field leaves room to give a new type its own request schema without
+
+        reshaping this top-level contract or affecting MODEL/SKILL.
+
+
+        skill_security_groups is a list (not a single object) so a future
+
+        relaxation of the one-SKILL-per-SCSG rule doesn''t require a breaking
+
+        request-shape change -- at most one element is allowed today (the SKILL
+
+        singleton cap is unchanged), but it is no longer required: an SCSG needs
+
+        at least one artifact SG of any type (SKILL or MODEL), not specifically
+
+        a SKILL child.'
+      properties:
+        description:
+          default: ''
+          description: A description of the supply chain security group's purpose.
+          maxLength: 1000
+          title: Description
+          type: string
+        model_security_groups:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ArtifactSecurityGroupCreateRequestSchema'
+            type: array
+          - type: 'null'
+          description: MODEL children to create under this supply chain security group.
+            At least one of model_security_groups or skill_security_groups is required.
+          title: Model Security Groups
+        name:
+          description: The supply chain security group's name.
+          maxLength: 255
+          minLength: 1
+          title: Name
+          type: string
+        skill_security_groups:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ArtifactSecurityGroupCreateRequestSchema'
+            maxItems: 1
+            type: array
+          - type: 'null'
+          description: SKILL children to create under this supply chain security group;
+            at most one is allowed. At least one of model_security_groups or skill_security_groups
+            is required.
+          title: Skill Security Groups
+      required:
+      - name
+      title: SupplyChainSecurityGroupCreateRequestSchema
+      type: object
+    SupplyChainSecurityGroupListItemSchema:
+      description: 'List-row shape: deliberately does NOT inherit SupplyChainSecurityGroupResponseSchema''s
+
+        model_security_groups/skill_security_groups -- list queries never populate
+        per-child
+
+        detail (too heavy for a list), so those fields would always be empty/null
+        here. Instead,
+
+        this carries rollups the UI''s list table needs directly.'
+      properties:
+        artifact_sg_count:
+          default: 0
+          title: Artifact Sg Count
+          type: integer
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        description:
+          title: Description
+          type: string
+        enabled_model_rule_count:
+          default: 0
+          title: Enabled Model Rule Count
+          type: integer
+        enabled_skill_rule_count:
+          default: 0
+          title: Enabled Skill Rule Count
+          type: integer
+        is_tombstone:
+          description: Indicates whether this supply chain security group is deleted
+          title: Is Tombstone
+          type: boolean
+        model_source_types:
+          items:
+            $ref: '#/components/schemas/SourceType'
+          title: Model Source Types
+          type: array
+        name:
+          title: Name
+          type: string
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/ModelSecurityGroupState'
+          - type: string
+          title: State
+        total_model_rule_count:
+          default: 0
+          title: Total Model Rule Count
+          type: integer
+        total_skill_rule_count:
+          default: 0
+          title: Total Skill Rule Count
+          type: integer
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+        version:
+          title: Version
+          type: integer
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - name
+      - description
+      - state
+      - version
+      - is_tombstone
+      title: SupplyChainSecurityGroupListItemSchema
+      type: object
+    SupplyChainSecurityGroupPatchRequestSchema:
+      additionalProperties: false
+      properties:
+        description:
+          anyOf:
+          - maxLength: 1000
+            type: string
+          - type: 'null'
+          description: The supply chain security group's new description. At least
+            one of name, description, or operations is required.
+          title: Description
+        name:
+          anyOf:
+          - maxLength: 255
+            minLength: 1
+            type: string
+          - type: 'null'
+          description: The supply chain security group's new name. At least one of
+            name, description, or operations is required.
+          title: Name
+        operations:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ScsgArtifactOperationSchema'
+            type: array
+          - type: 'null'
+          description: Create, update, or delete one or more of this supply chain
+            security group's MODEL or SKILL children in a single request. At least
+            one of name, description, or operations is required.
+          title: Operations
+      title: SupplyChainSecurityGroupPatchRequestSchema
+      type: object
+    SupplyChainSecurityGroupResponseSchema:
+      description: 'Mirrors the create schema''s explicit-per-type-field shape rather
+        than
+
+        one generic list, for the same future-extensibility reason: a new
+
+        artifact type can get its own named field (and its own summary schema,
+
+        if ArtifactSGSummarySchema doesn''t fit) without touching how MODEL/SKILL
+
+        are represented here.
+
+
+        skill_security_groups is a list, symmetric with the create schema, so a
+
+        future relaxation of the one-SKILL-per-SCSG rule doesn''t require a
+
+        breaking response-shape change either. No min_length: a SCSG with zero
+
+        live SKILL children is a normal, reachable state (a MODEL-only SCSG, or
+
+        one whose SKILL child was deleted via PATCH while a MODEL child
+
+        remained) -- an SCSG needs at least one artifact SG of any type, not
+
+        specifically a SKILL child.'
+      properties:
+        created_at:
+          format: date-time
+          title: Created At
+          type: string
+        description:
+          title: Description
+          type: string
+        is_tombstone:
+          description: Indicates whether this supply chain security group is deleted
+          title: Is Tombstone
+          type: boolean
+        model_security_groups:
+          items:
+            $ref: '#/components/schemas/ArtifactSGSummarySchema'
+          title: Model Security Groups
+          type: array
+        name:
+          title: Name
+          type: string
+        skill_security_groups:
+          items:
+            $ref: '#/components/schemas/ArtifactSGSummarySchema'
+          maxItems: 1
+          title: Skill Security Groups
+          type: array
+        state:
+          anyOf:
+          - $ref: '#/components/schemas/ModelSecurityGroupState'
+          - type: string
+          title: State
+        tsg_id:
+          maxLength: 64
+          title: Tsg Id
+          type: string
+        updated_at:
+          format: date-time
+          title: Updated At
+          type: string
+        uuid:
+          format: uuid
+          title: Uuid
+          type: string
+        version:
+          title: Version
+          type: integer
+      required:
+      - uuid
+      - tsg_id
+      - created_at
+      - updated_at
+      - name
+      - description
+      - state
+      - version
+      - is_tombstone
+      title: SupplyChainSecurityGroupResponseSchema
+      type: object
     ValidationError:
       properties:
         ctx:
@@ -1222,12 +2043,203 @@ components:
       title: ValidationError
       type: object
 info:
-  description: Model Security Management API - Configure and manage security groups
-    and rules for AI/ML model scanning
-  title: Model Security Management API
+  description: Supply Chain Management API - Configure and manage security groups
+    and rules for AI artifact scanning
+  title: Supply Chain Security Management API
   version: 0.1.0
 openapi: 3.1.0
 paths:
+  /v1/artifact-overrides:
+    get:
+      description: List artifact overrides
+      operationId: list_artifact_overrides_v1_artifact_overrides_get
+      parameters:
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 50
+          maximum: 100
+          minimum: 1
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          minimum: 0
+          title: Skip
+          type: integer
+      - description: Field to sort by
+        in: query
+        name: sort_field
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortByArtifactOverrideField'
+          default: created_at
+          description: Field to sort by
+      - description: Direction to sort sort_field by
+        in: query
+        name: sort_dir
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+          description: Direction to sort sort_field by
+      - description: Filter by artifact type
+        in: query
+        name: artifact_type
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/SupplyChainArtifactType'
+          - type: 'null'
+          description: Filter by artifact type
+          title: Artifact Type
+      - description: Filter by artifact name (case-insensitive substring)
+        in: query
+        name: artifact_name
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by artifact name (case-insensitive substring)
+          title: Artifact Name
+      - description: Filter by exact fingerprint
+        in: query
+        name: fingerprint
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by exact fingerprint
+          title: Fingerprint
+      - description: Filter by the email that trusted the artifact (case-insensitive
+          substring)
+        in: query
+        name: trusted_by
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by the email that trusted the artifact (case-insensitive
+            substring)
+          title: Trusted By
+      - description: 'Single-box search: matches artifact name OR trusting email (case-insensitive
+          substring; broadens, unlike the typed filters which narrow).'
+        in: query
+        name: q
+        required: false
+        schema:
+          anyOf:
+          - minLength: 3
+            type: string
+          - type: 'null'
+          description: 'Single-box search: matches artifact name OR trusting email
+            (case-insensitive substring; broadens, unlike the typed filters which
+            narrow).'
+          title: Q
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListArtifactOverridesResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Artifact Overrides
+      tags:
+      - Artifact Overrides
+    post:
+      description: Create an artifact override (trusted artifact). Enabled for SKILL
+        artifacts only -- other artifact types return 422.
+      operationId: create_artifact_override_v1_artifact_overrides_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArtifactOverrideCreateRequestSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactOverrideResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Create Artifact Override
+      tags:
+      - Artifact Overrides
+  /v1/artifact-overrides/{override_uuid}:
+    delete:
+      description: Delete an artifact override
+      operationId: delete_artifact_override_v1_artifact_overrides__override_uuid__delete
+      parameters:
+      - description: Artifact override UUID
+        in: path
+        name: override_uuid
+        required: true
+        schema:
+          description: Artifact override UUID
+          format: uuid
+          title: Override Uuid
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete Artifact Override
+      tags:
+      - Artifact Overrides
+    get:
+      description: Get an artifact override by id
+      operationId: get_artifact_override_v1_artifact_overrides__override_uuid__get
+      parameters:
+      - description: Artifact override UUID
+        in: path
+        name: override_uuid
+        required: true
+        schema:
+          description: Artifact override UUID
+          format: uuid
+          title: Override Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactOverrideResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Artifact Override
+      tags:
+      - Artifact Overrides
   /v1/custom-rules:
     get:
       description: List custom rules for the tenant, or fetch a specific custom rules
@@ -1291,7 +2303,8 @@ paths:
           title: Source Types
       - description: GCS object generation of the custom rules snapshot to fetch.
           When set, returns that historical snapshot version instead of the current
-          custom rule list. Other filters are ignored on a historical read.
+          custom rule list. Only artifact_type applies on a historical read; other
+          filters are ignored.
         in: query
         name: generation
         required: false
@@ -1302,8 +2315,17 @@ paths:
           - type: 'null'
           description: GCS object generation of the custom rules snapshot to fetch.
             When set, returns that historical snapshot version instead of the current
-            custom rule list. Other filters are ignored on a historical read.
+            custom rule list. Only artifact_type applies on a historical read; other
+            filters are ignored.
           title: Generation
+      - description: Which artifact type's data to read. Defaults to MODEL.
+        in: query
+        name: artifact_type
+        required: false
+        schema:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          default: MODEL
+          description: Which artifact type's data to read. Defaults to MODEL.
       responses:
         '200':
           content:
@@ -1648,17 +2670,17 @@ paths:
         name: sort_field
         required: false
         schema:
-          $ref: '#/components/schemas/SortByDateField'
+          $ref: '#/components/schemas/SortByNameOrDateField'
           default: created_at
           description: Field to sort by
-      - description: Sort direction
+      - description: Direction to sort sort_field by
         in: query
         name: sort_dir
         required: false
         schema:
           $ref: '#/components/schemas/SortDirection'
           default: desc
-          description: Sort direction
+          description: Direction to sort sort_field by
       - description: Filter by source types
         in: query
         name: source_types
@@ -2101,6 +3123,14 @@ paths:
             When set, returns that historical snapshot version instead of the current
             rule list.
           title: Generation
+      - description: Which artifact type's data to read. Defaults to MODEL.
+        in: query
+        name: artifact_type
+        required: false
+        schema:
+          $ref: '#/components/schemas/SupplyChainArtifactType'
+          default: MODEL
+          description: Which artifact type's data to read. Defaults to MODEL.
       responses:
         '200':
           content:
@@ -2183,6 +3213,362 @@ paths:
       summary: Get Security Rule
       tags:
       - Model Security Rules
+  /v1/supply-chain-security-groups:
+    get:
+      description: List supply chain security groups
+      operationId: list_supply_chain_security_groups_v1_supply_chain_security_groups_get
+      parameters:
+      - description: Number of items to skip
+        in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          description: Number of items to skip
+          minimum: 0
+          title: Skip
+          type: integer
+      - description: Number of items to return
+        in: query
+        name: limit
+        required: false
+        schema:
+          anyOf:
+          - maximum: 100
+            minimum: 1
+            type: integer
+          - type: 'null'
+          default: 50
+          description: Number of items to return
+          title: Limit
+      - description: Field to sort by
+        in: query
+        name: sort_field
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortByNameOrDateField'
+          default: created_at
+          description: Field to sort by
+      - description: Direction to sort sort_field by
+        in: query
+        name: sort_dir
+        required: false
+        schema:
+          $ref: '#/components/schemas/SortDirection'
+          default: desc
+          description: Direction to sort sort_field by
+      - description: Search term (matches UUID or Name)
+        in: query
+        name: search_query
+        required: false
+        schema:
+          anyOf:
+          - maxLength: 1000
+            minLength: 3
+            type: string
+          - type: 'null'
+          description: Search term (matches UUID or Name)
+          title: Search Query
+      - description: Filter to SCSGs with at least one live MODEL child of one of
+          these source types. 'ALL' alone matches any source type; 'ALL' combined
+          with a concrete value is rejected with 422.
+        in: query
+        name: source_types
+        required: false
+        schema:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/SourceType'
+            maxItems: 8
+            type: array
+          - type: 'null'
+          description: Filter to SCSGs with at least one live MODEL child of one of
+            these source types. 'ALL' alone matches any source type; 'ALL' combined
+            with a concrete value is rejected with 422.
+          title: Source Types
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListSupplyChainSecurityGroupsResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Supply Chain Security Groups
+      tags:
+      - Supply Chain Security Groups
+    post:
+      description: Create a new Supply Chain Security Group with at least one of a
+        SKILL child or MODEL children
+      operationId: create_supply_chain_security_group_v1_supply_chain_security_groups_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupplyChainSecurityGroupCreateRequestSchema'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyChainSecurityGroupResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Create Supply Chain Security Group
+      tags:
+      - Supply Chain Security Groups
+  /v1/supply-chain-security-groups/{scsg_uuid}:
+    delete:
+      description: Soft-delete a supply chain security group and cascade-tombstone
+        its children
+      operationId: delete_supply_chain_security_group_v1_supply_chain_security_groups__scsg_uuid__delete
+      parameters:
+      - in: path
+        name: scsg_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scsg Uuid
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Delete Supply Chain Security Group
+      tags:
+      - Supply Chain Security Groups
+    get:
+      description: Get a supply chain security group by id, with nested child summaries
+      operationId: get_supply_chain_security_group_v1_supply_chain_security_groups__scsg_uuid__get
+      parameters:
+      - in: path
+        name: scsg_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scsg Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyChainSecurityGroupResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Supply Chain Security Group
+      tags:
+      - Supply Chain Security Groups
+    patch:
+      description: Update a supply chain security group's metadata and/or its children
+      operationId: patch_supply_chain_security_group_v1_supply_chain_security_groups__scsg_uuid__patch
+      parameters:
+      - in: path
+        name: scsg_uuid
+        required: true
+        schema:
+          format: uuid
+          title: Scsg Uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SupplyChainSecurityGroupPatchRequestSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupplyChainSecurityGroupResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Patch Supply Chain Security Group
+      tags:
+      - Supply Chain Security Groups
+  /v1/supply-chain-security-groups/{scsg_uuid}/rule-instances:
+    get:
+      description: List rule instances across every live (non-tombstoned) MODEL and
+        SKILL child artifact security group of a supply chain security group
+      operationId: list_scsg_rule_instances_v1_supply_chain_security_groups__scsg_uuid__rule_instances_get
+      parameters:
+      - description: Supply chain security group UUID
+        in: path
+        name: scsg_uuid
+        required: true
+        schema:
+          description: Supply chain security group UUID
+          format: uuid
+          title: Scsg Uuid
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          default: 10
+          title: Limit
+          type: integer
+      - in: query
+        name: skip
+        required: false
+        schema:
+          default: 0
+          title: Skip
+          type: integer
+      - in: query
+        name: artifact_type
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/SupplyChainArtifactType'
+          - type: 'null'
+          title: Artifact Type
+      - in: query
+        name: security_rule_uuid
+        required: false
+        schema:
+          anyOf:
+          - format: uuid
+            type: string
+          - type: 'null'
+          title: Security Rule Uuid
+      - in: query
+        name: state
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/RuleState'
+          - type: 'null'
+          title: State
+      - in: query
+        name: is_custom
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Custom
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScsgRuleInstanceListResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: List Scsg Rule Instances
+      tags:
+      - Supply Chain Security Group Rule Instances
+    patch:
+      description: 'Bulk update rule instances'' state/field_values across this supply
+        chain security group''s live (non-tombstoned) MODEL and SKILL children. Every
+        entry is validated before any row is mutated: if one entry is invalid, no
+        entry is applied.'
+      operationId: bulk_patch_scsg_rule_instances_v1_supply_chain_security_groups__scsg_uuid__rule_instances_patch
+      parameters:
+      - description: Supply chain security group UUID
+        in: path
+        name: scsg_uuid
+        required: true
+        schema:
+          description: Supply chain security group UUID
+          format: uuid
+          title: Scsg Uuid
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScsgRuleInstancesBulkPatchRequestSchema'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScsgRuleInstancesBulkPatchResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Bulk Patch Scsg Rule Instances
+      tags:
+      - Supply Chain Security Group Rule Instances
+  /v1/supply-chain-security-groups/{scsg_uuid}/rule-instances/{rule_instance_uuid}:
+    get:
+      description: Get a rule instance by UUID, scoped to this supply chain security
+        group's live (non-tombstoned) children
+      operationId: get_scsg_rule_instance_v1_supply_chain_security_groups__scsg_uuid__rule_instances__rule_instance_uuid__get
+      parameters:
+      - description: Supply chain security group UUID
+        in: path
+        name: scsg_uuid
+        required: true
+        schema:
+          description: Supply chain security group UUID
+          format: uuid
+          title: Scsg Uuid
+          type: string
+      - description: Rule instance UUID
+        in: path
+        name: rule_instance_uuid
+        required: true
+        schema:
+          description: Rule instance UUID
+          format: uuid
+          title: Rule Instance Uuid
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScsgRuleInstanceResponseSchema'
+          description: Successful Response
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+          description: Validation Error
+      summary: Get Scsg Rule Instance
+      tags:
+      - Supply Chain Security Group Rule Instances
 servers:
-- description: Prisma AIRS Model Security management endpoint
+- description: Prisma AIRS Supply Chain Security management endpoint
   url: https://api.sase.paloaltonetworks.com/aims/mgmt
