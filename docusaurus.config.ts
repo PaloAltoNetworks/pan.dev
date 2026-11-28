@@ -1,4 +1,5 @@
 import tailwindPlugin from "./plugins/tailwind-config.cjs";
+import { resolveBaseUrl, resolveSiteUrl } from "./scripts/site-url.cjs";
 
 /**
  * Copyright (c) 2017-present, Facebook, Inc.
@@ -6,19 +7,6 @@ import tailwindPlugin from "./plugins/tailwind-config.cjs";
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
-let baseUrl;
-if (process.env.CI_MERGE_REQUEST_IID) {
-  if (process.env.CI_PROJECT_DIR == "dev") {
-    baseUrl = "/";
-  } else {
-    baseUrl =
-      process.env.GL_PAGES_BASE_URL ??
-      `/-/${process.env.CI_PROJECT_NAME}/-/jobs/${process.env.CI_JOB_ID}/artifacts/public/`;
-  }
-} else {
-  baseUrl = process.env.GL_PAGES_BASE_URL ?? "/";
-}
 
 // Every operation page the retired /access/api/browser-mgmt/* doc set
 // published, paired with its successor under /prisma-browser/api/*. Both doc
@@ -97,10 +85,8 @@ const config = {
   title: "Develop with Palo Alto Networks",
   tagline:
     "Explore our API Doc, Quickstarts, and Blog or dive right in and play in our sandbox. We have all the tools you needs to make the next big security innovation. SDKs in your favorite languages, detailed walk-throughs for sample apps, and all the resources you’ll need to flourish.",
-  url: process.env.GL_PAGES_URL
-    ? process.env.GL_PAGES_URL
-    : process.env.CI_PAGES_URL ?? "https://pan.dev",
-  baseUrl: baseUrl,
+  url: resolveSiteUrl(),
+  baseUrl: resolveBaseUrl(),
   favicon: "img/PANW_Parent_Glyph_Red.svg",
   organizationName: "PaloAltoNetworks",
   projectName: "pan.dev",

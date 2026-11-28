@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import Link from "@docusaurus/Link";
 import { API_REF_URL } from "@site/src/components/PBPortal/portalConfig";
 import { PBCodePanel } from "@site/src/components/PBPortal/ui";
 import { TYPE_ORDER, TYPE_LABEL, prettyDate, richText } from "./helpers";
@@ -20,9 +21,9 @@ export function Change({ ch }) {
             dangerouslySetInnerHTML={{ __html: richText(ch.text) }}
           />
           {ch.endpoint ? (
-            <a className="pb-endpoint" href={ch.to || API_REF_URL}>
+            <Link className="pb-endpoint" to={ch.to || API_REF_URL}>
               {ch.endpoint}
-            </a>
+            </Link>
           ) : null}
           {ch.todo ? (
             <div className="pb-todo">

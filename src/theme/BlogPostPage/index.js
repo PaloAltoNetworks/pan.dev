@@ -9,14 +9,16 @@ import BlogPostPageOriginal from "@theme-original/BlogPostPage";
 import PBPortal from "@site/src/components/PBPortal";
 import { RELEASE_NOTES_CONTENT } from "@site/src/components/PBPortal/portalConfig";
 import { ReleaseBox } from "@site/src/components/PBPortal/ReleaseNotes/ReleaseBox";
+import useRouteContext from "@docusaurus/useRouteContext";
 
-const PB_RELEASE_NOTES_BASE = "/prisma-browser/release-notes";
+const PB_RELEASE_NOTES_ID = "pb-release-notes";
 
 export default function BlogPostPage(props) {
   const BlogPostContent = props.content;
   const meta = BlogPostContent.metadata || {};
+  const { plugin } = useRouteContext();
 
-  if (!String(meta.permalink || "").startsWith(PB_RELEASE_NOTES_BASE)) {
+  if (plugin.id !== PB_RELEASE_NOTES_ID) {
     return <BlogPostPageOriginal {...props} />;
   }
 

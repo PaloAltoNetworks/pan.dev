@@ -8,7 +8,8 @@
 import React, { useCallback, useMemo } from "react";
 
 import { translate } from "@docusaurus/Translate";
-import { useLocation } from "@docusaurus/router";
+import { isPBPath } from "@site/src/components/PBPortal/pbRoute";
+import { useSitePath } from "@site/src/hooks/useSitePath";
 import { setSchemaSelection } from "@theme/ApiExplorer/SchemaSelection/slice";
 import { useTypedDispatch } from "@theme/ApiItem/hooks";
 import { ClosingArrayBracket, OpeningArrayBracket } from "@theme/ArrayBrackets";
@@ -43,18 +44,13 @@ import type { SchemaObject } from "docusaurus-theme-openapi-docs/lib/types";
 import { renderSchemaBadges } from "../SchemaItem/badges";
 import { getPBQualifierMessage } from "../SchemaItem/pbQualifierMessage";
 
-const PB_BASE = "/prisma-browser";
-
 // Prisma Browser pages use the corrected constraint labels in
 // ../SchemaItem/pbQualifierMessage; every other product keeps the stock
 // upstream output, so this ejected component stays behaviour-neutral for them.
 // Apart from this hook and its two call sites below, the file is an unmodified
 // eject of docusaurus-theme-openapi-docs 5.2.0. See UPSTREAM-SYNC.md.
 function useQualifierMessage(): (schema?: SchemaObject) => string | undefined {
-  const { pathname } = useLocation();
-  return pathname.startsWith(PB_BASE)
-    ? getPBQualifierMessage
-    : getQualifierMessage;
+  return isPBPath(useSitePath()) ? getPBQualifierMessage : getQualifierMessage;
 }
 
 interface MarkdownProps {
