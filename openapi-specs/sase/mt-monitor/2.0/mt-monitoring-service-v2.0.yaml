@@ -1,0 +1,2038 @@
+openapi: 3.1.0
+info:
+  title: Aggregate Monitoring APIs
+  version: '2.0'
+servers:
+  - url: https://api.sase.paloaltonetworks.com
+security:
+  - authKey: []
+paths:
+  /api/mt/monitoring/v2/threats/threats_by_category:
+    post:
+      tags:
+        - Threats
+      summary: Get Threats by Category
+      description: Get Threats by Category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get threats by category:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      category: vulnerability
+                      count: 142
+                    - tenant_id: "1021202872"
+                      category: spyware
+                      count: 87
+                    - tenant_id: "1033430256"
+                      category: virus
+                      count: 53
+                    - tenant_id: "1033430256"
+                      category: url-filtering
+                      count: 31
+                    requestId: a1b2c3d4-5e6f-7890-abcd-ef1234567890
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: b2c3d4e5-6f78-9012-bcde-f12345678901
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Unknown error:
+                  value:
+                    error:
+                      errorCode: 10002
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 500
+                      msg: Unknown error occurred
+                    requestId: c3d4e5f6-7890-1234-cdef-012345678901
+  /api/mt/monitoring/v2/threats/threats_by_severity:
+    post:
+      tags:
+        - Threats
+      summary: Get Threats by Severity
+      description: Get Threats by Severity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get threats by severity:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      severity: critical
+                      count: 12
+                    - tenant_id: "1021202872"
+                      severity: high
+                      count: 45
+                    - tenant_id: "1021202872"
+                      severity: medium
+                      count: 98
+                    - tenant_id: "1033430256"
+                      severity: low
+                      count: 210
+                    requestId: d4e5f678-9012-3456-def0-123456789012
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: e5f67890-1234-5678-ef01-234567890123
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/threats/threat_count:
+    post:
+      tags:
+        - Threats
+      summary: Get Threat Count
+      description: Get Threat Count
+      parameters:
+      - name: aggBy
+        in: query
+        description: "Aggregation strategy. SERVICE_TYPE groups by service, TENANT groups by tenant, NONE returns raw data."
+        schema:
+          $ref: "#/components/schemas/ThreatAggregationType"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Between timestamps:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: between
+                      values:
+                      - 1705312200000
+                      - 1705398600000
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Threat count by service type:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      service_type: GP
+                      count: 320
+                    - tenant_id: "1021202872"
+                      service_type: RN
+                      count: 145
+                    - tenant_id: "1033430256"
+                      service_type: SC
+                      count: 78
+                    requestId: f6789012-3456-7890-0123-456789012345
+                Threat count by tenant:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      count: 465
+                    - tenant_id: "1033430256"
+                      count: 210
+                    requestId: 01234567-89ab-cdef-0123-456789abcdef
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 12345678-9abc-def0-1234-56789abcdef0
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/threats/threat_count_histogram:
+    post:
+      tags:
+        - Threats
+      summary: Get Threat Count Histogram
+      description: Get Threat Count Histogram
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get threat count histogram:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      timestamp: 1705312200000
+                      count: 15
+                    - tenant_id: "1021202872"
+                      timestamp: 1705315800000
+                      count: 22
+                    - tenant_id: "1021202872"
+                      timestamp: 1705319400000
+                      count: 8
+                    - tenant_id: "1033430256"
+                      timestamp: 1705312200000
+                      count: 5
+                    requestId: 23456789-abcd-ef01-2345-6789abcdef01
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 34567890-bcde-f012-3456-789abcdef012
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/threats/threat_count_ai_security_addon:
+    post:
+      tags:
+        - Threats
+      summary: Get AI Security Threat Count
+      description: Get AI Security Threat Count
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get AI security threat count:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      count: 37
+                    - tenant_id: "1033430256"
+                      count: 14
+                    requestId: 45678901-cdef-0123-4567-89abcdef0123
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 56789012-def0-1234-5678-9abcdef01234
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/threats/add-on/{requestType}:
+    post:
+      tags:
+        - Threats
+      summary: Get Add-On Threat Metrics
+      description: Get Add-On Threat Metrics
+      parameters:
+      - name: requestType
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/AddOnThreatRequestType"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                AI security threat count:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      count: 37
+                    - tenant_id: "1033430256"
+                      count: 14
+                    requestId: 67890123-ef01-2345-6789-abcdef012345
+                IoT source type threat count:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      total_blocked_count: 42
+                      total_threat_count: 18
+                      total_allowed_count: 156
+                      source_type: iot
+                      services:
+                      - service_type: GP
+                        blocked_count: 22
+                        threat_count: 10
+                        allowed_count: 89
+                      - service_type: RN
+                        blocked_count: 20
+                        threat_count: 8
+                        allowed_count: 67
+                    requestId: 78901234-f012-3456-789a-bcdef0123456
+                App security threat count:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      count: 95
+                    - tenant_id: "1033430256"
+                      count: 41
+                    requestId: 89012345-0123-4567-89ab-cdef01234567
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 9abcdef0-1234-5678-9abc-def012345678
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/service-connectivity/status:
+    post:
+      tags:
+        - Service Connectivity
+      summary: Get Service Connectivity Status
+      description: Get Service Connectivity Status by Node Type
+      parameters:
+      - name: nodeType
+        in: query
+        required: true
+        description: "Node type to query connectivity status for"
+        schema:
+          $ref: "#/components/schemas/ServiceConnectionNodeType"
+      - name: aggBy
+        in: query
+        description: "Aggregation strategy. NONE returns per-tenant breakdown, CONNECTION_STATE aggregates across tenants by state."
+        schema:
+          $ref: "#/components/schemas/ConnectivityAggregationType"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Filter by state Up:
+                value:
+                  filter:
+                    rules:
+                    - property: state
+                      operator: in
+                      values:
+                      - 1
+              Filter by state Down:
+                value:
+                  filter:
+                    rules:
+                    - property: state
+                      operator: in
+                      values:
+                      - 0
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Service connectivity per tenant:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      node_type: MU
+                      up: 45
+                      down: 2
+                      needs_attention: 1
+                      unknown: 0
+                    - tenant_id: "1033430256"
+                      node_type: MU
+                      up: 120
+                      down: 0
+                      needs_attention: 3
+                      unknown: 0
+                    requestId: abcdef01-2345-6789-abcd-ef0123456789
+                Service connectivity aggregated by state:
+                  value:
+                    data:
+                    - connection_state: up
+                      count: 165
+                    - connection_state: down
+                      count: 2
+                    - connection_state: needs_attention
+                      count: 4
+                    - connection_state: unknown
+                      count: 0
+                    requestId: bcdef012-3456-789a-bcde-f01234567890
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: cdef0123-4567-89ab-cdef-012345678901
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Failed to retrieve data:
+                  value:
+                    error:
+                      errorCode: 1001
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 500
+                      msg: Failed to retrieve data from insights
+                    requestId: def01234-5678-9abc-def0-123456789012
+  /api/mt/monitoring/v2/incidents:
+    post:
+      tags:
+        - Incidents
+      summary: Get Incidents
+      description: Get Incidents
+      parameters:
+      - name: pageNum
+        in: query
+        description: "Page number (0 returns all results)"
+        schema:
+          type: integer
+          default: 0
+      - name: pageSize
+        in: query
+        description: "Page size (-1 returns all results)"
+        schema:
+          type: integer
+          default: -1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_days
+                      values:
+                      - 7
+              Between timestamps:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: between
+                      values:
+                      - 1705312200000
+                      - 1705398600000
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get incidents:
+                  value:
+                    data:
+                      total_count: 42
+                      records:
+                      - incident_id: "INC-2024-001234"
+                        tenant_id: "1021202872"
+                        severity: Critical
+                        status: Raised
+                        category: connectivity
+                        summary: "Remote Network tunnel down"
+                        raised_time: 1705312200000
+                        updated_time: 1705315800000
+                      - incident_id: "INC-2024-001235"
+                        tenant_id: "1033430256"
+                        severity: High
+                        status: Raised
+                        category: performance
+                        summary: "Service Connection latency threshold exceeded"
+                        raised_time: 1705313100000
+                        updated_time: 1705316700000
+                    requestId: ef012345-6789-abcd-ef01-23456789abcd
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: f0123456-789a-bcde-f012-3456789abcde
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/incidents/tenants:
+    post:
+      tags:
+        - Incidents
+      summary: Get Top Tenants by Incidents
+      description: Get Top Tenants by Incidents
+      parameters:
+      - name: limit
+        in: query
+        description: "Maximum number of tenants to return (0 returns all)"
+        schema:
+          type: integer
+          default: 0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 30 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_days
+                      values:
+                      - 30
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get top tenants by incidents:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      tenant_name: "Acme Corp"
+                      count: 15
+                    - tenant_id: "1033430256"
+                      tenant_name: "Widget Inc"
+                      count: 9
+                    - tenant_id: "1044561389"
+                      tenant_name: "Global Systems"
+                      count: 7
+                    requestId: 01234567-89ab-cdef-0123-456789abcde0
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 12345678-9abc-def0-1234-56789abcdef1
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/incidents/count:
+    post:
+      tags:
+        - Incidents
+      summary: Get Incident Count by Severity
+      description: Get Incident Count by Severity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get incident count by severity:
+                  value:
+                    data:
+                      total_count: 42
+                      data:
+                      - severity: Critical
+                        count: 3
+                        tenants:
+                        - "1021202872"
+                        - "1033430256"
+                      - severity: High
+                        count: 12
+                        tenants:
+                        - "1021202872"
+                        - "1044561389"
+                      - severity: Medium
+                        count: 18
+                        tenants:
+                        - "1033430256"
+                      - severity: Low
+                        count: 9
+                        tenants:
+                        - "1044561389"
+                    requestId: 23456789-abcd-ef01-2345-6789abcdef02
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 34567890-bcde-f012-3456-789abcdef013
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/incidents/trend/open:
+    post:
+      tags:
+        - Incidents
+      summary: Get Open Incident Trend
+      description: Get Open Incident Trend
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 7 Days with hourly histogram:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_days
+                      values:
+                      - 7
+                  histogram:
+                    range: hour
+                    value: "1"
+                    enableEmptyInterval: true
+              Last 30 Days with daily histogram:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_days
+                      values:
+                      - 30
+                  histogram:
+                    range: day
+                    value: "1"
+                    enableEmptyInterval: true
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get open incident trend:
+                  value:
+                    data:
+                    - timestamp: 1705312200000
+                      count: 5
+                    - timestamp: 1705315800000
+                      count: 7
+                    - timestamp: 1705319400000
+                      count: 6
+                    - timestamp: 1705323000000
+                      count: 8
+                    requestId: 45678901-cdef-0123-4567-89abcdef0124
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 56789012-def0-1234-5678-9abcdef01235
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/incidents/trend/cleared:
+    post:
+      tags:
+        - Incidents
+      summary: Get Cleared Incident Trend
+      description: Get Cleared Incident Trend
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 7 Days with hourly histogram:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_days
+                      values:
+                      - 7
+                  histogram:
+                    range: hour
+                    value: "1"
+                    enableEmptyInterval: true
+              Last 30 Days with daily histogram:
+                value:
+                  filter:
+                    rules:
+                    - property: raised_time
+                      operator: last_n_days
+                      values:
+                      - 30
+                  histogram:
+                    range: day
+                    value: "1"
+                    enableEmptyInterval: true
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get cleared incident trend:
+                  value:
+                    data:
+                    - timestamp: 1705312200000
+                      count: 3
+                    - timestamp: 1705315800000
+                      count: 2
+                    - timestamp: 1705319400000
+                      count: 4
+                    - timestamp: 1705323000000
+                      count: 1
+                    requestId: 67890123-ef01-2345-6789-abcdef012346
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 78901234-f012-3456-789a-bcdef0123457
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/incidents/impactedList:
+    post:
+      tags:
+        - Incidents
+      summary: Get Impacted Objects List
+      description: Get list of impacted objects for an incident
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Get impacted list for incident:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+                    - property: incident_id
+                      operator: equals
+                      values:
+                      - "INC-2024-001234"
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get impacted objects:
+                  value:
+                    data:
+                    - impacted_list:
+                      - type: site
+                        name: "Branch-Office-NYC"
+                        id: "site-001"
+                      - type: tunnel
+                        name: "tunnel-east-1"
+                        id: "tun-001"
+                      sites:
+                      - name: "Branch-Office-NYC"
+                        id: "site-001"
+                        state: down
+                      locations:
+                      - name: "us-east4"
+                        state: degraded
+                      tunnels:
+                      - name: "tunnel-east-1"
+                        id: "tun-001"
+                        state: down
+                      bgp_peers:
+                      - name: "peer-10.0.0.1"
+                        state: down
+                        peer_ip: "10.0.0.1"
+                    requestId: 89012345-0123-4567-89ab-cdef01234568
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 9abcdef0-1234-5678-9abc-def012345679
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/prisma-browser/blocked-events:
+    post:
+      tags:
+        - Prisma Access Browser
+      summary: Get Prisma Browser Blocked Events
+      description: Get Prisma Browser Blocked Events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get blocked events:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      dlp: 28
+                      malicious_websites: 15
+                      total_blocked: 43
+                    - tenant_id: "1033430256"
+                      dlp: 12
+                      malicious_websites: 8
+                      total_blocked: 20
+                    requestId: a0123456-789a-bcde-f012-3456789abcd0
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: b1234567-89ab-cdef-0123-456789abcde1
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/prisma-browser/metrics-analyzed:
+    post:
+      tags:
+        - Prisma Access Browser
+      summary: Get Prisma Browser Metrics Analyzed
+      description: Get Prisma Browser Metrics Analyzed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get metrics analyzed:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      website_count: 1250
+                      file_count: 480
+                      application_count: 95
+                    - tenant_id: "1033430256"
+                      website_count: 870
+                      file_count: 320
+                      application_count: 62
+                    requestId: c2345678-9abc-def0-1234-56789abcdef2
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: d3456789-abcd-ef01-2345-6789abcdef03
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/prisma-browser/threat-summary:
+    post:
+      tags:
+        - Prisma Access Browser
+      summary: Get Prisma Browser Threat Summary by Tenant
+      description: Get Prisma Browser Threat Summary by Tenant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get threat summary:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      blocked: 43
+                      prevented: 18
+                      total: 61
+                    - tenant_id: "1033430256"
+                      blocked: 20
+                      prevented: 9
+                      total: 29
+                    requestId: e4567890-bcde-f012-3456-789abcdef014
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: f5678901-cdef-0123-4567-89abcdef0125
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/prisma-browser/idp:
+    get:
+      tags:
+        - Prisma Access Browser
+      summary: Get IdP Information
+      description: Retrieves Identity Provider summary
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get IdP information:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      tenant_idp_tenant: "acme-corp.idp.example.com"
+                      msp_idp_tenant: "msp-root.idp.example.com"
+                      msp_idp_users: 150
+                      msp_idp_user_groups: 12
+                    - tenant_id: "1033430256"
+                      tenant_idp_tenant: "widget-inc.idp.example.com"
+                      msp_idp_tenant: "msp-root.idp.example.com"
+                      msp_idp_users: 85
+                      msp_idp_user_groups: 8
+                    requestId: 06789012-def0-1234-5678-9abcdef01236
+        "400":
+          description: Bad Request
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/prisma-browser/active-count:
+    post:
+      tags:
+        - Prisma Access Browser
+      summary: Get Active User and Device Count
+      description: Get Active User and Device Count
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get active user and device count:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      user_count: 142
+                      device_count: 168
+                    - tenant_id: "1033430256"
+                      user_count: 85
+                      device_count: 97
+                    requestId: 17890123-ef01-2345-6789-abcdef012347
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 28901234-f012-3456-789a-bcdef0123458
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/prisma-browser/incident:
+    post:
+      tags:
+        - Prisma Access Browser
+      summary: Get Incident Count by Category
+      description: Get Incident Count by Category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get incident count by category:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      malicious_website: 12
+                      malicious_file: 5
+                      talon_sign_in: 3
+                    - tenant_id: "1033430256"
+                      malicious_website: 7
+                      malicious_file: 2
+                      talon_sign_in: 1
+                    requestId: 39012345-0123-4567-89ab-cdef01234569
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 4a123456-1234-5678-9abc-def01234567a
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/prisma-browser/incident-summary:
+    post:
+      tags:
+        - Prisma Access Browser
+      summary: Get Incident Summary
+      description: Get Incident Summary
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get incident summary:
+                  value:
+                    data:
+                    - tenant_id: "1021202872"
+                      event_count: 245
+                      user_count: 42
+                      device_count: 53
+                      incident_count: 20
+                      idp: msp
+                      status: Complete
+                    - tenant_id: "1033430256"
+                      event_count: 130
+                      user_count: 28
+                      device_count: 35
+                      incident_count: 10
+                      idp: tenant
+                      status: Complete
+                    - tenant_id: "1044561389"
+                      event_count: 0
+                      user_count: 0
+                      device_count: 0
+                      incident_count: 0
+                      idp: unknown
+                      status: Pending
+                    requestId: 5b234567-2345-6789-abcd-ef012345678b
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 6c345678-3456-789a-bcde-f0123456789c
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/prisma-browser/total-count:
+    post:
+      tags:
+        - Prisma Access Browser
+      summary: Get Total Event and Tenant Count
+      description: Get Total Event and Tenant Count
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilterRequest"
+            examples:
+              Last 24 Hours:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_hours
+                      values:
+                      - 24
+              Last 7 Days:
+                value:
+                  filter:
+                    rules:
+                    - property: event_time
+                      operator: last_n_days
+                      values:
+                      - 7
+        required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get total event and tenant count:
+                  value:
+                    data:
+                    - total_event: 375
+                      total_tenant: 3
+                    requestId: 7d456789-4567-89ab-cdef-01234567890d
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 8e567890-5678-9abc-def0-12345678901e
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/license/{product}/summary:
+    get:
+      tags:
+        - License
+      summary: Get License Summary
+      description: Returns license summary for a given product type
+      parameters:
+      - name: product
+        in: path
+        required: true
+        description: "Product type. Supported values: prisma_access, sdwan, prisma_browser."
+        schema:
+          $ref: "#/components/schemas/LicenseProduct"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get Prisma Access license summary:
+                  value:
+                    data:
+                      features:
+                      - label: Mobile Users
+                        feature_id: mobile_users
+                        quantity: 5000
+                      - label: Remote Networks
+                        feature_id: remote_networks
+                        quantity: 25
+                      - label: Service Connections
+                        feature_id: service_connections
+                        quantity: 10
+                      total_aggregate_bandwidth: "5 Gbps"
+                    requestId: 9f678901-6789-abcd-ef01-23456789012f
+                Get SDWAN license summary:
+                  value:
+                    data:
+                      features:
+                      - label: Sites
+                        feature_id: sites
+                        quantity: 120
+                      - label: Bandwidth
+                        feature_id: bandwidth
+                        quantity: 10000
+                      total_aggregate_bandwidth: "10 Gbps"
+                    requestId: a0789012-789a-bcde-f012-34567890123a
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid product type:
+                  value:
+                    error:
+                      errorCode: 10004
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid API type
+                    requestId: b1890123-89ab-cdef-0123-4567890abcdb
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Failed to retrieve license details:
+                  value:
+                    error:
+                      errorCode: 10008
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 500
+                      msg: Failed to retrieve license details
+                    requestId: c2901234-9abc-def0-1234-56789abcdefc
+  /api/mt/monitoring/v2/license/services/summary:
+    get:
+      tags:
+        - License
+      summary: Get Services Summary
+      description: Returns tenant distribution across core service products
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get services summary:
+                  value:
+                    data:
+                      items:
+                      - id: prisma_access
+                        count: 45
+                        tenants:
+                        - "1021202872"
+                        - "1033430256"
+                        - "1044561389"
+                      - id: sdwan
+                        count: 12
+                        tenants:
+                        - "1021202872"
+                        - "1044561389"
+                      - id: pab
+                        count: 8
+                        tenants:
+                        - "1033430256"
+                      total_tenants: 50
+                    requestId: d3012345-abcd-ef01-2345-6789abcdef0d
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/license/{product}/details:
+    get:
+      tags:
+        - License
+      summary: Get License Details
+      description: Returns per-tenant license details for a given product
+      parameters:
+      - name: product
+        in: path
+        required: true
+        description: "Product type. Supported values: prisma_access, sdwan, prisma_browser."
+        schema:
+          $ref: "#/components/schemas/LicenseProduct"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get Prisma Access license details:
+                  value:
+                    data:
+                      total_count: 3
+                      instances:
+                      - tsg_id: "1021202872"
+                        start_date: 1672531200000
+                        end_date: 1704067200000
+                        utilization_status: active
+                        mobile_users:
+                          license_total: 2000
+                          license_utilized: 1450.0
+                        remote_networks:
+                          license_total: 10
+                          license_utilized: 7.0
+                      - tsg_id: "1033430256"
+                        start_date: 1672531200000
+                        end_date: 1704067200000
+                        utilization_status: active
+                        mobile_users:
+                          license_total: 1500
+                          license_utilized: 890.0
+                        remote_networks:
+                          license_total: 8
+                          license_utilized: 5.0
+                      - tsg_id: "1044561389"
+                        start_date: 1672531200000
+                        end_date: 1704067200000
+                        utilization_status: active
+                        mobile_users:
+                          license_total: 1500
+                          license_utilized: 1100.0
+                        remote_networks:
+                          license_total: 7
+                          license_utilized: 4.0
+                    requestId: e4123456-bcde-f012-3456-789abcdef01e
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid product type:
+                  value:
+                    error:
+                      errorCode: 10004
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid API type
+                    requestId: f5234567-cdef-0123-4567-89abcdef012f
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/license/subscription-status:
+    get:
+      tags:
+        - License
+      summary: Get Subscription Status
+      description: Returns all enabled licenses categorized by feature ID with utilization data
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get subscription status:
+                  value:
+                    data:
+                      total_entries: 6
+                      instances:
+                        mobile_users:
+                        - tsg_id: "1021202872"
+                          end_date: 1704067200000
+                          license_total: 2000
+                          license_utilized: 1450.0
+                        - tsg_id: "1033430256"
+                          end_date: 1704067200000
+                          license_total: 1500
+                          license_utilized: 890.0
+                        remote_networks:
+                        - tsg_id: "1021202872"
+                          end_date: 1704067200000
+                          license_total: 10
+                          license_utilized: 7.0
+                        service_connections:
+                        - tsg_id: "1021202872"
+                          end_date: 1704067200000
+                          license_total: 5
+                          license_utilized: 3.0
+                    requestId: 06345678-def0-1234-5678-9abcdef01230
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/license/addons/summary:
+    get:
+      tags:
+        - License
+      summary: Get Add-ons Summary
+      description: Returns tenant distribution across add-on products and features
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get add-ons summary:
+                  value:
+                    data:
+                      items:
+                      - id: adem
+                        count: 20
+                        tenants:
+                        - "1021202872"
+                        - "1033430256"
+                      - id: ztna
+                        count: 8
+                        tenants:
+                        - "1021202872"
+                      - id: casb
+                        count: 5
+                        tenants:
+                        - "1033430256"
+                      - id: scm_pro
+                        count: 3
+                        tenants:
+                        - "1044561389"
+                      total_tenants: 25
+                    requestId: 17456789-ef01-2345-6789-abcdef012341
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/license/security-addons/summary:
+    get:
+      tags:
+        - License
+      summary: Get Security Add-ons Summary
+      description: Returns tenant distribution for security add-on features filtered by product
+      parameters:
+      - name: product
+        in: query
+        required: true
+        description: "Product to filter security add-ons by. Valid values: prisma_access, sdwan."
+        schema:
+          $ref: "#/components/schemas/SecurityAddonsProduct"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get security add-ons for Prisma Access:
+                  value:
+                    data:
+                      items:
+                      - id: advanced_threat_prevention
+                        count: 30
+                        tenants:
+                        - "1021202872"
+                        - "1033430256"
+                      - id: advanced_url_filtering
+                        count: 25
+                        tenants:
+                        - "1021202872"
+                      - id: dns_security
+                        count: 22
+                        tenants:
+                        - "1033430256"
+                      - id: advanced_wildfire
+                        count: 15
+                        tenants:
+                        - "1044561389"
+                      total_tenants: 35
+                    requestId: 28567890-f012-3456-789a-bcdef0123452
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid product:
+                  value:
+                    error:
+                      errorCode: 10004
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid API type
+                    requestId: 39678901-0123-4567-89ab-cdef01234563
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/license/trend/services:
+    get:
+      tags:
+        - License
+      summary: Get License Trend By Services
+      description: Returns monthly tenant count trend by service for the last 6 months
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get license trend by services:
+                  value:
+                    data:
+                    - timestamp: 1701388800000
+                      group_key: prisma_access
+                      tenant_count: 40
+                    - timestamp: 1701388800000
+                      group_key: sdwan
+                      tenant_count: 10
+                    - timestamp: 1704067200000
+                      group_key: prisma_access
+                      tenant_count: 42
+                    - timestamp: 1704067200000
+                      group_key: sdwan
+                      tenant_count: 11
+                    - timestamp: 1706745600000
+                      group_key: prisma_access
+                      tenant_count: 45
+                    - timestamp: 1706745600000
+                      group_key: sdwan
+                      tenant_count: 12
+                    requestId: 4a789012-1234-5678-9abc-def012345674
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/license/trend/services/add-ons:
+    get:
+      tags:
+        - License
+      summary: Get License Trend By Add-Ons
+      description: Returns monthly tenant count trend by add-on feature for the last 6 months
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get license trend by add-ons:
+                  value:
+                    data:
+                    - timestamp: 1701388800000
+                      group_key: adem
+                      tenant_count: 15
+                    - timestamp: 1701388800000
+                      group_key: ztna
+                      tenant_count: 6
+                    - timestamp: 1704067200000
+                      group_key: adem
+                      tenant_count: 18
+                    - timestamp: 1704067200000
+                      group_key: ztna
+                      tenant_count: 7
+                    - timestamp: 1706745600000
+                      group_key: adem
+                      tenant_count: 20
+                    - timestamp: 1706745600000
+                      group_key: ztna
+                      tenant_count: 8
+                    requestId: 5b890123-2345-6789-abcd-ef01234567a5
+        "500":
+          description: Server Error
+  /api/mt/monitoring/v2/tenant/support-info:
+    get:
+      tags:
+        - Tenant
+      summary: Get Tenant Support Info
+      description: Returns tenant support information for the specified TSG
+      parameters:
+      - name: tsg_id
+        in: query
+        required: true
+        description: "Tenant Service Group ID to look up support info for"
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              examples:
+                Get tenant support info:
+                  value:
+                    data:
+                      tsg_id: "1021202872"
+                      support_account_id: "SF-001234567"
+                      sls_id: "SLS-98765"
+                      product_support_info:
+                      - product_id: prisma_access
+                        serial_number: "PA-SN-2024-001234"
+                        instance_id: "inst-abcdef012345"
+                      - product_id: sdwan
+                        serial_number: "SDWAN-SN-2024-005678"
+                        instance_id: "inst-fedcba654321"
+                    requestId: 6c901234-3456-789a-bcde-f012345678b6
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                Invalid request payload:
+                  value:
+                    error:
+                      errorCode: 10007
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 400
+                      msg: Invalid request payload
+                    requestId: 7d012345-4567-89ab-cdef-0123456789c7
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              examples:
+                Authentication failed:
+                  value:
+                    error:
+                      errorCode: 10003
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 401
+                      msg: Authentication failed
+                    requestId: 8e123456-5678-9abc-def0-12345678abd8
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              examples:
+                Failed to retrieve license details:
+                  value:
+                    error:
+                      errorCode: 10008
+                      errorType: INTERNAL_ERROR
+                      httpStatus: 500
+                      msg: Failed to retrieve license details
+                    requestId: 9f234567-6789-abcd-ef01-23456789bce9
+components:
+  schemas:
+    FilterRequest:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/FilterCondition"
+        histogram:
+          $ref: "#/components/schemas/HistogramCondition"
+        properties:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueryProperty"
+        count:
+          type: integer
+          description: Maximum number of records to return
+          default: 10000
+    FilterCondition:
+      type: object
+      properties:
+        operator:
+          type: string
+          enum:
+          - AND
+          - OR
+          default: AND
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueryRule"
+      required:
+      - rules
+    QueryRule:
+      type: object
+      required:
+      - property
+      - operator
+      - values
+      properties:
+        property:
+          type: string
+          description: "Field to filter on (e.g., event_time, raised_time, severity, state, incident_id)"
+        operator:
+          type: string
+          description: "Filter operator. Time fields support: last_n_hours, last_n_days, between. Other fields support: equals, not_equals, in, not_in, gt, lt, gte, lte."
+        values:
+          type: array
+          description: "Filter values. For last_n_hours: [N] where N is 1-24. For last_n_days: [N] where N is 1-180. For between: [startEpochMs, endEpochMs]."
+          items: {}
+    QueryProperty:
+      type: object
+      properties:
+        property:
+          type: string
+    HistogramCondition:
+      type: object
+      properties:
+        range:
+          type: string
+          description: "Time bucket size"
+          enum:
+          - minute
+          - hour
+          - day
+        value:
+          type: string
+          description: "Multiplier for the range (e.g., '1' for 1-hour buckets)"
+        enableEmptyInterval:
+          type: boolean
+          description: "Whether to include time buckets with zero count"
+          default: true
+    ThreatAggregationType:
+      type: string
+      description: "Aggregation strategy for threat count results"
+      enum:
+      - SERVICE_TYPE
+      - TENANT
+      - NONE
+      default: SERVICE_TYPE
+    ConnectivityAggregationType:
+      type: string
+      description: "Aggregation strategy for service connectivity results"
+      enum:
+      - NONE
+      - CONNECTION_STATE
+      default: NONE
+    ServiceConnectionNodeType:
+      type: string
+      description: "Service connectivity node type"
+      enum:
+      - CDL
+      - EP
+      - MU
+      - RN
+      - SC
+      - ZTNA
+    AddOnThreatRequestType:
+      type: string
+      description: "Add-on threat metric type to retrieve"
+      enum:
+      - threat_count_ai_security
+      - threat_count_iot_source_type
+      - threat_count_app_security
+    LicenseProduct:
+      type: string
+      description: "License product type"
+      enum:
+      - prisma_access
+      - sdwan
+      - prisma_browser
+    SecurityAddonsProduct:
+      type: string
+      description: "Product to filter security add-ons by"
+      enum:
+      - prisma_access
+      - sdwan
+  securitySchemes:
+    authKey:
+      type: http
+      scheme: Bearer
