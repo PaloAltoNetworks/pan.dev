@@ -397,6 +397,18 @@ module.exports = {
             ...require("./api/config/posture-management/config-cleanup/sidebar"),
           ],
         },
+        {
+          type: "category",
+          label: "Configuration Clean Up",
+          collapsed: true,
+          link: {
+            type: 'generated-index',
+            title: 'Configuration Clean Up',
+          },
+          items: [
+          require("./api/config/posture-management/config-clean-up/sidebar"),
+          ],
+        },
       ],
     },
     {
