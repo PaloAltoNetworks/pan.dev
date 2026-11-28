@@ -14,8 +14,8 @@ and [created a service account](/scm/docs/service-accounts) that has role-access
 When you did these things, you obtained:
 
 - A TSG ID, which you use to identify the scope of the access token.
-- A Client ID
-- A Client Secret
+- A Client ID 
+- A Client Secret 
 
 Using this information, you can use
 [POST /oauth2/access_token](/scm/api/auth/post-auth-v-1-oauth-2-access-token)
@@ -31,10 +31,12 @@ to create an access token. Be aware that:
 
 For example:
 
-    curl -d "grant_type=client_credentials&scope=tsg_id:<tsg_id>" \
-    -u <client_id>:<client_secret> \
-    -H "Content-Type: application/x-www-form-urlencoded" \
-    -X POST https://auth.apps.paloaltonetworks.com/oauth2/access_token
+    curl --location 'https://auth.apps.paloaltonetworks.com/auth/v1/oauth2/access_token' \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --data-urlencode 'grant_type=client_credentials' \
+    --data-urlencode 'scope=tsg_id:<tsg_id_here>' \
+    --data-urlencode 'client_id=<client_id_here>' \
+    --data-urlencode 'client_secret=<client_secret_here>'
 
 **Note**: The service account that you use to authenticate this request must belong to the TSG that
 you identify on the `scope` field. See [Acess Token Scopes](/scm/docs/scope) for more information.
@@ -46,7 +48,7 @@ Access tokens have a lifespan of 15 minutes.
 If your access token is incorrect, the API request may not go through,
 and the resulting error indicates an invalid authorization code.
 
-You can check your access token's credentials by pasting the access token into https://jwt.io/ .
+You can check your access token's credentials by pasting the access token into https://jwt.io/.
 This decodes the token to determine whether the actual set of credentials matches the set of
 credentials present in the access token.
 
